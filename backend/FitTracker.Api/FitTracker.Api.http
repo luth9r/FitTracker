@@ -1,0 +1,6 @@
+@FitTracker.Api_HostAddress = http://localhost:5004
+
+GET {{FitTracker.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
