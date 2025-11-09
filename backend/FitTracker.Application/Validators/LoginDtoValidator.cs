@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,24 +9,24 @@ using FluentValidation;
 
 namespace FitTracker.Application.Validators
 {
-    public class LoginDtoValidator : AbstractValidator<LoginDto>
-    {
-        private readonly ILocalizationService _localization;
-        public LoginDtoValidator(ILocalizationService localization)
-        {
-            _localization = localization;
+	public class LoginDtoValidator : AbstractValidator<LoginDto>
+	{
+		private readonly ILocalizationService _localization;
+		public LoginDtoValidator(ILocalizationService localization)
+		{
+			_localization = localization;
 
-            RuleFor(x => x.Email)
-                .NotEmpty()
-                .WithMessage(_localization.GetString("Auth.Login.EmailRequired"))
-                .EmailAddress()
-                .WithMessage(_localization.GetString("Auth.Login.InvalidEmail"));
+			RuleFor(x => x.Email)
+				.NotEmpty()
+				.WithMessage(_localization.GetString("Auth.Login.EmailRequired"))
+				.EmailAddress()
+				.WithMessage(_localization.GetString("Auth.Login.InvalidEmail"));
 
-            RuleFor(x => x.Password)
-                .NotEmpty()
-                .WithMessage(_localization.GetString("Auth.Login.PasswordRequired"))
-                .MinimumLength(6)
-                .WithMessage(_localization.GetString("Auth.Login.PasswordTooShort"));
-        }
-    }
+			RuleFor(x => x.Password)
+				.NotEmpty()
+				.WithMessage(_localization.GetString("Auth.Login.PasswordRequired"))
+				.MinimumLength(6)
+				.WithMessage(_localization.GetString("Auth.Login.PasswordTooShort"));
+		}
+	}
 }

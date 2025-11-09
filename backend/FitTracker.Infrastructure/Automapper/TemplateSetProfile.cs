@@ -17,10 +17,21 @@ namespace FitTracker.Infrastructure.Automapper
         public TemplateSetProfile()
         {
             CreateMap<TemplateSet, TemplateSetEf>()
-                .ForMember(dest => dest.PlannedWeight, opt => opt.MapFrom(src => src.PlannedWeight.ToKilograms()));
+                .ForMember(dest => dest.PlannedWeight, opt => opt.MapFrom(src => src.PlannedWeight.ToKilograms()))
+                .ForMember(dest => dest.WorkoutTemplateExercise, opt => opt.Ignore());
 
             CreateMap<TemplateSetEf, TemplateSet>()
-                .ConstructUsing(src => new TemplateSet(src.WorkoutTemplateExerciseId, src.SetNumber, src.PlannedWeight, src.PlannedReps, src.RestSeconds, (SetType)src.SetType));
+                .ConstructUsing(src => new TemplateSet(
+                    src.WorkoutTemplateExerciseId,
+                    src.SetNumber,
+                    src.PlannedWeight,
+                    src.PlannedReps,
+                    src.RestSeconds,
+                    (SetType)src.SetType))
+                .AfterMap((src, dest) =>
+                {
+                    dest.SetDatabaseFields(src.Id, src.CreatedAt, src.UpdatedAt);
+                });
         }
     }
 }

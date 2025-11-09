@@ -20,21 +20,11 @@ namespace FitTracker.Domain.Entities
         public int OrderIndex { get; private set; }
         public string? Notes { get; private set; }
 
-        // Navigation
-        public WorkoutTemplate? WorkoutTemplate { get; private set; }
-        public Exercise? Exercise { get; private set; }
-        public ICollection<TemplateSet> PlannedSets { get; private set; }
-
-        private WorkoutTemplateExercise()
-        {
-            PlannedSets = new HashSet<TemplateSet>();
-        }
-
         public WorkoutTemplateExercise(
             Guid workoutTemplateId,
             Guid exerciseId,
             int orderIndex,
-            string? notes = null)
+            string? notes = null) : base()
         {
             if (workoutTemplateId == Guid.Empty)
                 throw new ArgumentException("Template ID cannot be empty");
@@ -49,7 +39,6 @@ namespace FitTracker.Domain.Entities
             ExerciseId = exerciseId;
             OrderIndex = orderIndex;
             Notes = notes;
-            PlannedSets = new HashSet<TemplateSet>();
 
             EnsureValid();
         }
@@ -97,24 +86,6 @@ namespace FitTracker.Domain.Entities
             {
                 return new WorkoutTemplateExercise(_templateId, _exerciseId, _orderIndex, _notes);
             }
-        }
-
-        public void AddPlannedSet(TemplateSet set)
-        {
-            if (set == null)
-                throw new ArgumentNullException(nameof(set));
-
-            PlannedSets.Add(set);
-            UpdatedAt = DateTime.UtcNow;
-        }
-
-        public void RemovePlannedSet(TemplateSet set)
-        {
-            if (set == null)
-                throw new ArgumentNullException(nameof(set));
-
-            PlannedSets.Remove(set);
-            UpdatedAt = DateTime.UtcNow;
         }
 
         public void UpdateOrder(int newOrder)

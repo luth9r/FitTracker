@@ -11,5 +11,12 @@ namespace FitTracker.Infrastructure.Persistence.Data.Entities
         public Guid Id { get; protected set; }
         public DateTime CreatedAt { get; protected set; }
         public DateTime UpdatedAt { get; protected set; }
+
+        protected BaseEntityEf()
+        {
+            Id = Guid.NewGuid();
+            CreatedAt = DateTime.UtcNow;
+            UpdatedAt = DateTime.UtcNow;
+        }
     }
 }

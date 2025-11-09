@@ -38,24 +38,9 @@ namespace FitTracker.Domain.Entities
         public bool IsCustom { get; private set; }
         public Guid? UserId { get; private set; }
 
-        // Navigation Properties
-        public User? User { get; private set; }
-        public ICollection<WorkoutExercise> WorkoutExercises { get; private set; }
-
         // ============================================
         // Constructors
         // ============================================
-
-        /// <summary>
-        /// EF Core constructor
-        /// </summary>
-        private Exercise()
-        {
-            Name = string.Empty;
-            MuscleGroup = MuscleGroup.Chest;
-            Equipment = Equipment.Barbell;
-            WorkoutExercises = new HashSet<WorkoutExercise>();
-        }
 
         public Exercise(
             string name,
@@ -65,7 +50,7 @@ namespace FitTracker.Domain.Entities
             MuscleGroup muscleGroup,
             Equipment equipment,
             bool isCustom,
-            Guid? userId)
+            Guid? userId) : base()
         {
             Name = name;
             Description = description;
@@ -75,7 +60,6 @@ namespace FitTracker.Domain.Entities
             Equipment = equipment;
             IsCustom = isCustom;
             UserId = userId;
-            WorkoutExercises = new HashSet<WorkoutExercise>();
         }
 
 
@@ -91,7 +75,7 @@ namespace FitTracker.Domain.Entities
             string? imageUrl = null,
             string? videoUrl = null,
             bool isCustom = false,
-            Guid? userId = null)
+            Guid? userId = null) : base()
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentException("Exercise name cannot be empty");
@@ -107,7 +91,6 @@ namespace FitTracker.Domain.Entities
             VideoUrl = videoUrl;
             IsCustom = isCustom;
             UserId = userId;
-            WorkoutExercises = new HashSet<WorkoutExercise>();
 
             EnsureValid();
         }
@@ -243,17 +226,6 @@ namespace FitTracker.Domain.Entities
         {
             VideoUrl = videoUrl;
             UpdatedAt = DateTime.UtcNow;
-        }
-
-        /// <summary>
-        /// Check if exercise can be deleted
-        /// </summary>
-        public bool CanBeDeleted()
-        {
-            if (!IsCustom)
-                return false;
-
-            return !WorkoutExercises.Any();
         }
     }
 }

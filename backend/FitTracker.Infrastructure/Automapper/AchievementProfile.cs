@@ -14,7 +14,8 @@ namespace FitTracker.Infrastructure.Automapper
     {
         public AchievementProfile()
         {
-            CreateMap<Achievement, AchievementEf>();
+            CreateMap<Achievement, AchievementEf>()
+                .ForMember(dest => dest.User, opt => opt.Ignore());
 
             CreateMap<AchievementEf, Achievement>()
                 .ConstructUsing(src => new Achievement(
@@ -26,7 +27,11 @@ namespace FitTracker.Infrastructure.Automapper
                     (AchievementTier)src.Tier,
                     src.Progress,
                     src.IsUnlocked,
-                    src.UnlockedAt));
+                    src.UnlockedAt))
+                .AfterMap((src, dest) =>
+                {
+                    dest.SetDatabaseFields(src.Id, src.CreatedAt, src.UpdatedAt);
+                });
         }
     }
 }

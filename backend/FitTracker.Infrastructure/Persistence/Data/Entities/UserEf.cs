@@ -18,19 +18,11 @@ namespace FitTracker.Infrastructure.Persistence.Data.Entities
         public string? Bio { get; set; }
         public string PreferredUnits { get; set; }
 
-        public ICollection<WorkoutEf> Workouts { get; set; }
-        public ICollection<ExerciseEf> CustomExercises { get; set; }
-        public ICollection<WorkoutTemplateEf> WorkoutTemplates { get; set; }
-        public ICollection<AchievementEf> Achievements { get; set; }
-        public ICollection<ExerciseRecordEf> ExerciseRecords { get; set; }
+        public ICollection<WorkoutEf> Workouts { get; set; } = new HashSet<WorkoutEf>();
+        public ICollection<ExerciseEf> CustomExercises { get; set; } = new HashSet<ExerciseEf>();
+        public ICollection<WorkoutTemplateEf> WorkoutTemplates { get; set; } = new HashSet<WorkoutTemplateEf>();
+        public ICollection<AchievementEf> Achievements { get; set; } = new HashSet<AchievementEf>();
+        public ICollection<ExerciseRecordEf> ExerciseRecords { get; set; } = new HashSet<ExerciseRecordEf>();
 
-        public UserEf()
-        {
-            Workouts = new HashSet<WorkoutEf>();
-            CustomExercises = new HashSet<ExerciseEf>();
-            WorkoutTemplates = new HashSet<WorkoutTemplateEf>();
-            Achievements = new HashSet<AchievementEf>();
-            ExerciseRecords = new HashSet<ExerciseRecordEf>();
-        }
     }
 }

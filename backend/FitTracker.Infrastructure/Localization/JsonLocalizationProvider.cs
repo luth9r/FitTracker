@@ -1,146 +1,146 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 
 namespace FitTracker.Infrastructure.Localization
 {
-    public class JsonLocalizationProvider
-    {
-        private readonly Dictionary<string, Dictionary<string, string>> _translations = new();
+	public class JsonLocalizationProvider
+	{
+		private readonly Dictionary<string, Dictionary<string, string>> _translations = new();
 
-        public JsonLocalizationProvider()
-        {
-            LoadTranslations();
-        }
+		public JsonLocalizationProvider()
+		{
+			LoadTranslations();
+		}
 
-        /// <summary>
-        /// Load translations from storage
-        /// </summary>
-        private void LoadTranslations()
-        {
-            var localizationPath = Path.Combine(
-                Directory.GetCurrentDirectory(),
-                "Localization"
-            );
+		/// <summary>
+		/// Load translations from storage
+		/// </summary>
+		private void LoadTranslations()
+		{
+			var localizationPath = Path.Combine(
+				Directory.GetCurrentDirectory(),
+				"Localization"
+			);
 
-            var files = new[] { "en-US.json", "uk-UA.json" };
+			var files = new[] { "en-US.json", "uk-UA.json" };
 
-            foreach (var file in files)
-            {
-                var filePath = Path.Combine(localizationPath, file);
-                if (File.Exists(filePath))
-                {
-                    var language = file.Replace(".json", "");
-                    var json = File.ReadAllText(filePath);
-                    var flat = FlattenJson(JsonDocument.Parse(json).RootElement);
+			foreach (var file in files)
+			{
+				var filePath = Path.Combine(localizationPath, file);
+				if (File.Exists(filePath))
+				{
+					var language = file.Replace(".json", "");
+					var json = File.ReadAllText(filePath);
+					var flat = FlattenJson(JsonDocument.Parse(json).RootElement);
 
-                    _translations[language] = flat;
-                }
-            }
-        }
+					_translations[language] = flat;
+				}
+			}
+		}
 
-        /// <summary>
-        /// Flattens a nested JSON structure into a flat dictionary with dot-notation keys.
-        /// This method recursively traverses the JSON tree and creates composite keys for nested properties.
-        /// </summary>
-        /// <param name="element">The JSON element to flatten</param>
-        /// <param name="prefix">The current key prefix for nested properties (used during recursion)</param>
-        /// <returns>A dictionary where keys are dot-separated paths and values are the corresponding JSON string values</returns>
-        /// <example>
-        /// Input JSON:
-        /// <code>
-        /// {
-        ///   "common": {
-        ///     "buttons": {
-        ///       "save": "Save",
-        ///       "cancel": "Cancel"
-        ///     },
-        ///     "greeting": "Hello"
-        ///   },
-        ///   "title": "Welcome"
-        /// }
-        /// </code>
-        ///
-        /// Output Dictionary:
-        /// <code>
-        /// {
-        ///   ["common.buttons.save"] = "Save",
-        ///   ["common.buttons.cancel"] = "Cancel",
-        ///   ["common.greeting"] = "Hello",
-        ///   ["title"] = "Welcome"
-        /// }
-        /// </code>
-        ///
-        /// Usage:
-        /// <code>
-        /// var jsonDoc = JsonDocument.Parse(jsonString);
-        /// var flattened = FlattenJson(jsonDoc.RootElement);
-        /// // Access: flattened["common.buttons.save"] returns "Save"
-        /// </code>
-        private Dictionary<string, string> FlattenJson(JsonElement element, string prefix = "")
-        {
-            var result = new Dictionary<string, string>();
+		/// <summary>
+		/// Flattens a nested JSON structure into a flat dictionary with dot-notation keys.
+		/// This method recursively traverses the JSON tree and creates composite keys for nested properties.
+		/// </summary>
+		/// <param name="element">The JSON element to flatten</param>
+		/// <param name="prefix">The current key prefix for nested properties (used during recursion)</param>
+		/// <returns>A dictionary where keys are dot-separated paths and values are the corresponding JSON string values</returns>
+		/// <example>
+		/// Input JSON:
+		/// <code>
+		/// {
+		///   "common": {
+		///     "buttons": {
+		///       "save": "Save",
+		///       "cancel": "Cancel"
+		///     },
+		///     "greeting": "Hello"
+		///   },
+		///   "title": "Welcome"
+		/// }
+		/// </code>
+		///
+		/// Output Dictionary:
+		/// <code>
+		/// {
+		///   ["common.buttons.save"] = "Save",
+		///   ["common.buttons.cancel"] = "Cancel",
+		///   ["common.greeting"] = "Hello",
+		///   ["title"] = "Welcome"
+		/// }
+		/// </code>
+		///
+		/// Usage:
+		/// <code>
+		/// var jsonDoc = JsonDocument.Parse(jsonString);
+		/// var flattened = FlattenJson(jsonDoc.RootElement);
+		/// // Access: flattened["common.buttons.save"] returns "Save"
+		/// </code>
+		private Dictionary<string, string> FlattenJson(JsonElement element, string prefix = "")
+		{
+			var result = new Dictionary<string, string>();
 
-            foreach (var property in element.EnumerateObject())
-            {
-                var key = string.IsNullOrEmpty(prefix)
-                    ? property.Name
-                    : $"{prefix}.{property.Name}";
+			foreach (var property in element.EnumerateObject())
+			{
+				var key = string.IsNullOrEmpty(prefix)
+					? property.Name
+					: $"{prefix}.{property.Name}";
 
-                if (property.Value.ValueKind == JsonValueKind.Object)
-                {
-                    var nested = FlattenJson(property.Value, key);
-                    foreach (var kvp in nested)
-                    {
-                        result[kvp.Key] = kvp.Value;
-                    }
-                }
-                else
-                {
-                    result[key] = property.Value.GetString() ?? "";
-                }
-            }
+				if (property.Value.ValueKind == JsonValueKind.Object)
+				{
+					var nested = FlattenJson(property.Value, key);
+					foreach (var kvp in nested)
+					{
+						result[kvp.Key] = kvp.Value;
+					}
+				}
+				else
+				{
+					result[key] = property.Value.GetString() ?? "";
+				}
+			}
 
-            return result;
-        }
+			return result;
+		}
 
-        /// <summary>
-        /// Retrieves a translated string for the specified key and culture.
-        /// Implements a fallback mechanism: if the key is not found in the requested culture,
-        /// it falls back to English (en-US), and finally returns the key itself if no translation exists.
-        /// </summary>
-        /// <param name="key">The translation key in dot-notation format (e.g., "errors.validation.required")</param>
-        /// <param name="culture">The culture code (e.g., "en-US", "pl-PL", "de-DE"). Defaults to "en-US"</param>
-        /// <returns>
-        /// The translated string if found; otherwise, the English translation;
-        /// if that's also missing, returns the key itself
-        /// </returns>
-        public string GetString(string key, string culture = "en-US")
-        {
-            if (_translations.TryGetValue(culture, out var cultureDictionary))
-            {
-                if (cultureDictionary.TryGetValue(key, out var value))
-                    return value;
-            }
+		/// <summary>
+		/// Retrieves a translated string for the specified key and culture.
+		/// Implements a fallback mechanism: if the key is not found in the requested culture,
+		/// it falls back to English (en-US), and finally returns the key itself if no translation exists.
+		/// </summary>
+		/// <param name="key">The translation key in dot-notation format (e.g., "errors.validation.required")</param>
+		/// <param name="culture">The culture code (e.g., "en-US", "pl-PL", "de-DE"). Defaults to "en-US"</param>
+		/// <returns>
+		/// The translated string if found; otherwise, the English translation;
+		/// if that's also missing, returns the key itself
+		/// </returns>
+		public string GetString(string key, string culture = "en-US")
+		{
+			if (_translations.TryGetValue(culture, out var cultureDictionary))
+			{
+				if (cultureDictionary.TryGetValue(key, out var value))
+					return value;
+			}
 
-            // Fallback to English if nothing found
-            if (_translations.TryGetValue("en-US", out var enDictionary))
-            {
-                if (enDictionary.TryGetValue(key, out var value))
-                    return value;
-            }
+			// Fallback to English if nothing found
+			if (_translations.TryGetValue("en-US", out var enDictionary))
+			{
+				if (enDictionary.TryGetValue(key, out var value))
+					return value;
+			}
 
-            return key; // Return key
-        }
+			return key; // Return key
+		}
 
-        /// <summary>
-        /// Gets a list of all available culture codes that have been loaded into the translation service.
-        /// </summary>
-        /// <returns>
-        /// An enumerable collection of culture codes (e.g., "en-US", "pl-PL", "de-DE")
-        /// that are currently available in the service
-        /// </returns>
-        public IEnumerable<string> GetAvailableCultures()
-        {
-            return _translations.Keys;
-        }
-    }
+		/// <summary>
+		/// Gets a list of all available culture codes that have been loaded into the translation service.
+		/// </summary>
+		/// <returns>
+		/// An enumerable collection of culture codes (e.g., "en-US", "pl-PL", "de-DE")
+		/// that are currently available in the service
+		/// </returns>
+		public IEnumerable<string> GetAvailableCultures()
+		{
+			return _translations.Keys;
+		}
+	}
 }

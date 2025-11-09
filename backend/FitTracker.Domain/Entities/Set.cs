@@ -31,21 +31,9 @@ namespace FitTracker.Domain.Entities
         public bool IsCompleted { get; private set; }
         public DateTime? CompletedAt { get; private set; }
 
-        // Navigation Properties
-        public WorkoutExercise? WorkoutExercise { get; private set; }
-
         // ============================================
         // Constructors
         // ============================================
-
-        /// <summary>
-        /// EF Core constructor
-        /// </summary>
-        private Set()
-        {
-            Weight = Weight.FromKilograms(0);
-            SetType = SetType.Normal;
-        }
 
         /// <summary>
         /// Domain constructor
@@ -55,7 +43,7 @@ namespace FitTracker.Domain.Entities
             int setNumber,
             Weight weight,
             int reps,
-            SetType setType = SetType.Normal)
+            SetType setType = SetType.Normal) : base()
         {
             if (workoutExerciseId == Guid.Empty)
                 throw new ArgumentException("Workout exercise ID cannot be empty");
@@ -79,7 +67,7 @@ namespace FitTracker.Domain.Entities
             EnsureValid();
         }
 
-        public Set(Guid workoutExerciseId, int setNumber, Weight weight, int reps, int? restSeconds, SetType setType, bool isCompleted, DateTime? completedAt)
+        public Set(Guid workoutExerciseId, int setNumber, Weight weight, int reps, int? restSeconds, SetType setType, bool isCompleted, DateTime? completedAt) : base()
         {
             WorkoutExerciseId = workoutExerciseId;
             SetNumber = setNumber;

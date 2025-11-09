@@ -13,7 +13,10 @@ namespace FitTracker.Infrastructure.Automapper
     {
         public WorkoutProfile()
         {
-            CreateMap<Workout, WorkoutEf>();
+            CreateMap<Workout, WorkoutEf>()
+                .ForMember(dest => dest.User, opt => opt.Ignore())
+                .ForMember(dest => dest.WorkoutTemplate, opt => opt.Ignore())
+                .ForMember(dest => dest.Exercises, opt => opt.Ignore());
 
             CreateMap<WorkoutEf, Workout>()
                 .ConstructUsing(src => new Workout(
@@ -28,7 +31,11 @@ namespace FitTracker.Infrastructure.Automapper
                     src.IsInProgress,
                     src.StartedAt,
                     src.CompletedAt,
-                    src.TotalVolumeKg));
+                    src.TotalVolumeKg))
+                .AfterMap((src, dest) =>
+                {
+                    dest.SetDatabaseFields(src.Id, src.CreatedAt, src.UpdatedAt);
+                });
         }
     }
 }

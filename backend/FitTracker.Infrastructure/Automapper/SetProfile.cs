@@ -15,10 +15,23 @@ namespace FitTracker.Infrastructure.Automapper
         public SetProfile()
         {
             CreateMap<Set, SetEf>()
-                .ForMember(dest => dest.WeightKg, opt => opt.MapFrom(src => src.Weight.ToKilograms()));
+                .ForMember(dest => dest.WeightKg, opt => opt.MapFrom(src => src.Weight.ToKilograms()))
+                .ForMember(dest => dest.WorkoutExercise, opt => opt.Ignore());
 
             CreateMap<SetEf, Set>()
-                .ConstructUsing(src => new Set(src.WorkoutExerciseId, src.SetNumber, Weight.FromKilograms(src.WeightKg), src.Reps, src.RestSeconds, (Domain.Enums.SetType)src.SetType, src.IsCompleted, src.CompletedAt));
+                .ConstructUsing(src => new Set(
+                    src.WorkoutExerciseId,
+                    src.SetNumber,
+                    Weight.FromKilograms(src.WeightKg),
+                    src.Reps,
+                    src.RestSeconds,
+                    (Domain.Enums.SetType)src.SetType,
+                    src.IsCompleted,
+                    src.CompletedAt))
+                .AfterMap((src, dest) =>
+                {
+                    dest.SetDatabaseFields(src.Id, src.CreatedAt, src.UpdatedAt);
+                });
 
         }
     }

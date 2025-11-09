@@ -15,11 +15,7 @@ namespace FitTracker.Infrastructure.Persistence.Data.Entities
 
         public WorkoutTemplateEf? WorkoutTemplate { get; set; }
         public ExerciseEf? Exercise { get; set; }
-        public ICollection<TemplateSetEf> PlannedSets { get; set; }
+        public ICollection<TemplateSetEf> PlannedSets { get; set; } = new HashSet<TemplateSetEf>();
 
-        public WorkoutTemplateExerciseEf()
-        {
-            PlannedSets = new HashSet<TemplateSetEf>();
-        }
     }
 }

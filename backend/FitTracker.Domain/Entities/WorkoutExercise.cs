@@ -29,22 +29,9 @@ namespace FitTracker.Domain.Entities
         public int OrderIndex { get; private set; }
         public string? Notes { get; private set; }
 
-        // Navigation Properties
-        public Workout? Workout { get; private set; }
-        public Exercise? Exercise { get; private set; }
-        public ICollection<Set> Sets { get; private set; }
-
         // ============================================
         // Constructors
         // ============================================
-
-        /// <summary>
-        /// EF Core constructor
-        /// </summary>
-        private WorkoutExercise()
-        {
-            Sets = new HashSet<Set>();
-        }
 
         /// <summary>
         /// Domain constructor
@@ -53,7 +40,7 @@ namespace FitTracker.Domain.Entities
             Guid workoutId,
             Guid exerciseId,
             int orderIndex,
-            string? notes = null)
+            string? notes = null) : base()
         {
             if (workoutId == Guid.Empty)
                 throw new ArgumentException("Workout ID cannot be empty");
@@ -68,15 +55,9 @@ namespace FitTracker.Domain.Entities
             ExerciseId = exerciseId;
             OrderIndex = orderIndex;
             Notes = notes;
-            Sets = new HashSet<Set>();
 
             EnsureValid();
         }
-
-
-
-
-
 
         // ============================================
         // Validator
@@ -157,155 +138,6 @@ namespace FitTracker.Domain.Entities
             UpdatedAt = DateTime.UtcNow;
 
             EnsureValid();
-        }
-
-        /// <summary>
-        /// Add set to exercise
-        /// </summary>
-        public void AddSet(Set set)
-        {
-            if (set == null)
-                throw new ArgumentNullException(nameof(set));
-
-            if (Sets.Any(s => s.SetNumber == set.SetNumber))
-                throw new InvalidOperationException($"Set number {set.SetNumber} already exists");
-
-            Sets.Add(set);
-            UpdatedAt = DateTime.UtcNow;
-        }
-
-        /// <summary>
-        /// Remove set from exercise
-        /// </summary>
-        public void RemoveSet(Set set)
-        {
-            if (set == null)
-                throw new ArgumentNullException(nameof(set));
-
-            if (!Sets.Contains(set))
-                throw new InvalidOperationException("Set not found in exercise");
-
-            Sets.Remove(set);
-
-            // Reorder remaining sets
-            ReorderSets();
-            UpdatedAt = DateTime.UtcNow;
-        }
-
-        /// <summary>
-        /// Reorder sets after deletion
-        /// </summary>
-        private void ReorderSets()
-        {
-            var orderedSets = Sets.OrderBy(s => s.SetNumber).ToList();
-            for (int i = 0; i < orderedSets.Count; i++)
-            {
-                 orderedSets[i].UpdateSetNumber(i + 1);
-            }
-        }
-
-        /// <summary>
-        /// Move set to new position
-        /// </summary>
-        public void MoveSet(Set set, int newPosition)
-        {
-            if (set == null)
-                throw new ArgumentNullException(nameof(set));
-
-            if (!Sets.Contains(set))
-                throw new InvalidOperationException("Set not found in exercise");
-
-            if (newPosition < 1 || newPosition > Sets.Count)
-                throw new ArgumentException("Invalid position");
-
-            var orderedSets = Sets.OrderBy(s => s.SetNumber).ToList();
-            var oldIndex = orderedSets.IndexOf(set);
-            var newIndex = newPosition - 1;
-
-            // Remove from old position
-            orderedSets.RemoveAt(oldIndex);
-
-            // Insert at new position
-            orderedSets.Insert(newIndex, set);
-
-            // Renumber all sets
-            for (int i = 0; i < orderedSets.Count; i++)
-            {
-                orderedSets[i].UpdateSetNumber(i + 1);
-            }
-
-            UpdatedAt = DateTime.UtcNow;
-        }
-
-        /// <summary>
-        /// Get total volume for this exercise
-        /// </summary>
-        public decimal CalculateTotalVolume()
-        {
-            return Sets.Sum(s => s.CalculateVolume());
-        }
-
-        /// <summary>
-        /// Get total reps for this exercise
-        /// </summary>
-        public int GetTotalReps()
-        {
-            return Sets.Sum(s => s.Reps);
-        }
-
-        /// <summary>
-        /// Get total sets count
-        /// </summary>
-        public int GetTotalSets()
-        {
-            return Sets.Count;
-        }
-
-        /// <summary>
-        /// Get max weight used
-        /// </summary>
-        public decimal GetMaxWeight()
-        {
-            if (!Sets.Any())
-                return 0;
-
-            return Sets.Max(s => s.Weight.ToKilograms());
-        }
-
-        /// <summary>
-        /// Get working sets (exclude warmup)
-        /// </summary>
-        public IEnumerable<Set> GetWorkingSets()
-        {
-            return Sets.Where(s => s.SetType != SetType.WarmUp);
-        }
-
-        /// <summary>
-        /// Get warmup sets
-        /// </summary>
-        public IEnumerable<Set> GetWarmupSets()
-        {
-            return Sets.Where(s => s.SetType == SetType.WarmUp);
-        }
-
-        /// <summary>
-        /// Check if all sets are completed
-        /// </summary>
-        public bool AreAllSetsCompleted()
-        {
-            return Sets.Any() && Sets.All(s => s.IsCompleted);
-        }
-
-        /// <summary>
-        /// Get completion percentage
-        /// </summary>
-        public decimal GetCompletionPercentage()
-        {
-            if (!Sets.Any())
-                return 0;
-
-            var completedSets = Sets.Count(s => s.IsCompleted);
-            return (decimal)completedSets / Sets.Count * 100;
         }
     }
 }

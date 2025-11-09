@@ -15,18 +15,23 @@ namespace FitTracker.Infrastructure.Automapper
         public ExerciseProfile()
         {
             CreateMap<Exercise, ExerciseEf>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
-                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
-                .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.ImageUrl))
-                .ForMember(dest => dest.VideoUrl, opt => opt.MapFrom(src => src.VideoUrl))
-                .ForMember(dest => dest.MuscleGroup, opt => opt.MapFrom(src => src.MuscleGroup))
-                .ForMember(dest => dest.Equipment, opt => opt.MapFrom(src => src.Equipment))
-                .ForMember(dest => dest.IsCustom, opt => opt.MapFrom(src => src.IsCustom))
-                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId));
+                .ForMember(dest => dest.User, opt => opt.Ignore())
+                .ForMember(dest => dest.WorkoutExercises, opt => opt.Ignore());
 
             CreateMap<ExerciseEf, Exercise>()
-                .ConstructUsing(src => new Exercise(src.Name, src.Description, src.ImageUrl, src.VideoUrl, (MuscleGroup)src.MuscleGroup, (Equipment)src.Equipment, src.IsCustom, src.UserId));
+                .ConstructUsing(src => new Exercise(
+                    src.Name,
+                    src.Description,
+                    src.ImageUrl,
+                    src.VideoUrl,
+                    (MuscleGroup)src.MuscleGroup,
+                    (Equipment)src.Equipment,
+                    src.IsCustom,
+                    src.UserId))
+                .AfterMap((src, dest) =>
+                {
+                    dest.SetDatabaseFields(src.Id, src.CreatedAt, src.UpdatedAt);
+                });
         }
     }
 }

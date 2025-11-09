@@ -35,25 +35,9 @@ namespace FitTracker.Domain.Entities
         public DateTime? CompletedAt { get; private set; }
         public decimal TotalVolumeKg { get; private set; }
 
-        // Navigation Properties
-        public User? User { get; private set; }
-        public WorkoutTemplate? WorkoutTemplate { get; private set; }
-        public ICollection<WorkoutExercise> Exercises { get; private set; }
-
         // ============================================
         // Constructors
         // ============================================
-
-        /// <summary>
-        /// EF Core constructor
-        /// </summary>
-        private Workout()
-        {
-            Name = string.Empty;
-            WorkoutDate = DateTime.UtcNow;
-            Duration = TimeSpan.Zero;
-            Exercises = new HashSet<WorkoutExercise>();
-        }
 
         public Workout(
             Guid id,
@@ -67,7 +51,7 @@ namespace FitTracker.Domain.Entities
             bool isInProgress,
             DateTime? startedAt,
             DateTime? completedAt,
-            decimal totalVolumeKg)
+            decimal totalVolumeKg) : base()
         {
             Id = id;
             UserId = userId;
@@ -82,8 +66,6 @@ namespace FitTracker.Domain.Entities
             CompletedAt = completedAt;
             TotalVolumeKg = totalVolumeKg;
 
-            Exercises = new HashSet<WorkoutExercise>();
-
             EnsureValid();
         }
 
@@ -95,7 +77,7 @@ namespace FitTracker.Domain.Entities
             string name,
             DateTime workoutDate,
             Guid? workoutTemplateId = null,
-            string? notes = null)
+            string? notes = null) : base()
         {
             if (userId == Guid.Empty)
                 throw new ArgumentException("User ID cannot be empty");
@@ -112,7 +94,6 @@ namespace FitTracker.Domain.Entities
             IsCompleted = false;
             IsInProgress = false;
             TotalVolumeKg = 0;
-            Exercises = new HashSet<WorkoutExercise>();
 
             EnsureValid();
         }
@@ -254,7 +235,7 @@ namespace FitTracker.Domain.Entities
             CompletedAt = DateTime.UtcNow;
             UpdatedAt = DateTime.UtcNow;
 
-            CalculateTotalVolume();
+            //CalculateTotalVolume();
         }
 
         /// <summary>
@@ -320,54 +301,6 @@ namespace FitTracker.Domain.Entities
 
             EnsureValid();
         }
-
-        /// <summary>
-        /// Add exercise to workout
-        /// </summary>
-        public void AddExercise(WorkoutExercise exercise)
-        {
-            if (exercise == null)
-                throw new ArgumentNullException(nameof(exercise));
-
-            if (Exercises.Any(e => e.ExerciseId == exercise.ExerciseId))
-                throw new InvalidOperationException("Exercise already exists in workout");
-
-            Exercises.Add(exercise);
-            UpdatedAt = DateTime.UtcNow;
-        }
-
-        /// <summary>
-        /// Remove exercise from workout
-        /// </summary>
-        public void RemoveExercise(WorkoutExercise exercise)
-        {
-            if (exercise == null)
-                throw new ArgumentNullException(nameof(exercise));
-
-            if (!Exercises.Contains(exercise))
-                throw new InvalidOperationException("Exercise not found in workout");
-
-            Exercises.Remove(exercise);
-            UpdatedAt = DateTime.UtcNow;
-
-            CalculateTotalVolume();
-        }
-
-        /// <summary>
-        /// Calculate total volume from all exercises
-        /// </summary>
-        public void CalculateTotalVolume()
-        {
-            TotalVolumeKg = Exercises
-                .SelectMany(e => e.Sets)
-                .Sum(s => s.CalculateVolume());
-
-            UpdatedAt = DateTime.UtcNow;
-        }
-
-        public int GetTotalSets() => Exercises.Sum(e => e.Sets.Count);
-
-        public int GetTotalReps() => Exercises.SelectMany(e => e.Sets).Sum(s => s.Reps);
 
         public bool IsToday() => WorkoutDate.Date == DateTime.UtcNow.Date;
 

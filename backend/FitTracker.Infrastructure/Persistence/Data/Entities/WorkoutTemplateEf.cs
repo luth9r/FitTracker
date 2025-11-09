@@ -16,11 +16,6 @@ namespace FitTracker.Infrastructure.Persistence.Data.Entities
         public DateTime? LastUsedAt { get; set; }
 
         public UserEf? User { get; set; }
-        public ICollection<WorkoutTemplateExerciseEf> Exercises { get; set; }
-
-        public WorkoutTemplateEf()
-        {
-            Exercises = new HashSet<WorkoutTemplateExerciseEf>();
-        }
+        public ICollection<WorkoutTemplateExerciseEf> Exercises { get; set; } = new HashSet<WorkoutTemplateExerciseEf>();
     }
 }

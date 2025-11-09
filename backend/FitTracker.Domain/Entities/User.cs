@@ -36,32 +36,8 @@ namespace FitTracker.Domain.Entities
         public UnitSystem PreferredUnits { get; private set; }
 
         // ============================================
-        // Navigation Properties
-        // ============================================
-        public ICollection<Workout> Workouts { get; private set; }
-        public ICollection<Exercise> CustomExercises { get; private set; }
-        public ICollection<WorkoutTemplate> WorkoutTemplates { get; private set; }
-        public ICollection<Achievement> Achievements { get; private set; }
-        public ICollection<ExerciseRecord> ExerciseRecords { get; private set; }
-
-        // ============================================
         // Constructors
         // ============================================
-
-        /// <summary>
-        /// EF Core constructor
-        /// </summary>
-        private User()
-        {
-            Username = string.Empty;
-            Email = string.Empty;
-            PasswordHash = string.Empty;
-            PreferredUnits = UnitSystem.Metric;
-
-            Workouts = new HashSet<Workout>();
-            CustomExercises = new HashSet<Exercise>();
-            WorkoutTemplates = new HashSet<WorkoutTemplate>();
-        }
 
         /// <summary>
         /// Domain constructor
@@ -71,7 +47,7 @@ namespace FitTracker.Domain.Entities
             string email,
             string passwordHash,
             string? firstName = null,
-            string? lastName = null)
+            string? lastName = null) : base()
         {
             if (string.IsNullOrWhiteSpace(username))
                 throw new ArgumentException("Username cannot be empty", nameof(username));
@@ -88,10 +64,6 @@ namespace FitTracker.Domain.Entities
             FirstName = firstName;
             LastName = lastName;
             PreferredUnits = UnitSystem.Metric;
-
-            Workouts = new HashSet<Workout>();
-            CustomExercises = new HashSet<Exercise>();
-            WorkoutTemplates = new HashSet<WorkoutTemplate>();
 
             EnsureValid();
         }
@@ -196,14 +168,16 @@ namespace FitTracker.Domain.Entities
 
             public User Build()
             {
-                var user = new User(_username, _email, _passwordHash, _firstName, _lastName)
-                {
-                    Avatar = _avatar,
-                    Bio = _bio,
-                    PreferredUnits = _preferredUnits
-                };
-
-                return user;
+                return new User(
+                    _username,
+                    _email,
+                    _passwordHash,
+                    _firstName,
+                    _lastName,
+                    _avatar,
+                    _bio,
+                    _preferredUnits
+                );
             }
         }
 

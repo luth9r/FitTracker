@@ -13,10 +13,21 @@ namespace FitTracker.Infrastructure.Automapper
     {
         public WorkoutTemplateExerciseProfile()
         {
-            CreateMap<WorkoutTemplateExercise, WorkoutTemplateExerciseEf>();
+            CreateMap<WorkoutTemplateExercise, WorkoutTemplateExerciseEf>()
+                .ForMember(dest => dest.WorkoutTemplate, opt => opt.Ignore())
+                .ForMember(dest => dest.Exercise, opt => opt.Ignore())
+                .ForMember(dest => dest.PlannedSets, opt => opt.Ignore());
 
             CreateMap<WorkoutTemplateExerciseEf, WorkoutTemplateExercise>()
-                .ConstructUsing(src => new WorkoutTemplateExercise(src.WorkoutTemplateId,src.ExerciseId, src.OrderIndex, src.Notes));
+                .ConstructUsing(src => new WorkoutTemplateExercise(
+                    src.WorkoutTemplateId,
+                    src.ExerciseId,
+                    src.OrderIndex,
+                    src.Notes))
+                .AfterMap((src, dest) =>
+                {
+                    dest.SetDatabaseFields(src.Id, src.CreatedAt, src.UpdatedAt);
+                });
         }
     }
 }

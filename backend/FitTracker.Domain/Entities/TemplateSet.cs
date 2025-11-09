@@ -26,19 +26,12 @@ namespace FitTracker.Domain.Entities
         public int? RestSeconds { get; private set; }
         public SetType SetType { get; private set; }
 
-        // Navigation
-        public WorkoutTemplateExercise? WorkoutTemplateExercise { get; private set; }
-
-        private TemplateSet()
-        {
-        }
-
         private TemplateSet(
             Guid templateExerciseId,
             int setNumber,
             decimal plannedWeight,
             int plannedReps,
-            SetType setType = SetType.Normal)
+            SetType setType = SetType.Normal) : base()
         {
             if (templateExerciseId == Guid.Empty)
                 throw new ArgumentException("Template exercise ID cannot be empty");
@@ -58,7 +51,7 @@ namespace FitTracker.Domain.Entities
             EnsureValid();
         }
 
-        public TemplateSet(Guid workoutTemplateExerciseId, int setNumber, decimal plannedWeight, int plannedReps, int? restSeconds, SetType setType)
+        public TemplateSet(Guid workoutTemplateExerciseId, int setNumber, decimal plannedWeight, int plannedReps, int? restSeconds, SetType setType) : base()
         {
             WorkoutTemplateExerciseId = workoutTemplateExerciseId;
             SetNumber = setNumber;
@@ -122,16 +115,13 @@ namespace FitTracker.Domain.Entities
 
             public TemplateSet Build()
             {
-                var set = new TemplateSet(
+                return new TemplateSet(
                     _templateExerciseId,
                     _setNumber,
                     _plannedWeight,
                     _plannedReps,
-                    _setType)
-                {
-                    RestSeconds = _restSeconds
-                };
-                return set;
+                    _restSeconds,
+                    _setType);
             }
         }
 

@@ -1,13 +1,22 @@
-﻿using FluentValidation;
+using FluentValidation;
 using FluentValidation.Results;
 
 namespace FitTracker.Domain.Entities
 {
     public abstract class BaseEntity
     {
-        public Guid Id { get; protected set; }
-        public DateTime CreatedAt { get; protected set; }
-        public DateTime UpdatedAt { get; protected set; }
+        public Guid Id
+        {
+            get; protected set;
+        }
+        public DateTime CreatedAt
+        {
+            get; protected set;
+        }
+        public DateTime UpdatedAt
+        {
+            get; protected set;
+        }
 
         protected BaseEntity()
         {
@@ -24,6 +33,16 @@ namespace FitTracker.Domain.Entities
             Id = id;
             CreatedAt = DateTime.UtcNow;
             UpdatedAt = DateTime.UtcNow;
+        }
+
+        public void SetDatabaseFields(Guid id, DateTime createdAt, DateTime updatedAt)
+        {
+            if (id == Guid.Empty)
+                throw new ArgumentException("ID cannot be empty", nameof(id));
+
+            Id = id;
+            CreatedAt = createdAt;
+            UpdatedAt = updatedAt;
         }
 
         protected abstract IValidator GetValidator();

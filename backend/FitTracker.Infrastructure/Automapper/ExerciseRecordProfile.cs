@@ -15,7 +15,9 @@ namespace FitTracker.Infrastructure.Automapper
         public ExerciseRecordProfile()
         {
             CreateMap<ExerciseRecord, ExerciseRecordEf>()
-                .ForMember(dest => dest.MaxWeight_Kilograms, opt => opt.MapFrom(src => src.MaxWeight.ToKilograms()));
+                .ForMember(dest => dest.MaxWeight_Kilograms, opt => opt.MapFrom(src => src.MaxWeight.ToKilograms()))
+                .ForMember(dest => dest.User, opt => opt.Ignore())
+                .ForMember(dest => dest.Exercise, opt => opt.Ignore());
 
             CreateMap<ExerciseRecordEf, ExerciseRecord>()
                 .ConstructUsing(src => new ExerciseRecord(
@@ -33,7 +35,11 @@ namespace FitTracker.Infrastructure.Automapper
                     src.TotalSets,
                     src.TotalReps,
                     src.TotalLifted,
-                    src.LastPerformed));
+                    src.LastPerformed))
+                .AfterMap((src, dest) =>
+                {
+                    dest.SetDatabaseFields(src.Id, src.CreatedAt, src.UpdatedAt);
+                });
         }
     }
 }

@@ -23,17 +23,25 @@ jobs:
           dotnet-version: '9.0.x'
 
       - name: Restore dependencies
+        working-directory: ./backend
         run: dotnet restore
 
       - name: Build
+        working-directory: ./backend
         run: dotnet build --no-restore --configuration Release
 
       - name: Run tests with coverage
-        run: dotnet test --no-build --configuration Release /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=./TestResults/
+        run: dotnet test ./backend/FitTracker.Tests/FitTrackerDomain.Tests.csproj -c Release --collect:"XPlat Code Coverage"
 
+      - name: Debug - List coverage files
+        run: |
+          echo "Contents of TestResults:"
+          find ./backend/FitTracker.Tests/TestResults -type f -name "*.xml"
+          
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
-          files: ./TestResults/coverage.cobertura.xml
-          fail_ci_if_error: true
           token: ${{ secrets.CODECOV_TOKEN }}
+          directory: ./backend/FitTracker.Tests/TestResults/
+          flags: backend
+          fail_ci_if_error: true

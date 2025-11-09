@@ -36,16 +36,12 @@ namespace FitTracker.Domain.Entities
         public decimal TotalLifted { get; private set; }        // Total weight lifted
         public DateTime LastPerformed { get; private set; }
 
-        // Navigation
-        public User? User { get; private set; }
-        public Exercise? Exercise { get; private set; }
-
-        private ExerciseRecord()
+        private ExerciseRecord() : base()
         {
             MaxWeight = Weight.FromKilograms(0);
         }
 
-        private ExerciseRecord(Guid userId, Guid exerciseId)
+        private ExerciseRecord(Guid userId, Guid exerciseId) : base()
         {
             if (userId == Guid.Empty)
                 throw new ArgumentException("User ID cannot be empty");
@@ -87,7 +83,7 @@ namespace FitTracker.Domain.Entities
             int totalSets,
             int totalReps,
             decimal totalLifted,
-            DateTime lastPerformed)
+            DateTime lastPerformed) : base()
         {
             UserId = userId;
             ExerciseId = exerciseId;

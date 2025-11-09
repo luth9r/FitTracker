@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,21 +17,48 @@ namespace FitTracker.Domain.Entities
         public const int NameMaxLength = 100;
         public const int DescriptionMaxLength = 500;
 
-        public Guid UserId { get; private set; }
-        public AchievementType Type { get; private set; }
-        public string Name { get; private set; }
-        public string Description { get; private set; }
-        public string IconUrl { get; private set; }
-        public int Progress { get; private set; }
-        public int Target { get; private set; }
-        public bool IsUnlocked { get; private set; }
-        public DateTime? UnlockedAt { get; private set; }
-        public AchievementTier Tier { get; private set; }   // Bronze, Silver, Gold
+        public Guid UserId
+        {
+            get; private set;
+        }
+        public AchievementType Type
+        {
+            get; private set;
+        }
+        public string Name
+        {
+            get; private set;
+        }
+        public string Description
+        {
+            get; private set;
+        }
+        public string IconUrl
+        {
+            get; private set;
+        }
+        public int Progress
+        {
+            get; private set;
+        }
+        public int Target
+        {
+            get; private set;
+        }
+        public bool IsUnlocked
+        {
+            get; private set;
+        }
+        public DateTime? UnlockedAt
+        {
+            get; private set;
+        }
+        public AchievementTier Tier
+        {
+            get; private set;
+        }   // Bronze, Silver, Gold
 
-        // Navigation
-        public User? User { get; private set; }
-
-        private Achievement()
+        private Achievement() : base()
         {
             Name = string.Empty;
             Description = string.Empty;
@@ -44,7 +71,7 @@ namespace FitTracker.Domain.Entities
             string name,
             string description,
             int target,
-            AchievementTier tier = AchievementTier.Bronze)
+            AchievementTier tier = AchievementTier.Bronze) : base()
         {
             UserId = userId;
             Type = type;
@@ -68,7 +95,7 @@ namespace FitTracker.Domain.Entities
             AchievementTier tier,
             int progress,
             bool isUnlocked,
-            DateTime? unlockedAt)
+            DateTime? unlockedAt) : base()
         {
             UserId = userId;
             Type = type;

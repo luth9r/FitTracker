@@ -1,0 +1,13 @@
+{
+  "tasks": [
+    {
+      "name": "format-backend",
+      "group": "pre-commit",
+      "command": "dotnet",
+      "args": ["format", "--no-restore"],
+      "pathMode": "absolute",
+      "cwd": "backend",
+      "include": ["backend/**/*.cs"]
+    }
+  ]
+}
