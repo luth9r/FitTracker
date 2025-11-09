@@ -61,3 +61,28 @@
 #*.PDF   diff=astextplain
 #*.rtf   diff=astextplain
 #*.RTF   diff=astextplain
+
+# Exclude vendor and dependencies from language stats
+node_modules/* linguist-vendored
+package-lock.json linguist-vendored
+
+# Mark documentation
+*.md linguist-documentation
+LICENSE linguist-documentation
+
+# Mark generated .NET files
+**/bin/** linguist-generated
+**/obj/** linguist-generated
+**/Migrations/** linguist-generated
+
+# Primary language - C#
+backend/**/*.cs linguist-detectable=true linguist-language=C#
+*.csproj linguist-language=XML
+
+# Configuration files
+*.json linguist-language=JSON
+.editorconfig linguist-language=EditorConfig
+.gitignore linguist-language=Text
+
+# Git hooks
+.husky/* linguist-language=Shell
