@@ -1,0 +1,47 @@
+{
+  "name": "fittracker",
+  "version": "1.0.0",
+  "description": "FitTracker - fitness tracking application",
+  "private": true,
+  "scripts": {
+    "prepare": "husky",
+    "commit": "cz",
+    "lint:commit": "commitlint --edit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/luth9r/FitTracker.git"
+  },
+  "keywords": [
+    "fitness",
+    "tracking",
+    "workout",
+    "dotnet"
+  ],
+  "author": "luth9r",
+  "license": "MIT",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/luth9r/FitTracker/issues"
+  },
+  "homepage": "https://github.com/luth9r/FitTracker#readme",
+  "devDependencies": {
+    "@commitlint/cli": "^20.1.0",
+    "@commitlint/config-conventional": "^20.0.0",
+    "@commitlint/cz-commitlint": "^20.0.0",
+    "commitizen": "^4.3.1",
+    "husky": "^9.1.7",
+    "inquirer": "^8.2.6",
+    "lint-staged": "^15.2.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "@commitlint/cz-commitlint"
+    }
+  },
+  "lint-staged": {
+    "backend/**/*.cs": [
+      "dotnet format --include"
+    ]
+  }
+}
