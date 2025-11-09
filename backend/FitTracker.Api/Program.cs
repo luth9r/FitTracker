@@ -1,7 +1,9 @@
 using FitTracker.Infrastructure;
 using FitTracker.Infrastructure.Persistence.Data;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Serilog;
 
@@ -21,6 +23,31 @@ try
 
     var builder = WebApplication.CreateBuilder(args);
 
+
+    var supportedCultures = new[] { "en-US", "uk-UA" };
+
+    builder.Services.AddLocalization(options =>
+    {
+        options.ResourcesPath = "Localization";
+    });
+
+    builder.Services.Configure<RequestLocalizationOptions>(options =>
+    {
+        options.DefaultRequestCulture = new RequestCulture("en-US");
+        options.SupportedCultures = supportedCultures
+            .Select(c => new System.Globalization.CultureInfo(c))
+            .ToList();
+        options.SupportedUICultures = supportedCultures
+            .Select(c => new System.Globalization.CultureInfo(c))
+            .ToList();
+
+        options.RequestCultureProviders = new List<IRequestCultureProvider>
+        {
+            new QueryStringRequestCultureProvider(),           // ?culture=uk-UA
+            new CookieRequestCultureProvider(),                 // Cookie
+            new AcceptLanguageHeaderRequestCultureProvider()    // Accept-Language header
+        };
+    });
 
     // ============================================
     // Add Serilog to the host
@@ -120,12 +147,19 @@ try
     // CORS
     app.UseCors("AllowAll");
 
+    // ============================================
+    // Use Localization Middleware
+    // ============================================
+    var locOptions = app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>();
+    app.UseRequestLocalization(locOptions.Value);
+
     // Authentication & Authorization
     app.UseAuthentication();
     app.UseAuthorization();
 
     // Controllers routing
     app.MapControllers();
+
 
     // ============================================
     // Run the application

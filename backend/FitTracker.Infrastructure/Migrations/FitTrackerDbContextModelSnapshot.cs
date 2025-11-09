@@ -22,524 +22,692 @@ namespace FitTracker.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("FitTracker.Domain.Entities.Analytics", b =>
+            modelBuilder.Entity("FitTracker.Infrastructure.Persistence.Data.Entities.AchievementEf", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("AvgReps")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasDefaultValue(0);
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP AT TIME ZONE 'UTC'");
-
-                    b.Property<DateTime>("DateRecorded")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<decimal>("MaxWeight")
-                        .ValueGeneratedOnAdd()
-                        .HasPrecision(10, 2)
-                        .HasColumnType("numeric(10,2)")
-                        .HasDefaultValue(0m);
-
-                    b.Property<string>("MuscleGroup")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.Property<int>("TotalReps")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasDefaultValue(0);
-
-                    b.Property<int>("TotalSets")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasDefaultValue(0);
-
-                    b.Property<int>("TotalVolume")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasDefaultValue(0);
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId", "DateRecorded")
-                        .HasDatabaseName("IX_Analytics_User_Date");
-
-                    b.HasIndex("UserId", "MuscleGroup")
-                        .HasDatabaseName("IX_Analytics_User_MuscleGroup");
-
-                    b.HasIndex("UserId", "DateRecorded", "MuscleGroup")
-                        .HasDatabaseName("IX_Analytics_User_Date_MuscleGroup");
-
-                    b.ToTable("Analytics");
-                });
-
-            modelBuilder.Entity("FitTracker.Domain.Entities.Exercise", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP AT TIME ZONE 'UTC'");
 
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("description");
 
-                    b.Property<string>("Equipment")
+                    b.Property<string>("IconUrl")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasColumnType("text")
+                        .HasColumnName("icon_url");
+
+                    b.Property<bool>("IsUnlocked")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_unlocked");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("name");
+
+                    b.Property<int>("Progress")
+                        .HasColumnType("integer")
+                        .HasColumnName("progress");
+
+                    b.Property<int>("Target")
+                        .HasColumnType("integer")
+                        .HasColumnName("target");
+
+                    b.Property<int>("Tier")
+                        .HasColumnType("integer")
+                        .HasColumnName("tier");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer")
+                        .HasColumnName("type");
+
+                    b.Property<DateTime?>("UnlockedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("unlocked_at");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP AT TIME ZONE 'UTC'");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IsUnlocked")
+                        .HasDatabaseName("IX_Achievements_IsUnlocked");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("IX_Achievements_UserId");
+
+                    b.HasIndex("UserId", "Type")
+                        .HasDatabaseName("IX_Achievements_User_Type");
+
+                    b.ToTable("achievements", (string)null);
+                });
+
+            modelBuilder.Entity("FitTracker.Infrastructure.Persistence.Data.Entities.ExerciseEf", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP AT TIME ZONE 'UTC'");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("description");
+
+                    b.Property<int>("Equipment")
+                        .HasColumnType("integer")
+                        .HasColumnName("equipment");
 
                     b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("text")
-                        .HasDefaultValue("https://via.placeholder.com/300x300?text=Exercise");
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("image_url");
 
                     b.Property<bool>("IsCustom")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
-                        .HasDefaultValue(false);
+                        .HasDefaultValue(false)
+                        .HasColumnName("is_custom");
 
-                    b.Property<string>("MuscleGroup")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                    b.Property<int>("MuscleGroup")
+                        .HasColumnType("integer")
+                        .HasColumnName("muscle_group");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("name");
 
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP AT TIME ZONE 'UTC'");
 
                     b.Property<Guid?>("UserId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
 
                     b.Property<string>("VideoUrl")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("text")
-                        .HasDefaultValue("https://via.placeholder.com/300x300?text=Exercise");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("IsCustom", "MuscleGroup")
-                        .HasDatabaseName("IX_Exercise_IsCustom_MuscleGroup");
-
-                    b.ToTable("Exercises");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("00000000-0000-0000-0000-000000000001"),
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Description = "Basic exercise for chest",
-                            Equipment = "Barbell",
-                            ImageUrl = "https://via.placeholder.com/300x300?text=Exercise",
-                            IsCustom = false,
-                            MuscleGroup = "Chest",
-                            Name = "Bench press",
-                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            VideoUrl = "https://via.placeholder.com/300x300?text=Exercise"
-                        },
-                        new
-                        {
-                            Id = new Guid("00000000-0000-0000-0000-000000000002"),
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Description = "Isolation exercise for chest",
-                            Equipment = "Dumbbell",
-                            ImageUrl = "https://via.placeholder.com/300x300?text=Exercise",
-                            IsCustom = false,
-                            MuscleGroup = "Chest",
-                            Name = "Dumbbell flyes",
-                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            VideoUrl = "https://via.placeholder.com/300x300?text=Exercise"
-                        },
-                        new
-                        {
-                            Id = new Guid("00000000-0000-0000-0000-000000000003"),
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Description = "Bodyweight exercise",
-                            Equipment = "Bodyweight",
-                            ImageUrl = "https://via.placeholder.com/300x300?text=Exercise",
-                            IsCustom = false,
-                            MuscleGroup = "Chest",
-                            Name = "Push-ups",
-                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            VideoUrl = "https://via.placeholder.com/300x300?text=Exercise"
-                        },
-                        new
-                        {
-                            Id = new Guid("00000000-0000-0000-0000-000000000010"),
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Description = "Basic back exercise",
-                            Equipment = "Bodyweight",
-                            ImageUrl = "https://via.placeholder.com/300x300?text=Exercise",
-                            IsCustom = false,
-                            MuscleGroup = "Back",
-                            Name = "Pull-ups",
-                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            VideoUrl = "https://via.placeholder.com/300x300?text=Exercise"
-                        },
-                        new
-                        {
-                            Id = new Guid("00000000-0000-0000-0000-000000000020"),
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Description = "Basic legs exercise",
-                            Equipment = "Barbell",
-                            ImageUrl = "https://via.placeholder.com/300x300?text=Exercise",
-                            IsCustom = false,
-                            MuscleGroup = "Legs",
-                            Name = "Barbell squats",
-                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            VideoUrl = "https://via.placeholder.com/300x300?text=Exercise"
-                        },
-                        new
-                        {
-                            Id = new Guid("00000000-0000-0000-0000-000000000021"),
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Description = "Leg machine exercise",
-                            Equipment = "Machine",
-                            ImageUrl = "https://via.placeholder.com/300x300?text=Exercise",
-                            IsCustom = false,
-                            MuscleGroup = "Legs",
-                            Name = "Leg press",
-                            UpdatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            VideoUrl = "https://via.placeholder.com/300x300?text=Exercise"
-                        });
-                });
-
-            modelBuilder.Entity("FitTracker.Domain.Entities.Program", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP AT TIME ZONE 'UTC'");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
-
-                    b.Property<int>("DurationWeeks")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasDefaultValue(4);
-
-                    b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(true);
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP AT TIME ZONE 'UTC'");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("video_url");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("Equipment")
+                        .HasDatabaseName("IX_Exercises_Equipment");
 
-                    b.HasIndex("UserId", "IsActive")
-                        .HasDatabaseName("IX_Program_User_IsActive");
+                    b.HasIndex("MuscleGroup")
+                        .HasDatabaseName("IX_Exercises_MuscleGroup");
 
-                    b.ToTable("Programs");
+                    b.HasIndex("Name")
+                        .HasDatabaseName("IX_Exercises_Name");
+
+                    b.HasIndex("UserId", "IsCustom")
+                        .HasDatabaseName("IX_Exercises_User_Custom");
+
+                    b.ToTable("exercises", (string)null);
                 });
 
-            modelBuilder.Entity("FitTracker.Domain.Entities.Set", b =>
+            modelBuilder.Entity("FitTracker.Infrastructure.Persistence.Data.Entities.ExerciseRecordEf", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
-                    b.Property<DateTime?>("CompletedAt")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP AT TIME ZONE 'UTC'");
-
-                    b.Property<bool>("IsCompleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false);
-
-                    b.Property<int?>("RPE")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Reps")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("SetNumber")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("SetType")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasDefaultValue("Normal");
-
-                    b.Property<decimal>("Weight")
-                        .HasPrecision(10, 2)
-                        .HasColumnType("numeric(10,2)");
-
-                    b.Property<Guid>("WorkoutExerciseId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("WorkoutExerciseId");
-
-                    b.ToTable("Sets");
-                });
-
-            modelBuilder.Entity("FitTracker.Domain.Entities.User", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Avatar")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Bio")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP AT TIME ZONE 'UTC'");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.Property<bool>("IsPublic")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(true);
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.Property<string>("PasswordHash")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("PreferredUnits")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("text")
-                        .HasDefaultValue("kg");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP AT TIME ZONE 'UTC'");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Email")
-                        .IsUnique();
-
-                    b.HasIndex("Username")
-                        .IsUnique();
-
-                    b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("FitTracker.Domain.Entities.UserFriend", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP AT TIME ZONE 'UTC'");
-
-                    b.Property<Guid>("FriendId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)")
-                        .HasDefaultValue("pending");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP AT TIME ZONE 'UTC'");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FriendId");
-
-                    b.HasIndex("Status")
-                        .HasDatabaseName("IX_UserFriend_Status");
-
-                    b.HasIndex("UserId", "FriendId")
-                        .IsUnique()
-                        .HasDatabaseName("IX_UserFriend_User_Friend");
-
-                    b.ToTable("UserFriends");
-                });
-
-            modelBuilder.Entity("FitTracker.Domain.Entities.Workout", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP AT TIME ZONE 'UTC'");
-
-                    b.Property<TimeSpan>("Duration")
-                        .HasColumnType("interval");
-
-                    b.Property<bool>("IsCompleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false);
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<string>("Notes")
-                        .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
-
-                    b.Property<Guid?>("ProgramId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("TotalVolume")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasDefaultValue(0);
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP AT TIME ZONE 'UTC'");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("WorkoutDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProgramId");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("UserId", "WorkoutDate")
-                        .HasDatabaseName("IX_Workout_User_Date");
-
-                    b.ToTable("Workouts");
-                });
-
-            modelBuilder.Entity("FitTracker.Domain.Entities.WorkoutExercise", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP AT TIME ZONE 'UTC'");
 
                     b.Property<Guid>("ExerciseId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("exercise_id");
 
-                    b.Property<string>("Notes")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                    b.Property<DateTime>("LastPerformed")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_performed");
 
-                    b.Property<int>("OrderInWorkout")
-                        .HasColumnType("integer");
+                    b.Property<int>("MaxReps")
+                        .HasColumnType("integer")
+                        .HasColumnName("max_reps");
 
-                    b.Property<Guid>("WorkoutId")
-                        .HasColumnType("uuid");
+                    b.Property<DateTime>("MaxRepsDate")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("max_reps_date");
+
+                    b.Property<decimal>("MaxTotalVolume")
+                        .HasColumnType("numeric")
+                        .HasColumnName("max_total_volume");
+
+                    b.Property<DateTime>("MaxTotalVolumeDate")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("max_total_volume_date");
+
+                    b.Property<decimal>("MaxVolume")
+                        .HasColumnType("numeric")
+                        .HasColumnName("max_volume");
+
+                    b.Property<DateTime>("MaxVolumeDate")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("max_volume_date");
+
+                    b.Property<DateTime>("MaxWeightDate")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("max_weight_date");
+
+                    b.Property<decimal>("MaxWeight_Kilograms")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("numeric(10,2)")
+                        .HasColumnName("max_weight_kg");
+
+                    b.Property<decimal>("TotalLifted")
+                        .HasColumnType("numeric")
+                        .HasColumnName("total_lifted");
+
+                    b.Property<int>("TotalReps")
+                        .HasColumnType("integer")
+                        .HasColumnName("total_reps");
+
+                    b.Property<int>("TotalSets")
+                        .HasColumnType("integer")
+                        .HasColumnName("total_sets");
+
+                    b.Property<int>("TotalWorkouts")
+                        .HasColumnType("integer")
+                        .HasColumnName("total_workouts");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ExerciseId");
 
-                    b.HasIndex("WorkoutId", "OrderInWorkout")
-                        .HasDatabaseName("IX_WorkoutExercise_Workout_Order");
+                    b.HasIndex("LastPerformed")
+                        .HasDatabaseName("IX_ExerciseRecords_LastPerformed");
 
-                    b.ToTable("WorkoutExercises");
+                    b.HasIndex("UserId", "ExerciseId")
+                        .IsUnique()
+                        .HasDatabaseName("IX_ExerciseRecords_User_Exercise");
+
+                    b.ToTable("exercise_records", (string)null);
                 });
 
-            modelBuilder.Entity("FitTracker.Domain.Entities.Analytics", b =>
+            modelBuilder.Entity("FitTracker.Infrastructure.Persistence.Data.Entities.SetEf", b =>
                 {
-                    b.HasOne("FitTracker.Domain.Entities.User", "User")
-                        .WithMany()
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime?>("CompletedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("completed_at");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP AT TIME ZONE 'UTC'");
+
+                    b.Property<bool>("IsCompleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_completed");
+
+                    b.Property<int>("Reps")
+                        .HasColumnType("integer")
+                        .HasColumnName("reps");
+
+                    b.Property<int?>("RestSeconds")
+                        .HasColumnType("integer")
+                        .HasColumnName("rest_seconds");
+
+                    b.Property<int>("SetNumber")
+                        .HasColumnType("integer")
+                        .HasColumnName("set_number");
+
+                    b.Property<int>("SetType")
+                        .HasColumnType("integer")
+                        .HasColumnName("set_type");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP AT TIME ZONE 'UTC'");
+
+                    b.Property<decimal>("WeightKg")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("numeric(10,2)")
+                        .HasColumnName("weight_kg");
+
+                    b.Property<Guid>("WorkoutExerciseId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("workout_exercise_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IsCompleted")
+                        .HasDatabaseName("IX_Sets_IsCompleted");
+
+                    b.HasIndex("WorkoutExerciseId")
+                        .HasDatabaseName("IX_Sets_WorkoutExerciseId");
+
+                    b.HasIndex("WorkoutExerciseId", "SetNumber")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Sets_WorkoutExercise_SetNumber");
+
+                    b.ToTable("sets", (string)null);
+                });
+
+            modelBuilder.Entity("FitTracker.Infrastructure.Persistence.Data.Entities.TemplateSetEf", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP AT TIME ZONE 'UTC'");
+
+                    b.Property<int>("PlannedReps")
+                        .HasColumnType("integer")
+                        .HasColumnName("planned_reps");
+
+                    b.Property<decimal>("PlannedWeight")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("numeric(10,2)")
+                        .HasColumnName("planned_weight");
+
+                    b.Property<int?>("RestSeconds")
+                        .HasColumnType("integer")
+                        .HasColumnName("rest_seconds");
+
+                    b.Property<int>("SetNumber")
+                        .HasColumnType("integer")
+                        .HasColumnName("set_number");
+
+                    b.Property<int>("SetType")
+                        .HasColumnType("integer")
+                        .HasColumnName("set_type");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP AT TIME ZONE 'UTC'");
+
+                    b.Property<Guid>("WorkoutTemplateExerciseId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("workout_template_exercise_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("WorkoutTemplateExerciseId")
+                        .HasDatabaseName("IX_TemplateSets_TemplateExerciseId");
+
+                    b.HasIndex("WorkoutTemplateExerciseId", "SetNumber")
+                        .IsUnique()
+                        .HasDatabaseName("IX_TemplateSets_TemplateExercise_SetNumber");
+
+                    b.ToTable("template_sets", (string)null);
+                });
+
+            modelBuilder.Entity("FitTracker.Infrastructure.Persistence.Data.Entities.UserEf", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Avatar")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("avatar");
+
+                    b.Property<string>("Bio")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("bio");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP AT TIME ZONE 'UTC'");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("email");
+
+                    b.Property<string>("FirstName")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("first_name");
+
+                    b.Property<string>("LastName")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("last_name");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("password_hash");
+
+                    b.Property<string>("PreferredUnits")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("preferred_units");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP AT TIME ZONE 'UTC'");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("username");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Users_Email");
+
+                    b.HasIndex("Username")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Users_Username");
+
+                    b.ToTable("users", (string)null);
+                });
+
+            modelBuilder.Entity("FitTracker.Infrastructure.Persistence.Data.Entities.WorkoutEf", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime?>("CompletedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("completed_at");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP AT TIME ZONE 'UTC'");
+
+                    b.Property<TimeSpan>("Duration")
+                        .HasColumnType("interval")
+                        .HasColumnName("duration");
+
+                    b.Property<bool>("IsCompleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_completed");
+
+                    b.Property<bool>("IsInProgress")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_in_progress");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("name");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("notes");
+
+                    b.Property<DateTime?>("StartedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("started_at");
+
+                    b.Property<decimal>("TotalVolumeKg")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("numeric(10,2)")
+                        .HasColumnName("total_volume_kg");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP AT TIME ZONE 'UTC'");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.Property<DateTime>("WorkoutDate")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("workout_date");
+
+                    b.Property<Guid?>("WorkoutTemplateId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("workout_template_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IsCompleted")
+                        .HasDatabaseName("IX_Workouts_IsCompleted");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("IX_Workouts_UserId");
+
+                    b.HasIndex("WorkoutDate")
+                        .HasDatabaseName("IX_Workouts_WorkoutDate");
+
+                    b.HasIndex("WorkoutTemplateId")
+                        .HasDatabaseName("IX_Workouts_TemplateId");
+
+                    b.HasIndex("UserId", "WorkoutDate")
+                        .HasDatabaseName("IX_Workouts_User_Date");
+
+                    b.ToTable("workouts", (string)null);
+                });
+
+            modelBuilder.Entity("FitTracker.Infrastructure.Persistence.Data.Entities.WorkoutExerciseEf", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP AT TIME ZONE 'UTC'");
+
+                    b.Property<Guid>("ExerciseId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("exercise_id");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("notes");
+
+                    b.Property<int>("OrderIndex")
+                        .HasColumnType("integer")
+                        .HasColumnName("order_index");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP AT TIME ZONE 'UTC'");
+
+                    b.Property<Guid>("WorkoutId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("workout_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExerciseId")
+                        .HasDatabaseName("IX_WorkoutExercises_ExerciseId");
+
+                    b.HasIndex("WorkoutId")
+                        .HasDatabaseName("IX_WorkoutExercises_WorkoutId");
+
+                    b.HasIndex("WorkoutId", "OrderIndex")
+                        .IsUnique()
+                        .HasDatabaseName("IX_WorkoutExercises_Workout_Order");
+
+                    b.ToTable("workout_exercises", (string)null);
+                });
+
+            modelBuilder.Entity("FitTracker.Infrastructure.Persistence.Data.Entities.WorkoutTemplateEf", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP AT TIME ZONE 'UTC'");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("description");
+
+                    b.Property<DateTime?>("LastUsedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_used_at");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("name");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP AT TIME ZONE 'UTC'");
+
+                    b.Property<int>("UsageCount")
+                        .HasColumnType("integer")
+                        .HasColumnName("usage_count");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("IX_WorkoutTemplates_UserId");
+
+                    b.HasIndex("UserId", "LastUsedAt")
+                        .HasDatabaseName("IX_WorkoutTemplates_User_LastUsed");
+
+                    b.ToTable("workout_templates", (string)null);
+                });
+
+            modelBuilder.Entity("FitTracker.Infrastructure.Persistence.Data.Entities.WorkoutTemplateExerciseEf", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP AT TIME ZONE 'UTC'");
+
+                    b.Property<Guid>("ExerciseId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("exercise_id");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("notes");
+
+                    b.Property<int>("OrderIndex")
+                        .HasColumnType("integer")
+                        .HasColumnName("order_index");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP AT TIME ZONE 'UTC'");
+
+                    b.Property<Guid>("WorkoutTemplateId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("workout_template_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExerciseId")
+                        .HasDatabaseName("IX_WorkoutTemplateExercises_ExerciseId");
+
+                    b.HasIndex("WorkoutTemplateId")
+                        .HasDatabaseName("IX_WorkoutTemplateExercises_TemplateId");
+
+                    b.HasIndex("WorkoutTemplateId", "OrderIndex")
+                        .IsUnique()
+                        .HasDatabaseName("IX_WorkoutTemplateExercises_Template_Order");
+
+                    b.ToTable("workout_template_exercises", (string)null);
+                });
+
+            modelBuilder.Entity("FitTracker.Infrastructure.Persistence.Data.Entities.AchievementEf", b =>
+                {
+                    b.HasOne("FitTracker.Infrastructure.Persistence.Data.Entities.UserEf", "User")
+                        .WithMany("Achievements")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -547,9 +715,9 @@ namespace FitTracker.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("FitTracker.Domain.Entities.Exercise", b =>
+            modelBuilder.Entity("FitTracker.Infrastructure.Persistence.Data.Entities.ExerciseEf", b =>
                 {
-                    b.HasOne("FitTracker.Domain.Entities.User", "User")
+                    b.HasOne("FitTracker.Infrastructure.Persistence.Data.Entities.UserEf", "User")
                         .WithMany("CustomExercises")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.SetNull);
@@ -557,20 +725,28 @@ namespace FitTracker.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("FitTracker.Domain.Entities.Program", b =>
+            modelBuilder.Entity("FitTracker.Infrastructure.Persistence.Data.Entities.ExerciseRecordEf", b =>
                 {
-                    b.HasOne("FitTracker.Domain.Entities.User", "User")
-                        .WithMany("Programs")
+                    b.HasOne("FitTracker.Infrastructure.Persistence.Data.Entities.ExerciseEf", "Exercise")
+                        .WithMany()
+                        .HasForeignKey("ExerciseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FitTracker.Infrastructure.Persistence.Data.Entities.UserEf", "User")
+                        .WithMany("ExerciseRecords")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Exercise");
+
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("FitTracker.Domain.Entities.Set", b =>
+            modelBuilder.Entity("FitTracker.Infrastructure.Persistence.Data.Entities.SetEf", b =>
                 {
-                    b.HasOne("FitTracker.Domain.Entities.WorkoutExercise", "WorkoutExercise")
+                    b.HasOne("FitTracker.Infrastructure.Persistence.Data.Entities.WorkoutExerciseEf", "WorkoutExercise")
                         .WithMany("Sets")
                         .HasForeignKey("WorkoutExerciseId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -579,54 +755,44 @@ namespace FitTracker.Infrastructure.Migrations
                     b.Navigation("WorkoutExercise");
                 });
 
-            modelBuilder.Entity("FitTracker.Domain.Entities.UserFriend", b =>
+            modelBuilder.Entity("FitTracker.Infrastructure.Persistence.Data.Entities.TemplateSetEf", b =>
                 {
-                    b.HasOne("FitTracker.Domain.Entities.User", "Friend")
-                        .WithMany("FriendOf")
-                        .HasForeignKey("FriendId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_UserFriend_Friend_FriendId");
-
-                    b.HasOne("FitTracker.Domain.Entities.User", "User")
-                        .WithMany("Friends")
-                        .HasForeignKey("UserId")
+                    b.HasOne("FitTracker.Infrastructure.Persistence.Data.Entities.WorkoutTemplateExerciseEf", "WorkoutTemplateExercise")
+                        .WithMany("PlannedSets")
+                        .HasForeignKey("WorkoutTemplateExerciseId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_UserFriend_User_UserId");
+                        .IsRequired();
 
-                    b.Navigation("Friend");
-
-                    b.Navigation("User");
+                    b.Navigation("WorkoutTemplateExercise");
                 });
 
-            modelBuilder.Entity("FitTracker.Domain.Entities.Workout", b =>
+            modelBuilder.Entity("FitTracker.Infrastructure.Persistence.Data.Entities.WorkoutEf", b =>
                 {
-                    b.HasOne("FitTracker.Domain.Entities.Program", "Program")
-                        .WithMany("Workouts")
-                        .HasForeignKey("ProgramId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("FitTracker.Domain.Entities.User", "User")
+                    b.HasOne("FitTracker.Infrastructure.Persistence.Data.Entities.UserEf", "User")
                         .WithMany("Workouts")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Program");
+                    b.HasOne("FitTracker.Infrastructure.Persistence.Data.Entities.WorkoutTemplateEf", "WorkoutTemplate")
+                        .WithMany()
+                        .HasForeignKey("WorkoutTemplateId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("User");
+
+                    b.Navigation("WorkoutTemplate");
                 });
 
-            modelBuilder.Entity("FitTracker.Domain.Entities.WorkoutExercise", b =>
+            modelBuilder.Entity("FitTracker.Infrastructure.Persistence.Data.Entities.WorkoutExerciseEf", b =>
                 {
-                    b.HasOne("FitTracker.Domain.Entities.Exercise", "Exercise")
+                    b.HasOne("FitTracker.Infrastructure.Persistence.Data.Entities.ExerciseEf", "Exercise")
                         .WithMany("WorkoutExercises")
                         .HasForeignKey("ExerciseId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("FitTracker.Domain.Entities.Workout", "Workout")
+                    b.HasOne("FitTracker.Infrastructure.Persistence.Data.Entities.WorkoutEf", "Workout")
                         .WithMany("Exercises")
                         .HasForeignKey("WorkoutId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -637,37 +803,72 @@ namespace FitTracker.Infrastructure.Migrations
                     b.Navigation("Workout");
                 });
 
-            modelBuilder.Entity("FitTracker.Domain.Entities.Exercise", b =>
+            modelBuilder.Entity("FitTracker.Infrastructure.Persistence.Data.Entities.WorkoutTemplateEf", b =>
+                {
+                    b.HasOne("FitTracker.Infrastructure.Persistence.Data.Entities.UserEf", "User")
+                        .WithMany("WorkoutTemplates")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("FitTracker.Infrastructure.Persistence.Data.Entities.WorkoutTemplateExerciseEf", b =>
+                {
+                    b.HasOne("FitTracker.Infrastructure.Persistence.Data.Entities.ExerciseEf", "Exercise")
+                        .WithMany()
+                        .HasForeignKey("ExerciseId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("FitTracker.Infrastructure.Persistence.Data.Entities.WorkoutTemplateEf", "WorkoutTemplate")
+                        .WithMany("Exercises")
+                        .HasForeignKey("WorkoutTemplateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Exercise");
+
+                    b.Navigation("WorkoutTemplate");
+                });
+
+            modelBuilder.Entity("FitTracker.Infrastructure.Persistence.Data.Entities.ExerciseEf", b =>
                 {
                     b.Navigation("WorkoutExercises");
                 });
 
-            modelBuilder.Entity("FitTracker.Domain.Entities.Program", b =>
+            modelBuilder.Entity("FitTracker.Infrastructure.Persistence.Data.Entities.UserEf", b =>
                 {
-                    b.Navigation("Workouts");
-                });
+                    b.Navigation("Achievements");
 
-            modelBuilder.Entity("FitTracker.Domain.Entities.User", b =>
-                {
                     b.Navigation("CustomExercises");
 
-                    b.Navigation("FriendOf");
+                    b.Navigation("ExerciseRecords");
 
-                    b.Navigation("Friends");
-
-                    b.Navigation("Programs");
+                    b.Navigation("WorkoutTemplates");
 
                     b.Navigation("Workouts");
                 });
 
-            modelBuilder.Entity("FitTracker.Domain.Entities.Workout", b =>
+            modelBuilder.Entity("FitTracker.Infrastructure.Persistence.Data.Entities.WorkoutEf", b =>
                 {
                     b.Navigation("Exercises");
                 });
 
-            modelBuilder.Entity("FitTracker.Domain.Entities.WorkoutExercise", b =>
+            modelBuilder.Entity("FitTracker.Infrastructure.Persistence.Data.Entities.WorkoutExerciseEf", b =>
                 {
                     b.Navigation("Sets");
+                });
+
+            modelBuilder.Entity("FitTracker.Infrastructure.Persistence.Data.Entities.WorkoutTemplateEf", b =>
+                {
+                    b.Navigation("Exercises");
+                });
+
+            modelBuilder.Entity("FitTracker.Infrastructure.Persistence.Data.Entities.WorkoutTemplateExerciseEf", b =>
+                {
+                    b.Navigation("PlannedSets");
                 });
 #pragma warning restore 612, 618
         }

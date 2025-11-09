@@ -17,6 +17,7 @@ namespace FitTracker.Domain.Enums
         Band = 7,
         TRX = 8,
         Medicine_Ball = 9,
-        Other = 10
+        None = 10,
+        Other = 11
     }
 }

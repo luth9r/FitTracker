@@ -1,0 +1,19 @@
+{
+	"Health": {
+		"Status": {
+			"Ok": "Database connection successful",
+			"Failed": "Database connection failed",
+			"Error": "Error"
+		},
+		"Live":  "live"
+	},
+	"Auth": {
+		"Login": {
+			"InvalidCredentials": "Invalid email or password",
+			"EmailRequired": "Email is required",
+			"PasswordRequired": "Password is required",
+			"InvalidEmail": "Email must be a valid email address",
+			"PasswordTooShort": "Password must be at least 8 characters long"
+		}
+	}
+}
