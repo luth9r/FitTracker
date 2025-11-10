@@ -33,7 +33,7 @@ namespace FitTracker.Infrastructure.Persistence.Data.Configurations
                 .HasColumnType("uuid")
                 .IsRequired();
 
-            builder.Property(er => er.MaxWeight_Kilograms)
+            builder.Property(er => er.MaxWeightKilograms)
                 .HasColumnName("max_weight_kg")
                 .HasPrecision(10, 2)
                 .IsRequired();

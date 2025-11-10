@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,15 +7,59 @@ using FitTracker.Domain.Entities;
 
 namespace FitTracker.Infrastructure.Persistence.Data.Entities
 {
-    public class WorkoutTemplateEf : BaseEntityEf
+    /// <summary>
+	/// Represents a reusable workout template.
+	/// </summary>
+	public class WorkoutTemplateEf : BaseEntityEf
     {
-        public Guid UserId { get; set; }
-        public string Name { get; set; } = null!;
-        public string? Description { get; set; }
-        public int UsageCount { get; set; }
-        public DateTime? LastUsedAt { get; set; }
+        /// <summary>
+        /// ID of the user who owns this template.
+        /// </summary>
+        public Guid UserId
+        {
+            get; set;
+        }
 
-        public UserEf? User { get; set; }
+        /// <summary>
+        /// Template name.
+        /// </summary>
+        public string Name { get; set; } = null!;
+
+        /// <summary>
+        /// Optional template description.
+        /// </summary>
+        public string? Description
+        {
+            get; set;
+        }
+
+        /// <summary>
+        /// Number of times this template has been used.
+        /// </summary>
+        public int UsageCount
+        {
+            get; set;
+        }
+
+        /// <summary>
+        /// Timestamp of last template usage.
+        /// </summary>
+        public DateTime? LastUsedAt
+        {
+            get; set;
+        }
+
+        /// <summary>
+        /// Navigation to the user.
+        /// </summary>
+        public UserEf? User
+        {
+            get; set;
+        }
+
+        /// <summary>
+        /// Collection of exercises in this template.
+        /// </summary>
         public ICollection<WorkoutTemplateExerciseEf> Exercises { get; set; } = new HashSet<WorkoutTemplateExerciseEf>();
     }
 }
