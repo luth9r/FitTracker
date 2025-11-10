@@ -69,8 +69,8 @@ namespace FitTracker.Domain.Entities
         }
 
         /// <summary>
-        /// Domain constructor used by Builder for creating new achievements.
-        /// Contains business logic, initializes fields, and validates.
+        /// Constructor for restoring achievement from persistence layer.
+        /// Use <see cref="Create"/> for creating new achievements.
         /// </summary>
         private Achievement(
             Guid userId,
