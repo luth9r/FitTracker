@@ -65,6 +65,10 @@ namespace FitTracker.Domain.Entities
             IconUrl = string.Empty;
         }
 
+        /// <summary>
+        /// Constructor for restoring achievement from persistence layer.
+        /// Use <see cref="Create"/> for creating new achievements.
+        /// </summary>
         private Achievement(
             Guid userId,
             AchievementType type,
