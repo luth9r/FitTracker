@@ -11,11 +11,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FitTracker.Infrastructure",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FitTracker.Application", "FitTracker.Application\FitTracker.Application.csproj", "{3A0E4A8C-F0D1-4745-AAE6-1D32BB1FABC1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FitTrackerDomain.Tests", "FitTracker.Tests\FitTrackerDomain.Tests.csproj", "{E902D2D6-E739-424E-B1D7-E6318CBA6133}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FitTrackerDomain.Tests", "Tests\FitTrackerDomain.Tests\FitTrackerDomain.Tests.csproj", "{E902D2D6-E739-424E-B1D7-E6318CBA6133}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FitTrackerInfrastructure.Tests", "Tests\FitTrackerInfrastructure.Tests\FitTrackerInfrastructure.Tests.csproj", "{6846A56C-E70B-4885-8390-C29F70F63852}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FitTrackerInfrastructure.Tests", "FitTrackerInfrastructure.Tests\FitTrackerInfrastructure.Tests.csproj", "{6846A56C-E70B-4885-8390-C29F70F63852}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FitTracker.Tests", "FitTracker.Tests", "{7FB9AB62-4035-47B7-94D6-DB281FA4B179}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -104,8 +104,8 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{E902D2D6-E739-424E-B1D7-E6318CBA6133} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
-		{6846A56C-E70B-4885-8390-C29F70F63852} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{E902D2D6-E739-424E-B1D7-E6318CBA6133} = {7FB9AB62-4035-47B7-94D6-DB281FA4B179}
+		{6846A56C-E70B-4885-8390-C29F70F63852} = {7FB9AB62-4035-47B7-94D6-DB281FA4B179}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1FC66A9E-9448-4D76-8B2D-7705E2284B74}
