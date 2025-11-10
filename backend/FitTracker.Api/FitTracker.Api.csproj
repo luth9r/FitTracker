@@ -42,7 +42,6 @@
     <Folder Include="Controllers\" />
     <Folder Include="Middlewares\" />
     <Folder Include="Filters\" />
-    <Folder Include="Extensions\" />
     <Folder Include="Helpers\" />
     <Folder Include="Swagger\" />
   </ItemGroup>
