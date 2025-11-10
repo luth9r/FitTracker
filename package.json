@@ -41,7 +41,7 @@
   },
   "lint-staged": {
     "backend/**/*.cs": [
-      "dotnet format --include"
+      "dotnet format backend/FitTracker.sln --include"
     ]
   }
 }
