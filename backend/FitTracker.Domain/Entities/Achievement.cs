@@ -9,9 +9,6 @@ using FluentValidation;
 
 namespace FitTracker.Domain.Entities
 {
-    /// <summary>
-    /// User achievements/badges
-    /// </summary>
     public class Achievement : BaseEntity
     {
         public const int NameMaxLength = 100;
@@ -58,7 +55,13 @@ namespace FitTracker.Domain.Entities
             get; private set;
         }   // Bronze, Silver, Gold
 
-        private Achievement() : base()
+        #region Constructors
+
+        /// <summary>
+        /// Parameterless constructor for ORM.
+        /// Do not use directly.
+        /// </summary>
+        private Achievement()
         {
             Name = string.Empty;
             Description = string.Empty;
@@ -66,8 +69,8 @@ namespace FitTracker.Domain.Entities
         }
 
         /// <summary>
-        /// Constructor for restoring achievement from persistence layer.
-        /// Use <see cref="Create"/> for creating new achievements.
+        /// Domain constructor used by Builder for creating new achievements.
+        /// Contains business logic, initializes fields, and validates.
         /// </summary>
         private Achievement(
             Guid userId,
@@ -90,6 +93,10 @@ namespace FitTracker.Domain.Entities
             EnsureValid();
         }
 
+        /// <summary>
+        /// Constructor for restoring achievement from persistence layer.
+        /// Use <see cref="AchievementBuilder"/> for creating new achievements.
+        /// </summary>
         public Achievement(
             Guid userId,
             AchievementType type,
@@ -112,31 +119,27 @@ namespace FitTracker.Domain.Entities
             UnlockedAt = unlockedAt;
             IconUrl = $"/icons/achievement_{type.ToString().ToLower()}.png";
 
-            EnsureValid();
+            // No validation here since data is from persistence
         }
+
+        #endregion
+
+        #region Validation
 
         protected override IValidator GetValidator()
         {
             return new AchievementValidator();
         }
 
-        public static Achievement Create(
-            Guid userId,
-            AchievementType type,
-            string name,
-            string description,
-            int target,
-            AchievementTier tier = AchievementTier.Bronze)
-        {
-            return new Achievement(userId, type, name, description, target, tier);
-        }
+        #endregion
+
+        #region Domain Methods
 
         public bool UpdateProgress(int newProgress)
         {
             Progress = newProgress;
             UpdatedAt = DateTime.UtcNow;
 
-            // Check if unlocked
             if (!IsUnlocked && Progress >= Target)
             {
                 Unlock();
@@ -157,5 +160,82 @@ namespace FitTracker.Domain.Entities
         {
             return Target > 0 ? (Progress * 100) / Target : 0;
         }
+
+        #endregion
+
+        #region Builder
+
+        /// <summary>
+        /// Creates a new <see cref="AchievementBuilder"/> instance.
+        /// </summary>
+        public static AchievementBuilder CreateBuilder()
+        {
+            return new AchievementBuilder();
+        }
+
+        /// <summary>
+        /// Builder for creating <see cref="Achievement"/> instances.
+        /// </summary>
+        public class AchievementBuilder
+        {
+            private Guid _userId = Guid.NewGuid();
+            private AchievementType _type = AchievementType.FirstWorkout;
+            private string _name = "Default Achievement";
+            private string _description = "Default description";
+            private int _target = 100;
+            private AchievementTier _tier = AchievementTier.Bronze;
+
+            public AchievementBuilder WithUserId(Guid userId)
+            {
+                _userId = userId;
+                return this;
+            }
+
+            public AchievementBuilder WithType(AchievementType type)
+            {
+                _type = type;
+                return this;
+            }
+
+            public AchievementBuilder WithName(string name)
+            {
+                _name = name;
+                return this;
+            }
+
+            public AchievementBuilder WithDescription(string description)
+            {
+                _description = description;
+                return this;
+            }
+
+            public AchievementBuilder WithTarget(int target)
+            {
+                _target = target;
+                return this;
+            }
+
+            public AchievementBuilder WithTier(AchievementTier tier)
+            {
+                _tier = tier;
+                return this;
+            }
+
+            /// <summary>
+            /// Builds the <see cref="Achievement"/> entity.
+            /// </summary>
+            public Achievement Build()
+            {
+                return new Achievement(
+                    _userId,
+                    _type,
+                    _name,
+                    _description,
+                    _target,
+                    _tier);
+            }
+        }
+
+        #endregion
     }
 }

@@ -1,13 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FluentValidation;
-using FitTracker.Domain.Validators;
 using FitTracker.Domain.Enums;
+using FitTracker.Domain.Validators;
 
 namespace FitTracker.Domain.Entities
 {
@@ -16,9 +14,8 @@ namespace FitTracker.Domain.Entities
     /// </summary>
     public class Exercise : BaseEntity
     {
-        // ============================================
-        // Constants
-        // ============================================
+        #region Constants
+
         public const int NameMaxLength = 100;
         public const int DescriptionMaxLength = 1000;
         public const int MuscleGroupMaxLength = 50;
@@ -26,22 +23,59 @@ namespace FitTracker.Domain.Entities
         public const int ImageUrlMaxLength = 500;
         public const int VideoUrlMaxLength = 500;
 
-        // ============================================
-        // Properties
-        // ============================================
-        public string Name { get; private set; }
-        public string? Description { get; private set; }
-        public string? ImageUrl { get; private set; }
-        public string? VideoUrl { get; private set; }
-        public MuscleGroup MuscleGroup { get; private set; }
-        public Equipment Equipment { get; private set; }
-        public bool IsCustom { get; private set; }
-        public Guid? UserId { get; private set; }
+        #endregion
 
-        // ============================================
-        // Constructors
-        // ============================================
+        #region Properties
 
+        public string Name
+        {
+            get; private set;
+        }
+        public string? Description
+        {
+            get; private set;
+        }
+        public string? ImageUrl
+        {
+            get; private set;
+        }
+        public string? VideoUrl
+        {
+            get; private set;
+        }
+        public MuscleGroup MuscleGroup
+        {
+            get; private set;
+        }
+        public Equipment Equipment
+        {
+            get; private set;
+        }
+        public bool IsCustom
+        {
+            get; private set;
+        }
+        public Guid? UserId
+        {
+            get; private set;
+        }
+
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        /// Parameterless constructor for ORM.
+        /// Do not use directly.
+        /// </summary>
+        private Exercise()
+        {
+        }
+
+        /// <summary>
+        /// Constructor for restoring exercise from persistence layer.
+        /// Use <see cref="ExerciseBuilder"/> for creating new exercises.
+        /// </summary>
         public Exercise(
             string name,
             string? description,
@@ -61,8 +95,6 @@ namespace FitTracker.Domain.Entities
             IsCustom = isCustom;
             UserId = userId;
         }
-
-
 
         /// <summary>
         /// Domain constructor
@@ -95,20 +127,70 @@ namespace FitTracker.Domain.Entities
             EnsureValid();
         }
 
-        // ============================================
-        // Validator
-        // ============================================
+        #endregion
+
+        #region Validation
+
         protected override IValidator GetValidator()
         {
             return new ExerciseValidator();
         }
 
-        // ============================================
-        // Builder Pattern
-        // ============================================
+        #endregion
 
-        public static ExerciseBuilder CreateBuilder() => new ExerciseBuilder();
+        #region Domain Methods
 
+        /// <summary>
+        /// Update exercise details
+        /// </summary>
+        public void Update(string name, MuscleGroup muscleGroup, Equipment equipment, string? description = null)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException("Exercise name cannot be empty");
+
+            Name = name;
+            MuscleGroup = muscleGroup;
+            Equipment = equipment;
+            Description = description;
+            UpdatedAt = DateTime.UtcNow;
+
+            EnsureValid();
+        }
+
+        /// <summary>
+        /// Update image URL
+        /// </summary>
+        public void UpdateImageUrl(string? imageUrl)
+        {
+            ImageUrl = imageUrl;
+            UpdatedAt = DateTime.UtcNow;
+        }
+
+        /// <summary>
+        /// Update video URL
+        /// </summary>
+        public void UpdateVideoUrl(string? videoUrl)
+        {
+            VideoUrl = videoUrl;
+            UpdatedAt = DateTime.UtcNow;
+        }
+
+        #endregion
+
+        #region Builder
+
+        /// <summary>
+        /// Creates a new <see cref="ExerciseBuilder"/> instance.
+        /// </summary>
+        public static ExerciseBuilder CreateBuilder()
+        {
+            return new ExerciseBuilder();
+        }
+
+        /// <summary>
+        /// Builder for creating <see cref="Exercise"/> instances.
+        /// Uses the domain constructor.
+        /// </summary>
         public class ExerciseBuilder
         {
             private string _name = string.Empty;
@@ -170,6 +252,9 @@ namespace FitTracker.Domain.Entities
                 return this;
             }
 
+            /// <summary>
+            /// Builds the <see cref="Exercise"/> entity using domain constructor.
+            /// </summary>
             public Exercise Build()
             {
                 return new Exercise(
@@ -185,47 +270,6 @@ namespace FitTracker.Domain.Entities
             }
         }
 
-        // ============================================
-        // Domain Methods
-        // ============================================
-
-        /// <summary>
-        /// Update exercise details
-        /// </summary>
-        public void Update(
-            string name,
-            MuscleGroup muscleGroup,
-            Equipment equipment,
-            string? description = null)
-        {
-            if (string.IsNullOrWhiteSpace(name))
-                throw new ArgumentException("Exercise name cannot be empty");
-
-            Name = name;
-            MuscleGroup = muscleGroup;
-            Equipment = equipment;
-            Description = description;
-            UpdatedAt = DateTime.UtcNow;
-
-            EnsureValid();
-        }
-
-        /// <summary>
-        /// Update image URL
-        /// </summary>
-        public void UpdateImageUrl(string? imageUrl)
-        {
-            ImageUrl = imageUrl;
-            UpdatedAt = DateTime.UtcNow;
-        }
-
-        /// <summary>
-        /// Update video URL
-        /// </summary>
-        public void UpdateVideoUrl(string? videoUrl)
-        {
-            VideoUrl = videoUrl;
-            UpdatedAt = DateTime.UtcNow;
-        }
+        #endregion
     }
 }

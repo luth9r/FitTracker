@@ -41,3 +41,6 @@ csharp_space_between_method_call_empty_parameter_list_parentheses = false
 
 csharp_preserve_single_line_blocks = false
 csharp_preserve_single_line_statements = false
+
+csharp_new_line_before_open_brace_in_properties = false
+csharp_place_accessors_on_separate_lines = false
