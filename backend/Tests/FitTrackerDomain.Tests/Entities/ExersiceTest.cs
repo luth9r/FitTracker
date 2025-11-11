@@ -1,12 +1,8 @@
-// Domain.Tests/Entities/ExerciseTests.cs
-using System;
-using System.Threading;
-using Xunit;
-using FluentValidation;
 using FitTracker.Domain.Entities;
 using FitTracker.Domain.Enums;
-using FitTracker.Domain.Tests.Factories;
 using FitTrackerDomain.Tests.Factories;
+using FluentAssertions;
+using FluentValidation;
 
 namespace FitTracker.Domain.Tests.Entities
 {
@@ -23,34 +19,34 @@ namespace FitTracker.Domain.Tests.Entities
             var builder = Exercise.CreateBuilder();
 
             // Assert
-            Assert.NotNull(builder);
-            Assert.IsType<Exercise.ExerciseBuilder>(builder);
+            builder.Should().NotBeNull();
+            builder.Should().BeOfType<Exercise.ExerciseBuilder>();
         }
 
         [Fact]
         public void Build_WithValidData_ShouldCreateExercise()
         {
             // Arrange & Act
-            var exercise = ExerciseMother.Default();
+            var exercise = ExerciseFactory.Default();
 
             // Assert
-            Assert.NotNull(exercise);
-            Assert.Equal("Bench Press", exercise.Name);
-            Assert.Equal("Standard bench press exercise", exercise.Description);
-            Assert.Equal(MuscleGroup.Chest, exercise.MuscleGroup);
-            Assert.Equal(Equipment.Barbell, exercise.Equipment);
-            Assert.False(exercise.IsCustom);
-            Assert.Null(exercise.UserId);
+            exercise.Should().NotBeNull();
+            exercise.Name.Should().Be("Bench Press");
+            exercise.Description.Should().Be("Standard bench press exercise");
+            exercise.MuscleGroup.Should().Be(MuscleGroup.Chest);
+            exercise.Equipment.Should().Be(Equipment.Barbell);
+            exercise.IsCustom.Should().BeFalse();
+            exercise.UserId.Should().BeNull();
         }
 
         [Fact]
         public void Build_ShouldGenerateId()
         {
             // Arrange & Act
-            var exercise = ExerciseMother.Default();
+            var exercise = ExerciseFactory.Default();
 
             // Assert
-            Assert.NotEqual(Guid.Empty, exercise.Id);
+            exercise.Id.Should().NotBe(Guid.Empty);
         }
 
         [Fact]
@@ -60,14 +56,12 @@ namespace FitTracker.Domain.Tests.Entities
             var before = DateTime.UtcNow;
 
             // Act
-            var exercise = ExerciseMother.Default();
+            var exercise = ExerciseFactory.Default();
             var after = DateTime.UtcNow;
 
             // Assert
-            Assert.True(exercise.CreatedAt >= before);
-            Assert.True(exercise.CreatedAt <= after);
-            Assert.True(exercise.UpdatedAt >= before);
-            Assert.True(exercise.UpdatedAt <= after);
+            exercise.CreatedAt.Should().BeOnOrAfter(before).And.BeOnOrBefore(after);
+            exercise.UpdatedAt.Should().BeOnOrAfter(before).And.BeOnOrBefore(after);
         }
 
         [Theory]
@@ -76,15 +70,15 @@ namespace FitTracker.Domain.Tests.Entities
         [InlineData("   ")]
         public void Build_WithInvalidName_ShouldThrowValidationException(string invalidName)
         {
-            // Arrange & Act & Assert
-            var exception = Assert.Throws<ValidationException>(() =>
-                Exercise.CreateBuilder()
-                    .WithName(invalidName)
-                    .WithMuscleGroup(MuscleGroup.Chest)
-                    .WithEquipment(Equipment.Barbell)
-                    .Build());
+            // Arrange & Act
+            Action act = () => Exercise.CreateBuilder()
+                .WithName(invalidName)
+                .WithMuscleGroup(MuscleGroup.Chest)
+                .WithEquipment(Equipment.Barbell)
+                .Build();
 
-            Assert.Contains("name", exception.Message.ToLower());
+            // Assert
+            act.Should().Throw<ValidationException>().WithMessage("*name*");
         }
 
         [Fact]
@@ -93,13 +87,15 @@ namespace FitTracker.Domain.Tests.Entities
             // Arrange
             var longName = new string('A', Exercise.NameMaxLength + 1);
 
-            // Act & Assert
-            Assert.Throws<ValidationException>(() =>
-                Exercise.CreateBuilder()
-                    .WithName(longName)
-                    .WithMuscleGroup(MuscleGroup.Chest)
-                    .WithEquipment(Equipment.Barbell)
-                    .Build());
+            // Act
+            Action act = () => Exercise.CreateBuilder()
+                .WithName(longName)
+                .WithMuscleGroup(MuscleGroup.Chest)
+                .WithEquipment(Equipment.Barbell)
+                .Build();
+
+            // Assert
+            act.Should().Throw<ValidationException>();
         }
 
         #endregion
@@ -118,46 +114,46 @@ namespace FitTracker.Domain.Tests.Entities
                 .Build();
 
             // Assert
-            Assert.False(exercise.IsCustom);
-            Assert.Null(exercise.UserId);
+            exercise.IsCustom.Should().BeFalse();
+            exercise.UserId.Should().BeNull();
         }
 
         [Fact]
         public void BenchPress_ShouldCreateCorrectExercise()
         {
             // Arrange & Act
-            var exercise = ExerciseMother.BenchPress();
+            var exercise = ExerciseFactory.BenchPress();
 
             // Assert
-            Assert.Equal("Barbell Bench Press", exercise.Name);
-            Assert.Equal(MuscleGroup.Chest, exercise.MuscleGroup);
-            Assert.Equal(Equipment.Barbell, exercise.Equipment);
-            Assert.False(exercise.IsCustom);
-            Assert.NotNull(exercise.ImageUrl);
-            Assert.NotNull(exercise.VideoUrl);
+            exercise.Name.Should().Be("Barbell Bench Press");
+            exercise.MuscleGroup.Should().Be(MuscleGroup.Chest);
+            exercise.Equipment.Should().Be(Equipment.Barbell);
+            exercise.IsCustom.Should().BeFalse();
+            exercise.ImageUrl.Should().NotBeNullOrEmpty();
+            exercise.VideoUrl.Should().NotBeNullOrEmpty();
         }
 
         [Fact]
         public void Deadlift_ShouldCreateCorrectExercise()
         {
             // Arrange & Act
-            var exercise = ExerciseMother.Deadlift();
+            var exercise = ExerciseFactory.Deadlift();
 
             // Assert
-            Assert.Equal("Barbell Deadlift", exercise.Name);
-            Assert.Equal(MuscleGroup.Back, exercise.MuscleGroup);
-            Assert.Equal(Equipment.Barbell, exercise.Equipment);
+            exercise.Name.Should().Be("Barbell Deadlift");
+            exercise.MuscleGroup.Should().Be(MuscleGroup.Back);
+            exercise.Equipment.Should().Be(Equipment.Barbell);
         }
 
         [Fact]
         public void Squat_ShouldCreateCorrectExercise()
         {
             // Arrange & Act
-            var exercise = ExerciseMother.Squat();
+            var exercise = ExerciseFactory.Squat();
 
             // Assert
-            Assert.Equal("Barbell Squat", exercise.Name);
-            Assert.Equal(MuscleGroup.Legs, exercise.MuscleGroup);
+            exercise.Name.Should().Be("Barbell Squat");
+            exercise.MuscleGroup.Should().Be(MuscleGroup.Legs);
         }
 
         #endregion
@@ -176,12 +172,12 @@ namespace FitTracker.Domain.Tests.Entities
                 .Build();
 
             // Assert
-            Assert.True(exercise.IsCustom);
-            Assert.Equal(_testUserId, exercise.UserId);
+            exercise.IsCustom.Should().BeTrue();
+            exercise.UserId.Should().Be(_testUserId);
         }
 
         [Fact]
-        public void Build_AsCustomWithoutUserId_ShouldThrowArgumentException()
+        public void Build_AsCustomWithoutUserId_ShouldThrowValidationException()
         {
             var builder = Exercise.CreateBuilder()
                 .WithName("Custom Exercise")
@@ -189,35 +185,36 @@ namespace FitTracker.Domain.Tests.Entities
                 .WithEquipment(Equipment.Dumbbell)
                 .AsCustom(Guid.Empty);
 
-            // Act & Assert
-            var exception = Assert.Throws<ValidationException>(() => builder.Build());
+            // Act
+            Action act = () => builder.Build();
 
-            Assert.Contains("user", exception.Message.ToLower());
+            // Assert
+            act.Should().Throw<ValidationException>().WithMessage("*user*");
         }
 
         [Fact]
         public void CustomExercise_ShouldHaveCorrectUserId()
         {
             // Arrange & Act
-            var exercise = ExerciseMother.CustomExercise(_testUserId);
+            var exercise = ExerciseFactory.CustomExercise(_testUserId);
 
             // Assert
-            Assert.True(exercise.IsCustom);
-            Assert.Equal(_testUserId, exercise.UserId);
+            exercise.IsCustom.Should().BeTrue();
+            exercise.UserId.Should().Be(_testUserId);
         }
 
         [Fact]
         public void CustomWithAllFields_ShouldHaveAllProperties()
         {
             // Arrange & Act
-            var exercise = ExerciseMother.CustomWithAllFields(_testUserId);
+            var exercise = ExerciseFactory.CustomWithAllFields(_testUserId);
 
             // Assert
-            Assert.True(exercise.IsCustom);
-            Assert.Equal(_testUserId, exercise.UserId);
-            Assert.NotNull(exercise.ImageUrl);
-            Assert.NotNull(exercise.VideoUrl);
-            Assert.NotNull(exercise.Description);
+            exercise.IsCustom.Should().BeTrue();
+            exercise.UserId.Should().Be(_testUserId);
+            exercise.ImageUrl.Should().NotBeNullOrEmpty();
+            exercise.VideoUrl.Should().NotBeNullOrEmpty();
+            exercise.Description.Should().NotBeNullOrEmpty();
         }
 
         #endregion
@@ -245,7 +242,7 @@ namespace FitTracker.Domain.Tests.Entities
                 .Build();
 
             // Assert
-            Assert.Equal(muscleGroup, exercise.MuscleGroup);
+            exercise.MuscleGroup.Should().Be(muscleGroup);
         }
 
         #endregion
@@ -271,27 +268,27 @@ namespace FitTracker.Domain.Tests.Entities
                 .Build();
 
             // Assert
-            Assert.Equal(equipment, exercise.Equipment);
+            exercise.Equipment.Should().Be(equipment);
         }
 
         [Fact]
         public void WithBarbell_ShouldUseBarbell()
         {
             // Arrange & Act
-            var exercise = ExerciseMother.WithBarbell();
+            var exercise = ExerciseFactory.WithBarbell();
 
             // Assert
-            Assert.Equal(Equipment.Barbell, exercise.Equipment);
+            exercise.Equipment.Should().Be(Equipment.Barbell);
         }
 
         [Fact]
         public void WithBodyweight_ShouldUseBodyweight()
         {
             // Arrange & Act
-            var exercise = ExerciseMother.WithBodyweight();
+            var exercise = ExerciseFactory.WithBodyweight();
 
             // Assert
-            Assert.Equal(Equipment.Bodyweight, exercise.Equipment);
+            exercise.Equipment.Should().Be(Equipment.Bodyweight);
         }
 
         #endregion
@@ -310,7 +307,7 @@ namespace FitTracker.Domain.Tests.Entities
                 .Build();
 
             // Assert
-            Assert.Equal("https://example.com/image.jpg", exercise.ImageUrl);
+            exercise.ImageUrl.Should().Be("https://example.com/image.jpg");
         }
 
         [Fact]
@@ -325,40 +322,40 @@ namespace FitTracker.Domain.Tests.Entities
                 .Build();
 
             // Assert
-            Assert.Equal("https://example.com/video.mp4", exercise.VideoUrl);
+            exercise.VideoUrl.Should().Be("https://example.com/video.mp4");
         }
 
         [Fact]
         public void WithImage_ShouldHaveImageOnly()
         {
             // Arrange & Act
-            var exercise = ExerciseMother.WithImage();
+            var exercise = ExerciseFactory.WithImage();
 
             // Assert
-            Assert.NotNull(exercise.ImageUrl);
-            Assert.Null(exercise.VideoUrl);
+            exercise.ImageUrl.Should().NotBeNullOrEmpty();
+            exercise.VideoUrl.Should().BeNull();
         }
 
         [Fact]
         public void WithVideo_ShouldHaveVideoOnly()
         {
             // Arrange & Act
-            var exercise = ExerciseMother.WithVideo();
+            var exercise = ExerciseFactory.WithVideo();
 
             // Assert
-            Assert.Null(exercise.ImageUrl);
-            Assert.NotNull(exercise.VideoUrl);
+            exercise.ImageUrl.Should().BeNull();
+            exercise.VideoUrl.Should().NotBeNullOrEmpty();
         }
 
         [Fact]
         public void WithImageAndVideo_ShouldHaveBoth()
         {
             // Arrange & Act
-            var exercise = ExerciseMother.WithImageAndVideo();
+            var exercise = ExerciseFactory.WithImageAndVideo();
 
             // Assert
-            Assert.NotNull(exercise.ImageUrl);
-            Assert.NotNull(exercise.VideoUrl);
+            exercise.ImageUrl.Should().NotBeNullOrEmpty();
+            exercise.VideoUrl.Should().NotBeNullOrEmpty();
         }
 
         #endregion
@@ -369,7 +366,7 @@ namespace FitTracker.Domain.Tests.Entities
         public void Update_WithValidData_ShouldUpdateExercise()
         {
             // Arrange
-            var exercise = ExerciseMother.Default();
+            var exercise = ExerciseFactory.Default();
             var originalUpdatedAt = exercise.UpdatedAt;
             Thread.Sleep(10);
 
@@ -381,11 +378,11 @@ namespace FitTracker.Domain.Tests.Entities
                 "Updated description");
 
             // Assert
-            Assert.Equal("Updated Name", exercise.Name);
-            Assert.Equal(MuscleGroup.Back, exercise.MuscleGroup);
-            Assert.Equal(Equipment.Dumbbell, exercise.Equipment);
-            Assert.Equal("Updated description", exercise.Description);
-            Assert.True(exercise.UpdatedAt > originalUpdatedAt);
+            exercise.Name.Should().Be("Updated Name");
+            exercise.MuscleGroup.Should().Be(MuscleGroup.Back);
+            exercise.Equipment.Should().Be(Equipment.Dumbbell);
+            exercise.Description.Should().Be("Updated description");
+            exercise.UpdatedAt.Should().BeAfter(originalUpdatedAt);
         }
 
         [Theory]
@@ -395,20 +392,20 @@ namespace FitTracker.Domain.Tests.Entities
         public void Update_WithInvalidName_ShouldThrowValidationException(string invalidName)
         {
             // Arrange
-            var exercise = ExerciseMother.Default();
+            var exercise = ExerciseFactory.Default();
 
-            // Act & Assert
-            var exception = Assert.Throws<ValidationException>(() =>
-                exercise.Update(invalidName, MuscleGroup.Chest, Equipment.Barbell));
+            // Act
+            Action act = () => exercise.Update(invalidName, MuscleGroup.Chest, Equipment.Barbell);
 
-            Assert.Contains("name", exception.Message.ToLower());
+            // Assert
+            act.Should().Throw<ValidationException>().WithMessage("*name*");
         }
 
         [Fact]
         public void UpdateImageUrl_ShouldUpdateImage()
         {
             // Arrange
-            var exercise = ExerciseMother.Default();
+            var exercise = ExerciseFactory.Default();
             var originalUpdatedAt = exercise.UpdatedAt;
             Thread.Sleep(10);
 
@@ -416,28 +413,28 @@ namespace FitTracker.Domain.Tests.Entities
             exercise.UpdateImageUrl("https://example.com/new-image.jpg");
 
             // Assert
-            Assert.Equal("https://example.com/new-image.jpg", exercise.ImageUrl);
-            Assert.True(exercise.UpdatedAt > originalUpdatedAt);
+            exercise.ImageUrl.Should().Be("https://example.com/new-image.jpg");
+            exercise.UpdatedAt.Should().BeAfter(originalUpdatedAt);
         }
 
         [Fact]
         public void UpdateImageUrl_WithNull_ShouldSetNull()
         {
             // Arrange
-            var exercise = ExerciseMother.WithImage();
+            var exercise = ExerciseFactory.WithImage();
 
             // Act
             exercise.UpdateImageUrl(null);
 
             // Assert
-            Assert.Null(exercise.ImageUrl);
+            exercise.ImageUrl.Should().BeNull();
         }
 
         [Fact]
         public void UpdateVideoUrl_ShouldUpdateVideo()
         {
             // Arrange
-            var exercise = ExerciseMother.Default();
+            var exercise = ExerciseFactory.Default();
             var originalUpdatedAt = exercise.UpdatedAt;
             Thread.Sleep(10);
 
@@ -445,21 +442,21 @@ namespace FitTracker.Domain.Tests.Entities
             exercise.UpdateVideoUrl("https://example.com/new-video.mp4");
 
             // Assert
-            Assert.Equal("https://example.com/new-video.mp4", exercise.VideoUrl);
-            Assert.True(exercise.UpdatedAt > originalUpdatedAt);
+            exercise.VideoUrl.Should().Be("https://example.com/new-video.mp4");
+            exercise.UpdatedAt.Should().BeAfter(originalUpdatedAt);
         }
 
         [Fact]
         public void UpdateVideoUrl_WithNull_ShouldSetNull()
         {
             // Arrange
-            var exercise = ExerciseMother.WithVideo();
+            var exercise = ExerciseFactory.WithVideo();
 
             // Act
             exercise.UpdateVideoUrl(null);
 
             // Assert
-            Assert.Null(exercise.VideoUrl);
+            exercise.VideoUrl.Should().BeNull();
         }
 
         #endregion
@@ -470,69 +467,68 @@ namespace FitTracker.Domain.Tests.Entities
         public void ChestExercises_ShouldContainOnlyChestExercises()
         {
             // Arrange & Act
-            var exercises = ExerciseMother.ChestExercises();
+            var exercises = ExerciseFactory.ChestExercises();
 
             // Assert
-            Assert.Equal(3, exercises.Count);
-            Assert.All(exercises, e => Assert.Equal(MuscleGroup.Chest, e.MuscleGroup));
+            exercises.Count.Should().Be(3);
+            exercises.Should().OnlyContain(e => e.MuscleGroup == MuscleGroup.Chest);
         }
 
         [Fact]
         public void BackExercises_ShouldContainOnlyBackExercises()
         {
             // Arrange & Act
-            var exercises = ExerciseMother.BackExercises();
+            var exercises = ExerciseFactory.BackExercises();
 
             // Assert
-            Assert.Equal(3, exercises.Count);
-            Assert.All(exercises, e => Assert.Equal(MuscleGroup.Back, e.MuscleGroup));
+            exercises.Count.Should().Be(3);
+            exercises.Should().OnlyContain(e => e.MuscleGroup == MuscleGroup.Back);
         }
 
         [Fact]
         public void BodyweightExercises_ShouldContainOnlyBodyweight()
         {
             // Arrange & Act
-            var exercises = ExerciseMother.BodyweightExercises();
+            var exercises = ExerciseFactory.BodyweightExercises();
 
             // Assert
-            Assert.True(exercises.Count > 0);
-            Assert.All(exercises, e => Assert.Equal(Equipment.Bodyweight, e.Equipment));
+            exercises.Count.Should().BeGreaterThan(0);
+            exercises.Should().OnlyContain(e => e.Equipment == Equipment.Bodyweight);
         }
 
         [Fact]
         public void CompoundExercises_ShouldContainMajorLifts()
         {
             // Arrange & Act
-            var exercises = ExerciseMother.CompoundExercises();
+            var exercises = ExerciseFactory.CompoundExercises();
 
             // Assert
-            Assert.Contains(exercises, e => e.Name.Contains("Bench Press"));
-            Assert.Contains(exercises, e => e.Name.Contains("Deadlift"));
-            Assert.Contains(exercises, e => e.Name.Contains("Squat"));
+            exercises.Should().Contain(e => e.Name.Contains("Bench Press"));
+            exercises.Should().Contain(e => e.Name.Contains("Deadlift"));
+            exercises.Should().Contain(e => e.Name.Contains("Squat"));
         }
 
         [Fact]
         public void AllStandardExercises_ShouldBeStandard()
         {
             // Arrange & Act
-            var exercises = ExerciseMother.AllStandardExercises();
+            var exercises = ExerciseFactory.AllStandardExercises();
 
             // Assert
-            Assert.True(exercises.Count > 10);
-            Assert.All(exercises, e => Assert.False(e.IsCustom));
-            Assert.All(exercises, e => Assert.Null(e.UserId));
+            exercises.Count.Should().BeGreaterThan(10);
+            exercises.Should().OnlyContain(e => !e.IsCustom);
+            exercises.Should().OnlyContain(e => e.UserId == null);
         }
 
         [Fact]
         public void MixedCollection_ShouldContainBothStandardAndCustom()
         {
             // Arrange & Act
-            var exercises = ExerciseMother.MixedCollection(_testUserId);
+            var exercises = ExerciseFactory.MixedCollection(_testUserId);
 
             // Assert
-            Assert.Contains(exercises, e => !e.IsCustom);
-            Assert.Contains(exercises, e => e.IsCustom);
-            Assert.Contains(exercises, e => e.UserId == _testUserId);
+            exercises.Should().Contain(e => !e.IsCustom);
+            exercises.Should().Contain(e => e.IsCustom && e.UserId == _testUserId);
         }
 
         #endregion
@@ -543,36 +539,36 @@ namespace FitTracker.Domain.Tests.Entities
         public void PushUp_ShouldBeBodyweightChestExercise()
         {
             // Arrange & Act
-            var exercise = ExerciseMother.PushUp();
+            var exercise = ExerciseFactory.PushUp();
 
             // Assert
-            Assert.Equal("Push-Up", exercise.Name);
-            Assert.Equal(MuscleGroup.Chest, exercise.MuscleGroup);
-            Assert.Equal(Equipment.Bodyweight, exercise.Equipment);
-            Assert.False(exercise.IsCustom);
+            exercise.Name.Should().Be("Push-Up");
+            exercise.MuscleGroup.Should().Be(MuscleGroup.Chest);
+            exercise.Equipment.Should().Be(Equipment.Bodyweight);
+            exercise.IsCustom.Should().BeFalse();
         }
 
         [Fact]
         public void PullUp_ShouldBeBodyweightBackExercise()
         {
             // Arrange & Act
-            var exercise = ExerciseMother.PullUp();
+            var exercise = ExerciseFactory.PullUp();
 
             // Assert
-            Assert.Equal("Pull-Up", exercise.Name);
-            Assert.Equal(MuscleGroup.Back, exercise.MuscleGroup);
-            Assert.Equal(Equipment.Bodyweight, exercise.Equipment);
+            exercise.Name.Should().Be("Pull-Up");
+            exercise.MuscleGroup.Should().Be(MuscleGroup.Back);
+            exercise.Equipment.Should().Be(Equipment.Bodyweight);
         }
 
         [Fact]
         public void LegPress_ShouldBeMachineExercise()
         {
             // Arrange & Act
-            var exercise = ExerciseMother.LegPress();
+            var exercise = ExerciseFactory.LegPress();
 
             // Assert
-            Assert.Equal(MuscleGroup.Legs, exercise.MuscleGroup);
-            Assert.Equal(Equipment.Machine, exercise.Equipment);
+            exercise.MuscleGroup.Should().Be(MuscleGroup.Legs);
+            exercise.Equipment.Should().Be(Equipment.Machine);
         }
 
         #endregion

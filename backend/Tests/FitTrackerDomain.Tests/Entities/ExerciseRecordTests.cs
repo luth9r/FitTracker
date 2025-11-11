@@ -1,12 +1,8 @@
-// Domain.Tests/Entities/ExerciseRecordTests.cs
-using System;
-using System.Threading;
-using Xunit;
-using FluentValidation;
 using FitTracker.Domain.Entities;
 using FitTracker.Domain.ValueObjects;
-using FitTracker.Domain.Tests.Factories;
 using FitTrackerDomain.Tests.Factories;
+using FluentAssertions;
+using FluentValidation;
 
 namespace FitTracker.Domain.Tests.Entities
 {
@@ -20,21 +16,19 @@ namespace FitTracker.Domain.Tests.Entities
         [Fact]
         public void Create_WithEmptyUserId_ShouldThrowValidationException()
         {
-            // Act & Assert
-            var ex = Assert.Throws<ValidationException>(() =>
-                ExerciseRecord.Create(Guid.Empty, _exerciseId));
+            Action act = () => ExerciseRecord.Create(Guid.Empty, _exerciseId);
 
-            Assert.Contains("User ID is required", ex.Message);
+            var ex = act.Should().Throw<ValidationException>().Which;
+            ex.Message.Should().Contain("User ID is required");
         }
 
         [Fact]
         public void Create_WithEmptyExerciseId_ShouldThrowValidationException()
         {
-            // Act & Assert
-            var ex = Assert.Throws<ValidationException>(() =>
-                ExerciseRecord.Create(_userId, Guid.Empty));
+            Action act = () => ExerciseRecord.Create(_userId, Guid.Empty);
 
-            Assert.Contains("Exercise ID is required", ex.Message);
+            var ex = act.Should().Throw<ValidationException>().Which;
+            ex.Message.Should().Contain("Exercise ID is required");
         }
 
         #endregion
@@ -44,22 +38,20 @@ namespace FitTracker.Domain.Tests.Entities
         [Fact]
         public void Create_Default_ShouldInitializeWithZeroes()
         {
-            // Act
             var record = ExerciseRecord.Create(_userId, _exerciseId);
 
-            // Assert
-            Assert.Equal(_userId, record.UserId);
-            Assert.Equal(_exerciseId, record.ExerciseId);
-            Assert.Equal(0, record.MaxWeight.ToKilograms());
-            Assert.Equal(0, record.MaxReps);
-            Assert.Equal(0, record.MaxVolume);
-            Assert.Equal(0, record.MaxTotalVolume);
-            Assert.Equal(0, record.TotalWorkouts);
-            Assert.Equal(0, record.TotalSets);
-            Assert.Equal(0, record.TotalReps);
-            Assert.Equal(0, record.TotalLifted);
-            Assert.True(record.MaxWeightDate <= DateTime.UtcNow);
-            Assert.True(record.LastPerformed <= DateTime.UtcNow);
+            record.UserId.Should().Be(_userId);
+            record.ExerciseId.Should().Be(_exerciseId);
+            record.MaxWeight.ToKilograms().Should().Be(0);
+            record.MaxReps.Should().Be(0);
+            record.MaxVolume.Should().Be(0);
+            record.MaxTotalVolume.Should().Be(0);
+            record.TotalWorkouts.Should().Be(0);
+            record.TotalSets.Should().Be(0);
+            record.TotalReps.Should().Be(0);
+            record.TotalLifted.Should().Be(0);
+            record.MaxWeightDate.Should().BeOnOrBefore(DateTime.UtcNow);
+            record.LastPerformed.Should().BeOnOrBefore(DateTime.UtcNow);
         }
 
         #endregion
@@ -69,11 +61,9 @@ namespace FitTracker.Domain.Tests.Entities
         [Fact]
         public void UpdateRecords_WithNewMaxWeight_ShouldUpdateAndReturnTrue()
         {
-            // Arrange
-            var record = ExerciseRecordMother.Default();
+            var record = ExerciseRecordFactory.Default();
             var newMaxWeight = Weight.FromKilograms(50);
 
-            // Act
             var result = record.UpdateRecords(
                 maxSetWeight: newMaxWeight,
                 maxSetReps: 1,
@@ -83,24 +73,22 @@ namespace FitTracker.Domain.Tests.Entities
                 workoutReps: 1,
                 workoutLifted: 50m);
 
-            // Assert
-            Assert.True(result);
-            Assert.Equal(newMaxWeight.ToKilograms(), record.MaxWeight.ToKilograms());
-            Assert.Equal(1, record.MaxReps);
-            Assert.Equal(50m, record.MaxVolume);
-            Assert.Equal(50m, record.MaxTotalVolume);
-            Assert.Equal(1, record.TotalWorkouts);
-            Assert.Equal(1, record.TotalSets);
-            Assert.Equal(1, record.TotalReps);
-            Assert.Equal(50m, record.TotalLifted);
-            Assert.True(record.LastPerformed <= DateTime.UtcNow);
+            result.Should().BeTrue();
+            record.MaxWeight.ToKilograms().Should().Be(newMaxWeight.ToKilograms());
+            record.MaxReps.Should().Be(1);
+            record.MaxVolume.Should().Be(50m);
+            record.MaxTotalVolume.Should().Be(50m);
+            record.TotalWorkouts.Should().Be(1);
+            record.TotalSets.Should().Be(1);
+            record.TotalReps.Should().Be(1);
+            record.TotalLifted.Should().Be(50m);
+            record.LastPerformed.Should().BeOnOrBefore(DateTime.UtcNow);
         }
 
         [Fact]
         public void UpdateRecords_WithLowerMaxWeight_ShouldNotChangeMaxWeight()
         {
-            // Arrange
-            var record = ExerciseRecordMother.WithValues(
+            var record = ExerciseRecordFactory.WithValues(
                 maxWeight: Weight.FromKilograms(100),
                 maxReps: 10,
                 maxVolume: 1000m,
@@ -111,7 +99,6 @@ namespace FitTracker.Domain.Tests.Entities
                 totalLifted: 10000m);
             var newMaxWeight = Weight.FromKilograms(80);
 
-            // Act
             var result = record.UpdateRecords(
                 maxSetWeight: newMaxWeight,
                 maxSetReps: 5,
@@ -121,17 +108,16 @@ namespace FitTracker.Domain.Tests.Entities
                 workoutReps: 50,
                 workoutLifted: 3000m);
 
-            // Assert
-            Assert.False(result);
-            Assert.Equal(100, record.MaxWeight.ToKilograms());
-            Assert.Equal(10, record.MaxReps);
-            Assert.Equal(1000m, record.MaxVolume);
-            Assert.Equal(2000m, record.MaxTotalVolume);
-            Assert.Equal(6, record.TotalWorkouts);
-            Assert.Equal(23, record.TotalSets);
-            Assert.Equal(250, record.TotalReps);
-            Assert.Equal(13000m, record.TotalLifted);
-            Assert.True(record.LastPerformed <= DateTime.UtcNow);
+            result.Should().BeFalse();
+            record.MaxWeight.ToKilograms().Should().Be(100);
+            record.MaxReps.Should().Be(10);
+            record.MaxVolume.Should().Be(1000m);
+            record.MaxTotalVolume.Should().Be(2000m);
+            record.TotalWorkouts.Should().Be(6);
+            record.TotalSets.Should().Be(23);
+            record.TotalReps.Should().Be(250);
+            record.TotalLifted.Should().Be(13000m);
+            record.LastPerformed.Should().BeOnOrBefore(DateTime.UtcNow);
         }
 
         #endregion
@@ -141,57 +127,45 @@ namespace FitTracker.Domain.Tests.Entities
         [Fact]
         public void GetAverageWeightPerSet_WithZeroTotalSets_ShouldReturnZero()
         {
-            // Arrange
-            var record = ExerciseRecordMother.Default();
+            var record = ExerciseRecordFactory.Default();
 
-            // Act
             var avg = record.GetAverageWeightPerSet();
 
-            // Assert
-            Assert.Equal(0, avg);
+            avg.Should().Be(0);
         }
 
         [Fact]
         public void GetAverageWeightPerSet_WithData_ShouldCalculateCorrectly()
         {
-            // Arrange
-            var record = ExerciseRecordMother.WithValues(
+            var record = ExerciseRecordFactory.WithValues(
                 totalSets: 5,
                 totalLifted: 150);
 
-            // Act
             var avg = record.GetAverageWeightPerSet();
 
-            // Assert
-            Assert.Equal(30, avg);
+            avg.Should().Be(30);
         }
 
         [Fact]
         public void GetAverageRepsPerSet_WithZeroTotalSets_ShouldReturnZero()
         {
-            // Arrange
-            var record = ExerciseRecordMother.Default();
+            var record = ExerciseRecordFactory.Default();
 
-            // Act
             var avg = record.GetAverageRepsPerSet();
 
-            // Assert
-            Assert.Equal(0, avg);
+            avg.Should().Be(0);
         }
 
         [Fact]
         public void GetAverageRepsPerSet_WithData_ShouldCalculateCorrectly()
         {
-            // Arrange
-            var record = ExerciseRecordMother.WithValues(
+            var record = ExerciseRecordFactory.WithValues(
                 totalSets: 10,
                 totalReps: 100);
 
-            // Act
             var avg = record.GetAverageRepsPerSet();
 
-            // Assert
-            Assert.Equal(10, avg);
+            avg.Should().Be(10);
         }
 
         #endregion

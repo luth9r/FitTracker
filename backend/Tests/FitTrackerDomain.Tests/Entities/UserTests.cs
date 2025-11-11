@@ -1,10 +1,9 @@
-using System;
-using System.Threading;
-using Xunit;
 using FitTracker.Domain.Entities;
-using FitTracker.Domain.ValueObjects;
 using FitTracker.Domain.Tests.Factories;
+using FitTracker.Domain.ValueObjects;
+using FluentAssertions;
 using FluentValidation;
+using Moq;
 
 namespace FitTracker.Domain.Tests.Entities
 {
@@ -17,64 +16,54 @@ namespace FitTracker.Domain.Tests.Entities
         [Fact]
         public void CreateBuilder_ShouldReturnValidBuilder()
         {
-            // Act
             var builder = User.CreateBuilder();
 
-            // Assert
-            Assert.NotNull(builder);
-            Assert.IsType<User.UserBuilder>(builder);
+            builder.Should().NotBeNull();
+            builder.Should().BeOfType<User.UserBuilder>();
         }
 
         [Fact]
         public void Build_WithValidData_ShouldCreateUser()
         {
-            // Arrange & Act
-            var user = UserMother.Default();
+            var user = UserFactory.Default();
 
-            // Assert
-            Assert.NotNull(user);
-            Assert.Equal("testuser", user.Username);
-            Assert.Equal("test@example.com", user.Email);
-            Assert.Equal(PASSWORD_HASH, user.PasswordHash);
-            Assert.Equal(UnitSystem.Metric, user.PreferredUnits);
+            user.Should().NotBeNull();
+            user.Username.Should().Be("testuser");
+            user.Email.Should().Be("test@example.com");
+            user.PasswordHash.Should().Be(PASSWORD_HASH);
+            user.PreferredUnits.Should().Be(UnitSystem.Metric);
         }
 
         [Fact]
         public void Build_WithMetricUnits_ShouldSetMetricSystem()
         {
-            // Arrange & Act
-            var user = UserMother.WithMetricUnits();
+            var user = UserFactory.WithMetricUnits();
 
-            // Assert
-            Assert.Equal(UnitSystem.Metric, user.PreferredUnits);
-            Assert.True(user.UsesMetric());
-            Assert.False(user.UsesImperial());
+            user.PreferredUnits.Should().Be(UnitSystem.Metric);
+            user.UsesMetric().Should().BeTrue();
+            user.UsesImperial().Should().BeFalse();
         }
 
         [Fact]
         public void Build_WithImperialUnits_ShouldSetImperialSystem()
         {
-            // Arrange & Act
-            var user = UserMother.WithImperialUnits();
+            var user = UserFactory.WithImperialUnits();
 
-            // Assert
-            Assert.Equal(UnitSystem.Imperial, user.PreferredUnits);
-            Assert.False(user.UsesMetric());
-            Assert.True(user.UsesImperial());
+            user.PreferredUnits.Should().Be(UnitSystem.Imperial);
+            user.UsesMetric().Should().BeFalse();
+            user.UsesImperial().Should().BeTrue();
         }
 
         [Fact]
         public void Build_WithOptionalFields_ShouldCreateUserWithAllFields()
         {
-            // Arrange & Act
-            var user = UserMother.WithAllFields();
+            var user = UserFactory.WithAllFields();
 
-            // Assert
-            Assert.Equal("John", user.FirstName);
-            Assert.Equal("Doe", user.LastName);
-            Assert.Equal("https://avatar.com/pic.jpg", user.Avatar);
-            Assert.Equal("Fitness enthusiast", user.Bio);
-            Assert.Equal(UnitSystem.Imperial, user.PreferredUnits);
+            user.FirstName.Should().Be("John");
+            user.LastName.Should().Be("Doe");
+            user.Avatar.Should().Be("https://avatar.com/pic.jpg");
+            user.Bio.Should().Be("Fitness enthusiast");
+            user.PreferredUnits.Should().Be(UnitSystem.Imperial);
         }
 
         [Theory]
@@ -84,15 +73,14 @@ namespace FitTracker.Domain.Tests.Entities
         public void Build_WithInvalidUsername_ShouldThrowValidationException(
             string username, string email, string passwordHash)
         {
-            // Arrange
             var builder = User.CreateBuilder()
                 .WithUsername(username)
                 .WithEmail(email)
                 .WithPasswordHash(passwordHash);
 
-            // Act & Assert
-            var exception = Assert.Throws<ValidationException>(() => builder.Build());
-            Assert.Contains("Username", exception.Message);
+            Action act = () => builder.Build();
+
+            act.Should().Throw<ValidationException>().WithMessage("*username*");
         }
 
         [Theory]
@@ -102,15 +90,14 @@ namespace FitTracker.Domain.Tests.Entities
         public void Build_WithInvalidEmail_ShouldThrowValidationException(
             string username, string email, string passwordHash)
         {
-            // Arrange
             var builder = User.CreateBuilder()
                 .WithUsername(username)
                 .WithEmail(email)
                 .WithPasswordHash(passwordHash);
 
-            // Act & Assert
-            var exception = Assert.Throws<ValidationException>(() => builder.Build());
-            Assert.Contains("Email", exception.Message);
+            Action act = () => builder.Build();
+
+            act.Should().Throw<ValidationException>().WithMessage("*email*");
         }
 
         [Theory]
@@ -120,25 +107,22 @@ namespace FitTracker.Domain.Tests.Entities
         public void Build_WithInvalidPasswordHash_ShouldThrowValidationException(
             string username, string email, string passwordHash)
         {
-            // Arrange
             var builder = User.CreateBuilder()
                 .WithUsername(username)
                 .WithEmail(email)
                 .WithPasswordHash(passwordHash);
 
-            // Act & Assert
-            var exception = Assert.Throws<ValidationException>(() => builder.Build());
-            Assert.Contains("Password", exception.Message);
+            Action act = () => builder.Build();
+
+            act.Should().Throw<ValidationException>().WithMessage("*password*");
         }
 
         [Fact]
         public void Build_EmailShouldBeLowerCase()
         {
-            // Arrange & Act
-            var user = UserMother.WithEmail("TEST@EXAMPLE.COM");
+            var user = UserFactory.WithEmail("TEST@EXAMPLE.COM");
 
-            // Assert
-            Assert.Equal("test@example.com", user.Email);
+            user.Email.Should().Be("test@example.com");
         }
 
         #endregion
@@ -148,36 +132,30 @@ namespace FitTracker.Domain.Tests.Entities
         [Fact]
         public void UpdateProfile_WithValidData_ShouldUpdateFields()
         {
-            // Arrange
-            var user = UserMother.Default();
+            var user = UserFactory.Default();
             var originalUpdatedAt = user.UpdatedAt;
 
-            // Act
-            Thread.Sleep(10); // Ensure time passes
+            Thread.Sleep(10);
             user.UpdateProfile("Jane", "Smith", "New bio", "https://newavatar.com/pic.jpg");
 
-            // Assert
-            Assert.Equal("Jane", user.FirstName);
-            Assert.Equal("Smith", user.LastName);
-            Assert.Equal("New bio", user.Bio);
-            Assert.Equal("https://newavatar.com/pic.jpg", user.Avatar);
-            Assert.True(user.UpdatedAt > originalUpdatedAt);
+            user.FirstName.Should().Be("Jane");
+            user.LastName.Should().Be("Smith");
+            user.Bio.Should().Be("New bio");
+            user.Avatar.Should().Be("https://newavatar.com/pic.jpg");
+            user.UpdatedAt.Should().BeAfter(originalUpdatedAt);
         }
 
         [Fact]
         public void UpdateProfile_WithNullValues_ShouldAcceptNulls()
         {
-            // Arrange
-            var user = UserMother.WithCompletedProfile();
+            var user = UserFactory.WithCompletedProfile();
 
-            // Act
             user.UpdateProfile(null, null, null, null);
 
-            // Assert
-            Assert.Null(user.FirstName);
-            Assert.Null(user.LastName);
-            Assert.Null(user.Bio);
-            Assert.Null(user.Avatar);
+            user.FirstName.Should().BeNull();
+            user.LastName.Should().BeNull();
+            user.Bio.Should().BeNull();
+            user.Avatar.Should().BeNull();
         }
 
         #endregion
@@ -187,30 +165,24 @@ namespace FitTracker.Domain.Tests.Entities
         [Fact]
         public void UpdateEmail_WithValidEmail_ShouldUpdateEmail()
         {
-            // Arrange
-            var user = UserMother.Default();
+            var user = UserFactory.Default();
             var originalUpdatedAt = user.UpdatedAt;
 
-            // Act
             Thread.Sleep(10);
             user.UpdateEmail("newemail@example.com");
 
-            // Assert
-            Assert.Equal("newemail@example.com", user.Email);
-            Assert.True(user.UpdatedAt > originalUpdatedAt);
+            user.Email.Should().Be("newemail@example.com");
+            user.UpdatedAt.Should().BeAfter(originalUpdatedAt);
         }
 
         [Fact]
         public void UpdateEmail_ShouldConvertToLowerCase()
         {
-            // Arrange
-            var user = UserMother.Default();
+            var user = UserFactory.Default();
 
-            // Act
             user.UpdateEmail("NEWEMAIL@EXAMPLE.COM");
 
-            // Assert
-            Assert.Equal("newemail@example.com", user.Email);
+            user.Email.Should().Be("newemail@example.com");
         }
 
         [Theory]
@@ -219,12 +191,11 @@ namespace FitTracker.Domain.Tests.Entities
         [InlineData("  ")]
         public void UpdateEmail_WithInvalidEmail_ShouldThrowValidationException(string email)
         {
-            // Arrange
-            var user = UserMother.Default();
+            var user = UserFactory.Default();
 
-            // Act & Assert
-            var exception = Assert.Throws<ValidationException>(() => user.UpdateEmail(email));
-            Assert.Contains("Email", exception.Message);
+            Action act = () => user.UpdateEmail(email);
+
+            act.Should().Throw<ValidationException>().WithMessage("*email*");
         }
 
         #endregion
@@ -234,17 +205,14 @@ namespace FitTracker.Domain.Tests.Entities
         [Fact]
         public void UpdatePasswordHash_WithValidHash_ShouldUpdatePassword()
         {
-            // Arrange
-            var user = UserMother.Default();
+            var user = UserFactory.Default();
             var originalUpdatedAt = user.UpdatedAt;
 
-            // Act
             Thread.Sleep(10);
             user.UpdatePasswordHash("newhash123");
 
-            // Assert
-            Assert.Equal("newhash123", user.PasswordHash);
-            Assert.True(user.UpdatedAt > originalUpdatedAt);
+            user.PasswordHash.Should().Be("newhash123");
+            user.UpdatedAt.Should().BeAfter(originalUpdatedAt);
         }
 
         [Theory]
@@ -253,12 +221,11 @@ namespace FitTracker.Domain.Tests.Entities
         [InlineData("  ")]
         public void UpdatePasswordHash_WithInvalidHash_ShouldThrowValidationException(string hash)
         {
-            // Arrange
-            var user = UserMother.Default();
+            var user = UserFactory.Default();
 
-            // Act & Assert
-            var exception = Assert.Throws<ValidationException>(() => user.UpdatePasswordHash(hash));
-            Assert.Contains("Password", exception.Message);
+            Action act = () => user.UpdatePasswordHash(hash);
+
+            act.Should().Throw<ValidationException>().WithMessage("*password*");
         }
 
         #endregion
@@ -268,55 +235,46 @@ namespace FitTracker.Domain.Tests.Entities
         [Fact]
         public void UpdatePreferredUnits_WithValidUnit_ShouldUpdateUnits()
         {
-            // Arrange
-            var user = UserMother.Default();
+            var user = UserFactory.Default();
             var originalUpdatedAt = user.UpdatedAt;
 
-            // Act
             Thread.Sleep(10);
             user.UpdatePreferredUnits(UnitSystem.Imperial);
 
-            // Assert
-            Assert.Equal(UnitSystem.Imperial, user.PreferredUnits);
-            Assert.True(user.UpdatedAt > originalUpdatedAt);
+            user.PreferredUnits.Should().Be(UnitSystem.Imperial);
+            user.UpdatedAt.Should().BeAfter(originalUpdatedAt);
         }
 
         [Fact]
         public void SetMetricUnits_ShouldSetToMetric()
         {
-            // Arrange
-            var user = UserMother.WithImperialUnits();
+            var user = UserFactory.WithImperialUnits();
 
-            // Act
             user.SetMetricUnits();
 
-            // Assert
-            Assert.Equal(UnitSystem.Metric, user.PreferredUnits);
-            Assert.True(user.UsesMetric());
+            user.PreferredUnits.Should().Be(UnitSystem.Metric);
+            user.UsesMetric().Should().BeTrue();
         }
 
         [Fact]
         public void SetImperialUnits_ShouldSetToImperial()
         {
-            // Arrange
-            var user = UserMother.WithMetricUnits();
+            var user = UserFactory.WithMetricUnits();
 
-            // Act
             user.SetImperialUnits();
 
-            // Assert
-            Assert.Equal(UnitSystem.Imperial, user.PreferredUnits);
-            Assert.True(user.UsesImperial());
+            user.PreferredUnits.Should().Be(UnitSystem.Imperial);
+            user.UsesImperial().Should().BeTrue();
         }
 
         [Fact]
         public void UpdatePreferredUnits_WithNull_ShouldThrowArgumentNullException()
         {
-            // Arrange
-            var user = UserMother.Default();
+            var user = UserFactory.Default();
 
-            // Act & Assert
-            Assert.Throws<ArgumentNullException>(() => user.UpdatePreferredUnits(null));
+            Action act = () => user.UpdatePreferredUnits(null);
+
+            act.Should().Throw<ArgumentNullException>();
         }
 
         #endregion
@@ -326,67 +284,52 @@ namespace FitTracker.Domain.Tests.Entities
         [Fact]
         public void GetFullName_WithFirstAndLastName_ShouldReturnFullName()
         {
-            // Arrange
-            var user = UserMother.WithFullName("John", "Doe");
+            var user = UserFactory.WithFullName("John", "Doe");
 
-            // Act
             var fullName = user.GetFullName();
 
-            // Assert
-            Assert.Equal("John Doe", fullName);
+            fullName.Should().Be("John Doe");
         }
 
         [Fact]
         public void GetFullName_WithOnlyFirstName_ShouldReturnFirstName()
         {
-            // Arrange
-            var user = UserMother.WithFirstNameOnly("John");
+            var user = UserFactory.WithFirstNameOnly("John");
 
-            // Act
             var fullName = user.GetFullName();
 
-            // Assert
-            Assert.Equal("John", fullName);
+            fullName.Should().Be("John");
         }
 
         [Fact]
         public void GetFullName_WithOnlyLastName_ShouldReturnLastName()
         {
-            // Arrange
-            var user = UserMother.WithLastNameOnly("Doe");
+            var user = UserFactory.WithLastNameOnly("Doe");
 
-            // Act
             var fullName = user.GetFullName();
 
-            // Assert
-            Assert.Equal("Doe", fullName);
+            fullName.Should().Be("Doe");
         }
 
         [Fact]
         public void GetFullName_WithoutNames_ShouldReturnUsername()
         {
-            // Arrange
-            var user = UserMother.Default();
+            var user = UserFactory.Default();
 
-            // Act
             var fullName = user.GetFullName();
 
-            // Assert
-            Assert.Equal("testuser", fullName);
+            fullName.Should().Be("testuser");
         }
 
         [Fact]
         public void GetDisplayName_ShouldReturnSameAsGetFullName()
         {
-            // Arrange
-            var user = UserMother.WithFullName("John", "Doe");
+            var user = UserFactory.WithFullName("John", "Doe");
 
-            // Act
             var displayName = user.GetDisplayName();
             var fullName = user.GetFullName();
 
-            // Assert
-            Assert.Equal(fullName, displayName);
+            displayName.Should().Be(fullName);
         }
 
         #endregion
@@ -396,14 +339,11 @@ namespace FitTracker.Domain.Tests.Entities
         [Fact]
         public void HasCompletedProfile_WithAllFields_ShouldReturnTrue()
         {
-            // Arrange
-            var user = UserMother.WithCompletedProfile();
+            var user = UserFactory.WithCompletedProfile();
 
-            // Act
             var isCompleted = user.HasCompletedProfile();
 
-            // Assert
-            Assert.True(isCompleted);
+            isCompleted.Should().BeTrue();
         }
 
         [Theory]
@@ -416,7 +356,6 @@ namespace FitTracker.Domain.Tests.Entities
         public void HasCompletedProfile_WithMissingFields_ShouldReturnFalse(
             string firstName, string lastName, string bio)
         {
-            // Arrange
             var user = User.CreateBuilder()
                 .WithUsername("testuser")
                 .WithEmail("test@example.com")
@@ -426,11 +365,9 @@ namespace FitTracker.Domain.Tests.Entities
                 .WithBio(bio)
                 .Build();
 
-            // Act
             var isCompleted = user.HasCompletedProfile();
 
-            // Assert
-            Assert.False(isCompleted);
+            isCompleted.Should().BeFalse();
         }
 
         #endregion
@@ -440,40 +377,50 @@ namespace FitTracker.Domain.Tests.Entities
         [Fact]
         public void GetWeightUnit_WithMetric_ShouldReturnKg()
         {
-            // Arrange
-            var user = UserMother.WithMetricUnits();
+            var user = UserFactory.WithMetricUnits();
 
-            // Act
             var unit = user.GetWeightUnit();
 
-            // Assert
-            Assert.Equal(UnitSystem.Metric.WeightUnit, unit);
+            unit.Should().Be(UnitSystem.Metric.WeightUnit);
         }
 
         [Fact]
         public void GetWeightUnit_WithImperial_ShouldReturnLbs()
         {
-            // Arrange
-            var user = UserMother.WithImperialUnits();
+            var user = UserFactory.WithImperialUnits();
 
-            // Act
             var unit = user.GetWeightUnit();
 
-            // Assert
-            Assert.Equal(UnitSystem.Imperial.WeightUnit, unit);
+            unit.Should().Be(UnitSystem.Imperial.WeightUnit);
         }
 
         [Fact]
         public void GetLengthUnit_WithMetric_ShouldReturnCm()
         {
-            // Arrange
-            var user = UserMother.WithMetricUnits();
+            var user = UserFactory.WithMetricUnits();
 
-            // Act
             var unit = user.GetLengthUnit();
 
+            unit.Should().Be(UnitSystem.Metric.LengthUnit);
+        }
+
+        [Theory]
+        [InlineData(10, "metric", "imperial", 22.0462)]
+        [InlineData(22.0462, "imperial", "metric", 10)]
+        [InlineData(5, "metric", "metric", 5)]
+        public void ConvertWeight_Should_Convert_Correctly(decimal weight, string fromUnit, string toUnit, decimal expected)
+        {
+            // Arrange
+            var from = UnitSystem.FromString(fromUnit);
+            var to = UnitSystem.FromString(toUnit);
+
+            var user = UserFactory.WithPreferedUnits(from);
+
+            // Act
+            var result = user.ConvertWeight(weight, to);
+
             // Assert
-            Assert.Equal(UnitSystem.Metric.LengthUnit, unit);
+            result.Should().BeApproximately(expected, 0.0001m);
         }
 
         #endregion
@@ -483,41 +430,33 @@ namespace FitTracker.Domain.Tests.Entities
         [Fact]
         public void Build_ShouldGenerateId()
         {
-            // Arrange & Act
-            var user = UserMother.Default();
+            var user = UserFactory.Default();
 
-            // Assert
-            Assert.NotEqual(Guid.Empty, user.Id);
+            user.Id.Should().NotBe(Guid.Empty);
         }
 
         [Fact]
         public void Build_ShouldSetCreatedAt()
         {
-            // Arrange
             var beforeCreation = DateTime.UtcNow;
 
-            // Act
-            var user = UserMother.Default();
+            var user = UserFactory.Default();
+
             var afterCreation = DateTime.UtcNow;
 
-            // Assert
-            Assert.True(user.CreatedAt >= beforeCreation);
-            Assert.True(user.CreatedAt <= afterCreation);
+            user.CreatedAt.Should().BeOnOrAfter(beforeCreation).And.BeOnOrBefore(afterCreation);
         }
 
         [Fact]
         public void Build_ShouldSetUpdatedAt()
         {
-            // Arrange
             var beforeCreation = DateTime.UtcNow;
 
-            // Act
-            var user = UserMother.Default();
+            var user = UserFactory.Default();
+
             var afterCreation = DateTime.UtcNow;
 
-            // Assert
-            Assert.True(user.UpdatedAt >= beforeCreation);
-            Assert.True(user.UpdatedAt <= afterCreation);
+            user.UpdatedAt.Should().BeOnOrAfter(beforeCreation).And.BeOnOrBefore(afterCreation);
         }
 
         #endregion

@@ -1,15 +1,9 @@
-// Domain.Tests/Entities/SetTests.cs
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using Xunit;
-using FluentValidation;
 using FitTracker.Domain.Entities;
 using FitTracker.Domain.Enums;
 using FitTracker.Domain.ValueObjects;
-using FitTracker.Domain.Tests.Factories;
 using FitTrackerDomain.Tests.Factories;
+using FluentAssertions;
+using FluentValidation;
 
 namespace FitTracker.Domain.Tests.Entities
 {
@@ -17,20 +11,125 @@ namespace FitTracker.Domain.Tests.Entities
     {
         private readonly Guid _workoutExerciseId = Guid.NewGuid();
 
+
+        [Fact]
+        public void Build_Should_Create_Set_With_Provided_Properties()
+        {
+            // Arrange
+            var workoutExerciseId = Guid.NewGuid();
+            var setNumber = 1;
+            var weight = Weight.FromKilograms(50);
+            var reps = 10;
+            var restSeconds = 60;
+            var setType = SetType.Dropset;
+
+            // Act
+            var set = Set.CreateBuilder()
+                         .WithWorkoutExercise(workoutExerciseId)
+                         .WithSetNumber(setNumber)
+                         .WithWeight(weight)
+                         .WithReps(reps)
+                         .WithRest(restSeconds)
+                         .WithSetType(setType)
+                         .Build();
+
+            // Assert
+            set.Should().NotBeNull();
+            set.WorkoutExerciseId.Should().Be(workoutExerciseId);
+            set.SetNumber.Should().Be(setNumber);
+            set.Weight.Should().Be(weight);
+            set.Reps.Should().Be(reps);
+            set.RestSeconds.Should().Be(restSeconds);
+            set.SetType.Should().Be(setType);
+            set.IsCompleted.Should().BeFalse();
+            set.CompletedAt.Should().BeNull();
+        }
+
+        [Fact]
+        public void Build_Should_Default_RestSeconds_To_Null_If_Not_Provided()
+        {
+            var set = Set.CreateBuilder()
+                         .WithWorkoutExercise(Guid.NewGuid())
+                         .WithSetNumber(1)
+                         .WithWeightKg(20)
+                         .WithReps(8)
+                         .Build();
+
+            set.RestSeconds.Should().BeNull();
+        }
+
+        [Fact]
+        public void WithWeightKg_Should_Set_Weight_Correctly()
+        {
+            var weightKg = 75m;
+
+            var set = Set.CreateBuilder()
+                         .WithWorkoutExercise(Guid.NewGuid())
+                         .WithSetNumber(2)
+                         .WithWeightKg(weightKg)
+                         .WithReps(5)
+                         .Build();
+
+            set.Weight.ToKilograms().Should().Be(weightKg);
+        }
+
+        [Fact]
+        public void WithWeightLbs_Should_Set_Weight_Correctly()
+        {
+            var weightLbs = 220m;
+            var expectedKg = Weight.FromPounds(weightLbs).ToKilograms();
+
+            var set = Set.CreateBuilder()
+                         .WithWorkoutExercise(Guid.NewGuid())
+                         .WithSetNumber(3)
+                         .WithWeightLbs(weightLbs)
+                         .WithReps(5)
+                         .Build();
+
+            set.Weight.ToKilograms().Should().BeApproximately(expectedKg, 0.001m);
+        }
+
+        [Fact]
+        public void WithRest_Should_Throw_When_Negative_Value_Provided()
+        {
+            var builder = Set.CreateBuilder()
+                             .WithWorkoutExercise(Guid.NewGuid())
+                             .WithSetNumber(1)
+                             .WithWeightKg(10)
+                             .WithReps(5);
+
+            Action act = () => builder.WithRest(-10);
+
+            act.Should().Throw<ArgumentException>()
+               .WithMessage("Rest seconds cannot be negative");
+        }
+
+        [Fact]
+        public void Build_Should_Throw_If_Weight_Is_Null()
+        {
+            var builder = new Set.SetBuilder()
+                .WithWorkoutExercise(Guid.NewGuid())
+                .WithSetNumber(1)
+                .WithReps(5);
+
+            Action act = () => builder.Build();
+
+            act.Should().Throw<ValidationException>();
+        }
+
         #region Constructor Validation
 
         [Fact]
         public void Constructor_WithEmptyWorkoutExerciseId_ShouldThrowValidationException()
         {
-            var ex = Assert.Throws<ValidationException>(() =>
-                Set.CreateBuilder()
-                    .WithWorkoutExercise(Guid.Empty)
-                    .WithSetNumber(1)
-                    .WithWeightKg(50)
-                    .WithReps(10)
-                    .Build());
+            Action act = () => Set.CreateBuilder()
+                .WithWorkoutExercise(Guid.Empty)
+                .WithSetNumber(1)
+                .WithWeightKg(50)
+                .WithReps(10)
+                .Build();
 
-            Assert.Contains("workout exercise id", ex.Message.ToLower());
+            act.Should().Throw<ValidationException>().WithMessage("*workout exercise id*");
         }
 
         [Theory]
@@ -38,15 +137,14 @@ namespace FitTracker.Domain.Tests.Entities
         [InlineData(-1)]
         public void Constructor_WithInvalidSetNumber_ShouldThrowValidationException(int invalidSetNumber)
         {
-            var ex = Assert.Throws<ValidationException>(() =>
-                Set.CreateBuilder()
-                    .WithWorkoutExercise(_workoutExerciseId)
-                    .WithSetNumber(invalidSetNumber)
-                    .WithWeightKg(50)
-                    .WithReps(10)
-                    .Build());
+            Action act = () => Set.CreateBuilder()
+                .WithWorkoutExercise(_workoutExerciseId)
+                .WithSetNumber(invalidSetNumber)
+                .WithWeightKg(50)
+                .WithReps(10)
+                .Build();
 
-            Assert.Contains("set number", ex.Message.ToLower());
+            act.Should().Throw<ValidationException>().WithMessage("*set number*");
         }
 
         [Theory]
@@ -54,37 +152,28 @@ namespace FitTracker.Domain.Tests.Entities
         [InlineData(-1)]
         public void Constructor_WithInvalidReps_ShouldThrowValidationException(int invalidReps)
         {
-            var ex = Assert.Throws<ValidationException>(() =>
-                Set.CreateBuilder()
-                    .WithWorkoutExercise(_workoutExerciseId)
-                    .WithSetNumber(1)
-                    .WithWeightKg(50)
-                    .WithReps(invalidReps)
-                    .Build());
+            Action act = () => Set.CreateBuilder()
+                .WithWorkoutExercise(_workoutExerciseId)
+                .WithSetNumber(1)
+                .WithWeightKg(50)
+                .WithReps(invalidReps)
+                .Build();
 
-            Assert.Contains("reps", ex.Message.ToLower());
+            act.Should().Throw<ValidationException>().WithMessage("*reps*");
         }
 
         [Fact]
         public void Constructor_WithRepsExceedingMax_ShouldThrowValidationException()
         {
-            var ex = Assert.Throws<ValidationException>(() =>
-                Set.CreateBuilder()
-                    .WithWorkoutExercise(_workoutExerciseId)
-                    .WithSetNumber(1)
-                    .WithWeightKg(50)
-                    .WithReps(Set.MaxReps + 1)
-                    .Build());
+            Action act = () => Set.CreateBuilder()
+                .WithWorkoutExercise(_workoutExerciseId)
+                .WithSetNumber(1)
+                .WithWeightKg(50)
+                .WithReps(Set.MaxReps + 1)
+                .Build();
 
-            Assert.Contains("reps", ex.Message.ToLower());
+            act.Should().Throw<ValidationException>().WithMessage("*reps*");
         }
-
-        //[Fact]
-        //public void Constructor_WithNullWeight_ShouldThrowArgumentNullException()
-        //{
-        //    Assert.Throws<ArgumentNullException>(() =>
-        //        new Set(_workoutExerciseId, 1, null!, 10));
-        //}
 
         #endregion
 
@@ -93,11 +182,11 @@ namespace FitTracker.Domain.Tests.Entities
         [Fact]
         public void UpdateSetNumber_WithValidNumber_ShouldChangeSetNumber()
         {
-            var set = SetMother.Default();
+            var set = SetFactory.Default();
 
             set.UpdateSetNumber(2);
 
-            Assert.Equal(2, set.SetNumber);
+            set.SetNumber.Should().Be(2);
         }
 
         [Theory]
@@ -105,87 +194,94 @@ namespace FitTracker.Domain.Tests.Entities
         [InlineData(-1)]
         public void UpdateSetNumber_WithInvalidNumber_ShouldThrowArgumentException(int invalidNumber)
         {
-            var set = SetMother.Default();
+            var set = SetFactory.Default();
 
-            var ex = Assert.Throws<ArgumentException>(() => set.UpdateSetNumber(invalidNumber));
+            Action act = () => set.UpdateSetNumber(invalidNumber);
 
-            Assert.Contains("set number", ex.Message.ToLower());
+            act.Should().Throw<ArgumentException>().WithMessage("*set number*");
         }
 
         [Fact]
         public void UpdateWeight_WithValidWeight_ShouldUpdateWeight()
         {
-            var set = SetMother.Default();
+            var set = SetFactory.Default();
             var newWeight = Weight.FromKilograms(60);
 
             set.UpdateWeight(newWeight);
 
-            Assert.Equal(60m, set.Weight.ToKilograms());
+            set.Weight.ToKilograms().Should().Be(60m);
         }
 
         [Fact]
         public void UpdateWeight_WithNull_ShouldThrowArgumentNullException()
         {
-            var set = SetMother.Default();
-            Assert.Throws<ArgumentNullException>(() => set.UpdateWeight(null!));
+            var set = SetFactory.Default();
+
+            Action act = () => set.UpdateWeight(null!);
+
+            act.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
         public void IncreaseWeightKg_WithPositiveAmount_ShouldIncreaseWeight()
         {
-            var set = SetMother.Default();
+            var set = SetFactory.Default();
             var initialWeight = set.Weight.ToKilograms();
 
             set.IncreaseWeightKg(10);
 
-            Assert.Equal(initialWeight + 10, set.Weight.ToKilograms());
+            set.Weight.ToKilograms().Should().Be(initialWeight + 10);
         }
 
         [Fact]
         public void IncreaseWeightKg_WithNegativeAmount_ShouldThrowArgumentException()
         {
-            var set = SetMother.Default();
-            var ex = Assert.Throws<ArgumentException>(() => set.IncreaseWeightKg(-5));
-            Assert.Contains("amount", ex.Message.ToLower());
+            var set = SetFactory.Default();
+
+            Action act = () => set.IncreaseWeightKg(-5);
+
+            act.Should().Throw<ArgumentException>().WithMessage("*amount*");
         }
 
         [Fact]
         public void DecreaseWeightKg_WithPositiveAmount_ShouldDecreaseWeight()
         {
-            var set = SetMother.Default();
+            var set = SetFactory.Default();
             set.UpdateWeight(Weight.FromKilograms(100));
 
             set.DecreaseWeightKg(10);
 
-            Assert.Equal(90m, set.Weight.ToKilograms());
+            set.Weight.ToKilograms().Should().Be(90m);
         }
 
         [Fact]
         public void DecreaseWeightKg_WithNegativeAmount_ShouldThrowArgumentException()
         {
-            var set = SetMother.Default();
-            var ex = Assert.Throws<ArgumentException>(() => set.DecreaseWeightKg(-5));
-            Assert.Contains("amount", ex.Message.ToLower());
+            var set = SetFactory.Default();
+
+            Action act = () => set.DecreaseWeightKg(-5);
+
+            act.Should().Throw<ArgumentException>().WithMessage("*amount*");
         }
 
         [Fact]
         public void DecreaseWeightKg_BelowZero_ShouldThrowInvalidOperationException()
         {
-            var set = SetMother.Default();
+            var set = SetFactory.Default();
 
-            var ex = Assert.Throws<InvalidOperationException>(() => set.DecreaseWeightKg(set.Weight.ToKilograms() + 1));
+            Action act = () => set.DecreaseWeightKg(set.Weight.ToKilograms() + 1);
 
-            Assert.Contains("weight cannot be negative", ex.Message.ToLower());
+            act.Should().Throw<InvalidOperationException>().WithMessage("*weight cannot be negative*");
         }
 
         [Fact]
         public void UpdateReps_WithValidValue_ShouldChangeReps()
         {
-            var set = SetMother.Default();
+            var set = SetFactory.Default();
 
             set.UpdateReps(12);
 
-            Assert.Equal(12, set.Reps);
+            set.Reps.Should().Be(12);
         }
 
         [Theory]
@@ -193,92 +289,94 @@ namespace FitTracker.Domain.Tests.Entities
         [InlineData(-1)]
         public void UpdateReps_WithNonPositiveValue_ShouldThrowArgumentException(int invalidReps)
         {
-            var set = SetMother.Default();
+            var set = SetFactory.Default();
 
-            var ex = Assert.Throws<ArgumentException>(() => set.UpdateReps(invalidReps));
+            Action act = () => set.UpdateReps(invalidReps);
 
-            Assert.Contains("reps", ex.Message.ToLower());
+            act.Should().Throw<ArgumentException>().WithMessage("*reps*");
         }
 
         [Fact]
         public void UpdateReps_ExceedingMax_ShouldThrowArgumentException()
         {
-            var set = SetMother.Default();
+            var set = SetFactory.Default();
 
-            var ex = Assert.Throws<ArgumentException>(() => set.UpdateReps(Set.MaxReps + 1));
+            Action act = () => set.UpdateReps(Set.MaxReps + 1);
 
-            Assert.Contains("reps", ex.Message.ToLower());
+            act.Should().Throw<ArgumentException>().WithMessage("*reps*");
         }
 
         [Fact]
         public void UpdateRest_WithValidValue_ShouldUpdateRestSeconds()
         {
-            var set = SetMother.Default();
+            var set = SetFactory.Default();
 
             set.UpdateRest(60);
 
-            Assert.Equal(60, set.RestSeconds);
+            set.RestSeconds.Should().Be(60);
         }
 
         [Fact]
         public void UpdateRest_WithNull_ShouldSetRestSecondsNull()
         {
-            var set = SetMother.Default();
+            var set = SetFactory.Default();
             set.UpdateRest(60);
 
             set.UpdateRest(null);
 
-            Assert.Null(set.RestSeconds);
+            set.RestSeconds.Should().BeNull();
         }
 
         [Fact]
         public void UpdateRest_WithNegativeValue_ShouldThrowArgumentException()
         {
-            var set = SetMother.Default();
-            var ex = Assert.Throws<ArgumentException>(() => set.UpdateRest(-5));
+            var set = SetFactory.Default();
 
-            Assert.Contains("rest seconds cannot be negative", ex.Message.ToLower());
+            Action act = () => set.UpdateRest(-5);
+
+            act.Should().Throw<ArgumentException>().WithMessage("*rest seconds cannot be negative*");
         }
 
         [Fact]
         public void UpdateRest_ExceedingMax_ShouldThrowArgumentException()
         {
-            var set = SetMother.Default();
-            var ex = Assert.Throws<ArgumentException>(() => set.UpdateRest(Set.MaxRestSeconds + 1));
+            var set = SetFactory.Default();
 
-            Assert.Contains("rest cannot exceed", ex.Message.ToLower());
+            Action act = () => set.UpdateRest(Set.MaxRestSeconds + 1);
+
+            act.Should().Throw<ArgumentException>().WithMessage("*rest cannot exceed*");
         }
 
         [Fact]
         public void ChangeSetType_ShouldUpdateSetType()
         {
-            var set = SetMother.Default();
+            var set = SetFactory.Default();
 
             set.ChangeSetType(SetType.Dropset);
 
-            Assert.Equal(SetType.Dropset, set.SetType);
+            set.SetType.Should().Be(SetType.Dropset);
         }
 
         [Fact]
         public void Complete_ShouldMarkCompleted()
         {
-            var set = SetMother.Default();
+            var set = SetFactory.Default();
 
             set.Complete();
 
-            Assert.True(set.IsCompleted);
-            Assert.NotNull(set.CompletedAt);
+            set.IsCompleted.Should().BeTrue();
+            set.CompletedAt.Should().NotBeNull();
         }
 
         [Fact]
         public void Uncomplete_ShouldMarkNotCompleted()
         {
-            var set = SetMother.CompletedSet();
+            var set = SetFactory.CompletedSet();
 
             set.Uncomplete();
 
-            Assert.False(set.IsCompleted);
-            Assert.Null(set.CompletedAt);
+            set.IsCompleted.Should().BeFalse();
+            set.CompletedAt.Should().BeNull();
         }
 
         #endregion
@@ -288,21 +386,21 @@ namespace FitTracker.Domain.Tests.Entities
         [Fact]
         public void CalculateVolume_ShouldReturnCorrectWeightTimesReps()
         {
-            var set = SetMother.Default();
+            var set = SetFactory.Default();
 
             var expected = set.Weight.ToKilograms() * set.Reps;
 
-            Assert.Equal(expected, set.CalculateVolume());
+            set.CalculateVolume().Should().Be(expected);
         }
 
         [Fact]
         public void CalculateVolumeLbs_ShouldReturnCorrectWeightTimesReps()
         {
-            var set = SetMother.Default();
+            var set = SetFactory.Default();
 
             var expected = set.Weight.ToPounds() * set.Reps;
 
-            Assert.Equal(expected, set.CalculateVolumeLbs());
+            set.CalculateVolumeLbs().Should().Be(expected);
         }
 
         #endregion
@@ -312,41 +410,41 @@ namespace FitTracker.Domain.Tests.Entities
         [Fact]
         public void IsPR_WithNoPreviousSets_ShouldReturnTrue()
         {
-            var set = SetMother.Default();
+            var set = SetFactory.Default();
 
             var result = set.IsPR(new List<Set>());
 
-            Assert.True(result);
+            result.Should().BeTrue();
         }
 
         [Fact]
         public void IsPR_WithHigherWeight_ShouldReturnTrue()
         {
-            var set = SetMother.Default();
+            var set = SetFactory.Default();
             var previousSets = new List<Set>
             {
-                SetMother.Default()
+                SetFactory.Default()
             };
             previousSets[0].UpdateWeight(Weight.FromKilograms(40));
 
             var result = set.IsPR(previousSets);
 
-            Assert.True(result);
+            result.Should().BeTrue();
         }
 
         [Fact]
         public void IsPR_WithLowerWeight_ShouldReturnFalse()
         {
-            var set = SetMother.Default();
+            var set = SetFactory.Default();
             var previousSets = new List<Set>
             {
-                SetMother.Default()
+                SetFactory.Default()
             };
             previousSets[0].UpdateWeight(Weight.FromKilograms(60));
 
             var result = set.IsPR(previousSets);
 
-            Assert.False(result);
+            result.Should().BeFalse();
         }
 
         #endregion

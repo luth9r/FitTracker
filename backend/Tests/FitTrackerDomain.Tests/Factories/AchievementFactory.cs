@@ -1,6 +1,3 @@
-// Domain.Tests/Factories/AchievementMother.cs
-using System;
-using System.Collections.Generic;
 using FitTracker.Domain.Entities;
 using FitTracker.Domain.Enums;
 
@@ -9,7 +6,7 @@ namespace FitTracker.Domain.Tests.Factories
     /// <summary>
     /// Factory for creating Achievement test data.
     /// </summary>
-    public static class AchievementMother
+    public static class AchievementFactory
     {
         /// <summary>
         /// Creates a default achievement with minimal data.

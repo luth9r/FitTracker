@@ -107,12 +107,14 @@ namespace FitTracker.Domain.Entities
             int setNumber,
             Weight weight,
             int reps,
+            int? restSeconds,
             SetType setType = SetType.Normal) : base()
         {
             WorkoutExerciseId = workoutExerciseId;
             SetNumber = setNumber;
             Weight = weight ?? throw new ArgumentNullException(nameof(weight));
             Reps = reps;
+            RestSeconds = restSeconds;
             SetType = setType;
             IsCompleted = false;
 
@@ -340,7 +342,6 @@ namespace FitTracker.Domain.Entities
             private Weight _weight = Weight.FromKilograms(0);
             private int _reps;
             private int? _restSeconds;
-            private bool _isWarmup;
             private SetType _setType = SetType.Normal;
 
             public SetBuilder WithWorkoutExercise(Guid id)
@@ -401,12 +402,6 @@ namespace FitTracker.Domain.Entities
                 return this;
             }
 
-            public SetBuilder AsWarmup(bool isWarmup = true)
-            {
-                _isWarmup = isWarmup;
-                return this;
-            }
-
             /// <summary>
             /// Sets the type of set (Normal, Dropset, Superset, etc.).
             /// </summary>
@@ -422,10 +417,7 @@ namespace FitTracker.Domain.Entities
             /// </summary>
             public Set Build()
             {
-                var set = new Set(_workoutExerciseId, _setNumber, _weight, _reps)
-                {
-                    RestSeconds = _restSeconds,
-                };
+                var set = new Set(_workoutExerciseId, _setNumber, _weight, _reps, _restSeconds, _setType);
                 return set;
             }
         }

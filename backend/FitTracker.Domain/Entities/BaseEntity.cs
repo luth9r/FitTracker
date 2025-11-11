@@ -27,9 +27,6 @@ namespace FitTracker.Domain.Entities
 
         protected BaseEntity(Guid id)
         {
-            if (id == Guid.Empty)
-                throw new ArgumentException("ID cannot be empty", nameof(id));
-
             Id = id;
             CreatedAt = DateTime.UtcNow;
             UpdatedAt = DateTime.UtcNow;
@@ -37,9 +34,6 @@ namespace FitTracker.Domain.Entities
 
         public void SetDatabaseFields(Guid id, DateTime createdAt, DateTime updatedAt)
         {
-            if (id == Guid.Empty)
-                throw new ArgumentException("ID cannot be empty", nameof(id));
-
             Id = id;
             CreatedAt = createdAt;
             UpdatedAt = updatedAt;

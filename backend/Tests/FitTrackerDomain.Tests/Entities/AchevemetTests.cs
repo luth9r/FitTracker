@@ -1,11 +1,8 @@
-// Domain.Tests/Entities/AchievementTests.cs
-using System;
-using System.Threading;
-using Xunit;
-using FluentValidation;
 using FitTracker.Domain.Entities;
 using FitTracker.Domain.Enums;
 using FitTracker.Domain.Tests.Factories;
+using FluentAssertions;
+using FluentValidation;
 
 namespace FitTracker.Domain.Tests.Entities
 {
@@ -22,34 +19,34 @@ namespace FitTracker.Domain.Tests.Entities
             var builder = Achievement.CreateBuilder();
 
             // Assert
-            Assert.NotNull(builder);
-            Assert.IsType<Achievement.AchievementBuilder>(builder);
+            builder.Should().NotBeNull();
+            builder.Should().BeOfType<Achievement.AchievementBuilder>();
         }
 
         [Fact]
         public void Build_WithValidData_ShouldCreateAchievement()
         {
             // Arrange & Act
-            var achievement = AchievementMother.Default();
+            var achievement = AchievementFactory.Default();
 
             // Assert
-            Assert.NotNull(achievement);
-            Assert.Equal("Test Achievement", achievement.Name);
-            Assert.Equal("Test description", achievement.Description);
-            Assert.Equal(100, achievement.Target);
-            Assert.Equal(AchievementTier.Bronze, achievement.Tier);
-            Assert.Equal(0, achievement.Progress);
-            Assert.False(achievement.IsUnlocked);
+            achievement.Should().NotBeNull();
+            achievement.Name.Should().Be("Test Achievement");
+            achievement.Description.Should().Be("Test description");
+            achievement.Target.Should().Be(100);
+            achievement.Tier.Should().Be(AchievementTier.Bronze);
+            achievement.Progress.Should().Be(0);
+            achievement.IsUnlocked.Should().BeFalse();
         }
 
         [Fact]
         public void Build_ShouldGenerateId()
         {
             // Arrange & Act
-            var achievement = AchievementMother.Default();
+            var achievement = AchievementFactory.Default();
 
             // Assert
-            Assert.NotEqual(Guid.Empty, achievement.Id);
+            achievement.Id.Should().NotBe(Guid.Empty);
         }
 
         [Fact]
@@ -59,14 +56,14 @@ namespace FitTracker.Domain.Tests.Entities
             var before = DateTime.UtcNow;
 
             // Act
-            var achievement = AchievementMother.Default();
+            var achievement = AchievementFactory.Default();
             var after = DateTime.UtcNow;
 
             // Assert
-            Assert.True(achievement.CreatedAt >= before);
-            Assert.True(achievement.CreatedAt <= after);
-            Assert.True(achievement.UpdatedAt >= before);
-            Assert.True(achievement.UpdatedAt <= after);
+            achievement.CreatedAt.Should().BeOnOrAfter(before);
+            achievement.CreatedAt.Should().BeOnOrBefore(after);
+            achievement.UpdatedAt.Should().BeOnOrAfter(before);
+            achievement.UpdatedAt.Should().BeOnOrBefore(after);
         }
 
         [Theory]
@@ -75,14 +72,16 @@ namespace FitTracker.Domain.Tests.Entities
         [InlineData("   ")]
         public void Build_WithInvalidName_ShouldThrowValidationException(string invalidName)
         {
-            // Arrange & Act & Assert
-            Assert.Throws<ValidationException>(() =>
-                Achievement.CreateBuilder()
-                    .WithType(AchievementType.FirstWorkout)
-                    .WithName(invalidName)
-                    .WithDescription("Description")
-                    .WithTarget(100)
-                    .Build());
+            // Arrange & Act
+            Action act = () => Achievement.CreateBuilder()
+                .WithType(AchievementType.FirstWorkout)
+                .WithName(invalidName)
+                .WithDescription("Description")
+                .WithTarget(100)
+                .Build();
+
+            // Assert
+            act.Should().Throw<ValidationException>();
         }
 
         [Fact]
@@ -91,14 +90,16 @@ namespace FitTracker.Domain.Tests.Entities
             // Arrange
             var longName = new string('A', Achievement.NameMaxLength + 1);
 
-            // Act & Assert
-            Assert.Throws<ValidationException>(() =>
-                Achievement.CreateBuilder()
-                    .WithType(AchievementType.FirstWorkout)
-                    .WithName(longName)
-                    .WithDescription("Description")
-                    .WithTarget(100)
-                    .Build());
+            // Act
+            Action act = () => Achievement.CreateBuilder()
+                .WithType(AchievementType.FirstWorkout)
+                .WithName(longName)
+                .WithDescription("Description")
+                .WithTarget(100)
+                .Build();
+
+            // Assert
+            act.Should().Throw<ValidationException>();
         }
 
         [Theory]
@@ -107,14 +108,16 @@ namespace FitTracker.Domain.Tests.Entities
         [InlineData("   ")]
         public void Build_WithInvalidDescription_ShouldThrowValidationException(string invalidDescription)
         {
-            // Arrange & Act & Assert
-            Assert.Throws<ValidationException>(() =>
-                Achievement.CreateBuilder()
-                    .WithType(AchievementType.FirstWorkout)
-                    .WithName("Name")
-                    .WithDescription(invalidDescription)
-                    .WithTarget(100)
-                    .Build());
+            // Arrange & Act
+            Action act = () => Achievement.CreateBuilder()
+                .WithType(AchievementType.FirstWorkout)
+                .WithName("Name")
+                .WithDescription(invalidDescription)
+                .WithTarget(100)
+                .Build();
+
+            // Assert
+            act.Should().Throw<ValidationException>();
         }
 
         [Theory]
@@ -123,14 +126,16 @@ namespace FitTracker.Domain.Tests.Entities
         [InlineData(-100)]
         public void Build_WithInvalidTarget_ShouldThrowValidationException(int invalidTarget)
         {
-            // Arrange & Act & Assert
-            Assert.Throws<ValidationException>(() =>
-                Achievement.CreateBuilder()
-                    .WithType(AchievementType.FirstWorkout)
-                    .WithName("Name")
-                    .WithDescription("Description")
-                    .WithTarget(invalidTarget)
-                    .Build());
+            // Arrange & Act
+            Action act = () => Achievement.CreateBuilder()
+                .WithType(AchievementType.FirstWorkout)
+                .WithName("Name")
+                .WithDescription("Description")
+                .WithTarget(invalidTarget)
+                .Build();
+
+            // Assert
+            act.Should().Throw<ValidationException>();
         }
 
         #endregion
@@ -162,18 +167,18 @@ namespace FitTracker.Domain.Tests.Entities
                 .Build();
 
             // Assert
-            Assert.Equal(type, achievement.Type);
+            achievement.Type.Should().Be(type);
         }
 
         [Fact]
         public void Build_ShouldGenerateCorrectIconUrl()
         {
             // Arrange & Act
-            var achievement = AchievementMother.FirstWorkout();
+            var achievement = AchievementFactory.FirstWorkout();
 
             // Assert
-            Assert.Contains("/icons/achievement_", achievement.IconUrl.ToLower());
-            Assert.Contains("firstworkout", achievement.IconUrl.ToLower());
+            achievement.IconUrl.ToLower().Should().Contain("/icons/achievement_");
+            achievement.IconUrl.ToLower().Should().Contain("firstworkout");
         }
 
         #endregion
@@ -200,7 +205,7 @@ namespace FitTracker.Domain.Tests.Entities
                 .Build();
 
             // Assert
-            Assert.Equal(tier, achievement.Tier);
+            achievement.Tier.Should().Be(tier);
         }
 
         [Fact]
@@ -215,7 +220,7 @@ namespace FitTracker.Domain.Tests.Entities
                 .Build();
 
             // Assert
-            Assert.Equal(AchievementTier.Bronze, achievement.Tier);
+            achievement.Tier.Should().Be(AchievementTier.Bronze);
         }
 
         [Fact]
@@ -230,7 +235,7 @@ namespace FitTracker.Domain.Tests.Entities
                 .Build();
 
             // Assert
-            Assert.Equal(AchievementTier.Silver, achievement.Tier);
+            achievement.Tier.Should().Be(AchievementTier.Silver);
         }
 
         [Fact]
@@ -245,7 +250,7 @@ namespace FitTracker.Domain.Tests.Entities
                 .Build();
 
             // Assert
-            Assert.Equal(AchievementTier.Gold, achievement.Tier);
+            achievement.Tier.Should().Be(AchievementTier.Gold);
         }
 
         #endregion
@@ -256,7 +261,7 @@ namespace FitTracker.Domain.Tests.Entities
         public void UpdateProgress_WithValidProgress_ShouldUpdateProgress()
         {
             // Arrange
-            var achievement = AchievementMother.WorkoutStreakSilver();
+            var achievement = AchievementFactory.WorkoutStreakSilver();
             var initialUpdatedAt = achievement.UpdatedAt;
             Thread.Sleep(10);
 
@@ -264,49 +269,49 @@ namespace FitTracker.Domain.Tests.Entities
             var result = achievement.UpdateProgress(3);
 
             // Assert
-            Assert.Equal(3, achievement.Progress);
-            Assert.False(result); // Not unlocked yet
-            Assert.False(achievement.IsUnlocked);
-            Assert.True(achievement.UpdatedAt > initialUpdatedAt);
+            achievement.Progress.Should().Be(3);
+            result.Should().BeFalse(); // Not unlocked yet
+            achievement.IsUnlocked.Should().BeFalse();
+            achievement.UpdatedAt.Should().BeAfter(initialUpdatedAt);
         }
 
         [Fact]
         public void UpdateProgress_ReachingTarget_ShouldUnlockAchievement()
         {
             // Arrange
-            var achievement = AchievementMother.FirstWorkout();
+            var achievement = AchievementFactory.FirstWorkout();
 
             // Act
             var result = achievement.UpdateProgress(1);
 
             // Assert
-            Assert.True(result);
-            Assert.True(achievement.IsUnlocked);
-            Assert.NotNull(achievement.UnlockedAt);
-            Assert.Equal(1, achievement.Progress);
+            result.Should().BeTrue();
+            achievement.IsUnlocked.Should().BeTrue();
+            achievement.UnlockedAt.Should().NotBeNull();
+            achievement.Progress.Should().Be(1);
         }
 
         [Fact]
         public void UpdateProgress_ExceedingTarget_ShouldUnlockAchievement()
         {
             // Arrange
-            var achievement = AchievementMother.WorkoutStreakBronze();
+            var achievement = AchievementFactory.WorkoutStreakBronze();
 
             // Act
             var result = achievement.UpdateProgress(10);
 
             // Assert
-            Assert.True(result);
-            Assert.True(achievement.IsUnlocked);
-            Assert.NotNull(achievement.UnlockedAt);
-            Assert.Equal(10, achievement.Progress);
+            result.Should().BeTrue();
+            achievement.IsUnlocked.Should().BeTrue();
+            achievement.UnlockedAt.Should().NotBeNull();
+            achievement.Progress.Should().Be(10);
         }
 
         [Fact]
         public void UpdateProgress_AlreadyUnlocked_ShouldNotReturnTrue()
         {
             // Arrange
-            var achievement = AchievementMother.FirstWorkout();
+            var achievement = AchievementFactory.FirstWorkout();
             achievement.UpdateProgress(1); // First unlock
             var unlockedAt = achievement.UnlockedAt;
             Thread.Sleep(10);
@@ -315,31 +320,31 @@ namespace FitTracker.Domain.Tests.Entities
             var result = achievement.UpdateProgress(2);
 
             // Assert
-            Assert.False(result); // Already unlocked
-            Assert.True(achievement.IsUnlocked);
-            Assert.Equal(unlockedAt, achievement.UnlockedAt);
+            result.Should().BeFalse(); // Already unlocked
+            achievement.IsUnlocked.Should().BeTrue();
+            achievement.UnlockedAt.Should().Be(unlockedAt);
         }
 
         [Fact]
         public void UpdateProgress_FromZeroToTarget_ShouldUnlockInOneStep()
         {
             // Arrange
-            var achievement = AchievementMother.TotalWorkoutsBronze();
+            var achievement = AchievementFactory.TotalWorkoutsBronze();
 
             // Act
             var result = achievement.UpdateProgress(10);
 
             // Assert
-            Assert.True(result);
-            Assert.True(achievement.IsUnlocked);
-            Assert.Equal(10, achievement.Progress);
+            result.Should().BeTrue();
+            achievement.IsUnlocked.Should().BeTrue();
+            achievement.Progress.Should().Be(10);
         }
 
         [Fact]
         public void UpdateProgress_MultipleIncrements_ShouldTrackCorrectly()
         {
             // Arrange
-            var achievement = AchievementMother.WorkoutStreakSilver();
+            var achievement = AchievementFactory.WorkoutStreakSilver();
 
             // Act
             achievement.UpdateProgress(2);
@@ -347,24 +352,24 @@ namespace FitTracker.Domain.Tests.Entities
             var result = achievement.UpdateProgress(7);
 
             // Assert
-            Assert.True(result); // Now unlocked
-            Assert.Equal(7, achievement.Progress);
-            Assert.True(achievement.IsUnlocked);
+            result.Should().BeTrue(); // Now unlocked
+            achievement.Progress.Should().Be(7);
+            achievement.IsUnlocked.Should().BeTrue();
         }
 
         [Fact]
         public void UpdateProgress_ShouldAllowDecrement()
         {
             // Arrange
-            var achievement = AchievementMother.Default();
+            var achievement = AchievementFactory.Default();
             achievement.UpdateProgress(50);
 
             // Act
             achievement.UpdateProgress(30);
 
             // Assert
-            Assert.Equal(30, achievement.Progress);
-            Assert.False(achievement.IsUnlocked);
+            achievement.Progress.Should().Be(30);
+            achievement.IsUnlocked.Should().BeFalse();
         }
 
         #endregion
@@ -391,34 +396,34 @@ namespace FitTracker.Domain.Tests.Entities
             var percentage = achievement.GetProgressPercentage();
 
             // Assert
-            Assert.Equal(expectedPercentage, percentage);
+            percentage.Should().Be(expectedPercentage);
         }
 
         [Fact]
         public void GetProgressPercentage_WithZeroProgress_ShouldReturnZero()
         {
             // Arrange
-            var achievement = AchievementMother.Default();
+            var achievement = AchievementFactory.Default();
 
             // Act
             var percentage = achievement.GetProgressPercentage();
 
             // Assert
-            Assert.Equal(0, percentage);
+            percentage.Should().Be(0);
         }
 
         [Fact]
         public void GetProgressPercentage_WhenCompleted_ShouldReturn100()
         {
             // Arrange
-            var achievement = AchievementMother.FirstWorkout();
+            var achievement = AchievementFactory.FirstWorkout();
             achievement.UpdateProgress(1);
 
             // Act
             var percentage = achievement.GetProgressPercentage();
 
             // Assert
-            Assert.Equal(100, percentage);
+            percentage.Should().Be(100);
         }
 
         #endregion
@@ -429,83 +434,83 @@ namespace FitTracker.Domain.Tests.Entities
         public void FirstWorkout_ShouldCreateCorrectAchievement()
         {
             // Arrange & Act
-            var achievement = AchievementMother.FirstWorkout();
+            var achievement = AchievementFactory.FirstWorkout();
 
             // Assert
-            Assert.Equal("First Steps", achievement.Name);
-            Assert.Equal(1, achievement.Target);
-            Assert.Equal(AchievementType.FirstWorkout, achievement.Type);
-            Assert.Equal(AchievementTier.Bronze, achievement.Tier);
+            achievement.Name.Should().Be("First Steps");
+            achievement.Target.Should().Be(1);
+            achievement.Type.Should().Be(AchievementType.FirstWorkout);
+            achievement.Tier.Should().Be(AchievementTier.Bronze);
         }
 
         [Fact]
         public void WorkoutStreakGold_ShouldCreateGoldAchievement()
         {
             // Arrange & Act
-            var achievement = AchievementMother.WorkoutStreakGold();
+            var achievement = AchievementFactory.WorkoutStreakGold();
 
             // Assert
-            Assert.Equal("30-Day Streak", achievement.Name);
-            Assert.Equal(30, achievement.Target);
-            Assert.Equal(AchievementTier.Gold, achievement.Tier);
+            achievement.Name.Should().Be("30-Day Streak");
+            achievement.Target.Should().Be(30);
+            achievement.Tier.Should().Be(AchievementTier.Gold);
         }
 
         [Fact]
         public void TotalWorkoutsTitan_ShouldCreateTitanAchievement()
         {
             // Arrange & Act
-            var achievement = AchievementMother.TotalWorkoutsTitan();
+            var achievement = AchievementFactory.TotalWorkoutsTitan();
 
             // Assert
-            Assert.Equal(AchievementType.TotalWorkouts, achievement.Type);
-            Assert.Equal(1000, achievement.Target);
-            Assert.Equal(AchievementTier.Titan, achievement.Tier);
+            achievement.Type.Should().Be(AchievementType.TotalWorkouts);
+            achievement.Target.Should().Be(1000);
+            achievement.Tier.Should().Be(AchievementTier.Titan);
         }
 
         [Fact]
         public void MaxWeightEmerald_ShouldCreateEmeraldAchievement()
         {
             // Arrange & Act
-            var achievement = AchievementMother.MaxWeightEmerald();
+            var achievement = AchievementFactory.MaxWeightEmerald();
 
             // Assert
-            Assert.Equal(AchievementType.MaxWeight, achievement.Type);
-            Assert.Equal(200, achievement.Target);
-            Assert.Equal(AchievementTier.Emerald, achievement.Tier);
+            achievement.Type.Should().Be(AchievementType.MaxWeight);
+            achievement.Target.Should().Be(200);
+            achievement.Tier.Should().Be(AchievementTier.Emerald);
         }
 
         [Fact]
         public void Unlocked_ShouldReturnUnlockedAchievement()
         {
             // Arrange & Act
-            var achievement = AchievementMother.Unlocked();
+            var achievement = AchievementFactory.Unlocked();
 
             // Assert
-            Assert.True(achievement.IsUnlocked);
-            Assert.NotNull(achievement.UnlockedAt);
-            Assert.Equal(achievement.Target, achievement.Progress);
+            achievement.IsUnlocked.Should().BeTrue();
+            achievement.UnlockedAt.Should().NotBeNull();
+            achievement.Progress.Should().Be(achievement.Target);
         }
 
         [Fact]
         public void HalfwayComplete_ShouldHave50PercentProgress()
         {
             // Arrange & Act
-            var achievement = AchievementMother.HalfwayComplete();
+            var achievement = AchievementFactory.HalfwayComplete();
 
             // Assert
-            Assert.Equal(50, achievement.GetProgressPercentage());
-            Assert.False(achievement.IsUnlocked);
+            achievement.GetProgressPercentage().Should().Be(50);
+            achievement.IsUnlocked.Should().BeFalse();
         }
 
         [Fact]
         public void AlmostComplete_ShouldHave99PercentProgress()
         {
             // Arrange & Act
-            var achievement = AchievementMother.AlmostComplete();
+            var achievement = AchievementFactory.AlmostComplete();
 
             // Assert
-            Assert.Equal(99, achievement.GetProgressPercentage());
-            Assert.False(achievement.IsUnlocked);
+            achievement.GetProgressPercentage().Should().Be(99);
+            achievement.IsUnlocked.Should().BeFalse();
         }
 
         #endregion
@@ -516,86 +521,85 @@ namespace FitTracker.Domain.Tests.Entities
         public void BronzeCollection_ShouldContainOnlyBronze()
         {
             // Arrange & Act
-            var achievements = AchievementMother.BronzeCollection();
+            var achievements = AchievementFactory.BronzeCollection();
 
             // Assert
-            Assert.Equal(8, achievements.Count);
-            Assert.All(achievements, a => Assert.Equal(AchievementTier.Bronze, a.Tier));
+            achievements.Should().HaveCount(8);
+            achievements.Should().OnlyContain(a => a.Tier == AchievementTier.Bronze);
         }
 
         [Fact]
         public void AllTiersCollection_ShouldContainAllTiers()
         {
             // Arrange & Act
-            var achievements = AchievementMother.AllTiersCollection();
+            var achievements = AchievementFactory.AllTiersCollection();
 
             // Assert
-            Assert.Contains(achievements, a => a.Tier == AchievementTier.Bronze);
-            Assert.Contains(achievements, a => a.Tier == AchievementTier.Silver);
-            Assert.Contains(achievements, a => a.Tier == AchievementTier.Gold);
-            Assert.Contains(achievements, a => a.Tier == AchievementTier.Platinum);
-            Assert.Contains(achievements, a => a.Tier == AchievementTier.Diamond);
-            Assert.Contains(achievements, a => a.Tier == AchievementTier.Emerald);
-            Assert.Contains(achievements, a => a.Tier == AchievementTier.Titan);
+            achievements.Should().Contain(a => a.Tier == AchievementTier.Bronze);
+            achievements.Should().Contain(a => a.Tier == AchievementTier.Silver);
+            achievements.Should().Contain(a => a.Tier == AchievementTier.Gold);
+            achievements.Should().Contain(a => a.Tier == AchievementTier.Platinum);
+            achievements.Should().Contain(a => a.Tier == AchievementTier.Diamond);
+            achievements.Should().Contain(a => a.Tier == AchievementTier.Emerald);
+            achievements.Should().Contain(a => a.Tier == AchievementTier.Titan);
         }
 
         [Fact]
         public void WorkoutProgressionPath_ShouldHaveIncreasingTargets()
         {
             // Arrange & Act
-            var achievements = AchievementMother.WorkoutProgressionPath();
+            var achievements = AchievementFactory.WorkoutProgressionPath();
 
             // Assert
-            Assert.Equal(4, achievements.Count);
-            Assert.Equal(1, achievements[0].Target);
-            Assert.Equal(10, achievements[1].Target);
-            Assert.Equal(100, achievements[2].Target);
-            Assert.Equal(1000, achievements[3].Target);
+            achievements.Should().HaveCount(4);
+            achievements[0].Target.Should().Be(1);
+            achievements[1].Target.Should().Be(10);
+            achievements[2].Target.Should().Be(100);
+            achievements[3].Target.Should().Be(1000);
         }
 
         [Fact]
         public void StreakProgressionPath_ShouldHaveIncreasingDifficulty()
         {
             // Arrange & Act
-            var achievements = AchievementMother.StreakProgressionPath();
+            var achievements = AchievementFactory.StreakProgressionPath();
 
             // Assert
-            Assert.Equal(3, achievements.Count);
-            Assert.All(achievements, a => Assert.Equal(AchievementType.WorkoutStreak, a.Type));
-            Assert.True(achievements[0].Target < achievements[1].Target);
-            Assert.True(achievements[1].Target < achievements[2].Target);
+            achievements.Should().HaveCount(3);
+            achievements.Should().OnlyContain(a => a.Type == AchievementType.WorkoutStreak);
+            achievements[0].Target.Should().BeLessThan(achievements[1].Target);
+            achievements[1].Target.Should().BeLessThan(achievements[2].Target);
         }
 
         [Fact]
         public void MixedProgressCollection_ShouldHaveVariedProgress()
         {
             // Arrange & Act
-            var achievements = AchievementMother.MixedProgressCollection();
+            var achievements = AchievementFactory.MixedProgressCollection();
 
             // Assert
-            Assert.Contains(achievements, a => a.IsUnlocked);
-            Assert.Contains(achievements, a => !a.IsUnlocked && a.Progress > 0);
-            Assert.Contains(achievements, a => a.Progress == 0);
+            achievements.Should().Contain(a => a.IsUnlocked);
+            achievements.Should().Contain(a => !a.IsUnlocked && a.Progress > 0);
+            achievements.Should().Contain(a => a.Progress == 0);
         }
 
         [Fact]
         public void CompleteAchievementSystem_ShouldContainAllTypes()
         {
             // Arrange & Act
-            var achievements = AchievementMother.CompleteAchievementSystem();
+            var achievements = AchievementFactory.CompleteAchievementSystem();
 
             // Assert
-            Assert.True(achievements.Count >= 13); // At least one of each type
-            Assert.Contains(achievements, a => a.Type == AchievementType.FirstWorkout);
-            Assert.Contains(achievements, a => a.Type == AchievementType.WorkoutStreak);
-            Assert.Contains(achievements, a => a.Type == AchievementType.TotalWorkouts);
-            Assert.Contains(achievements, a => a.Type == AchievementType.TotalVolume);
-            Assert.Contains(achievements, a => a.Type == AchievementType.MaxWeight);
-            Assert.Contains(achievements, a => a.Type == AchievementType.ConsecutiveDays);
-            Assert.Contains(achievements, a => a.Type == AchievementType.ExerciseVariety);
-            Assert.Contains(achievements, a => a.Type == AchievementType.PerfectForm);
-            Assert.Contains(achievements, a => a.Type == AchievementType.EarlyBird);
-            Assert.Contains(achievements, a => a.Type == AchievementType.NightOwl);
+            achievements.Should().Contain(a => a.Type == AchievementType.FirstWorkout);
+            achievements.Should().Contain(a => a.Type == AchievementType.WorkoutStreak);
+            achievements.Should().Contain(a => a.Type == AchievementType.TotalWorkouts);
+            achievements.Should().Contain(a => a.Type == AchievementType.TotalVolume);
+            achievements.Should().Contain(a => a.Type == AchievementType.MaxWeight);
+            achievements.Should().Contain(a => a.Type == AchievementType.ConsecutiveDays);
+            achievements.Should().Contain(a => a.Type == AchievementType.ExerciseVariety);
+            achievements.Should().Contain(a => a.Type == AchievementType.PerfectForm);
+            achievements.Should().Contain(a => a.Type == AchievementType.EarlyBird);
+            achievements.Should().Contain(a => a.Type == AchievementType.NightOwl);
         }
 
         #endregion
@@ -606,21 +610,21 @@ namespace FitTracker.Domain.Tests.Entities
         public void WithUserId_ShouldSetCorrectUserId()
         {
             // Arrange & Act
-            var achievement = AchievementMother.WithUserId(_testUserId);
+            var achievement = AchievementFactory.WithUserId(_testUserId);
 
             // Assert
-            Assert.Equal(_testUserId, achievement.UserId);
+            achievement.UserId.Should().Be(_testUserId);
         }
 
         [Fact]
         public void ForUser_ShouldCreateMultipleAchievementsForUser()
         {
             // Arrange & Act
-            var achievements = AchievementMother.ForUser(_testUserId);
+            var achievements = AchievementFactory.ForUser(_testUserId);
 
             // Assert
-            Assert.All(achievements, a => Assert.Equal(_testUserId, a.UserId));
-            Assert.True(achievements.Count > 0);
+            achievements.Should().OnlyContain(a => a.UserId == _testUserId);
+            achievements.Should().NotBeEmpty();
         }
 
         #endregion

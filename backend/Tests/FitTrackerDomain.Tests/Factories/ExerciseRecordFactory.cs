@@ -1,14 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using FitTracker.Domain.Entities;
 using FitTracker.Domain.ValueObjects;
 
 namespace FitTrackerDomain.Tests.Factories
 {
-    public static class ExerciseRecordMother
+    public static class ExerciseRecordFactory
     {
         private static readonly Guid DefaultUserId = Guid.NewGuid();
         private static readonly Guid DefaultExerciseId = Guid.NewGuid();

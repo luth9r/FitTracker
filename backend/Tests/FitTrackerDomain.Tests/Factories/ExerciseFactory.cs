@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using FitTracker.Domain.Entities;
 using FitTracker.Domain.Enums;
 
@@ -11,7 +6,7 @@ namespace FitTrackerDomain.Tests.Factories
     /// <summary>
     /// Factory for creating Exercise test data.
     /// </summary>
-    public static class ExerciseMother
+    public static class ExerciseFactory
     {
         /// <summary>
         /// Creates a default standard exercise.

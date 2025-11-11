@@ -8,140 +8,142 @@ using FluentValidation;
 
 namespace FitTracker.Domain.Validators
 {
-	internal class ExerciseRecordValidator : AbstractValidator<ExerciseRecord>
-	{
-		public ExerciseRecordValidator()
-		{
-			#region Required Fields
+    internal class ExerciseRecordValidator : AbstractValidator<ExerciseRecord>
+    {
+        public ExerciseRecordValidator()
+        {
+            Include(new BaseEntityValidator<ExerciseRecord>());
 
-			RuleFor(er => er.UserId)
-				.NotEmpty()
-				.WithMessage("User ID is required")
-				.WithName("userId")
-				.OverridePropertyName("userId");
+            #region Required Fields
 
-			RuleFor(er => er.ExerciseId)
-				.NotEmpty()
-				.WithMessage("Exercise ID is required")
-				.WithName("exerciseId")
-				.OverridePropertyName("exerciseId");
+            RuleFor(er => er.UserId)
+                .NotEmpty()
+                .WithMessage("User ID is required")
+                .WithName("userId")
+                .OverridePropertyName("userId");
 
-			RuleFor(er => er.MaxWeight)
-				.NotNull()
-				.WithMessage("Max weight is required")
-				.WithName("maxWeight")
-				.OverridePropertyName("maxWeight");
+            RuleFor(er => er.ExerciseId)
+                .NotEmpty()
+                .WithMessage("Exercise ID is required")
+                .WithName("exerciseId")
+                .OverridePropertyName("exerciseId");
 
-			#endregion
+            RuleFor(er => er.MaxWeight)
+                .NotNull()
+                .WithMessage("Max weight is required")
+                .WithName("maxWeight")
+                .OverridePropertyName("maxWeight");
 
-			// Detailed validations
-			WeightValidation();
-			RepsValidation();
-			VolumeValidation();
-			StatsValidation();
-			DateValidation();
-		}
+            #endregion
 
-		private void WeightValidation()
-		{
-			RuleFor(er => er.MaxWeight)
-				.Must(w => w.ToKilograms() >= 0)
-				.WithMessage("Max weight cannot be negative")
-				.Must(w => w.ToKilograms() <= 3000)
-				.WithMessage("Max weight cannot exceed 3000 kg")
-				.WithName("maxWeight")
-				.OverridePropertyName("maxWeight");
-		}
+            // Detailed validations
+            WeightValidation();
+            RepsValidation();
+            VolumeValidation();
+            StatsValidation();
+            DateValidation();
+        }
 
-		private void RepsValidation()
-		{
-			RuleFor(er => er.MaxReps)
-				.GreaterThanOrEqualTo(0)
-				.WithMessage("Max reps cannot be negative")
-				.LessThanOrEqualTo(1000)
-				.WithMessage("Max reps cannot exceed 1000")
-				.WithName("maxReps")
-				.OverridePropertyName("maxReps");
-		}
+        private void WeightValidation()
+        {
+            RuleFor(er => er.MaxWeight)
+                .Must(w => w.ToKilograms() >= 0)
+                .WithMessage("Max weight cannot be negative")
+                .Must(w => w.ToKilograms() <= 3000)
+                .WithMessage("Max weight cannot exceed 3000 kg")
+                .WithName("maxWeight")
+                .OverridePropertyName("maxWeight");
+        }
 
-		private void VolumeValidation()
-		{
-			RuleFor(er => er.MaxVolume)
-				.GreaterThanOrEqualTo(0)
-				.WithMessage("Max volume cannot be negative")
-				.WithName("maxVolume")
-				.OverridePropertyName("maxVolume");
+        private void RepsValidation()
+        {
+            RuleFor(er => er.MaxReps)
+                .GreaterThanOrEqualTo(0)
+                .WithMessage("Max reps cannot be negative")
+                .LessThanOrEqualTo(1000)
+                .WithMessage("Max reps cannot exceed 1000")
+                .WithName("maxReps")
+                .OverridePropertyName("maxReps");
+        }
 
-			RuleFor(er => er.MaxTotalVolume)
-				.GreaterThanOrEqualTo(0)
-				.WithMessage("Max total volume cannot be negative")
-				.WithName("maxTotalVolume")
-				.OverridePropertyName("maxTotalVolume");
-		}
+        private void VolumeValidation()
+        {
+            RuleFor(er => er.MaxVolume)
+                .GreaterThanOrEqualTo(0)
+                .WithMessage("Max volume cannot be negative")
+                .WithName("maxVolume")
+                .OverridePropertyName("maxVolume");
 
-		private void StatsValidation()
-		{
-			RuleFor(er => er.TotalWorkouts)
-				.GreaterThanOrEqualTo(0)
-				.WithMessage("Total workouts cannot be negative")
-				.WithName("totalWorkouts")
-				.OverridePropertyName("totalWorkouts");
+            RuleFor(er => er.MaxTotalVolume)
+                .GreaterThanOrEqualTo(0)
+                .WithMessage("Max total volume cannot be negative")
+                .WithName("maxTotalVolume")
+                .OverridePropertyName("maxTotalVolume");
+        }
 
-			RuleFor(er => er.TotalSets)
-				.GreaterThanOrEqualTo(0)
-				.WithMessage("Total sets cannot be negative")
-				.WithName("totalSets")
-				.OverridePropertyName("totalSets");
+        private void StatsValidation()
+        {
+            RuleFor(er => er.TotalWorkouts)
+                .GreaterThanOrEqualTo(0)
+                .WithMessage("Total workouts cannot be negative")
+                .WithName("totalWorkouts")
+                .OverridePropertyName("totalWorkouts");
 
-			RuleFor(er => er.TotalReps)
-				.GreaterThanOrEqualTo(0)
-				.WithMessage("Total reps cannot be negative")
-				.WithName("totalReps")
-				.OverridePropertyName("totalReps");
+            RuleFor(er => er.TotalSets)
+                .GreaterThanOrEqualTo(0)
+                .WithMessage("Total sets cannot be negative")
+                .WithName("totalSets")
+                .OverridePropertyName("totalSets");
 
-			RuleFor(er => er.TotalLifted)
-				.GreaterThanOrEqualTo(0)
-				.WithMessage("Total lifted cannot be negative")
-				.WithName("totalLifted")
-				.OverridePropertyName("totalLifted");
-		}
+            RuleFor(er => er.TotalReps)
+                .GreaterThanOrEqualTo(0)
+                .WithMessage("Total reps cannot be negative")
+                .WithName("totalReps")
+                .OverridePropertyName("totalReps");
 
-		private void DateValidation()
-		{
-			// Max weight date cannot be in the future
-			RuleFor(er => er.MaxWeightDate)
-				.LessThanOrEqualTo(DateTime.UtcNow)
-				.WithMessage("Max weight date cannot be in the future")
-				.WithName("maxWeightDate")
-				.OverridePropertyName("maxWeightDate");
+            RuleFor(er => er.TotalLifted)
+                .GreaterThanOrEqualTo(0)
+                .WithMessage("Total lifted cannot be negative")
+                .WithName("totalLifted")
+                .OverridePropertyName("totalLifted");
+        }
 
-			// Max reps date cannot be in the future
-			RuleFor(er => er.MaxRepsDate)
-				.LessThanOrEqualTo(DateTime.UtcNow)
-				.WithMessage("Max reps date cannot be in the future")
-				.WithName("maxRepsDate")
-				.OverridePropertyName("maxRepsDate");
+        private void DateValidation()
+        {
+            // Max weight date cannot be in the future
+            RuleFor(er => er.MaxWeightDate)
+                .LessThanOrEqualTo(DateTime.UtcNow)
+                .WithMessage("Max weight date cannot be in the future")
+                .WithName("maxWeightDate")
+                .OverridePropertyName("maxWeightDate");
 
-			// Max volume date cannot be in the future
-			RuleFor(er => er.MaxVolumeDate)
-				.LessThanOrEqualTo(DateTime.UtcNow)
-				.WithMessage("Max volume date cannot be in the future")
-				.WithName("maxVolumeDate")
-				.OverridePropertyName("maxVolumeDate");
+            // Max reps date cannot be in the future
+            RuleFor(er => er.MaxRepsDate)
+                .LessThanOrEqualTo(DateTime.UtcNow)
+                .WithMessage("Max reps date cannot be in the future")
+                .WithName("maxRepsDate")
+                .OverridePropertyName("maxRepsDate");
 
-			// Max total volume date cannot be in the future
-			RuleFor(er => er.MaxTotalVolumeDate)
-				.LessThanOrEqualTo(DateTime.UtcNow)
-				.WithMessage("Max total volume date cannot be in the future")
-				.WithName("maxTotalVolumeDate")
-				.OverridePropertyName("maxTotalVolumeDate");
+            // Max volume date cannot be in the future
+            RuleFor(er => er.MaxVolumeDate)
+                .LessThanOrEqualTo(DateTime.UtcNow)
+                .WithMessage("Max volume date cannot be in the future")
+                .WithName("maxVolumeDate")
+                .OverridePropertyName("maxVolumeDate");
 
-			// Last performed cannot be in the future
-			RuleFor(er => er.LastPerformed)
-				.LessThanOrEqualTo(DateTime.UtcNow)
-				.WithMessage("Last performed date cannot be in the future")
-				.WithName("lastPerformed")
-				.OverridePropertyName("lastPerformed");
-		}
-	}
+            // Max total volume date cannot be in the future
+            RuleFor(er => er.MaxTotalVolumeDate)
+                .LessThanOrEqualTo(DateTime.UtcNow)
+                .WithMessage("Max total volume date cannot be in the future")
+                .WithName("maxTotalVolumeDate")
+                .OverridePropertyName("maxTotalVolumeDate");
+
+            // Last performed cannot be in the future
+            RuleFor(er => er.LastPerformed)
+                .LessThanOrEqualTo(DateTime.UtcNow)
+                .WithMessage("Last performed date cannot be in the future")
+                .WithName("lastPerformed")
+                .OverridePropertyName("lastPerformed");
+        }
+    }
 }

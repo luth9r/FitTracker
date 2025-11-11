@@ -10,6 +10,8 @@ namespace FitTracker.Domain.Validators
     {
         public UserValidator()
         {
+            Include(new BaseEntityValidator<User>());
+
             #region Username
 
             RuleFor(u => u.Username)

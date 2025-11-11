@@ -8,56 +8,58 @@ using FluentValidation;
 
 namespace FitTracker.Domain.Validators
 {
-	internal class WorkoutExerciseValidator : AbstractValidator<WorkoutExercise>
-	{
-		public WorkoutExerciseValidator()
-		{
-			#region Required Fields
+    internal class WorkoutExerciseValidator : AbstractValidator<WorkoutExercise>
+    {
+        public WorkoutExerciseValidator()
+        {
+            Include(new BaseEntityValidator<WorkoutExercise>());
 
-			RuleFor(we => we.WorkoutId)
-				.NotEmpty()
-				.WithMessage("Workout ID is required")
-				.WithName("workoutId")
-				.OverridePropertyName("workoutId");
+            #region Required Fields
 
-			RuleFor(we => we.ExerciseId)
-				.NotEmpty()
-				.WithMessage("Exercise ID is required")
-				.WithName("exerciseId")
-				.OverridePropertyName("exerciseId");
+            RuleFor(we => we.WorkoutId)
+                .NotEmpty()
+                .WithMessage("Workout ID is required")
+                .WithName("workoutId")
+                .OverridePropertyName("workoutId");
 
-			RuleFor(we => we.OrderIndex)
-				.NotEmpty()
-				.WithMessage("Order index is required")
-				.WithName("orderIndex")
-				.OverridePropertyName("orderIndex");
+            RuleFor(we => we.ExerciseId)
+                .NotEmpty()
+                .WithMessage("Exercise ID is required")
+                .WithName("exerciseId")
+                .OverridePropertyName("exerciseId");
 
-			#endregion
+            RuleFor(we => we.OrderIndex)
+                .NotEmpty()
+                .WithMessage("Order index is required")
+                .WithName("orderIndex")
+                .OverridePropertyName("orderIndex");
 
-			// Detailed validations
-			OrderIndexValidation();
-			NotesValidation();
-		}
+            #endregion
 
-		private void OrderIndexValidation()
-		{
-			RuleFor(we => we.OrderIndex)
-				.GreaterThan(0)
-				.WithMessage("Order index must be greater than 0")
-				.LessThanOrEqualTo(WorkoutExercise.MaxOrderIndex)
-				.WithMessage($"Order index cannot exceed {WorkoutExercise.MaxOrderIndex}")
-				.WithName("orderIndex")
-				.OverridePropertyName("orderIndex");
-		}
+            // Detailed validations
+            OrderIndexValidation();
+            NotesValidation();
+        }
 
-		private void NotesValidation()
-		{
-			RuleFor(we => we.Notes)
-				.MaximumLength(WorkoutExercise.NotesMaxLength)
-				.When(we => !string.IsNullOrEmpty(we.Notes))
-				.WithMessage($"Notes cannot exceed {WorkoutExercise.NotesMaxLength} characters")
-				.WithName("notes")
-				.OverridePropertyName("notes");
-		}
-	}
+        private void OrderIndexValidation()
+        {
+            RuleFor(we => we.OrderIndex)
+                .GreaterThan(0)
+                .WithMessage("Order index must be greater than 0")
+                .LessThanOrEqualTo(WorkoutExercise.MaxOrderIndex)
+                .WithMessage($"Order index cannot exceed {WorkoutExercise.MaxOrderIndex}")
+                .WithName("orderIndex")
+                .OverridePropertyName("orderIndex");
+        }
+
+        private void NotesValidation()
+        {
+            RuleFor(we => we.Notes)
+                .MaximumLength(WorkoutExercise.NotesMaxLength)
+                .When(we => !string.IsNullOrEmpty(we.Notes))
+                .WithMessage($"Notes cannot exceed {WorkoutExercise.NotesMaxLength} characters")
+                .WithName("notes")
+                .OverridePropertyName("notes");
+        }
+    }
 }

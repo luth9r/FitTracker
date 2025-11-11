@@ -12,6 +12,8 @@ namespace FitTracker.Domain.Validators
     {
         public ExerciseValidator()
         {
+            Include(new BaseEntityValidator<Exercise>());
+
             #region Required Fields
 
             RuleFor(e => e.Name)

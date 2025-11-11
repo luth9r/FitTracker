@@ -1,4 +1,3 @@
-using System;
 using FitTracker.Domain.Entities;
 using FitTracker.Domain.ValueObjects;
 
@@ -7,7 +6,7 @@ namespace FitTracker.Domain.Tests.Factories
     /// <summary>
     /// Factory for creating User test data.
     /// </summary>
-    public static class UserMother
+    public static class UserFactory
     {
         private const string PASSWORD_HASH = "hashedpassword123";
 
@@ -89,6 +88,17 @@ namespace FitTracker.Domain.Tests.Factories
             .WithEmail("test@example.com")
             .WithPasswordHash(PASSWORD_HASH)
             .WithLastName(lastName)
+            .Build();
+
+        /// <summary>
+        /// Creates a user with preferred units.
+        /// </summary>
+        public static User WithPreferedUnits(UnitSystem units) => User.CreateBuilder()
+            .WithUsername("testuser")
+            .WithEmail("test@example.com")
+            .WithPasswordHash(PASSWORD_HASH)
+            .WithLastName("lastName")
+            .WithPreferredUnits(units)
             .Build();
 
         /// <summary>

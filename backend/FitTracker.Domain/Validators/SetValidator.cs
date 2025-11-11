@@ -5,120 +5,122 @@ using FitTracker.Domain.Enums;
 
 namespace FitTracker.Domain.Validators
 {
-	internal class SetValidator : AbstractValidator<Set>
-	{
-		public SetValidator()
-		{
-			#region WorkoutExerciseId
+    internal class SetValidator : AbstractValidator<Set>
+    {
+        public SetValidator()
+        {
+            Include(new BaseEntityValidator<Set>());
 
-			RuleFor(s => s.WorkoutExerciseId)
-				.NotEmpty()
-				.WithMessage("Workout exercise ID is required")
-				.WithName("workoutExerciseId")
-				.OverridePropertyName("workoutExerciseId");
+            #region WorkoutExerciseId
 
-			#endregion
+            RuleFor(s => s.WorkoutExerciseId)
+                .NotEmpty()
+                .WithMessage("Workout exercise ID is required")
+                .WithName("workoutExerciseId")
+                .OverridePropertyName("workoutExerciseId");
 
-			#region SetNumber
+            #endregion
 
-			RuleFor(s => s.SetNumber)
-				.NotEmpty()
-				.WithMessage("Set number is required")
-				.WithName("setNumber")
-				.OverridePropertyName("setNumber");
+            #region SetNumber
 
-			#endregion
+            RuleFor(s => s.SetNumber)
+                .NotEmpty()
+                .WithMessage("Set number is required")
+                .WithName("setNumber")
+                .OverridePropertyName("setNumber");
 
-			#region Weight
+            #endregion
 
-			RuleFor(s => s.Weight)
-				.NotNull()
-				.WithMessage("Weight is required")
-				.WithName("weight")
-				.OverridePropertyName("weight");
+            #region Weight
 
-			#endregion
+            RuleFor(s => s.Weight)
+                .NotNull()
+                .WithMessage("Weight is required")
+                .WithName("weight")
+                .OverridePropertyName("weight");
 
-			#region Reps
+            #endregion
 
-			RuleFor(s => s.Reps)
-				.NotEmpty()
-				.WithMessage("Reps is required")
-				.WithName("reps")
-				.OverridePropertyName("reps");
+            #region Reps
 
-			#endregion
+            RuleFor(s => s.Reps)
+                .NotEmpty()
+                .WithMessage("Reps is required")
+                .WithName("reps")
+                .OverridePropertyName("reps");
 
-			#region SetType
+            #endregion
 
-			RuleFor(s => s.SetType)
-				.NotNull()
-				.WithMessage("Set type is required")
-				.WithName("setType")
-				.OverridePropertyName("setType");
+            #region SetType
 
-			#endregion
+            RuleFor(s => s.SetType)
+                .NotNull()
+                .WithMessage("Set type is required")
+                .WithName("setType")
+                .OverridePropertyName("setType");
 
-			// Detailed validations
-			SetNumberValidation();
-			WeightValidation();
-			RepsValidation();
-			RestSecondsValidation();
-			SetTypeValidation();
-		}
+            #endregion
 
-		private void SetNumberValidation()
-		{
-			RuleFor(s => s.SetNumber)
-				.GreaterThan(0)
-				.WithMessage("Set number must be greater than 0")
-				.WithName("setNumber")
-				.OverridePropertyName("setNumber");
-		}
+            // Detailed validations
+            SetNumberValidation();
+            WeightValidation();
+            RepsValidation();
+            RestSecondsValidation();
+            SetTypeValidation();
+        }
 
-		private void WeightValidation()
-		{
-			RuleFor(s => s.Weight.ToKilograms())
-				.GreaterThan(0)
-				.WithMessage("Weight must be greater than 0")
-				.LessThanOrEqualTo(Set.MaxWeightKg)
-				.WithMessage($"Weight cannot exceed {Set.MaxWeightKg} kg")
-				.WithName("weight")
-				.OverridePropertyName("weight");
-		}
+        private void SetNumberValidation()
+        {
+            RuleFor(s => s.SetNumber)
+                .GreaterThan(0)
+                .WithMessage("Set number must be greater than 0")
+                .WithName("setNumber")
+                .OverridePropertyName("setNumber");
+        }
 
-		private void RepsValidation()
-		{
-			RuleFor(s => s.Reps)
-				.GreaterThan(0)
-				.WithMessage("Reps must be greater than 0")
-				.LessThanOrEqualTo(Set.MaxReps)
-				.WithMessage($"Reps cannot exceed {Set.MaxReps}")
-				.WithName("reps")
-				.OverridePropertyName("reps");
-		}
+        private void WeightValidation()
+        {
+            RuleFor(s => s.Weight.ToKilograms())
+                .GreaterThan(0)
+                .WithMessage("Weight must be greater than 0")
+                .LessThanOrEqualTo(Set.MaxWeightKg)
+                .WithMessage($"Weight cannot exceed {Set.MaxWeightKg} kg")
+                .WithName("weight")
+                .OverridePropertyName("weight");
+        }
 
-		private void RestSecondsValidation()
-		{
-			RuleFor(s => s.RestSeconds)
-				.GreaterThanOrEqualTo(0)
-				.When(s => s.RestSeconds.HasValue)
-				.WithMessage("Rest seconds cannot be negative")
-				.LessThanOrEqualTo(Set.MaxRestSeconds)
-				.When(s => s.RestSeconds.HasValue)
-				.WithMessage($"Rest cannot exceed {Set.MaxRestSeconds} seconds")
-				.WithName("restSeconds")
-				.OverridePropertyName("restSeconds");
-		}
+        private void RepsValidation()
+        {
+            RuleFor(s => s.Reps)
+                .GreaterThan(0)
+                .WithMessage("Reps must be greater than 0")
+                .LessThanOrEqualTo(Set.MaxReps)
+                .WithMessage($"Reps cannot exceed {Set.MaxReps}")
+                .WithName("reps")
+                .OverridePropertyName("reps");
+        }
 
-		private void SetTypeValidation()
-		{
-			RuleFor(s => s.SetType)
-				.IsInEnum()
-				.WithMessage("Set type must be a valid value")
-				.WithName("setType")
-				.OverridePropertyName("setType");
-		}
+        private void RestSecondsValidation()
+        {
+            RuleFor(s => s.RestSeconds)
+                .GreaterThanOrEqualTo(0)
+                .When(s => s.RestSeconds.HasValue)
+                .WithMessage("Rest seconds cannot be negative")
+                .LessThanOrEqualTo(Set.MaxRestSeconds)
+                .When(s => s.RestSeconds.HasValue)
+                .WithMessage($"Rest cannot exceed {Set.MaxRestSeconds} seconds")
+                .WithName("restSeconds")
+                .OverridePropertyName("restSeconds");
+        }
 
-	}
+        private void SetTypeValidation()
+        {
+            RuleFor(s => s.SetType)
+                .IsInEnum()
+                .WithMessage("Set type must be a valid value")
+                .WithName("setType")
+                .OverridePropertyName("setType");
+        }
+
+    }
 }

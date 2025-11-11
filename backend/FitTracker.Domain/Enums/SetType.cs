@@ -15,6 +15,9 @@ namespace FitTracker.Domain.Enums
 		TriSet = 5,
 		AMRAP = 6,
 		EMOM = 7,
-		RPT = 8 // Rest Pause Training
-	}
+		RPT = 8, // Rest Pause Training
+        Warmup = 9,
+        Pyramid = 10,
+        RestPause = 11
+    }
 }
