@@ -10,74 +10,127 @@ using FluentValidation;
 namespace FitTracker.Domain.Entities
 {
     /// <summary>
-    /// Personal records for exercises
+    /// Represents personal records and statistics for a user's exercise performance.
     /// </summary>
     public class ExerciseRecord : BaseEntity
     {
         #region Properties
 
+        /// <summary>
+        /// Gets the unique identifier of the user who owns this record.
+        /// </summary>
         public Guid UserId
         {
             get; private set;
         }
+
+        /// <summary>
+        /// Gets the unique identifier of the exercise associated with this record.
+        /// </summary>
         public Guid ExerciseId
         {
             get; private set;
         }
 
-        // Records
+        /// <summary>
+        /// Gets the maximum weight lifted for this exercise (1RM or max weight).
+        /// </summary>
         public Weight MaxWeight
         {
             get; private set;
-        }               // 1RM or max weight
+        }
+
+        /// <summary>
+        /// Gets the maximum number of repetitions achieved in a single set.
+        /// </summary>
         public int MaxReps
         {
             get; private set;
-        }                    // Max reps
+        }
+
+        /// <summary>
+        /// Gets the maximum volume (weight × reps) achieved in a single set.
+        /// </summary>
         public decimal MaxVolume
         {
             get; private set;
-        }              // Max volume for set
+        }
+
+        /// <summary>
+        /// Gets the maximum total volume achieved in a single workout session.
+        /// </summary>
         public decimal MaxTotalVolume
         {
             get; private set;
-        }         // Max volume for workout
+        }
 
-        // When records were set
+        /// <summary>
+        /// Gets the date and time when the maximum weight record was set.
+        /// </summary>
         public DateTime MaxWeightDate
         {
             get; private set;
         }
+
+        /// <summary>
+        /// Gets the date and time when the maximum reps record was set.
+        /// </summary>
         public DateTime MaxRepsDate
         {
             get; private set;
         }
+
+        /// <summary>
+        /// Gets the date and time when the maximum volume record was set.
+        /// </summary>
         public DateTime MaxVolumeDate
         {
             get; private set;
         }
+
+        /// <summary>
+        /// Gets the date and time when the maximum total volume record was set.
+        /// </summary>
         public DateTime MaxTotalVolumeDate
         {
             get; private set;
         }
 
-        // Stats
+        /// <summary>
+        /// Gets the total number of workout sessions where this exercise was performed.
+        /// </summary>
         public int TotalWorkouts
         {
             get; private set;
-        }              // How many times this exercise done
+        }
+
+        /// <summary>
+        /// Gets the total number of sets performed for this exercise.
+        /// </summary>
         public int TotalSets
         {
             get; private set;
         }
+
+        /// <summary>
+        /// Gets the total number of repetitions performed for this exercise.
+        /// </summary>
         public int TotalReps
         {
             get; private set;
         }
+
+        /// <summary>
+        /// Gets the total weight lifted across all sets for this exercise.
+        /// </summary>
         public decimal TotalLifted
         {
             get; private set;
-        }            // Total weight lifted
+        }
+
+        /// <summary>
+        /// Gets the date and time when this exercise was last performed.
+        /// </summary>
         public DateTime LastPerformed
         {
             get; private set;
@@ -89,24 +142,18 @@ namespace FitTracker.Domain.Entities
 
         /// <summary>
         /// Parameterless constructor for ORM.
-        /// Use only by ORM.
+        /// Do not use directly.
         /// </summary>
         private ExerciseRecord()
         {
         }
 
         /// <summary>
-        /// Constructor for creating a new ExerciseRecord with minimal information.
-        /// Use <see cref="Create"/> instead of directly calling this constructor.
+        /// Domain constructor used by Factory for creating new exercise records.
+        /// Contains business logic, initializes fields, and validates.
         /// </summary>
         private ExerciseRecord(Guid userId, Guid exerciseId) : base()
         {
-            if (userId == Guid.Empty)
-                throw new ArgumentException("User ID cannot be empty", nameof(userId));
-
-            if (exerciseId == Guid.Empty)
-                throw new ArgumentException("Exercise ID cannot be empty", nameof(exerciseId));
-
             UserId = userId;
             ExerciseId = exerciseId;
             MaxWeight = Weight.FromKilograms(0);
@@ -127,8 +174,8 @@ namespace FitTracker.Domain.Entities
         }
 
         /// <summary>
-        /// Constructor for restoring from persistence with full data.
-        /// No validation performed; data is assumed valid.
+        /// Constructor for restoring exercise record from persistence layer.
+        /// Use <see cref="Create"/> for creating new exercise records.
         /// </summary>
         public ExerciseRecord(
             Guid userId,
@@ -163,7 +210,7 @@ namespace FitTracker.Domain.Entities
             TotalLifted = totalLifted;
             LastPerformed = lastPerformed;
 
-            EnsureValid();
+            // No validation here since data is from persistence
         }
 
         #endregion
@@ -180,8 +227,11 @@ namespace FitTracker.Domain.Entities
         #region Factory
 
         /// <summary>
-        /// Factory method to create a new ExerciseRecord.
+        /// Creates a new exercise record for the specified user and exercise.
         /// </summary>
+        /// <param name="userId">The unique identifier of the user.</param>
+        /// <param name="exerciseId">The unique identifier of the exercise.</param>
+        /// <returns>A new <see cref="ExerciseRecord"/> instance with initialized values.</returns>
         public static ExerciseRecord Create(Guid userId, Guid exerciseId)
         {
             return new ExerciseRecord(userId, exerciseId);
@@ -192,9 +242,16 @@ namespace FitTracker.Domain.Entities
         #region Domain Methods
 
         /// <summary>
-        /// Update records based on workout data.
-        /// Returns true if any personal record was improved.
+        /// Updates the exercise records based on workout performance data.
         /// </summary>
+        /// <param name="maxSetWeight">The maximum weight lifted in a single set during the workout.</param>
+        /// <param name="maxSetReps">The maximum number of reps achieved in a single set during the workout.</param>
+        /// <param name="maxSetVolume">The maximum volume achieved in a single set during the workout.</param>
+        /// <param name="workoutTotalVolume">The total volume for the entire workout session.</param>
+        /// <param name="workoutSets">The total number of sets performed in the workout.</param>
+        /// <param name="workoutReps">The total number of reps performed in the workout.</param>
+        /// <param name="workoutLifted">The total weight lifted during the workout.</param>
+        /// <returns><c>true</c> if any personal record was improved; otherwise, <c>false</c>.</returns>
         public bool UpdateRecords(
             Weight maxSetWeight,
             int maxSetReps,
@@ -250,16 +307,18 @@ namespace FitTracker.Domain.Entities
         }
 
         /// <summary>
-        /// Calculates average weight lifted per set.
+        /// Calculates the average weight lifted per set.
         /// </summary>
+        /// <returns>The average weight per set, or 0 if no sets have been performed.</returns>
         public decimal GetAverageWeightPerSet()
         {
             return TotalSets > 0 ? TotalLifted / TotalSets : 0;
         }
 
         /// <summary>
-        /// Calculates average reps per set.
+        /// Calculates the average number of repetitions per set.
         /// </summary>
+        /// <returns>The average reps per set, or 0 if no sets have been performed.</returns>
         public decimal GetAverageRepsPerSet()
         {
             return TotalSets > 0 ? (decimal)TotalReps / TotalSets : 0;

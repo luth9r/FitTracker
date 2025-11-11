@@ -74,10 +74,10 @@ namespace FitTracker.Domain.Tests.Entities
         [InlineData("")]
         [InlineData(null)]
         [InlineData("   ")]
-        public void Build_WithInvalidName_ShouldThrowArgumentException(string invalidName)
+        public void Build_WithInvalidName_ShouldThrowValidationException(string invalidName)
         {
             // Arrange & Act & Assert
-            var exception = Assert.Throws<ArgumentException>(() =>
+            var exception = Assert.Throws<ValidationException>(() =>
                 Exercise.CreateBuilder()
                     .WithName(invalidName)
                     .WithMuscleGroup(MuscleGroup.Chest)
@@ -392,13 +392,13 @@ namespace FitTracker.Domain.Tests.Entities
         [InlineData("")]
         [InlineData(null)]
         [InlineData("   ")]
-        public void Update_WithInvalidName_ShouldThrowArgumentException(string invalidName)
+        public void Update_WithInvalidName_ShouldThrowValidationException(string invalidName)
         {
             // Arrange
             var exercise = ExerciseMother.Default();
 
             // Act & Assert
-            var exception = Assert.Throws<ArgumentException>(() =>
+            var exception = Assert.Throws<ValidationException>(() =>
                 exercise.Update(invalidName, MuscleGroup.Chest, Equipment.Barbell));
 
             Assert.Contains("name", exception.Message.ToLower());

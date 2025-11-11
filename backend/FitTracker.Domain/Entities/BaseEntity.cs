@@ -55,10 +55,12 @@ namespace FitTracker.Domain.Entities
 
         protected void EnsureValid()
         {
-            var validationResult = Validate();
-            if (!validationResult.IsValid)
+            var validator = GetValidator();
+            var result = validator.Validate(new ValidationContext<object>(this));
+
+            if (!result.IsValid)
             {
-                throw new ValidationException(validationResult.Errors);
+                throw new ValidationException(result.Errors);
             }
         }
 

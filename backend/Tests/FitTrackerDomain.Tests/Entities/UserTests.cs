@@ -4,6 +4,7 @@ using Xunit;
 using FitTracker.Domain.Entities;
 using FitTracker.Domain.ValueObjects;
 using FitTracker.Domain.Tests.Factories;
+using FluentValidation;
 
 namespace FitTracker.Domain.Tests.Entities
 {
@@ -80,7 +81,7 @@ namespace FitTracker.Domain.Tests.Entities
         [InlineData("", "test@example.com", PASSWORD_HASH)]
         [InlineData(null, "test@example.com", PASSWORD_HASH)]
         [InlineData("  ", "test@example.com", PASSWORD_HASH)]
-        public void Build_WithInvalidUsername_ShouldThrowArgumentException(
+        public void Build_WithInvalidUsername_ShouldThrowValidationException(
             string username, string email, string passwordHash)
         {
             // Arrange
@@ -90,7 +91,7 @@ namespace FitTracker.Domain.Tests.Entities
                 .WithPasswordHash(passwordHash);
 
             // Act & Assert
-            var exception = Assert.Throws<ArgumentException>(() => builder.Build());
+            var exception = Assert.Throws<ValidationException>(() => builder.Build());
             Assert.Contains("Username", exception.Message);
         }
 
@@ -98,7 +99,7 @@ namespace FitTracker.Domain.Tests.Entities
         [InlineData("testuser", "", PASSWORD_HASH)]
         [InlineData("testuser", null, PASSWORD_HASH)]
         [InlineData("testuser", "  ", PASSWORD_HASH)]
-        public void Build_WithInvalidEmail_ShouldThrowArgumentException(
+        public void Build_WithInvalidEmail_ShouldThrowValidationException(
             string username, string email, string passwordHash)
         {
             // Arrange
@@ -108,7 +109,7 @@ namespace FitTracker.Domain.Tests.Entities
                 .WithPasswordHash(passwordHash);
 
             // Act & Assert
-            var exception = Assert.Throws<ArgumentException>(() => builder.Build());
+            var exception = Assert.Throws<ValidationException>(() => builder.Build());
             Assert.Contains("Email", exception.Message);
         }
 
@@ -116,7 +117,7 @@ namespace FitTracker.Domain.Tests.Entities
         [InlineData("testuser", "test@example.com", "")]
         [InlineData("testuser", "test@example.com", null)]
         [InlineData("testuser", "test@example.com", "  ")]
-        public void Build_WithInvalidPasswordHash_ShouldThrowArgumentException(
+        public void Build_WithInvalidPasswordHash_ShouldThrowValidationException(
             string username, string email, string passwordHash)
         {
             // Arrange
@@ -126,7 +127,7 @@ namespace FitTracker.Domain.Tests.Entities
                 .WithPasswordHash(passwordHash);
 
             // Act & Assert
-            var exception = Assert.Throws<ArgumentException>(() => builder.Build());
+            var exception = Assert.Throws<ValidationException>(() => builder.Build());
             Assert.Contains("Password", exception.Message);
         }
 
@@ -216,13 +217,13 @@ namespace FitTracker.Domain.Tests.Entities
         [InlineData("")]
         [InlineData(null)]
         [InlineData("  ")]
-        public void UpdateEmail_WithInvalidEmail_ShouldThrowArgumentException(string email)
+        public void UpdateEmail_WithInvalidEmail_ShouldThrowValidationException(string email)
         {
             // Arrange
             var user = UserMother.Default();
 
             // Act & Assert
-            var exception = Assert.Throws<ArgumentException>(() => user.UpdateEmail(email));
+            var exception = Assert.Throws<ValidationException>(() => user.UpdateEmail(email));
             Assert.Contains("Email", exception.Message);
         }
 
@@ -250,13 +251,13 @@ namespace FitTracker.Domain.Tests.Entities
         [InlineData("")]
         [InlineData(null)]
         [InlineData("  ")]
-        public void UpdatePasswordHash_WithInvalidHash_ShouldThrowArgumentException(string hash)
+        public void UpdatePasswordHash_WithInvalidHash_ShouldThrowValidationException(string hash)
         {
             // Arrange
             var user = UserMother.Default();
 
             // Act & Assert
-            var exception = Assert.Throws<ArgumentException>(() => user.UpdatePasswordHash(hash));
+            var exception = Assert.Throws<ValidationException>(() => user.UpdatePasswordHash(hash));
             Assert.Contains("Password", exception.Message);
         }
 

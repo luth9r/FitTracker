@@ -18,23 +18,23 @@ namespace FitTracker.Domain.Tests.Entities
         #region Constructor Validation
 
         [Fact]
-        public void Create_WithEmptyUserId_ShouldThrowArgumentException()
+        public void Create_WithEmptyUserId_ShouldThrowValidationException()
         {
             // Act & Assert
-            var ex = Assert.Throws<ArgumentException>(() =>
+            var ex = Assert.Throws<ValidationException>(() =>
                 ExerciseRecord.Create(Guid.Empty, _exerciseId));
 
-            Assert.Contains("User ID cannot be empty", ex.Message);
+            Assert.Contains("User ID is required", ex.Message);
         }
 
         [Fact]
-        public void Create_WithEmptyExerciseId_ShouldThrowArgumentException()
+        public void Create_WithEmptyExerciseId_ShouldThrowValidationException()
         {
             // Act & Assert
-            var ex = Assert.Throws<ArgumentException>(() =>
+            var ex = Assert.Throws<ValidationException>(() =>
                 ExerciseRecord.Create(_userId, Guid.Empty));
 
-            Assert.Contains("Exercise ID cannot be empty", ex.Message);
+            Assert.Contains("Exercise ID is required", ex.Message);
         }
 
         #endregion

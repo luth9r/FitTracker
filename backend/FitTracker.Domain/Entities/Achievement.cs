@@ -14,46 +14,85 @@ namespace FitTracker.Domain.Entities
         public const int NameMaxLength = 100;
         public const int DescriptionMaxLength = 500;
 
+        /// <summary>
+        /// Gets the unique identifier of the user who owns this achievement.
+        /// </summary>
         public Guid UserId
         {
             get; private set;
         }
+
+        /// <summary>
+        /// Gets the type of the achievement.
+        /// </summary>
         public AchievementType Type
         {
             get; private set;
         }
+
+        /// <summary>
+        /// Gets the name of the achievement.
+        /// </summary>
         public string Name
         {
             get; private set;
         }
+
+        /// <summary>
+        /// Gets the description of the achievement.
+        /// </summary>
         public string Description
         {
             get; private set;
         }
+
+        /// <summary>
+        /// Gets the URL to the achievement's icon image.
+        /// </summary>
         public string IconUrl
         {
             get; private set;
         }
+
+        /// <summary>
+        /// Gets the current progress value towards completing this achievement.
+        /// </summary>
         public int Progress
         {
             get; private set;
         }
+
+        /// <summary>
+        /// Gets the target value required to unlock this achievement.
+        /// </summary>
         public int Target
         {
             get; private set;
         }
+
+        /// <summary>
+        /// Gets a value indicating whether this achievement has been unlocked.
+        /// </summary>
         public bool IsUnlocked
         {
             get; private set;
         }
+
+        /// <summary>
+        /// Gets the date and time when this achievement was unlocked, or null if not yet unlocked.
+        /// </summary>
         public DateTime? UnlockedAt
         {
             get; private set;
         }
+
+        /// <summary>
+        /// Gets the tier level of the achievement (Bronze, Silver, or Gold).
+        /// </summary>
         public AchievementTier Tier
         {
             get; private set;
-        }   // Bronze, Silver, Gold
+        }
 
         #region Constructors
 
@@ -63,9 +102,6 @@ namespace FitTracker.Domain.Entities
         /// </summary>
         private Achievement()
         {
-            Name = string.Empty;
-            Description = string.Empty;
-            IconUrl = string.Empty;
         }
 
         /// <summary>

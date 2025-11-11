@@ -20,9 +20,9 @@ namespace FitTracker.Domain.Tests.Entities
         #region Constructor Validation
 
         [Fact]
-        public void Constructor_WithEmptyWorkoutExerciseId_ShouldThrowArgumentException()
+        public void Constructor_WithEmptyWorkoutExerciseId_ShouldThrowValidationException()
         {
-            var ex = Assert.Throws<ArgumentException>(() =>
+            var ex = Assert.Throws<ValidationException>(() =>
                 Set.CreateBuilder()
                     .WithWorkoutExercise(Guid.Empty)
                     .WithSetNumber(1)
@@ -36,9 +36,9 @@ namespace FitTracker.Domain.Tests.Entities
         [Theory]
         [InlineData(0)]
         [InlineData(-1)]
-        public void Constructor_WithInvalidSetNumber_ShouldThrowArgumentException(int invalidSetNumber)
+        public void Constructor_WithInvalidSetNumber_ShouldThrowValidationException(int invalidSetNumber)
         {
-            var ex = Assert.Throws<ArgumentException>(() =>
+            var ex = Assert.Throws<ValidationException>(() =>
                 Set.CreateBuilder()
                     .WithWorkoutExercise(_workoutExerciseId)
                     .WithSetNumber(invalidSetNumber)
@@ -52,9 +52,9 @@ namespace FitTracker.Domain.Tests.Entities
         [Theory]
         [InlineData(0)]
         [InlineData(-1)]
-        public void Constructor_WithInvalidReps_ShouldThrowArgumentException(int invalidReps)
+        public void Constructor_WithInvalidReps_ShouldThrowValidationException(int invalidReps)
         {
-            var ex = Assert.Throws<ArgumentException>(() =>
+            var ex = Assert.Throws<ValidationException>(() =>
                 Set.CreateBuilder()
                     .WithWorkoutExercise(_workoutExerciseId)
                     .WithSetNumber(1)
@@ -66,9 +66,9 @@ namespace FitTracker.Domain.Tests.Entities
         }
 
         [Fact]
-        public void Constructor_WithRepsExceedingMax_ShouldThrowArgumentException()
+        public void Constructor_WithRepsExceedingMax_ShouldThrowValidationException()
         {
-            var ex = Assert.Throws<ArgumentException>(() =>
+            var ex = Assert.Throws<ValidationException>(() =>
                 Set.CreateBuilder()
                     .WithWorkoutExercise(_workoutExerciseId)
                     .WithSetNumber(1)

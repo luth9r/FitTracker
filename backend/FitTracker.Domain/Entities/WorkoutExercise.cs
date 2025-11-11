@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -11,46 +11,77 @@ using FluentValidation;
 namespace FitTracker.Domain.Entities
 {
     /// <summary>
-    /// Represents an exercise within a workout session
+    /// Represents an exercise within a workout session.
     /// </summary>
     public class WorkoutExercise : BaseEntity
     {
-        // ============================================
-        // Constants
-        // ============================================
+        #region Constants
+
         public const int NotesMaxLength = 500;
         public const int MaxOrderIndex = 1000;
 
-        // ============================================
-        // Properties
-        // ============================================
-        public Guid WorkoutId { get; private set; }
-        public Guid ExerciseId { get; private set; }
-        public int OrderIndex { get; private set; }
-        public string? Notes { get; private set; }
+        #endregion
 
-        // ============================================
-        // Constructors
-        // ============================================
+        #region Properties
 
         /// <summary>
-        /// Domain constructor
+        /// Gets the unique identifier of the workout this exercise belongs to.
         /// </summary>
+        public Guid WorkoutId
+        {
+            get; private set;
+        }
+
+        /// <summary>
+        /// Gets the unique identifier of the exercise.
+        /// </summary>
+        public Guid ExerciseId
+        {
+            get; private set;
+        }
+
+        /// <summary>
+        /// Gets the order index of this exercise within the workout.
+        /// </summary>
+        public int OrderIndex
+        {
+            get; private set;
+        }
+
+        /// <summary>
+        /// Gets any notes associated with this workout exercise.
+        /// </summary>
+        public string? Notes
+        {
+            get; private set;
+        }
+
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        /// Parameterless constructor for ORM.
+        /// Do not use directly.
+        /// </summary>
+        private WorkoutExercise()
+        {
+        }
+
+        /// <summary>
+        /// Domain constructor used by Builder for creating new workout exercises.
+        /// Contains business logic, initializes fields, and validates.
+        /// </summary>
+        /// <param name="workoutId">The unique identifier of the workout.</param>
+        /// <param name="exerciseId">The unique identifier of the exercise.</param>
+        /// <param name="orderIndex">The order index within the workout.</param>
+        /// <param name="notes">Optional notes for this exercise.</param>
         public WorkoutExercise(
             Guid workoutId,
             Guid exerciseId,
             int orderIndex,
             string? notes = null) : base()
         {
-            if (workoutId == Guid.Empty)
-                throw new ArgumentException("Workout ID cannot be empty");
-
-            if (exerciseId == Guid.Empty)
-                throw new ArgumentException("Exercise ID cannot be empty");
-
-            if (orderIndex < 1)
-                throw new ArgumentException("Order index must be at least 1");
-
             WorkoutId = workoutId;
             ExerciseId = exerciseId;
             OrderIndex = orderIndex;
@@ -59,20 +90,30 @@ namespace FitTracker.Domain.Entities
             EnsureValid();
         }
 
-        // ============================================
-        // Validator
-        // ============================================
+        #endregion
+
+        #region Validation
+
         protected override IValidator GetValidator()
         {
             return new WorkoutExerciseValidator();
         }
 
-        // ============================================
-        // Builder Pattern
-        // ============================================
+        #endregion
 
-        public static WorkoutExerciseBuilder CreateBuilder() => new WorkoutExerciseBuilder();
+        #region Builder
 
+        /// <summary>
+        /// Creates a new <see cref="WorkoutExerciseBuilder"/> instance.
+        /// </summary>
+        public static WorkoutExerciseBuilder CreateBuilder()
+        {
+            return new WorkoutExerciseBuilder();
+        }
+
+        /// <summary>
+        /// Builder for creating <see cref="WorkoutExercise"/> instances.
+        /// </summary>
         public class WorkoutExerciseBuilder
         {
             private Guid _workoutId;
@@ -104,34 +145,40 @@ namespace FitTracker.Domain.Entities
                 return this;
             }
 
+            /// <summary>
+            /// Builds the <see cref="WorkoutExercise"/> entity.
+            /// </summary>
             public WorkoutExercise Build()
             {
                 return new WorkoutExercise(_workoutId, _exerciseId, _orderIndex, _notes);
             }
         }
 
-        // ============================================
-        // Domain Methods
-        // ============================================
+        #endregion
+
+        #region Domain Methods
 
         /// <summary>
-        /// Update order index
+        /// Updates the order index of this workout exercise.
         /// </summary>
+        /// <param name="newOrder">The new order index. Must be between 1 and <see cref="MaxOrderIndex"/>.</param>
+        /// <exception cref="ArgumentException">Thrown if the new order is out of valid range.</exception>
         public void UpdateOrder(int newOrder)
         {
             if (newOrder < 1)
-                throw new ArgumentException("Order index must be at least 1");
+                throw new ArgumentException("Order index must be at least 1", nameof(newOrder));
 
             if (newOrder > MaxOrderIndex)
-                throw new ArgumentException($"Order index cannot exceed {MaxOrderIndex}");
+                throw new ArgumentException($"Order index cannot exceed {MaxOrderIndex}", nameof(newOrder));
 
             OrderIndex = newOrder;
             UpdatedAt = DateTime.UtcNow;
         }
 
         /// <summary>
-        /// Update notes
+        /// Updates the notes for this workout exercise.
         /// </summary>
+        /// <param name="notes">The new notes (optional).</param>
         public void UpdateNotes(string? notes)
         {
             Notes = notes;
@@ -139,5 +186,7 @@ namespace FitTracker.Domain.Entities
 
             EnsureValid();
         }
+
+        #endregion
     }
 }

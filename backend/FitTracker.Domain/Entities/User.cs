@@ -1,4 +1,3 @@
-﻿// FitTracker.Domain/Entities/User.cs
 using System;
 using System.Collections.Generic;
 using FitTracker.Domain.ValueObjects;
@@ -8,13 +7,12 @@ using FluentValidation;
 namespace FitTracker.Domain.Entities
 {
     /// <summary>
-    /// Represents a user in the FitTracker application
+    /// Represents a user in the FitTracker application.
     /// </summary>
     public class User : BaseEntity
     {
-        // ============================================
-        // Constants
-        // ============================================
+        #region Constants
+
         public const int UsernameMaxLength = 50;
         public const int UsernameMinLength = 3;
         public const int EmailMaxLength = 100;
@@ -23,24 +21,89 @@ namespace FitTracker.Domain.Entities
         public const int BioMaxLength = 500;
         public const int AvatarMaxLength = 500;
 
-        // ============================================
-        // Properties
-        // ============================================
-        public string Username { get; private set; }
-        public string Email { get; private set; }
-        public string PasswordHash { get; private set; }
-        public string? FirstName { get; private set; }
-        public string? LastName { get; private set; }
-        public string? Avatar { get; private set; }
-        public string? Bio { get; private set; }
-        public UnitSystem PreferredUnits { get; private set; }
+        #endregion
 
-        // ============================================
-        // Constructors
-        // ============================================
+        #region Properties
 
         /// <summary>
-        /// Domain constructor
+        /// Gets the username of the user.
+        /// </summary>
+        public string Username
+        {
+            get; private set;
+        }
+
+        /// <summary>
+        /// Gets the email address of the user.
+        /// </summary>
+        public string Email
+        {
+            get; private set;
+        }
+
+        /// <summary>
+        /// Gets the hashed password of the user.
+        /// </summary>
+        public string PasswordHash
+        {
+            get; private set;
+        }
+
+        /// <summary>
+        /// Gets the first name of the user.
+        /// </summary>
+        public string? FirstName
+        {
+            get; private set;
+        }
+
+        /// <summary>
+        /// Gets the last name of the user.
+        /// </summary>
+        public string? LastName
+        {
+            get; private set;
+        }
+
+        /// <summary>
+        /// Gets the avatar image URL of the user.
+        /// </summary>
+        public string? Avatar
+        {
+            get; private set;
+        }
+
+        /// <summary>
+        /// Gets the biography of the user.
+        /// </summary>
+        public string? Bio
+        {
+            get; private set;
+        }
+
+        /// <summary>
+        /// Gets the preferred unit system of the user.
+        /// </summary>
+        public UnitSystem PreferredUnits
+        {
+            get; private set;
+        }
+
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        /// Parameterless constructor for ORM.
+        /// Do not use directly.
+        /// </summary>
+        private User()
+        {
+        }
+
+        /// <summary>
+        /// Domain constructor used by Builder for creating new users.
+        /// Contains business logic, initializes fields, and validates.
         /// </summary>
         private User(
             string username,
@@ -49,17 +112,8 @@ namespace FitTracker.Domain.Entities
             string? firstName = null,
             string? lastName = null) : base()
         {
-            if (string.IsNullOrWhiteSpace(username))
-                throw new ArgumentException("Username cannot be empty", nameof(username));
-
-            if (string.IsNullOrWhiteSpace(email))
-                throw new ArgumentException("Email cannot be empty", nameof(email));
-
-            if (string.IsNullOrWhiteSpace(passwordHash))
-                throw new ArgumentException("Password hash cannot be empty", nameof(passwordHash));
-
             Username = username;
-            Email = email.ToLowerInvariant();
+            Email = email?.ToLowerInvariant();
             PasswordHash = passwordHash;
             FirstName = firstName;
             LastName = lastName;
@@ -68,32 +122,51 @@ namespace FitTracker.Domain.Entities
             EnsureValid();
         }
 
-        public User(string username, string email, string passwordHash, string? firstName, string? lastName, string? avatar, string? bio, UnitSystem preferredUnits) : this(username, email, passwordHash, firstName, lastName)
+        /// <summary>
+        /// Constructor for restoring user from persistence layer.
+        /// Use <see cref="UserBuilder"/> for creating new users.
+        /// </summary>
+        public User(
+            string username,
+            string email,
+            string passwordHash,
+            string? firstName,
+            string? lastName,
+            string? avatar,
+            string? bio,
+            UnitSystem preferredUnits) : this(username, email, passwordHash, firstName, lastName)
         {
             Avatar = avatar;
             Bio = bio;
             PreferredUnits = preferredUnits;
+
+            // No validation here since data is from persistence
         }
 
+        #endregion
 
+        #region Validation
 
-        // ============================================
-        // Validator
-        // ============================================
         protected override IValidator GetValidator()
         {
             return new UserValidator();
         }
 
-        // ============================================
-        // Builder Pattern
-        // ============================================
+        #endregion
+
+        #region Builder
 
         /// <summary>
-        /// Creates a new builder for User
+        /// Creates a new <see cref="UserBuilder"/> instance.
         /// </summary>
-        public static UserBuilder CreateBuilder() => new UserBuilder();
+        public static UserBuilder CreateBuilder()
+        {
+            return new UserBuilder();
+        }
 
+        /// <summary>
+        /// Builder for creating <see cref="User"/> instances.
+        /// </summary>
         public class UserBuilder
         {
             private string _username = string.Empty;
@@ -147,7 +220,6 @@ namespace FitTracker.Domain.Entities
                 return this;
             }
 
-
             public UserBuilder WithPreferredUnits(UnitSystem preferredUnits)
             {
                 _preferredUnits = preferredUnits ?? throw new ArgumentNullException(nameof(preferredUnits));
@@ -166,6 +238,9 @@ namespace FitTracker.Domain.Entities
                 return this;
             }
 
+            /// <summary>
+            /// Builds the <see cref="User"/> entity.
+            /// </summary>
             public User Build()
             {
                 return new User(
@@ -176,18 +251,21 @@ namespace FitTracker.Domain.Entities
                     _lastName,
                     _avatar,
                     _bio,
-                    _preferredUnits
-                );
+                    _preferredUnits);
             }
         }
 
-        // ============================================
-        // Domain Methods
-        // ============================================
+        #endregion
+
+        #region Domain Methods
 
         /// <summary>
-        /// Update user profile information
+        /// Updates the user profile information.
         /// </summary>
+        /// <param name="firstName">New first name</param>
+        /// <param name="lastName">New last name</param>
+        /// <param name="bio">New biography</param>
+        /// <param name="avatar">New avatar URL</param>
         public void UpdateProfile(string? firstName, string? lastName, string? bio, string? avatar)
         {
             FirstName = firstName;
@@ -200,34 +278,34 @@ namespace FitTracker.Domain.Entities
         }
 
         /// <summary>
-        /// Update email address
+        /// Updates the user's email address.
         /// </summary>
+        /// <param name="email">New email address</param>
         public void UpdateEmail(string email)
         {
-            if (string.IsNullOrWhiteSpace(email))
-                throw new ArgumentException("Email cannot be empty", nameof(email));
-
-            Email = email.ToLowerInvariant();
+            Email = email?.ToLowerInvariant();
             UpdatedAt = DateTime.UtcNow;
 
             EnsureValid();
         }
 
         /// <summary>
-        /// Update password hash
+        /// Updates the password hash.
         /// </summary>
+        /// <param name="passwordHash">New password hash</param>
         public void UpdatePasswordHash(string passwordHash)
         {
-            if (string.IsNullOrWhiteSpace(passwordHash))
-                throw new ArgumentException("Password hash cannot be empty", nameof(passwordHash));
-
             PasswordHash = passwordHash;
             UpdatedAt = DateTime.UtcNow;
+
+            EnsureValid();
         }
 
         /// <summary>
-        /// Change preferred unit system
+        /// Updates the preferred unit system.
         /// </summary>
+        /// <param name="units">New unit system</param>
+        /// <exception cref="ArgumentNullException">If units is null</exception>
         public void UpdatePreferredUnits(UnitSystem units)
         {
             PreferredUnits = units ?? throw new ArgumentNullException(nameof(units));
@@ -235,37 +313,54 @@ namespace FitTracker.Domain.Entities
         }
 
         /// <summary>
-        /// Set to metric units
+        /// Sets preferred units to metric system.
         /// </summary>
-        public void SetMetricUnits() => UpdatePreferredUnits(UnitSystem.Metric);
+        public void SetMetricUnits()
+        {
+            UpdatePreferredUnits(UnitSystem.Metric);
+        }
 
         /// <summary>
-        /// Set to imperial units
+        /// Sets preferred units to imperial system.
         /// </summary>
-        public void SetImperialUnits() => UpdatePreferredUnits(UnitSystem.Imperial);
-
+        public void SetImperialUnits()
+        {
+            UpdatePreferredUnits(UnitSystem.Imperial);
+        }
 
         /// <summary>
-        /// Convert weight between unit systems
+        /// Converts a weight value from current preferred units to specified target units.
         /// </summary>
+        /// <param name="weight">Weight value to convert</param>
+        /// <param name="targetSystem">Target unit system</param>
+        /// <returns>Converted weight value</returns>
         public decimal ConvertWeight(decimal weight, UnitSystem targetSystem)
         {
             return PreferredUnits.ConvertWeight(weight, targetSystem);
         }
 
         /// <summary>
-        /// Get current weight unit
+        /// Gets the unit string for weight in the current preferred unit system.
         /// </summary>
-        public string GetWeightUnit() => PreferredUnits.WeightUnit;
+        /// <returns>Unit string for weight</returns>
+        public string GetWeightUnit()
+        {
+            return PreferredUnits.WeightUnit;
+        }
 
         /// <summary>
-        /// Get current length unit
+        /// Gets the unit string for length in the current preferred unit system.
         /// </summary>
-        public string GetLengthUnit() => PreferredUnits.LengthUnit;
+        /// <returns>Unit string for length</returns>
+        public string GetLengthUnit()
+        {
+            return PreferredUnits.LengthUnit;
+        }
 
         /// <summary>
-        /// Get full name of user
+        /// Gets the full name of the user, constructed from first and last names if available.
         /// </summary>
+        /// <returns>Full name or username if names are unavailable</returns>
         public string GetFullName()
         {
             if (!string.IsNullOrWhiteSpace(FirstName) && !string.IsNullOrWhiteSpace(LastName))
@@ -281,16 +376,18 @@ namespace FitTracker.Domain.Entities
         }
 
         /// <summary>
-        /// Get display name (full name or username)
+        /// Gets the display name for the user.
         /// </summary>
+        /// <returns>Full name if available, otherwise username</returns>
         public string GetDisplayName()
         {
             return GetFullName();
         }
 
         /// <summary>
-        /// Check if profile is completed
+        /// Determines if the user has completed their profile.
         /// </summary>
+        /// <returns>True if first name, last name, and bio are filled; otherwise false</returns>
         public bool HasCompletedProfile()
         {
             return !string.IsNullOrWhiteSpace(FirstName)
@@ -299,13 +396,23 @@ namespace FitTracker.Domain.Entities
         }
 
         /// <summary>
-        /// Check if user uses metric system
+        /// Determines if the user prefers the metric unit system.
         /// </summary>
-        public bool UsesMetric() => PreferredUnits == UnitSystem.Metric;
+        /// <returns>True if metric units are preferred; otherwise false</returns>
+        public bool UsesMetric()
+        {
+            return PreferredUnits == UnitSystem.Metric;
+        }
 
         /// <summary>
-        /// Check if user uses imperial system
+        /// Determines if the user prefers the imperial unit system.
         /// </summary>
-        public bool UsesImperial() => PreferredUnits == UnitSystem.Imperial;
+        /// <returns>True if imperial units are preferred; otherwise false</returns>
+        public bool UsesImperial()
+        {
+            return PreferredUnits == UnitSystem.Imperial;
+        }
+
+        #endregion
     }
 }

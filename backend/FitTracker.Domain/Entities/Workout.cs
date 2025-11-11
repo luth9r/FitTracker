@@ -1,4 +1,3 @@
-﻿// FitTracker.Domain/Entities/Workout.cs
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,37 +7,125 @@ using FluentValidation;
 namespace FitTracker.Domain.Entities
 {
     /// <summary>
-    /// Represents a workout session
+    /// Represents a workout session.
     /// </summary>
     public class Workout : BaseEntity
     {
-        // ============================================
-        // Constants
-        // ============================================
+        #region Constants
+
         public const int NameMaxLength = 100;
         public const int NameMinLength = 3;
         public const int NotesMaxLength = 2000;
         public const int MaxDurationHours = 12;
 
-        // ============================================
-        // Properties
-        // ============================================
-        public Guid UserId { get; private set; }
-        public Guid? WorkoutTemplateId { get; private set; }
-        public string Name { get; private set; }
-        public string? Notes { get; private set; }
-        public DateTime WorkoutDate { get; private set; }
-        public TimeSpan Duration { get; private set; }
-        public bool IsCompleted { get; private set; }
-        public bool IsInProgress { get; private set; }
-        public DateTime? StartedAt { get; private set; }
-        public DateTime? CompletedAt { get; private set; }
-        public decimal TotalVolumeKg { get; private set; }
+        #endregion
 
-        // ============================================
-        // Constructors
-        // ============================================
+        #region Properties
 
+        /// <summary>
+        /// Gets the unique identifier of the user performing the workout.
+        /// </summary>
+        public Guid UserId
+        {
+            get; private set;
+        }
+
+        /// <summary>
+        /// Gets the optional unique identifier of the workout template.
+        /// </summary>
+        public Guid? WorkoutTemplateId
+        {
+            get; private set;
+        }
+
+        /// <summary>
+        /// Gets the name of the workout.
+        /// </summary>
+        public string Name
+        {
+            get; private set;
+        }
+
+        /// <summary>
+        /// Gets the optional notes for the workout.
+        /// </summary>
+        public string? Notes
+        {
+            get; private set;
+        }
+
+        /// <summary>
+        /// Gets the date when the workout occurred.
+        /// </summary>
+        public DateTime WorkoutDate
+        {
+            get; private set;
+        }
+
+        /// <summary>
+        /// Gets the duration of the workout.
+        /// </summary>
+        public TimeSpan Duration
+        {
+            get; private set;
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether the workout is completed.
+        /// </summary>
+        public bool IsCompleted
+        {
+            get; private set;
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether the workout is currently in progress.
+        /// </summary>
+        public bool IsInProgress
+        {
+            get; private set;
+        }
+
+        /// <summary>
+        /// Gets the timestamp when the workout was started, or null if not started.
+        /// </summary>
+        public DateTime? StartedAt
+        {
+            get; private set;
+        }
+
+        /// <summary>
+        /// Gets the timestamp when the workout was completed, or null if not completed.
+        /// </summary>
+        public DateTime? CompletedAt
+        {
+            get; private set;
+        }
+
+        /// <summary>
+        /// Gets the total volume lifted during the workout, in kilograms.
+        /// </summary>
+        public decimal TotalVolumeKg
+        {
+            get; private set;
+        }
+
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        /// Parameterless constructor for ORM.
+        /// Do not use directly.
+        /// </summary>
+        private Workout()
+        {
+        }
+
+        /// <summary>
+        /// Constructor for restoring workout from persistence layer.
+        /// Use <see cref="WorkoutBuilder"/> for creating new workouts.
+        /// </summary>
         public Workout(
             Guid id,
             Guid userId,
@@ -70,7 +157,8 @@ namespace FitTracker.Domain.Entities
         }
 
         /// <summary>
-        /// Domain constructor
+        /// Domain constructor used by Builder for creating new workouts.
+        /// Contains business logic, initializes fields, and validates.
         /// </summary>
         private Workout(
             Guid userId,
@@ -79,12 +167,6 @@ namespace FitTracker.Domain.Entities
             Guid? workoutTemplateId = null,
             string? notes = null) : base()
         {
-            if (userId == Guid.Empty)
-                throw new ArgumentException("User ID cannot be empty");
-
-            if (string.IsNullOrWhiteSpace(name))
-                throw new ArgumentException("Workout name cannot be empty");
-
             UserId = userId;
             WorkoutTemplateId = workoutTemplateId;
             Name = name;
@@ -98,20 +180,30 @@ namespace FitTracker.Domain.Entities
             EnsureValid();
         }
 
-        // ============================================
-        // Validator
-        // ============================================
+        #endregion
+
+        #region Validation
+
         protected override IValidator GetValidator()
         {
             return new WorkoutValidator();
         }
 
-        // ============================================
-        // Builder Pattern
-        // ============================================
+        #endregion
 
-        public static WorkoutBuilder CreateBuilder() => new WorkoutBuilder();
+        #region Builder
 
+        /// <summary>
+        /// Creates a new <see cref="WorkoutBuilder"/> instance.
+        /// </summary>
+        public static WorkoutBuilder CreateBuilder()
+        {
+            return new WorkoutBuilder();
+        }
+
+        /// <summary>
+        /// Builder for creating <see cref="Workout"/> instances.
+        /// </summary>
         public class WorkoutBuilder
         {
             private Guid _userId;
@@ -150,19 +242,23 @@ namespace FitTracker.Domain.Entities
                 return this;
             }
 
+            /// <summary>
+            /// Builds the <see cref="Workout"/> entity.
+            /// </summary>
             public Workout Build()
             {
                 return new Workout(_userId, _name, _workoutDate, _workoutTemplateId, _notes);
             }
         }
 
-        // ============================================
-        // Domain Methods - Workout Lifecycle
-        // ============================================
+        #endregion
+
+        #region Domain Methods - Workout Lifecycle
 
         /// <summary>
-        /// Start the workout (begins timer)
+        /// Starts the workout (begins timer).
         /// </summary>
+        /// <exception cref="InvalidOperationException">Thrown if workout is already in progress or completed.</exception>
         public void Start()
         {
             if (IsInProgress)
@@ -178,8 +274,9 @@ namespace FitTracker.Domain.Entities
         }
 
         /// <summary>
-        /// Pause the workout (stops timer)
+        /// Pauses the workout (stops timer).
         /// </summary>
+        /// <exception cref="InvalidOperationException">Thrown if workout is not in progress or already completed.</exception>
         public void Pause()
         {
             if (!IsInProgress)
@@ -190,19 +287,18 @@ namespace FitTracker.Domain.Entities
 
             IsInProgress = false;
 
-            // Calculate actual duration
             if (StartedAt.HasValue)
             {
-                var elapsed = DateTime.UtcNow - StartedAt.Value;
-                Duration = elapsed;
+                Duration = DateTime.UtcNow - StartedAt.Value;
             }
 
             UpdatedAt = DateTime.UtcNow;
         }
 
         /// <summary>
-        /// Resume the workout (continues timer)
+        /// Resumes the workout (continues timer).
         /// </summary>
+        /// <exception cref="InvalidOperationException">Thrown if workout is already in progress or completed.</exception>
         public void Resume()
         {
             if (IsInProgress)
@@ -212,19 +308,19 @@ namespace FitTracker.Domain.Entities
                 throw new InvalidOperationException("Cannot resume completed workout");
 
             IsInProgress = true;
-            StartedAt = DateTime.UtcNow - Duration;  // Adjust start time to account for elapsed duration
+            StartedAt = DateTime.UtcNow - Duration;
             UpdatedAt = DateTime.UtcNow;
         }
 
         /// <summary>
-        /// Complete the workout (finalizes duration)
+        /// Completes the workout (finalizes duration).
         /// </summary>
+        /// <exception cref="InvalidOperationException">Thrown if workout is already completed.</exception>
         public void Complete()
         {
             if (IsCompleted)
                 throw new InvalidOperationException("Workout is already completed");
 
-            // Calculate final duration
             if (IsInProgress && StartedAt.HasValue)
             {
                 Duration = DateTime.UtcNow - StartedAt.Value;
@@ -235,12 +331,13 @@ namespace FitTracker.Domain.Entities
             CompletedAt = DateTime.UtcNow;
             UpdatedAt = DateTime.UtcNow;
 
-            //CalculateTotalVolume();
+            // TODO: Calculate total volume if needed
         }
 
         /// <summary>
-        /// Mark workout as incomplete
+        /// Marks the workout as incomplete.
         /// </summary>
+        /// <exception cref="InvalidOperationException">Thrown if workout is not completed.</exception>
         public void Uncomplete()
         {
             if (!IsCompleted)
@@ -251,9 +348,14 @@ namespace FitTracker.Domain.Entities
             UpdatedAt = DateTime.UtcNow;
         }
 
+        #endregion
+
+        #region Domain Methods - Other
+
         /// <summary>
-        /// Get current duration (accounts for in-progress workouts)
+        /// Gets the current duration, accounting for in-progress workouts.
         /// </summary>
+        /// <returns>The current workout duration.</returns>
         public TimeSpan GetCurrentDuration()
         {
             if (IsInProgress && StartedAt.HasValue)
@@ -265,8 +367,11 @@ namespace FitTracker.Domain.Entities
         }
 
         /// <summary>
-        /// Manually set duration (for completed workouts)
+        /// Manually sets the workout duration (for completed workouts).
         /// </summary>
+        /// <param name="duration">The duration to set.</param>
+        /// <exception cref="InvalidOperationException">Thrown if workout is in progress.</exception>
+        /// <exception cref="ArgumentException">Thrown if duration is negative or exceeds the maximum allowed duration.</exception>
         public void SetDuration(TimeSpan duration)
         {
             if (IsInProgress)
@@ -282,13 +387,13 @@ namespace FitTracker.Domain.Entities
             UpdatedAt = DateTime.UtcNow;
         }
 
-        // ============================================
-        // Domain Methods - Other
-        // ============================================
-
         /// <summary>
-        /// Update workout details
+        /// Updates workout details.
         /// </summary>
+        /// <param name="name">The new workout name.</param>
+        /// <param name="workoutDate">The new workout date.</param>
+        /// <param name="notes">The new notes (optional).</param>
+        /// <exception cref="ArgumentException">Thrown if name is null or whitespace.</exception>
         public void Update(string name, DateTime workoutDate, string? notes = null)
         {
             if (string.IsNullOrWhiteSpace(name))
@@ -302,10 +407,21 @@ namespace FitTracker.Domain.Entities
             EnsureValid();
         }
 
+        /// <summary>
+        /// Returns true if the workout date is today (UTC).
+        /// </summary>
         public bool IsToday() => WorkoutDate.Date == DateTime.UtcNow.Date;
 
+        /// <summary>
+        /// Returns true if the workout date is in the past (UTC).
+        /// </summary>
         public bool IsPast() => WorkoutDate.Date < DateTime.UtcNow.Date;
 
+        /// <summary>
+        /// Returns true if the workout date is in the future (UTC).
+        /// </summary>
         public bool IsFuture() => WorkoutDate.Date > DateTime.UtcNow.Date;
+
+        #endregion
     }
 }

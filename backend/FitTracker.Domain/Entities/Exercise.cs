@@ -10,7 +10,7 @@ using FitTracker.Domain.Validators;
 namespace FitTracker.Domain.Entities
 {
     /// <summary>
-    /// Represents an exercise that can be performed in a workout
+    /// Represents an exercise that can be performed in a workout.
     /// </summary>
     public class Exercise : BaseEntity
     {
@@ -27,34 +27,65 @@ namespace FitTracker.Domain.Entities
 
         #region Properties
 
+        /// <summary>
+        /// Gets the name of the exercise.
+        /// </summary>
         public string Name
         {
             get; private set;
         }
+
+        /// <summary>
+        /// Gets the description of the exercise.
+        /// </summary>
         public string? Description
         {
             get; private set;
         }
+
+        /// <summary>
+        /// Gets the URL to the exercise's image.
+        /// </summary>
         public string? ImageUrl
         {
             get; private set;
         }
+
+        /// <summary>
+        /// Gets the URL to the exercise's instructional video.
+        /// </summary>
         public string? VideoUrl
         {
             get; private set;
         }
+
+        /// <summary>
+        /// Gets the primary muscle group targeted by this exercise.
+        /// </summary>
         public MuscleGroup MuscleGroup
         {
             get; private set;
         }
+
+        /// <summary>
+        /// Gets the equipment required for this exercise.
+        /// </summary>
         public Equipment Equipment
         {
             get; private set;
         }
+
+        /// <summary>
+        /// Gets a value indicating whether this is a custom exercise created by a user.
+        /// </summary>
         public bool IsCustom
         {
             get; private set;
         }
+
+        /// <summary>
+        /// Gets the unique identifier of the user who created this custom exercise, or null if this is a standard exercise.
+        /// </summary>
         public Guid? UserId
         {
             get; private set;
@@ -70,6 +101,32 @@ namespace FitTracker.Domain.Entities
         /// </summary>
         private Exercise()
         {
+        }
+
+        /// <summary>
+        /// Domain constructor used by Builder for creating new exercises.
+        /// Contains business logic, initializes fields, and validates.
+        /// </summary>
+        private Exercise(
+            string name,
+            MuscleGroup muscleGroup,
+            Equipment equipment,
+            string? description = null,
+            string? imageUrl = null,
+            string? videoUrl = null,
+            bool isCustom = false,
+            Guid? userId = null) : base()
+        {
+            Name = name;
+            MuscleGroup = muscleGroup;
+            Equipment = equipment;
+            Description = description;
+            ImageUrl = imageUrl;
+            VideoUrl = videoUrl;
+            IsCustom = isCustom;
+            UserId = userId;
+
+            EnsureValid();
         }
 
         /// <summary>
@@ -94,37 +151,8 @@ namespace FitTracker.Domain.Entities
             Equipment = equipment;
             IsCustom = isCustom;
             UserId = userId;
-        }
 
-        /// <summary>
-        /// Domain constructor
-        /// </summary>
-        private Exercise(
-            string name,
-            MuscleGroup muscleGroup,
-            Equipment equipment,
-            string? description = null,
-            string? imageUrl = null,
-            string? videoUrl = null,
-            bool isCustom = false,
-            Guid? userId = null) : base()
-        {
-            if (string.IsNullOrWhiteSpace(name))
-                throw new ArgumentException("Exercise name cannot be empty");
-
-            if (isCustom && userId == null)
-                throw new ArgumentException("Custom exercises must have a user ID");
-
-            Name = name;
-            MuscleGroup = muscleGroup;
-            Equipment = equipment;
-            Description = description;
-            ImageUrl = imageUrl;
-            VideoUrl = videoUrl;
-            IsCustom = isCustom;
-            UserId = userId;
-
-            EnsureValid();
+            // No validation here since data is from persistence
         }
 
         #endregion
@@ -141,12 +169,15 @@ namespace FitTracker.Domain.Entities
         #region Domain Methods
 
         /// <summary>
-        /// Update exercise details
+        /// Updates the core properties of the exercise.
         /// </summary>
+        /// <param name="name">The new name for the exercise.</param>
+        /// <param name="muscleGroup">The new target muscle group.</param>
+        /// <param name="equipment">The new required equipment.</param>
+        /// <param name="description">The new description (optional).</param>
+        /// <exception cref="ArgumentException">Thrown when name is null, empty, or whitespace.</exception>
         public void Update(string name, MuscleGroup muscleGroup, Equipment equipment, string? description = null)
         {
-            if (string.IsNullOrWhiteSpace(name))
-                throw new ArgumentException("Exercise name cannot be empty");
 
             Name = name;
             MuscleGroup = muscleGroup;
@@ -158,8 +189,9 @@ namespace FitTracker.Domain.Entities
         }
 
         /// <summary>
-        /// Update image URL
+        /// Updates the image URL of the exercise.
         /// </summary>
+        /// <param name="imageUrl">The new image URL.</param>
         public void UpdateImageUrl(string? imageUrl)
         {
             ImageUrl = imageUrl;
@@ -167,8 +199,9 @@ namespace FitTracker.Domain.Entities
         }
 
         /// <summary>
-        /// Update video URL
+        /// Updates the video URL of the exercise.
         /// </summary>
+        /// <param name="videoUrl">The new video URL.</param>
         public void UpdateVideoUrl(string? videoUrl)
         {
             VideoUrl = videoUrl;
@@ -189,7 +222,6 @@ namespace FitTracker.Domain.Entities
 
         /// <summary>
         /// Builder for creating <see cref="Exercise"/> instances.
-        /// Uses the domain constructor.
         /// </summary>
         public class ExerciseBuilder
         {
@@ -253,7 +285,7 @@ namespace FitTracker.Domain.Entities
             }
 
             /// <summary>
-            /// Builds the <see cref="Exercise"/> entity using domain constructor.
+            /// Builds the <see cref="Exercise"/> entity.
             /// </summary>
             public Exercise Build()
             {
@@ -265,8 +297,7 @@ namespace FitTracker.Domain.Entities
                     _imageUrl,
                     _videoUrl,
                     _isCustom,
-                    _userId
-                );
+                    _userId);
             }
         }
 
