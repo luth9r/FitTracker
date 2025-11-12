@@ -22,7 +22,7 @@ FROM build AS publish
 RUN dotnet publish "FitTracker.Api/FitTracker.Api.csproj" -c Release -o /app/publish
 
 # Runtime stage - minimal image for running the application
-FROM mcr.microsoft.com/dotnet/aspnet:9.0
+FROM mcr.microsoft.com/dotnet/aspnet:10.0
 WORKDIR /app
 
 # Copy published application from publish stage
