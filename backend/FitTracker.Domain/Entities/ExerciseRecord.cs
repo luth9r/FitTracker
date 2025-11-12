@@ -1,11 +1,13 @@
+using CSharpFunctionalExtensions;
+using FitTracker.Domain.Validators;
+using FitTracker.Domain.ValueObjects;
+using FluentValidation;
+using FluentValidation.Results;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using FitTracker.Domain.Validators;
-using FitTracker.Domain.ValueObjects;
-using FluentValidation;
 
 namespace FitTracker.Domain.Entities
 {
@@ -152,7 +154,7 @@ namespace FitTracker.Domain.Entities
         /// Domain constructor used by Factory for creating new exercise records.
         /// Contains business logic, initializes fields, and validates.
         /// </summary>
-        private ExerciseRecord(Guid userId, Guid exerciseId) : base()
+        public ExerciseRecord(Guid userId, Guid exerciseId) : base()
         {
             UserId = userId;
             ExerciseId = exerciseId;
@@ -169,8 +171,6 @@ namespace FitTracker.Domain.Entities
             MaxVolumeDate = DateTime.UtcNow;
             MaxTotalVolumeDate = DateTime.UtcNow;
             LastPerformed = DateTime.UtcNow;
-
-            EnsureValid();
         }
 
         /// <summary>
@@ -220,6 +220,15 @@ namespace FitTracker.Domain.Entities
         protected override IValidator GetValidator()
         {
             return new ExerciseRecordValidator();
+        }
+
+        private Result<ExerciseRecord, ValidationResult> ValidateWithResult()
+        {
+            var result = Validate();
+            if (!result.IsValid)
+                return Result.Failure<ExerciseRecord, ValidationResult>(result);
+
+            return Result.Success<ExerciseRecord, ValidationResult>(this);
         }
 
         #endregion

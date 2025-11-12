@@ -1,16 +1,14 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using CSharpFunctionalExtensions;
 using FluentValidation;
+using FluentValidation.Results;
 using FitTracker.Domain.Enums;
 using FitTracker.Domain.Validators;
 
 namespace FitTracker.Domain.Entities
 {
     /// <summary>
-    /// Represents an exercise that can be performed in a workout.
+    /// Represents an exercise that can be performed as part of a workout.
     /// </summary>
     public class Exercise : BaseEntity
     {
@@ -27,87 +25,25 @@ namespace FitTracker.Domain.Entities
 
         #region Properties
 
-        /// <summary>
-        /// Gets the name of the exercise.
-        /// </summary>
-        public string Name
-        {
-            get; private set;
-        }
-
-        /// <summary>
-        /// Gets the description of the exercise.
-        /// </summary>
-        public string? Description
-        {
-            get; private set;
-        }
-
-        /// <summary>
-        /// Gets the URL to the exercise's image.
-        /// </summary>
-        public string? ImageUrl
-        {
-            get; private set;
-        }
-
-        /// <summary>
-        /// Gets the URL to the exercise's instructional video.
-        /// </summary>
-        public string? VideoUrl
-        {
-            get; private set;
-        }
-
-        /// <summary>
-        /// Gets the primary muscle group targeted by this exercise.
-        /// </summary>
-        public MuscleGroup MuscleGroup
-        {
-            get; private set;
-        }
-
-        /// <summary>
-        /// Gets the equipment required for this exercise.
-        /// </summary>
-        public Equipment Equipment
-        {
-            get; private set;
-        }
-
-        /// <summary>
-        /// Gets a value indicating whether this is a custom exercise created by a user.
-        /// </summary>
-        public bool IsCustom
-        {
-            get; private set;
-        }
-
-        /// <summary>
-        /// Gets the unique identifier of the user who created this custom exercise, or null if this is a standard exercise.
-        /// </summary>
-        public Guid? UserId
-        {
-            get; private set;
-        }
+        public string Name { get; private set; }
+        public string? Description { get; private set; }
+        public string? ImageUrl { get; private set; }
+        public string? VideoUrl { get; private set; }
+        public MuscleGroup MuscleGroup { get; private set; }
+        public Equipment Equipment { get; private set; }
+        public bool IsCustom { get; private set; }
+        public Guid? UserId { get; private set; }
 
         #endregion
 
         #region Constructors
 
-        /// <summary>
-        /// Parameterless constructor for ORM.
-        /// Do not use directly.
-        /// </summary>
         private Exercise()
         {
+            // For ORM
         }
 
-        /// <summary>
-        /// Domain constructor used by Builder for creating new exercises.
-        /// Contains business logic, initializes fields, and validates.
-        /// </summary>
-        private Exercise(
+        public Exercise(
             string name,
             MuscleGroup muscleGroup,
             Equipment equipment,
@@ -125,14 +61,8 @@ namespace FitTracker.Domain.Entities
             VideoUrl = videoUrl;
             IsCustom = isCustom;
             UserId = userId;
-
-            EnsureValid();
         }
 
-        /// <summary>
-        /// Constructor for restoring exercise from persistence layer.
-        /// Use <see cref="ExerciseBuilder"/> for creating new exercises.
-        /// </summary>
         public Exercise(
             string name,
             string? description,
@@ -141,67 +71,71 @@ namespace FitTracker.Domain.Entities
             MuscleGroup muscleGroup,
             Equipment equipment,
             bool isCustom,
-            Guid? userId) : base()
+            Guid? userId) : this(name, muscleGroup, equipment, description, imageUrl, videoUrl, isCustom, userId)
         {
-            Name = name;
-            Description = description;
-            ImageUrl = imageUrl;
-            VideoUrl = videoUrl;
-            MuscleGroup = muscleGroup;
-            Equipment = equipment;
-            IsCustom = isCustom;
-            UserId = userId;
+            // No validation here as this typically restores from persistence
+        }
 
-            // No validation here since data is from persistence
+        #endregion
+
+        #region Factory Method with Validation
+
+        public static Result<Exercise, ValidationResult> Create(
+            string name,
+            MuscleGroup muscleGroup,
+            Equipment equipment,
+            string? description = null,
+            string? imageUrl = null,
+            string? videoUrl = null,
+            bool isCustom = false,
+            Guid? userId = null)
+        {
+            var exercise = new Exercise(name, muscleGroup, equipment, description, imageUrl, videoUrl, isCustom, userId);
+            return exercise.ValidateWithResult();
         }
 
         #endregion
 
         #region Validation
 
-        protected override IValidator GetValidator()
+        protected override IValidator GetValidator() => new ExerciseValidator();
+
+        public ValidationResult Validate()
         {
-            return new ExerciseValidator();
+            var validator = GetValidator();
+            return validator.Validate(new ValidationContext<object>(this));
+        }
+
+        private Result<Exercise, ValidationResult> ValidateWithResult()
+        {
+            var result = Validate();
+            if (!result.IsValid)
+                return Result.Failure<Exercise, ValidationResult>(result);
+
+            return Result.Success<Exercise, ValidationResult>(this);
         }
 
         #endregion
 
         #region Domain Methods
 
-        /// <summary>
-        /// Updates the core properties of the exercise.
-        /// </summary>
-        /// <param name="name">The new name for the exercise.</param>
-        /// <param name="muscleGroup">The new target muscle group.</param>
-        /// <param name="equipment">The new required equipment.</param>
-        /// <param name="description">The new description (optional).</param>
-        /// <exception cref="ArgumentException">Thrown when name is null, empty, or whitespace.</exception>
-        public void Update(string name, MuscleGroup muscleGroup, Equipment equipment, string? description = null)
+        public Result<Exercise, ValidationResult> Update(string name, MuscleGroup muscleGroup, Equipment equipment, string? description = null)
         {
-
             Name = name;
             MuscleGroup = muscleGroup;
             Equipment = equipment;
             Description = description;
             UpdatedAt = DateTime.UtcNow;
 
-            EnsureValid();
+            return ValidateWithResult();
         }
 
-        /// <summary>
-        /// Updates the image URL of the exercise.
-        /// </summary>
-        /// <param name="imageUrl">The new image URL.</param>
         public void UpdateImageUrl(string? imageUrl)
         {
             ImageUrl = imageUrl;
             UpdatedAt = DateTime.UtcNow;
         }
 
-        /// <summary>
-        /// Updates the video URL of the exercise.
-        /// </summary>
-        /// <param name="videoUrl">The new video URL.</param>
         public void UpdateVideoUrl(string? videoUrl)
         {
             VideoUrl = videoUrl;
@@ -212,17 +146,8 @@ namespace FitTracker.Domain.Entities
 
         #region Builder
 
-        /// <summary>
-        /// Creates a new <see cref="ExerciseBuilder"/> instance.
-        /// </summary>
-        public static ExerciseBuilder CreateBuilder()
-        {
-            return new ExerciseBuilder();
-        }
+        public static ExerciseBuilder CreateBuilder() => new ExerciseBuilder();
 
-        /// <summary>
-        /// Builder for creating <see cref="Exercise"/> instances.
-        /// </summary>
         public class ExerciseBuilder
         {
             private string _name = string.Empty;
@@ -234,62 +159,18 @@ namespace FitTracker.Domain.Entities
             private bool _isCustom;
             private Guid? _userId;
 
-            public ExerciseBuilder WithName(string name)
-            {
-                _name = name;
-                return this;
-            }
+            public ExerciseBuilder WithName(string name) { _name = name; return this; }
+            public ExerciseBuilder WithDescription(string? description) { _description = description; return this; }
+            public ExerciseBuilder WithImageUrl(string? imageUrl) { _imageUrl = imageUrl; return this; }
+            public ExerciseBuilder WithVideoUrl(string? videoUrl) { _videoUrl = videoUrl; return this; }
+            public ExerciseBuilder WithMuscleGroup(MuscleGroup muscleGroup) { _muscleGroup = muscleGroup; return this; }
+            public ExerciseBuilder WithEquipment(Equipment equipment) { _equipment = equipment; return this; }
+            public ExerciseBuilder AsCustom(Guid userId) { _isCustom = true; _userId = userId; return this; }
+            public ExerciseBuilder AsStandard() { _isCustom = false; _userId = null; return this; }
 
-            public ExerciseBuilder WithDescription(string? description)
+            public Result<Exercise, ValidationResult> Build()
             {
-                _description = description;
-                return this;
-            }
-
-            public ExerciseBuilder WithImageUrl(string? imageUrl)
-            {
-                _imageUrl = imageUrl;
-                return this;
-            }
-
-            public ExerciseBuilder WithVideoUrl(string? videoUrl)
-            {
-                _videoUrl = videoUrl;
-                return this;
-            }
-
-            public ExerciseBuilder WithMuscleGroup(MuscleGroup muscleGroup)
-            {
-                _muscleGroup = muscleGroup;
-                return this;
-            }
-
-            public ExerciseBuilder WithEquipment(Equipment equipment)
-            {
-                _equipment = equipment;
-                return this;
-            }
-
-            public ExerciseBuilder AsCustom(Guid userId)
-            {
-                _isCustom = true;
-                _userId = userId;
-                return this;
-            }
-
-            public ExerciseBuilder AsStandard()
-            {
-                _isCustom = false;
-                _userId = null;
-                return this;
-            }
-
-            /// <summary>
-            /// Builds the <see cref="Exercise"/> entity.
-            /// </summary>
-            public Exercise Build()
-            {
-                return new Exercise(
+                var exercise = new Exercise(
                     _name,
                     _muscleGroup,
                     _equipment,
@@ -298,6 +179,13 @@ namespace FitTracker.Domain.Entities
                     _videoUrl,
                     _isCustom,
                     _userId);
+
+                var validationResult = exercise.Validate();
+
+                if (!validationResult.IsValid)
+                    return Result.Failure<Exercise, ValidationResult>(validationResult);
+
+                return Result.Success<Exercise, ValidationResult>(exercise);
             }
         }
 

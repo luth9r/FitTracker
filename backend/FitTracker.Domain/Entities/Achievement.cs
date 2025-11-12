@@ -1,138 +1,36 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using FitTracker.Domain.Enums;
 using FitTracker.Domain.Validators;
 using FluentValidation;
+using FluentValidation.Results;
+using CSharpFunctionalExtensions;
 
 namespace FitTracker.Domain.Entities
 {
+    /// <summary>
+    /// Represents an exercise achievement within the system.
+    /// </summary>
     public class Achievement : BaseEntity
     {
         public const int NameMaxLength = 100;
         public const int DescriptionMaxLength = 500;
 
-        /// <summary>
-        /// Gets the unique identifier of the user who owns this achievement.
-        /// </summary>
-        public Guid UserId
-        {
-            get; private set;
-        }
+        public Guid UserId { get; private set; }
+        public AchievementType Type { get; private set; }
+        public string Name { get; private set; }
+        public string Description { get; private set; }
+        public string IconUrl { get; private set; }
+        public int Progress { get; private set; }
+        public int Target { get; private set; }
+        public bool IsUnlocked { get; private set; }
+        public DateTime? UnlockedAt { get; private set; }
+        public AchievementTier Tier { get; private set; }
 
-        /// <summary>
-        /// Gets the type of the achievement.
-        /// </summary>
-        public AchievementType Type
-        {
-            get; private set;
-        }
-
-        /// <summary>
-        /// Gets the name of the achievement.
-        /// </summary>
-        public string Name
-        {
-            get; private set;
-        }
-
-        /// <summary>
-        /// Gets the description of the achievement.
-        /// </summary>
-        public string Description
-        {
-            get; private set;
-        }
-
-        /// <summary>
-        /// Gets the URL to the achievement's icon image.
-        /// </summary>
-        public string IconUrl
-        {
-            get; private set;
-        }
-
-        /// <summary>
-        /// Gets the current progress value towards completing this achievement.
-        /// </summary>
-        public int Progress
-        {
-            get; private set;
-        }
-
-        /// <summary>
-        /// Gets the target value required to unlock this achievement.
-        /// </summary>
-        public int Target
-        {
-            get; private set;
-        }
-
-        /// <summary>
-        /// Gets a value indicating whether this achievement has been unlocked.
-        /// </summary>
-        public bool IsUnlocked
-        {
-            get; private set;
-        }
-
-        /// <summary>
-        /// Gets the date and time when this achievement was unlocked, or null if not yet unlocked.
-        /// </summary>
-        public DateTime? UnlockedAt
-        {
-            get; private set;
-        }
-
-        /// <summary>
-        /// Gets the tier level of the achievement (Bronze, Silver, or Gold).
-        /// </summary>
-        public AchievementTier Tier
-        {
-            get; private set;
-        }
-
-        #region Constructors
-
-        /// <summary>
-        /// Parameterless constructor for ORM.
-        /// Do not use directly.
-        /// </summary>
         private Achievement()
         {
+            // For ORM
         }
 
-        /// <summary>
-        /// Domain constructor used by Builder for creating new achievements.
-        /// Contains business logic, initializes fields, and validates.
-        /// </summary>
-        private Achievement(
-            Guid userId,
-            AchievementType type,
-            string name,
-            string description,
-            int target,
-            AchievementTier tier = AchievementTier.Bronze) : base()
-        {
-            UserId = userId;
-            Type = type;
-            Name = name;
-            Description = description;
-            Target = target;
-            Tier = tier;
-            Progress = 0;
-            IsUnlocked = false;
-            IconUrl = $"/icons/achievement_{type.ToString().ToLower()}.png";
-
-            EnsureValid();
-        }
-
-        /// <summary>
-        /// Constructor for restoring achievement from persistence layer.
-        /// Use <see cref="AchievementBuilder"/> for creating new achievements.
-        /// </summary>
         public Achievement(
             Guid userId,
             AchievementType type,
@@ -154,22 +52,58 @@ namespace FitTracker.Domain.Entities
             IsUnlocked = isUnlocked;
             UnlockedAt = unlockedAt;
             IconUrl = $"/icons/achievement_{type.ToString().ToLower()}.png";
-
-            // No validation here since data is from persistence
         }
 
-        #endregion
-
-        #region Validation
+        private Achievement(
+        Guid userId,
+        AchievementType type,
+        string name,
+        string description,
+        int target,
+        AchievementTier tier) : base()
+        {
+            UserId = userId;
+            Type = type;
+            Name = name;
+            Description = description;
+            Target = target;
+            Tier = tier;
+            Progress = 0;
+            IsUnlocked = false;
+            IconUrl = $"/icons/achievement_{type.ToString().ToLower()}.png";
+        }
 
         protected override IValidator GetValidator()
         {
             return new AchievementValidator();
         }
 
-        #endregion
+        public ValidationResult Validate()
+        {
+            var validator = GetValidator();
+            return validator.Validate(new ValidationContext<Achievement>(this));
+        }
 
-        #region Domain Methods
+        private Result<Achievement, ValidationResult> ValidateWithResult()
+        {
+            var result = Validate();
+            if (!result.IsValid)
+                return Result.Failure<Achievement, ValidationResult>(result);
+
+            return Result.Success<Achievement, ValidationResult>(this);
+        }
+
+        public static Result<Achievement, ValidationResult> Create(
+            Guid userId,
+            AchievementType type,
+            string name,
+            string description,
+            int target,
+            AchievementTier tier = AchievementTier.Bronze)
+        {
+            var achievement = new Achievement(userId, type, name, description, target, tier);
+            return achievement.ValidateWithResult();
+        }
 
         public bool UpdateProgress(int newProgress)
         {
@@ -197,21 +131,23 @@ namespace FitTracker.Domain.Entities
             return Target > 0 ? (Progress * 100) / Target : 0;
         }
 
-        #endregion
-
-        #region Builder
-
-        /// <summary>
-        /// Creates a new <see cref="AchievementBuilder"/> instance.
-        /// </summary>
-        public static AchievementBuilder CreateBuilder()
+        public Result<Achievement, ValidationResult> Update(
+            string name,
+            string description,
+            int target,
+            AchievementTier tier)
         {
-            return new AchievementBuilder();
+            Name = name;
+            Description = description;
+            Target = target;
+            Tier = tier;
+            UpdatedAt = DateTime.UtcNow;
+
+            return ValidateWithResult();
         }
 
-        /// <summary>
-        /// Builder for creating <see cref="Achievement"/> instances.
-        /// </summary>
+        public static AchievementBuilder CreateBuilder() => new AchievementBuilder();
+
         public class AchievementBuilder
         {
             private Guid _userId = Guid.NewGuid();
@@ -257,21 +193,12 @@ namespace FitTracker.Domain.Entities
                 return this;
             }
 
-            /// <summary>
-            /// Builds the <see cref="Achievement"/> entity.
-            /// </summary>
-            public Achievement Build()
+            public Result<Achievement, ValidationResult> Build()
             {
-                return new Achievement(
-                    _userId,
-                    _type,
-                    _name,
-                    _description,
-                    _target,
-                    _tier);
+                var achievement = new Achievement(_userId, _type, _name, _description, _target, _tier);
+
+                return achievement.ValidateWithResult();
             }
         }
-
-        #endregion
     }
 }

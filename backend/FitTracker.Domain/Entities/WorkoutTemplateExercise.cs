@@ -1,10 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using FitTracker.Domain.Validators;
 using FluentValidation;
+using FluentValidation.Results;
+using CSharpFunctionalExtensions;
 
 namespace FitTracker.Domain.Entities
 {
@@ -21,58 +19,20 @@ namespace FitTracker.Domain.Entities
 
         #region Properties
 
-        /// <summary>
-        /// Gets the unique identifier of the workout template this exercise belongs to.
-        /// </summary>
-        public Guid WorkoutTemplateId
-        {
-            get; private set;
-        }
-
-        /// <summary>
-        /// Gets the unique identifier of the exercise.
-        /// </summary>
-        public Guid ExerciseId
-        {
-            get; private set;
-        }
-
-        /// <summary>
-        /// Gets the order index of this exercise within the workout template.
-        /// </summary>
-        public int OrderIndex
-        {
-            get; private set;
-        }
-
-        /// <summary>
-        /// Gets any optional notes associated with this workout template exercise.
-        /// </summary>
-        public string? Notes
-        {
-            get; private set;
-        }
+        public Guid WorkoutTemplateId { get; private set; }
+        public Guid ExerciseId { get; private set; }
+        public int OrderIndex { get; private set; }
+        public string? Notes { get; private set; }
 
         #endregion
 
         #region Constructors
 
-        /// <summary>
-        /// Parameterless constructor for ORM.
-        /// Do not use directly.
-        /// </summary>
         private WorkoutTemplateExercise()
         {
+            // For ORM
         }
 
-        /// <summary>
-        /// Domain constructor used by Builder for creating new workout template exercises.
-        /// Contains business logic, initializes fields, and validates.
-        /// </summary>
-        /// <param name="workoutTemplateId">The unique identifier of the workout template.</param>
-        /// <param name="exerciseId">The unique identifier of the exercise.</param>
-        /// <param name="orderIndex">The order index of the exercise.</param>
-        /// <param name="notes">Optional notes about the exercise.</param>
         public WorkoutTemplateExercise(
             Guid workoutTemplateId,
             Guid exerciseId,
@@ -83,8 +43,6 @@ namespace FitTracker.Domain.Entities
             ExerciseId = exerciseId;
             OrderIndex = orderIndex;
             Notes = notes;
-
-            EnsureValid();
         }
 
         #endregion
@@ -96,21 +54,63 @@ namespace FitTracker.Domain.Entities
             return new WorkoutTemplateExerciseValidator();
         }
 
+        public ValidationResult Validate()
+        {
+            var validator = GetValidator();
+            return validator.Validate(new ValidationContext<WorkoutTemplateExercise>(this));
+        }
+
+        private Result<WorkoutTemplateExercise, ValidationResult> ValidateWithResult()
+        {
+            var result = Validate();
+            if (!result.IsValid)
+                return Result.Failure<WorkoutTemplateExercise, ValidationResult>(result);
+            return Result.Success<WorkoutTemplateExercise, ValidationResult>(this);
+        }
+
+        #endregion
+
+        #region Factory
+
+        public static Result<WorkoutTemplateExercise, ValidationResult> Create(
+            Guid workoutTemplateId,
+            Guid exerciseId,
+            int orderIndex,
+            string? notes = null)
+        {
+            var workoutTemplateExercise = new WorkoutTemplateExercise(workoutTemplateId, exerciseId, orderIndex, notes);
+            return workoutTemplateExercise.ValidateWithResult();
+        }
+
+        #endregion
+
+        #region Domain Methods
+
+        public Result<WorkoutTemplateExercise, ValidationResult> UpdateOrder(int newOrder)
+        {
+            if (newOrder < 1)
+                throw new ArgumentException("Order must be at least 1", nameof(newOrder));
+
+            OrderIndex = newOrder;
+            UpdatedAt = DateTime.UtcNow;
+
+            return ValidateWithResult();
+        }
+
+        public Result<WorkoutTemplateExercise, ValidationResult> UpdateNotes(string? notes)
+        {
+            Notes = notes;
+            UpdatedAt = DateTime.UtcNow;
+
+            return ValidateWithResult();
+        }
+
         #endregion
 
         #region Builder
 
-        /// <summary>
-        /// Creates a new <see cref="WorkoutTemplateExerciseBuilder"/> instance.
-        /// </summary>
-        public static WorkoutTemplateExerciseBuilder CreateBuilder()
-        {
-            return new WorkoutTemplateExerciseBuilder();
-        }
+        public static WorkoutTemplateExerciseBuilder CreateBuilder() => new WorkoutTemplateExerciseBuilder();
 
-        /// <summary>
-        /// Builder for creating <see cref="WorkoutTemplateExercise"/> instances.
-        /// </summary>
         public class WorkoutTemplateExerciseBuilder
         {
             private Guid _templateId;
@@ -142,41 +142,11 @@ namespace FitTracker.Domain.Entities
                 return this;
             }
 
-            /// <summary>
-            /// Builds the <see cref="WorkoutTemplateExercise"/> entity.
-            /// </summary>
-            public WorkoutTemplateExercise Build()
+            public Result<WorkoutTemplateExercise, ValidationResult> Build()
             {
-                return new WorkoutTemplateExercise(_templateId, _exerciseId, _orderIndex, _notes);
+                var workoutTemplateExercise = new WorkoutTemplateExercise(_templateId, _exerciseId, _orderIndex, _notes);
+                return workoutTemplateExercise.ValidateWithResult();
             }
-        }
-
-        #endregion
-
-        #region Domain Methods
-
-        /// <summary>
-        /// Updates the order index of this workout template exercise.
-        /// </summary>
-        /// <param name="newOrder">The new order index; must be at least 1.</param>
-        /// <exception cref="ArgumentException">Thrown if the new order is less than 1.</exception>
-        public void UpdateOrder(int newOrder)
-        {
-            if (newOrder < 1)
-                throw new ArgumentException("Order must be at least 1", nameof(newOrder));
-
-            OrderIndex = newOrder;
-            UpdatedAt = DateTime.UtcNow;
-        }
-
-        /// <summary>
-        /// Updates the notes for this workout template exercise.
-        /// </summary>
-        /// <param name="notes">The new notes; can be null.</param>
-        public void UpdateNotes(string? notes)
-        {
-            Notes = notes;
-            UpdatedAt = DateTime.UtcNow;
         }
 
         #endregion

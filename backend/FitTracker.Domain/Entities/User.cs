@@ -1,8 +1,9 @@
 using System;
-using System.Collections.Generic;
+using CSharpFunctionalExtensions;
+using FluentValidation;
+using FluentValidation.Results;
 using FitTracker.Domain.ValueObjects;
 using FitTracker.Domain.Validators;
-using FluentValidation;
 
 namespace FitTracker.Domain.Entities
 {
@@ -25,86 +26,24 @@ namespace FitTracker.Domain.Entities
 
         #region Properties
 
-        /// <summary>
-        /// Gets the username of the user.
-        /// </summary>
-        public string Username
-        {
-            get; private set;
-        }
-
-        /// <summary>
-        /// Gets the email address of the user.
-        /// </summary>
-        public string Email
-        {
-            get; private set;
-        }
-
-        /// <summary>
-        /// Gets the hashed password of the user.
-        /// </summary>
-        public string PasswordHash
-        {
-            get; private set;
-        }
-
-        /// <summary>
-        /// Gets the first name of the user.
-        /// </summary>
-        public string? FirstName
-        {
-            get; private set;
-        }
-
-        /// <summary>
-        /// Gets the last name of the user.
-        /// </summary>
-        public string? LastName
-        {
-            get; private set;
-        }
-
-        /// <summary>
-        /// Gets the avatar image URL of the user.
-        /// </summary>
-        public string? Avatar
-        {
-            get; private set;
-        }
-
-        /// <summary>
-        /// Gets the biography of the user.
-        /// </summary>
-        public string? Bio
-        {
-            get; private set;
-        }
-
-        /// <summary>
-        /// Gets the preferred unit system of the user.
-        /// </summary>
-        public UnitSystem PreferredUnits
-        {
-            get; private set;
-        }
+        public string Username { get; private set; }
+        public string Email { get; private set; }
+        public string PasswordHash { get; private set; }
+        public string? FirstName { get; private set; }
+        public string? LastName { get; private set; }
+        public string? Avatar { get; private set; }
+        public string? Bio { get; private set; }
+        public UnitSystem PreferredUnits { get; private set; }
 
         #endregion
 
         #region Constructors
 
-        /// <summary>
-        /// Parameterless constructor for ORM.
-        /// Do not use directly.
-        /// </summary>
         private User()
         {
+            // Parameterless constructor for ORM only
         }
 
-        /// <summary>
-        /// Domain constructor used by Builder for creating new users.
-        /// Contains business logic, initializes fields, and validates.
-        /// </summary>
         private User(
             string username,
             string email,
@@ -118,13 +57,11 @@ namespace FitTracker.Domain.Entities
             FirstName = firstName;
             LastName = lastName;
             PreferredUnits = UnitSystem.Metric;
-
-            EnsureValid();
         }
 
         /// <summary>
         /// Constructor for restoring user from persistence layer.
-        /// Use <see cref="UserBuilder"/> for creating new users.
+        /// Use factory methods or builder for creating new users.
         /// </summary>
         public User(
             string username,
@@ -139,34 +76,51 @@ namespace FitTracker.Domain.Entities
             Avatar = avatar;
             Bio = bio;
             PreferredUnits = preferredUnits;
+        }
 
-            // No validation here since data is from persistence
+        #endregion
+
+        #region Factory method with validation
+
+        public static Result<User, ValidationResult> Create(
+            string username,
+            string email,
+            string passwordHash,
+            string? firstName = null,
+            string? lastName = null)
+        {
+            var user = new User(username, email, passwordHash, firstName, lastName);
+
+            return user.ValidateWithResult();
         }
 
         #endregion
 
         #region Validation
 
-        protected override IValidator GetValidator()
+        protected override IValidator GetValidator() => new UserValidator();
+
+        public ValidationResult Validate()
         {
-            return new UserValidator();
+            var validator = GetValidator();
+            return validator.Validate(new ValidationContext<object>(this));
+        }
+
+        private Result<User, ValidationResult> ValidateWithResult()
+        {
+            var result = Validate();
+            if (!result.IsValid)
+                return Result.Failure<User, ValidationResult>(result);
+
+            return Result.Success<User, ValidationResult>(this);
         }
 
         #endregion
 
         #region Builder
 
-        /// <summary>
-        /// Creates a new <see cref="UserBuilder"/> instance.
-        /// </summary>
-        public static UserBuilder CreateBuilder()
-        {
-            return new UserBuilder();
-        }
+        public static UserBuilder CreateBuilder() => new UserBuilder();
 
-        /// <summary>
-        /// Builder for creating <see cref="User"/> instances.
-        /// </summary>
         public class UserBuilder
         {
             private string _username = string.Empty;
@@ -178,72 +132,24 @@ namespace FitTracker.Domain.Entities
             private string? _bio;
             private UnitSystem _preferredUnits = UnitSystem.Metric;
 
-            public UserBuilder WithUsername(string username)
-            {
-                _username = username;
-                return this;
-            }
-
-            public UserBuilder WithEmail(string email)
-            {
-                _email = email;
-                return this;
-            }
-
-            public UserBuilder WithPasswordHash(string passwordHash)
-            {
-                _passwordHash = passwordHash;
-                return this;
-            }
-
-            public UserBuilder WithFirstName(string? firstName)
-            {
-                _firstName = firstName;
-                return this;
-            }
-
-            public UserBuilder WithLastName(string? lastName)
-            {
-                _lastName = lastName;
-                return this;
-            }
-
-            public UserBuilder WithAvatar(string? avatar)
-            {
-                _avatar = avatar;
-                return this;
-            }
-
-            public UserBuilder WithBio(string? bio)
-            {
-                _bio = bio;
-                return this;
-            }
-
+            public UserBuilder WithUsername(string username) { _username = username; return this; }
+            public UserBuilder WithEmail(string email) { _email = email; return this; }
+            public UserBuilder WithPasswordHash(string passwordHash) { _passwordHash = passwordHash; return this; }
+            public UserBuilder WithFirstName(string? firstName) { _firstName = firstName; return this; }
+            public UserBuilder WithLastName(string? lastName) { _lastName = lastName; return this; }
+            public UserBuilder WithAvatar(string? avatar) { _avatar = avatar; return this; }
+            public UserBuilder WithBio(string? bio) { _bio = bio; return this; }
             public UserBuilder WithPreferredUnits(UnitSystem preferredUnits)
             {
                 _preferredUnits = preferredUnits ?? throw new ArgumentNullException(nameof(preferredUnits));
                 return this;
             }
+            public UserBuilder WithMetricUnits() { _preferredUnits = UnitSystem.Metric; return this; }
+            public UserBuilder WithImperialUnits() { _preferredUnits = UnitSystem.Imperial; return this; }
 
-            public UserBuilder WithMetricUnits()
+            public Result<User, ValidationResult> Build()
             {
-                _preferredUnits = UnitSystem.Metric;
-                return this;
-            }
-
-            public UserBuilder WithImperialUnits()
-            {
-                _preferredUnits = UnitSystem.Imperial;
-                return this;
-            }
-
-            /// <summary>
-            /// Builds the <see cref="User"/> entity.
-            /// </summary>
-            public User Build()
-            {
-                return new User(
+                var user = new User(
                     _username,
                     _email,
                     _passwordHash,
@@ -252,6 +158,11 @@ namespace FitTracker.Domain.Entities
                     _avatar,
                     _bio,
                     _preferredUnits);
+                var validationResult = user.Validate();
+                if (!validationResult.IsValid)
+                    return Result.Failure<User, ValidationResult>(validationResult);
+
+                return Result.Success<User, ValidationResult>(user);
             }
         }
 
@@ -259,159 +170,63 @@ namespace FitTracker.Domain.Entities
 
         #region Domain Methods
 
-        /// <summary>
-        /// Updates the user profile information.
-        /// </summary>
-        /// <param name="firstName">New first name</param>
-        /// <param name="lastName">New last name</param>
-        /// <param name="bio">New biography</param>
-        /// <param name="avatar">New avatar URL</param>
-        public void UpdateProfile(string? firstName, string? lastName, string? bio, string? avatar)
+        public Result<User, ValidationResult> UpdateProfile(string? firstName, string? lastName, string? bio, string? avatar)
         {
             FirstName = firstName;
             LastName = lastName;
             Bio = bio;
             Avatar = avatar;
             UpdatedAt = DateTime.UtcNow;
-
-            EnsureValid();
+            return ValidateWithResult();
         }
 
-        /// <summary>
-        /// Updates the user's email address.
-        /// </summary>
-        /// <param name="email">New email address</param>
-        public void UpdateEmail(string email)
+        public Result<User, ValidationResult> UpdateEmail(string email)
         {
             Email = email?.ToLowerInvariant();
             UpdatedAt = DateTime.UtcNow;
-
-            EnsureValid();
+            return ValidateWithResult();
         }
 
-        /// <summary>
-        /// Updates the password hash.
-        /// </summary>
-        /// <param name="passwordHash">New password hash</param>
-        public void UpdatePasswordHash(string passwordHash)
+        public Result<User, ValidationResult> UpdatePasswordHash(string passwordHash)
         {
             PasswordHash = passwordHash;
             UpdatedAt = DateTime.UtcNow;
-
-            EnsureValid();
+            return ValidateWithResult();
         }
 
-        /// <summary>
-        /// Updates the preferred unit system.
-        /// </summary>
-        /// <param name="units">New unit system</param>
-        /// <exception cref="ArgumentNullException">If units is null</exception>
         public void UpdatePreferredUnits(UnitSystem units)
         {
             PreferredUnits = units ?? throw new ArgumentNullException(nameof(units));
             UpdatedAt = DateTime.UtcNow;
         }
 
-        /// <summary>
-        /// Sets preferred units to metric system.
-        /// </summary>
-        public void SetMetricUnits()
-        {
-            UpdatePreferredUnits(UnitSystem.Metric);
-        }
+        public void SetMetricUnits() => UpdatePreferredUnits(UnitSystem.Metric);
+        public void SetImperialUnits() => UpdatePreferredUnits(UnitSystem.Imperial);
 
-        /// <summary>
-        /// Sets preferred units to imperial system.
-        /// </summary>
-        public void SetImperialUnits()
-        {
-            UpdatePreferredUnits(UnitSystem.Imperial);
-        }
+        public decimal ConvertWeight(decimal weight, UnitSystem targetSystem) => PreferredUnits.ConvertWeight(weight, targetSystem);
+        public string GetWeightUnit() => PreferredUnits.WeightUnit;
+        public string GetLengthUnit() => PreferredUnits.LengthUnit;
 
-        /// <summary>
-        /// Converts a weight value from current preferred units to specified target units.
-        /// </summary>
-        /// <param name="weight">Weight value to convert</param>
-        /// <param name="targetSystem">Target unit system</param>
-        /// <returns>Converted weight value</returns>
-        public decimal ConvertWeight(decimal weight, UnitSystem targetSystem)
-        {
-            return PreferredUnits.ConvertWeight(weight, targetSystem);
-        }
-
-        /// <summary>
-        /// Gets the unit string for weight in the current preferred unit system.
-        /// </summary>
-        /// <returns>Unit string for weight</returns>
-        public string GetWeightUnit()
-        {
-            return PreferredUnits.WeightUnit;
-        }
-
-        /// <summary>
-        /// Gets the unit string for length in the current preferred unit system.
-        /// </summary>
-        /// <returns>Unit string for length</returns>
-        public string GetLengthUnit()
-        {
-            return PreferredUnits.LengthUnit;
-        }
-
-        /// <summary>
-        /// Gets the full name of the user, constructed from first and last names if available.
-        /// </summary>
-        /// <returns>Full name or username if names are unavailable</returns>
         public string GetFullName()
         {
             if (!string.IsNullOrWhiteSpace(FirstName) && !string.IsNullOrWhiteSpace(LastName))
                 return $"{FirstName} {LastName}";
-
             if (!string.IsNullOrWhiteSpace(FirstName))
                 return FirstName;
-
             if (!string.IsNullOrWhiteSpace(LastName))
                 return LastName;
-
             return Username;
         }
 
-        /// <summary>
-        /// Gets the display name for the user.
-        /// </summary>
-        /// <returns>Full name if available, otherwise username</returns>
-        public string GetDisplayName()
-        {
-            return GetFullName();
-        }
+        public string GetDisplayName() => GetFullName();
 
-        /// <summary>
-        /// Determines if the user has completed their profile.
-        /// </summary>
-        /// <returns>True if first name, last name, and bio are filled; otherwise false</returns>
-        public bool HasCompletedProfile()
-        {
-            return !string.IsNullOrWhiteSpace(FirstName)
-                && !string.IsNullOrWhiteSpace(LastName)
-                && !string.IsNullOrWhiteSpace(Bio);
-        }
+        public bool HasCompletedProfile() =>
+            !string.IsNullOrWhiteSpace(FirstName)
+            && !string.IsNullOrWhiteSpace(LastName)
+            && !string.IsNullOrWhiteSpace(Bio);
 
-        /// <summary>
-        /// Determines if the user prefers the metric unit system.
-        /// </summary>
-        /// <returns>True if metric units are preferred; otherwise false</returns>
-        public bool UsesMetric()
-        {
-            return PreferredUnits == UnitSystem.Metric;
-        }
-
-        /// <summary>
-        /// Determines if the user prefers the imperial unit system.
-        /// </summary>
-        /// <returns>True if imperial units are preferred; otherwise false</returns>
-        public bool UsesImperial()
-        {
-            return PreferredUnits == UnitSystem.Imperial;
-        }
+        public bool UsesMetric() => PreferredUnits == UnitSystem.Metric;
+        public bool UsesImperial() => PreferredUnits == UnitSystem.Imperial;
 
         #endregion
     }

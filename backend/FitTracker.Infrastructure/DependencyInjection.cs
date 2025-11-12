@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using FitTracker.Application.Interfaces;
 using FitTracker.Infrastructure.Services;
 using FitTracker.Infrastructure.Localization;
+using FitTracker.Domain.Abstract.Interfaces;
+using FitTracker.Infrastructure.Persistence.Repositories;
 
 namespace FitTracker.Infrastructure;
 
@@ -92,10 +94,10 @@ public static class DependencyInjection
     private static void AddRepositories(IServiceCollection services)
     {
         services.AddScoped<IPasswordHasher, PasswordHasher>();
+        services.AddScoped<IUserRepository, UserRepository>();
         // TODO:
         // services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
         // services.AddScoped<IUnitOfWork, UnitOfWork>();
-        // services.AddScoped<IUserRepository, UserRepository>();
         // services.AddScoped<IWorkoutRepository, WorkoutRepository>();
         // services.AddScoped<IExerciseRepository, ExerciseRepository>();
     }

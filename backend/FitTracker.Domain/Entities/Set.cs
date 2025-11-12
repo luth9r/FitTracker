@@ -1,9 +1,12 @@
-// FitTracker.Domain/Entities/Set.cs
-using System;
+using CSharpFunctionalExtensions;
 using FitTracker.Domain.Enums;
 using FitTracker.Domain.Validators;
 using FitTracker.Domain.ValueObjects;
 using FluentValidation;
+using FluentValidation.Results;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace FitTracker.Domain.Entities
 {
@@ -25,66 +28,42 @@ namespace FitTracker.Domain.Entities
         /// <summary>
         /// Gets the unique identifier of the workout exercise this set belongs to.
         /// </summary>
-        public Guid WorkoutExerciseId
-        {
-            get; private set;
-        }
+        public Guid WorkoutExerciseId { get; private set; }
 
         /// <summary>
         /// Gets the sequential number of this set within the workout exercise.
         /// </summary>
-        public int SetNumber
-        {
-            get; private set;
-        }
+        public int SetNumber { get; private set; }
 
         /// <summary>
         /// Gets the weight used for this set.
         /// </summary>
-        public Weight Weight
-        {
-            get; private set;
-        }
+        public Weight Weight { get; private set; }
 
         /// <summary>
         /// Gets the number of repetitions performed in this set.
         /// </summary>
-        public int Reps
-        {
-            get; private set;
-        }
+        public int Reps { get; private set; }
 
         /// <summary>
         /// Gets the rest period in seconds before the next set, or null if not specified.
         /// </summary>
-        public int? RestSeconds
-        {
-            get; private set;
-        }
+        public int? RestSeconds { get; private set; }
 
         /// <summary>
         /// Gets the type of this set (Normal, Dropset, Superset, etc.).
         /// </summary>
-        public SetType SetType
-        {
-            get; private set;
-        }
+        public SetType SetType { get; private set; }
 
         /// <summary>
         /// Gets a value indicating whether this set has been completed.
         /// </summary>
-        public bool IsCompleted
-        {
-            get; private set;
-        }
+        public bool IsCompleted { get; private set; }
 
         /// <summary>
         /// Gets the date and time when this set was completed, or null if not yet completed.
         /// </summary>
-        public DateTime? CompletedAt
-        {
-            get; private set;
-        }
+        public DateTime? CompletedAt { get; private set; }
 
         #endregion
 
@@ -118,12 +97,11 @@ namespace FitTracker.Domain.Entities
             SetType = setType;
             IsCompleted = false;
 
-            EnsureValid();
         }
 
         /// <summary>
         /// Constructor for restoring set from persistence layer.
-        /// Use <see cref="SetBuilder"/> for creating new sets.
+        /// Use <see cref="Create"/> for creating new sets.
         /// </summary>
         public Set(
             Guid workoutExerciseId,
@@ -156,42 +134,64 @@ namespace FitTracker.Domain.Entities
             return new SetValidator();
         }
 
+        public ValidationResult Validate()
+        {
+            var validator = GetValidator();
+            return validator.Validate(new ValidationContext<Set>(this));
+        }
+
+        private Result<Set, ValidationResult> ValidateWithResult()
+        {
+            var result = Validate();
+            if (!result.IsValid)
+                return Result.Failure<Set, ValidationResult>(result);
+
+            return Result.Success<Set, ValidationResult>(this);
+        }
+
+        #endregion
+
+        #region Factory
+
+        /// <summary>
+        /// Creates a new set with validation.
+        /// </summary>
+        public static Result<Set, ValidationResult> Create(
+            Guid workoutExerciseId,
+            int setNumber,
+            Weight weight,
+            int reps,
+            int? restSeconds,
+            SetType setType = SetType.Normal)
+        {
+            var set = new Set(workoutExerciseId, setNumber, weight, reps, restSeconds, setType);
+            return set.ValidateWithResult();
+        }
+
         #endregion
 
         #region Domain Methods
 
-        /// <summary>
-        /// Updates the set number during reordering operations.
-        /// </summary>
-        /// <param name="newSetNumber">The new sequential number for this set.</param>
-        /// <exception cref="ArgumentException">Thrown when set number is less than or equal to 0.</exception>
-        public void UpdateSetNumber(int newSetNumber)
+        public Result<Set, ValidationResult> UpdateSetNumber(int newSetNumber)
         {
             if (newSetNumber <= 0)
                 throw new ArgumentException("Set number must be greater than 0");
 
             SetNumber = newSetNumber;
             UpdatedAt = DateTime.UtcNow;
+
+            return ValidateWithResult();
+
         }
 
-        /// <summary>
-        /// Updates the weight value for this set.
-        /// </summary>
-        /// <param name="weight">The new weight value.</param>
-        /// <exception cref="ArgumentNullException">Thrown when weight is null.</exception>
-        public void UpdateWeight(Weight weight)
+        public Result<Set, ValidationResult> UpdateWeight(Weight weight)
         {
             Weight = weight ?? throw new ArgumentNullException(nameof(weight));
             UpdatedAt = DateTime.UtcNow;
-            EnsureValid();
+            return ValidateWithResult();
         }
 
-        /// <summary>
-        /// Increases the weight by the specified amount in kilograms.
-        /// </summary>
-        /// <param name="amountKg">The amount to increase in kilograms.</param>
-        /// <exception cref="ArgumentException">Thrown when amount is negative.</exception>
-        public void IncreaseWeightKg(decimal amountKg)
+        public Result<Set, ValidationResult> IncreaseWeightKg(decimal amountKg)
         {
             if (amountKg < 0)
                 throw new ArgumentException("Amount cannot be negative");
@@ -199,36 +199,24 @@ namespace FitTracker.Domain.Entities
             var newWeightKg = Weight.ToKilograms() + amountKg;
             Weight = Weight.FromKilograms(newWeightKg);
             UpdatedAt = DateTime.UtcNow;
-            EnsureValid();
+            return ValidateWithResult();
         }
 
-        /// <summary>
-        /// Decreases the weight by the specified amount in kilograms.
-        /// </summary>
-        /// <param name="amountKg">The amount to decrease in kilograms.</param>
-        /// <exception cref="ArgumentException">Thrown when amount is negative.</exception>
-        /// <exception cref="InvalidOperationException">Thrown when the resulting weight would be negative.</exception>
-        public void DecreaseWeightKg(decimal amountKg)
+        public Result<Set, ValidationResult> DecreaseWeightKg(decimal amountKg)
         {
             if (amountKg < 0)
                 throw new ArgumentException("Amount cannot be negative");
 
             var newWeightKg = Weight.ToKilograms() - amountKg;
-
             if (newWeightKg < 0)
                 throw new InvalidOperationException("Weight cannot be negative");
 
             Weight = Weight.FromKilograms(newWeightKg);
             UpdatedAt = DateTime.UtcNow;
-            EnsureValid();
+            return ValidateWithResult();
         }
 
-        /// <summary>
-        /// Updates the number of repetitions for this set.
-        /// </summary>
-        /// <param name="reps">The new number of repetitions.</param>
-        /// <exception cref="ArgumentException">Thrown when reps is less than or equal to 0, or exceeds <see cref="MaxReps"/>.</exception>
-        public void UpdateReps(int reps)
+        public Result<Set, ValidationResult> UpdateReps(int reps)
         {
             if (reps <= 0)
                 throw new ArgumentException("Reps must be greater than 0");
@@ -238,39 +226,32 @@ namespace FitTracker.Domain.Entities
 
             Reps = reps;
             UpdatedAt = DateTime.UtcNow;
-            EnsureValid();
+            return ValidateWithResult();
         }
 
-        /// <summary>
-        /// Updates the rest period in seconds before the next set.
-        /// </summary>
-        /// <param name="seconds">The rest period in seconds, or null to clear.</param>
-        /// <exception cref="ArgumentException">Thrown when seconds is negative or exceeds <see cref="MaxRestSeconds"/>.</exception>
-        public void UpdateRest(int? seconds)
+        public Result<Set, ValidationResult> UpdateRest(int? seconds)
         {
-            if (seconds.HasValue && seconds.Value < 0)
-                throw new ArgumentException("Rest seconds cannot be negative");
+            if (seconds.HasValue)
+            {
+                if (seconds.Value < 0)
+                    throw new ArgumentException("Rest seconds cannot be negative");
 
-            if (seconds.HasValue && seconds.Value > MaxRestSeconds)
-                throw new ArgumentException($"Rest cannot exceed {MaxRestSeconds} seconds");
+                if (seconds.Value > MaxRestSeconds)
+                    throw new ArgumentException($"Rest cannot exceed {MaxRestSeconds} seconds");
+            }
 
             RestSeconds = seconds;
             UpdatedAt = DateTime.UtcNow;
+
+            return ValidateWithResult();
         }
 
-        /// <summary>
-        /// Changes the type of this set.
-        /// </summary>
-        /// <param name="setType">The new set type.</param>
         public void ChangeSetType(SetType setType)
         {
             SetType = setType;
             UpdatedAt = DateTime.UtcNow;
         }
 
-        /// <summary>
-        /// Marks this set as completed.
-        /// </summary>
         public void Complete()
         {
             IsCompleted = true;
@@ -278,9 +259,6 @@ namespace FitTracker.Domain.Entities
             UpdatedAt = DateTime.UtcNow;
         }
 
-        /// <summary>
-        /// Marks this set as incomplete.
-        /// </summary>
         public void Uncomplete()
         {
             IsCompleted = false;
@@ -288,29 +266,16 @@ namespace FitTracker.Domain.Entities
             UpdatedAt = DateTime.UtcNow;
         }
 
-        /// <summary>
-        /// Calculates the volume (weight × reps) in kilograms.
-        /// </summary>
-        /// <returns>The volume in kilograms.</returns>
         public decimal CalculateVolume()
         {
             return Weight.ToKilograms() * Reps;
         }
 
-        /// <summary>
-        /// Calculates the volume (weight × reps) in pounds.
-        /// </summary>
-        /// <returns>The volume in pounds.</returns>
         public decimal CalculateVolumeLbs()
         {
             return Weight.ToPounds() * Reps;
         }
 
-        /// <summary>
-        /// Determines whether this set represents a personal record for weight.
-        /// </summary>
-        /// <param name="previousSets">Collection of previous sets to compare against.</param>
-        /// <returns><c>true</c> if this set's weight exceeds all previous sets or no previous sets exist; otherwise, <c>false</c>.</returns>
         public bool IsPR(IEnumerable<Set> previousSets)
         {
             if (previousSets == null || !previousSets.Any())
@@ -324,17 +289,8 @@ namespace FitTracker.Domain.Entities
 
         #region Builder
 
-        /// <summary>
-        /// Creates a new <see cref="SetBuilder"/> instance.
-        /// </summary>
-        public static SetBuilder CreateBuilder()
-        {
-            return new SetBuilder();
-        }
+        public static SetBuilder CreateBuilder() => new SetBuilder();
 
-        /// <summary>
-        /// Builder for creating <see cref="Set"/> instances.
-        /// </summary>
         public class SetBuilder
         {
             private Guid _workoutExerciseId;
@@ -358,24 +314,16 @@ namespace FitTracker.Domain.Entities
 
             public SetBuilder WithWeight(Weight weight)
             {
-                _weight = weight ?? throw new ArgumentNullException(nameof(weight));
+                _weight = weight;
                 return this;
             }
 
-            /// <summary>
-            /// Sets the weight in kilograms.
-            /// </summary>
-            /// <param name="kg">The weight in kilograms.</param>
             public SetBuilder WithWeightKg(decimal kg)
             {
                 _weight = Weight.FromKilograms(kg);
                 return this;
             }
 
-            /// <summary>
-            /// Sets the weight in pounds (will be converted to kilograms).
-            /// </summary>
-            /// <param name="lbs">The weight in pounds.</param>
             public SetBuilder WithWeightLbs(decimal lbs)
             {
                 _weight = Weight.FromPounds(lbs);
@@ -388,37 +336,23 @@ namespace FitTracker.Domain.Entities
                 return this;
             }
 
-            /// <summary>
-            /// Sets the rest period in seconds.
-            /// </summary>
-            /// <param name="seconds">The rest period in seconds.</param>
-            /// <exception cref="ArgumentException">Thrown when seconds is negative.</exception>
             public SetBuilder WithRest(int seconds)
             {
-                if (seconds < 0)
-                    throw new ArgumentException("Rest seconds cannot be negative");
-
                 _restSeconds = seconds;
                 return this;
             }
 
-            /// <summary>
-            /// Sets the type of set (Normal, Dropset, Superset, etc.).
-            /// </summary>
-            /// <param name="setType">The set type.</param>
             public SetBuilder WithSetType(SetType setType)
             {
                 _setType = setType;
                 return this;
             }
 
-            /// <summary>
-            /// Builds the <see cref="Set"/> entity.
-            /// </summary>
-            public Set Build()
+            public Result<Set, ValidationResult> Build()
             {
                 var set = new Set(_workoutExerciseId, _setNumber, _weight, _reps, _restSeconds, _setType);
-                return set;
+
+                return set.ValidateWithResult();
             }
         }
 

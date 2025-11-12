@@ -1,17 +1,19 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using FitTracker.Domain.Entities;
 using FitTracker.Domain.Enums;
 using FitTracker.Domain.ValueObjects;
 using FitTracker.Infrastructure.Persistence.Data.Configurations;
 using FitTracker.Infrastructure.Persistence.Data.Entities;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace FitTracker.Infrastructure.Persistence.Data
 {
+    [ExcludeFromCodeCoverage]
     public class FitTrackerDbContext : DbContext
     {
         public FitTrackerDbContext(DbContextOptions<FitTrackerDbContext> options)

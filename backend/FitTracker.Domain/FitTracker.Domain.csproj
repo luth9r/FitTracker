@@ -7,12 +7,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Folder Include="Interfaces\" />
 		<Folder Include="Exceptions\" />
 		<Folder Include="Specifications\" />
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="CSharpFunctionalExtensions" Version="3.6.0" />
 		<PackageReference Include="FluentValidation" Version="12.1.0" />
 	</ItemGroup>
 

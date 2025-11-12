@@ -1,3 +1,4 @@
+using CSharpFunctionalExtensions;
 using FluentValidation;
 using FluentValidation.Results;
 
@@ -47,15 +48,14 @@ namespace FitTracker.Domain.Entities
             return validator.Validate(new ValidationContext<object>(this));
         }
 
-        protected void EnsureValid()
+        public Result<BaseEntity, ValidationResult> ValidateWithResult()
         {
-            var validator = GetValidator();
-            var result = validator.Validate(new ValidationContext<object>(this));
+            var validationResult = Validate();
 
-            if (!result.IsValid)
-            {
-                throw new ValidationException(result.Errors);
-            }
+            if (!validationResult.IsValid)
+                return Result.Failure<BaseEntity, ValidationResult>(validationResult);
+
+            return Result.Success<BaseEntity, ValidationResult>(this);
         }
 
         public override bool Equals(object? obj)
