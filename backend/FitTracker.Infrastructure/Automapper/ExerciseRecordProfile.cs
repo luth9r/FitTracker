@@ -36,6 +36,7 @@ namespace FitTracker.Infrastructure.Automapper
                     src.TotalReps,
                     src.TotalLifted,
                     src.LastPerformed))
+                .ForMember(dest => dest.MaxWeight, opt => opt.Ignore())
                 .AfterMap((src, dest) =>
                 {
                     dest.SetDatabaseFields(src.Id, src.CreatedAt, src.UpdatedAt);

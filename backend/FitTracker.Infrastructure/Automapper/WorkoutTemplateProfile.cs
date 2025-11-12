@@ -14,11 +14,12 @@ namespace FitTracker.Infrastructure.Automapper
         public WorkoutTemplateProfile()
         {
             CreateMap<WorkoutTemplate, WorkoutTemplateEf>()
-                .ForMember(dest => dest.Exercises, opt => opt.Ignore());
+                .ForMember(dest => dest.Exercises, opt => opt.Ignore())
+                .ForMember(dest => dest.User, opt => opt.Ignore());
 
             CreateMap<WorkoutTemplateEf, WorkoutTemplate>()
                 .ConstructUsing(src => new WorkoutTemplate(
-                    src.Id,
+                    src.UserId,
                     src.Name,
                     src.Description,
                     src.UsageCount,

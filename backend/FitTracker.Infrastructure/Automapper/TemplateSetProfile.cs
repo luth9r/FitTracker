@@ -24,10 +24,11 @@ namespace FitTracker.Infrastructure.Automapper
                 .ConstructUsing(src => new TemplateSet(
                     src.WorkoutTemplateExerciseId,
                     src.SetNumber,
-                    src.PlannedWeight,
+                    Weight.FromKilograms(src.PlannedWeight),
                     src.PlannedReps,
                     src.RestSeconds,
                     (SetType)src.SetType))
+                .ForMember(dest => dest.PlannedWeight, opt => opt.Ignore())
                 .AfterMap((src, dest) =>
                 {
                     dest.SetDatabaseFields(src.Id, src.CreatedAt, src.UpdatedAt);

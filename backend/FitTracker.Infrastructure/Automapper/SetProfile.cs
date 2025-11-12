@@ -28,6 +28,7 @@ namespace FitTracker.Infrastructure.Automapper
                     (Domain.Enums.SetType)src.SetType,
                     src.IsCompleted,
                     src.CompletedAt))
+                .ForMember(dest => dest.Weight, opt => opt.Ignore())
                 .AfterMap((src, dest) =>
                 {
                     dest.SetDatabaseFields(src.Id, src.CreatedAt, src.UpdatedAt);

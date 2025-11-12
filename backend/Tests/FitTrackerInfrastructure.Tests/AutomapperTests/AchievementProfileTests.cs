@@ -3,6 +3,7 @@ using FitTracker.Domain.Entities;
 using FitTracker.Domain.Enums;
 using FitTracker.Infrastructure.Automapper;
 using FitTracker.Infrastructure.Persistence.Data.Entities;
+using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 
 namespace FitTrackerInfrastructure.Tests.AutomapperTests
@@ -26,8 +27,11 @@ namespace FitTrackerInfrastructure.Tests.AutomapperTests
         [Fact]
         public void Configuration_Should_BeValid()
         {
-            // Arrange & Act & Assert
-            _mapper.ConfigurationProvider.AssertConfigurationIsValid();
+            // Arrange & Act
+            Action act = () => _mapper.ConfigurationProvider.AssertConfigurationIsValid();
+
+            // Assert
+            act.Should().NotThrow();
         }
 
         [Fact]
@@ -50,16 +54,16 @@ namespace FitTrackerInfrastructure.Tests.AutomapperTests
             var result = _mapper.Map<AchievementEf>(achievement);
 
             // Assert
-            Assert.NotNull(result);
-            Assert.Equal(achievement.UserId, result.UserId);
-            Assert.Equal((int)achievement.Type, result.Type);
-            Assert.Equal(achievement.Name, result.Name);
-            Assert.Equal(achievement.Description, result.Description);
-            Assert.Equal(achievement.Target, result.Target);
-            Assert.Equal((int)achievement.Tier, result.Tier);
-            Assert.Equal(achievement.Progress, result.Progress);
-            Assert.Equal(achievement.IsUnlocked, result.IsUnlocked);
-            Assert.Equal(achievement.UnlockedAt, result.UnlockedAt);
+            result.Should().NotBeNull();
+            result.UserId.Should().Be(achievement.UserId);
+            result.Type.Should().Be((int)achievement.Type);
+            result.Name.Should().Be(achievement.Name);
+            result.Description.Should().Be(achievement.Description);
+            result.Target.Should().Be(achievement.Target);
+            result.Tier.Should().Be((int)achievement.Tier);
+            result.Progress.Should().Be(achievement.Progress);
+            result.IsUnlocked.Should().Be(achievement.IsUnlocked);
+            result.UnlockedAt.Should().Be(achievement.UnlockedAt);
         }
 
         [Fact]
@@ -83,16 +87,16 @@ namespace FitTrackerInfrastructure.Tests.AutomapperTests
             var result = _mapper.Map<Achievement>(achievementEf);
 
             // Assert
-            Assert.NotNull(result);
-            Assert.Equal(achievementEf.UserId, result.UserId);
-            Assert.Equal((AchievementType)achievementEf.Type, result.Type);
-            Assert.Equal(achievementEf.Name, result.Name);
-            Assert.Equal(achievementEf.Description, result.Description);
-            Assert.Equal(achievementEf.Target, result.Target);
-            Assert.Equal((AchievementTier)achievementEf.Tier, result.Tier);
-            Assert.Equal(achievementEf.Progress, result.Progress);
-            Assert.Equal(achievementEf.IsUnlocked, result.IsUnlocked);
-            Assert.Equal(achievementEf.UnlockedAt, result.UnlockedAt);
+            result.Should().NotBeNull();
+            result.UserId.Should().Be(achievementEf.UserId);
+            result.Type.Should().Be((AchievementType)achievementEf.Type);
+            result.Name.Should().Be(achievementEf.Name);
+            result.Description.Should().Be(achievementEf.Description);
+            result.Target.Should().Be(achievementEf.Target);
+            result.Tier.Should().Be((AchievementTier)achievementEf.Tier);
+            result.Progress.Should().Be(achievementEf.Progress);
+            result.IsUnlocked.Should().Be(achievementEf.IsUnlocked);
+            result.UnlockedAt.Should().Be(achievementEf.UnlockedAt);
         }
     }
 }

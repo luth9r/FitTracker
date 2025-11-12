@@ -115,14 +115,14 @@ namespace FitTracker.Domain.Entities
         public TemplateSet(
             Guid workoutTemplateExerciseId,
             int setNumber,
-            decimal plannedWeight,
+            Weight plannedWeight,
             int plannedReps,
             int? restSeconds,
             SetType setType) : base()
         {
             WorkoutTemplateExerciseId = workoutTemplateExerciseId;
             SetNumber = setNumber;
-            PlannedWeight = Weight.FromKilograms(plannedWeight);
+            PlannedWeight = plannedWeight;
             PlannedReps = plannedReps;
             RestSeconds = restSeconds;
             SetType = setType;
@@ -178,7 +178,7 @@ namespace FitTracker.Domain.Entities
         {
             private Guid _templateExerciseId;
             private int _setNumber;
-            private decimal _plannedWeight;
+            private Weight _plannedWeight;
             private int _plannedReps;
             private int? _restSeconds;
             private SetType _setType = SetType.Normal;
@@ -197,7 +197,7 @@ namespace FitTracker.Domain.Entities
 
             public TemplateSetBuilder WithPlannedWeight(decimal weight)
             {
-                _plannedWeight = weight;
+                _plannedWeight = Weight.FromKilograms(weight);
                 return this;
             }
 

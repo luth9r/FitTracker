@@ -32,6 +32,7 @@ namespace FitTracker.Infrastructure.Automapper
                     src.Avatar,
                     src.Bio,
                     UnitSystem.FromString(src.PreferredUnits)))
+                 .ForMember(dest => dest.PreferredUnits, opt => opt.Ignore())
                  .AfterMap((src, dest) =>
                  {
                      dest.SetDatabaseFields(src.Id, src.CreatedAt, src.UpdatedAt);

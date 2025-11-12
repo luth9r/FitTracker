@@ -1,6 +1,7 @@
 ﻿using FitTracker.Domain.Entities;
 using FitTracker.Domain.Enums;
 using FitTracker.Domain.Tests.Factories;
+using FitTracker.Domain.ValueObjects;
 using FluentAssertions;
 
 namespace FitTracker.Domain.Tests.Entities
@@ -15,7 +16,7 @@ namespace FitTracker.Domain.Tests.Entities
             // Arrange
             var templateExerciseId = Guid.NewGuid();
             var setNumber = 1;
-            var plannedWeight = 50m;
+            var plannedWeight = Weight.FromKilograms(50);
             var plannedReps = 10;
             var restSeconds = 90;
             var setType = SetType.Normal;
@@ -33,7 +34,7 @@ namespace FitTracker.Domain.Tests.Entities
             templateSet.Should().NotBeNull();
             templateSet.WorkoutTemplateExerciseId.Should().Be(templateExerciseId);
             templateSet.SetNumber.Should().Be(setNumber);
-            templateSet.PlannedWeight.ToKilograms().Should().Be(plannedWeight);
+            templateSet.PlannedWeight.ToKilograms().Should().Be(plannedWeight.ValueInKg);
             templateSet.PlannedReps.Should().Be(plannedReps);
             templateSet.RestSeconds.Should().Be(restSeconds);
             templateSet.SetType.Should().Be(setType);
@@ -49,7 +50,7 @@ namespace FitTracker.Domain.Tests.Entities
             var templateSet = new TemplateSet(
                 templateExerciseId,
                 1,
-                50m,
+                Weight.FromKilograms(50),
                 10,
                 null,
                 SetType.Normal);
