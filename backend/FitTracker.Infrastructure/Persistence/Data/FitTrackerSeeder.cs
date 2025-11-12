@@ -65,6 +65,7 @@ namespace FitTracker.Infrastructure.Persistence.Data
                     Avatar = "https://example.com/avatars/john.jpg",
                     Bio = "Passionate about fitness and strength training. 5 years experience.",
                     PreferredUnits = "metric",
+                    IsEmailVerefied = true,
                     CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc),
                     UpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
                 }

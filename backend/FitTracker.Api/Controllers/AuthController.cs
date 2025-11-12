@@ -1,21 +1,27 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FitTracker.Api.Controllers.Extensions;
+using FitTracker.Application.DTOs.Auth;
+using FitTracker.Application.UseCases.User.Commands;
+using MediatR;
+
+using Microsoft.AspNetCore.Mvc;
 
 namespace FitTracker.Api.Controllers
 {
     [Route("api/[controller]")]
-    public class AuthController(ILogger<AuthController> logger) : Controller
+    public class AuthController(IMediator mediator, ILogger<AuthController> logger) : Controller
     {
-        public class RegisterRequest
+
+        [HttpPost("register")]
+        public async Task<IResult> RegisterAsync(RegisterDto registerRequest, CancellationToken cancellationToken)
         {
-            public string Username { get; set; }
-            public string Email { get; set; }
-            public string Password { get; set; }
+            var result = await mediator.Send(new RegisterCommand(registerRequest));
+            if (result.IsFailure)
+            {
+                return result.Error.ValidationProblem();
+            }
+
+            return Results.Ok(result.Value);
+
         }
-
-        //[HttpPost("register")]
-        //public async Task<IActionResult> RegisterAsync(RegisterRequest registerRequest, CancellationToken cancellationToken)
-        //{
-
-        //}
     }
 }

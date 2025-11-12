@@ -53,6 +53,11 @@ namespace FitTracker.Infrastructure.Persistence.Data.Entities
         public string PreferredUnits { get; set; }
 
         /// <summary>
+        /// Verification status
+        /// </summary>
+        public bool IsEmailVerified { get; set; }
+
+        /// <summary>
         /// Collection of user's workout sessions.
         /// </summary>
         public ICollection<WorkoutEf> Workouts { get; set; } = new HashSet<WorkoutEf>();

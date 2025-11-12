@@ -35,6 +35,8 @@ namespace FitTracker.Domain.Entities
         public string? Bio { get; private set; }
         public UnitSystem PreferredUnits { get; private set; }
 
+        public bool IsEmailVerefied { get; private set; }
+
         #endregion
 
         #region Constructors
@@ -57,6 +59,7 @@ namespace FitTracker.Domain.Entities
             FirstName = firstName;
             LastName = lastName;
             PreferredUnits = UnitSystem.Metric;
+            IsEmailVerefied = false;
         }
 
         /// <summary>
@@ -141,7 +144,7 @@ namespace FitTracker.Domain.Entities
             public UserBuilder WithBio(string? bio) { _bio = bio; return this; }
             public UserBuilder WithPreferredUnits(UnitSystem preferredUnits)
             {
-                _preferredUnits = preferredUnits ?? throw new ArgumentNullException(nameof(preferredUnits));
+                _preferredUnits = preferredUnits;
                 return this;
             }
             public UserBuilder WithMetricUnits() { _preferredUnits = UnitSystem.Metric; return this; }
@@ -196,7 +199,7 @@ namespace FitTracker.Domain.Entities
 
         public void UpdatePreferredUnits(UnitSystem units)
         {
-            PreferredUnits = units ?? throw new ArgumentNullException(nameof(units));
+            PreferredUnits = units;
             UpdatedAt = DateTime.UtcNow;
         }
 

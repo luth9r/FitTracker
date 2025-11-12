@@ -1,14 +1,15 @@
-using System;
-using Microsoft.AspNetCore.Http;
+using FitTracker.Application.Interfaces;
+using FitTracker.Application.UseCases.User.Commands;
+using FitTracker.Domain.Abstract.Interfaces;
+using FitTracker.Infrastructure.Localization;
 using FitTracker.Infrastructure.Persistence.Data;
+using FitTracker.Infrastructure.Persistence.Repositories;
+using FitTracker.Infrastructure.Services;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.EntityFrameworkCore;
-using FitTracker.Application.Interfaces;
-using FitTracker.Infrastructure.Services;
-using FitTracker.Infrastructure.Localization;
-using FitTracker.Domain.Abstract.Interfaces;
-using FitTracker.Infrastructure.Persistence.Repositories;
+using System;
 
 namespace FitTracker.Infrastructure;
 
@@ -95,6 +96,7 @@ public static class DependencyInjection
     {
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(RegisterCommand).Assembly));
         // TODO:
         // services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
         // services.AddScoped<IUnitOfWork, UnitOfWork>();
