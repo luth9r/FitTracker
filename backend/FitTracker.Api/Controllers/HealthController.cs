@@ -1,8 +1,6 @@
 using FitTracker.Application.Interfaces;
 using FitTracker.Infrastructure.Persistence.Data;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace FitTracker.Api.Controllers
 {

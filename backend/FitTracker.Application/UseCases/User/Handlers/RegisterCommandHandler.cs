@@ -6,20 +6,24 @@ using FitTracker.Application.UseCases.User.Commands;
 using FitTracker.Domain.Abstract.Interfaces;
 using FluentValidation.Results;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using Microsoft.Extensions.Configuration;
 using UserEntity = FitTracker.Domain.Entities.User;
 
 namespace FitTracker.Application.UseCases.User.Handlers
 {
-    public class RegisterCommandHandler(IUserRepository userRepository, IMapper mapper, IUnitOfWork unitOfWork, ILocalizationService localization) : IRequestHandler<RegisterCommand, Result<RegisterResponse, ValidationResult>>
+    public class RegisterCommandHandler(IUserRepository userRepository,
+        IMapper mapper,
+        IUnitOfWork unitOfWork,
+        ILocalizationService localization,
+        IJwtTokenGenerator jwtTokenGenerator,
+        IEmailService emailService,
+        IConfiguration configuration) : IRequestHandler<RegisterCommand, Result<RegisterResponse, ValidationResult>>
     {
         public async Task<Result<RegisterResponse, ValidationResult>> Handle(RegisterCommand request, CancellationToken cancellationToken)
         {
             var userRequest = request.User;
 
-            var existingUser = await userRepository.GetByUsernameAsync(userRequest.Username, cancellationToken);
+            var existingUser = await userRepository.GetByUsernameReadonlyAsync(userRequest.Username, cancellationToken);
             if (existingUser != null)
             {
                 var errorMessage = localization.GetString("Auth.Register.UsernameAlreadyExists");
@@ -50,7 +54,7 @@ namespace FitTracker.Application.UseCases.User.Handlers
 
             var user = userBuilderResult.Value;
 
-            // Add to tracking
+            // Add to trackings
             await userRepository.AddAsync(user, cancellationToken);
 
             // Save changes to db
@@ -58,7 +62,16 @@ namespace FitTracker.Application.UseCases.User.Handlers
 
             var response = mapper.Map<RegisterResponse>(user);
 
-            response.JWT = "abracadabra"; // TODO
+            var verificationToken = jwtTokenGenerator.GenerateVerificationToken(user);
+
+            var verificationLinkBase = configuration["App:VerificationLinkBase"];
+            var verificationUrl = $"{verificationLinkBase}?token={verificationToken}";
+
+            var emailBody = $"Здравствуйте, {user.Username}!<br>" +
+                            $"Пожалуйста, подтвердите ваш email, перейдя по ссылке: <a href='{verificationUrl}'>Подтвердить</a><br>" +
+                            $"Ссылка действительна 15 минут.";
+
+            await emailService.SendEmailAsync(user.Email, "Подтверждение регистрации FitTracker", emailBody);
 
             return Result.Success<RegisterResponse, ValidationResult>(response);
 

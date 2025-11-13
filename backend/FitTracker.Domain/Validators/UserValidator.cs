@@ -1,8 +1,7 @@
 // FitTracker.Domain/Entities/Validators/UserValidator.cs
-using System;
-using FluentValidation;
-using FitTracker.Domain.ValueObjects;
 using FitTracker.Domain.Entities;
+using FitTracker.Domain.ValueObjects;
+using FluentValidation;
 
 namespace FitTracker.Domain.Validators
 {

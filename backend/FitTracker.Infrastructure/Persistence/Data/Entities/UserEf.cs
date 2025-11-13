@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FitTracker.Domain.Entities;
-
-namespace FitTracker.Infrastructure.Persistence.Data.Entities
+﻿namespace FitTracker.Infrastructure.Persistence.Data.Entities
 {
     /// <summary>
 	/// Represents a user account in the system.

@@ -1,5 +1,4 @@
 // FitTracker.Domain/Validators/WorkoutValidator.cs
-using System;
 using FitTracker.Domain.Entities;
 using FluentValidation;
 

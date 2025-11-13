@@ -4,8 +4,6 @@ using FitTracker.Infrastructure.Automapper;
 using FitTracker.Infrastructure.Persistence.Data.Entities;
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
-using System;
-using Xunit;
 
 namespace FitTrackerInfrastructure.Tests.AutomapperTests
 {

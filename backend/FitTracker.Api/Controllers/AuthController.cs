@@ -2,11 +2,8 @@
 using FitTracker.Api.Controllers.Extensions;
 using FitTracker.Application.DTOs.Auth;
 using FitTracker.Application.UseCases.User.Commands;
-using FitTracker.Domain.Entities;
-using FluentValidation.Results;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace FitTracker.Api.Controllers
 {
@@ -25,6 +22,25 @@ namespace FitTracker.Api.Controllers
             }
             return Ok(result.Value);
 
+        }
+
+
+        [HttpGet("verify-email")]
+        public async Task<ActionResult<LoginResponse>> VerifyEmail([FromQuery] string token)
+        {
+            if (string.IsNullOrEmpty(token))
+            {
+                return BadRequest();
+            }
+
+            var command = new VerifyEmailCommand(token);
+            var result = await mediator.Send(command);
+
+            if (result.IsSuccess)
+            {
+                return Ok(result.Value);
+            }
+            return BadRequest(result.Error.Errors.Select(e => e.ErrorMessage));
         }
     }
 }

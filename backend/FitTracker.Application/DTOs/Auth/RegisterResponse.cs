@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace FitTracker.Application.DTOs.Auth
+﻿namespace FitTracker.Application.DTOs.Auth
 {
     public class RegisterResponse
     {

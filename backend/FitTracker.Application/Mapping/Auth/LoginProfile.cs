@@ -2,13 +2,13 @@
 using FitTracker.Application.DTOs.Auth;
 using FitTracker.Domain.Entities;
 
-namespace FitTracker.Application.Mapping
+namespace FitTracker.Application.Mapping.Auth
 {
-    public class RegisterProfile : Profile
+    public class LoginProfile : Profile
     {
-        public RegisterProfile()
+        public LoginProfile()
         {
-            CreateMap<User, RegisterResponse>()
+            CreateMap<User, LoginResponse>()
                 .ForMember(dest => dest.JWT, opt => opt.Ignore());
         }
     }

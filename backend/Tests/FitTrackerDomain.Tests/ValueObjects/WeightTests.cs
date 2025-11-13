@@ -1,7 +1,5 @@
-﻿using System;
+﻿using FitTracker.Domain.ValueObjects;
 using FluentAssertions;
-using FitTracker.Domain.ValueObjects;
-using Xunit;
 
 namespace FitTracker.Tests.Domain.ValueObjects
 {

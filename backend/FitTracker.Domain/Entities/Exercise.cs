@@ -1,9 +1,8 @@
-using System;
 using CSharpFunctionalExtensions;
-using FluentValidation;
-using FluentValidation.Results;
 using FitTracker.Domain.Enums;
 using FitTracker.Domain.Validators;
+using FluentValidation;
+using FluentValidation.Results;
 
 namespace FitTracker.Domain.Entities
 {

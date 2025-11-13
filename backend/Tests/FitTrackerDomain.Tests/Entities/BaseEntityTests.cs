@@ -1,9 +1,6 @@
-﻿using System;
+﻿using FitTracker.Domain.Entities;
 using FluentAssertions;
 using FluentValidation;
-using FluentValidation.Results;
-using FitTracker.Domain.Entities;
-using Xunit;
 
 namespace FitTracker.Tests.Domain.Entities
 {

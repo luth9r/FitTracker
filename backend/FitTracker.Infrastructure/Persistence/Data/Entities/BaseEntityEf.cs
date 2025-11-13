@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace FitTracker.Infrastructure.Persistence.Data.Entities
+﻿namespace FitTracker.Infrastructure.Persistence.Data.Entities
 {
     /// <summary>
 	/// Base class for all database entities with common properties.

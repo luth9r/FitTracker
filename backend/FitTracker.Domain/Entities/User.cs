@@ -1,9 +1,8 @@
-using System;
 using CSharpFunctionalExtensions;
+using FitTracker.Domain.Validators;
+using FitTracker.Domain.ValueObjects;
 using FluentValidation;
 using FluentValidation.Results;
-using FitTracker.Domain.ValueObjects;
-using FitTracker.Domain.Validators;
 
 namespace FitTracker.Domain.Entities
 {
@@ -119,6 +118,8 @@ namespace FitTracker.Domain.Entities
 
             return Result.Success<User, ValidationResult>(this);
         }
+
+        public void SetEmailVerified() => this.IsEmailVerified = true;
 
         #endregion
 

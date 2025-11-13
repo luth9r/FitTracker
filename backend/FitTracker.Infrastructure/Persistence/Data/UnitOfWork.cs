@@ -1,7 +1,4 @@
 ﻿using FitTracker.Application.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace FitTracker.Infrastructure.Persistence.Data
 {

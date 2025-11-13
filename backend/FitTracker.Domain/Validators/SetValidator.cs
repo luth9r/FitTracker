@@ -1,7 +1,6 @@
 // FitTracker.Domain/Entities/Validators/SetValidator.cs
-using FluentValidation;
 using FitTracker.Domain.Entities;
-using FitTracker.Domain.Enums;
+using FluentValidation;
 
 namespace FitTracker.Domain.Validators
 {

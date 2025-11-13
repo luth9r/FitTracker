@@ -1,12 +1,5 @@
-using FitTracker.Infrastructure;
-using FitTracker.Infrastructure.Persistence.Data;
-using Microsoft.AspNetCore.Localization;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using Microsoft.OpenApi.Models;
-using Serilog;
 using FitTracker.Api.Extensions;
+using Serilog;
 
 var config = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())

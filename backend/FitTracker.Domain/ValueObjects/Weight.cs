@@ -1,5 +1,4 @@
 // FitTracker.Domain/ValueObjects/Weight.cs
-using System;
 using System.Globalization;
 
 namespace FitTracker.Domain.ValueObjects

@@ -1,9 +1,9 @@
+using FitTracker.Application;
+using FitTracker.Infrastructure;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using System.Globalization;
-using FitTracker.Infrastructure;
-using FitTracker.Application;
 
 namespace FitTracker.Api.Extensions
 {
