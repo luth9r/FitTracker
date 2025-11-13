@@ -31,7 +31,8 @@ namespace FitTracker.Infrastructure.Automapper
                     src.LastName,
                     src.Avatar,
                     src.Bio,
-                    UnitSystem.FromString(src.PreferredUnits)))
+                    UnitSystem.FromString(src.PreferredUnits),
+                    src.IsEmailVerified))
                  .ForMember(dest => dest.PreferredUnits, opt => opt.Ignore())
                  .AfterMap((src, dest) =>
                  {

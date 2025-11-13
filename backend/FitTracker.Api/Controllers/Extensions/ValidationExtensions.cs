@@ -1,25 +1,26 @@
 ﻿using FitTracker.Domain.Shared.ValidationErrors;
 using FluentValidation.Results;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace FitTracker.Api.Controllers.Extensions
 {
     internal static class ValidationExtensions
     {
-        internal static IResult ValidationProblem(this ValidationResult error)
+        /// <summary>
+        /// Transform <see cref="ValidationResult"/> to <see cref="ModelStateDictionary"/>
+        /// </summary>
+        /// <param name="validationResult"></param>
+        /// <returns></returns>
+        public static ModelStateDictionary ToModelState(this ValidationResult validationResult)
         {
-            return Results.ValidationProblem(error.ToDictionary(), statusCode: error.GetStatusCode());
-        }
+            var modelState = new ModelStateDictionary();
 
-        private static int GetStatusCode(this ValidationResult error)
-        {
-            return error switch
+            foreach (var error in validationResult.Errors)
             {
-                BadRequestError => StatusCodes.Status400BadRequest,
-                NotAuthorizedError => StatusCodes.Status401Unauthorized,
-                ForbiddenError => StatusCodes.Status403Forbidden,
-                NotFoundError => StatusCodes.Status404NotFound,
-                _ => StatusCodes.Status400BadRequest,
-            };
+                modelState.AddModelError(error.PropertyName, error.ErrorMessage);
+            }
+
+            return modelState;
         }
     }
 }

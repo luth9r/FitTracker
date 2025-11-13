@@ -1,9 +1,12 @@
-﻿using FitTracker.Api.Controllers.Extensions;
+﻿using CSharpFunctionalExtensions;
+using FitTracker.Api.Controllers.Extensions;
 using FitTracker.Application.DTOs.Auth;
 using FitTracker.Application.UseCases.User.Commands;
+using FitTracker.Domain.Entities;
+using FluentValidation.Results;
 using MediatR;
-
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace FitTracker.Api.Controllers
 {
@@ -12,15 +15,15 @@ namespace FitTracker.Api.Controllers
     {
 
         [HttpPost("register")]
-        public async Task<IResult> RegisterAsync(RegisterDto registerRequest, CancellationToken cancellationToken)
+        public async Task<ActionResult<RegisterResponse>> RegisterAsync(RegisterRequest registerRequest,
+        CancellationToken cancellationToken)
         {
-            var result = await mediator.Send(new RegisterCommand(registerRequest));
+            var result = await mediator.Send(new RegisterCommand(registerRequest), cancellationToken);
             if (result.IsFailure)
             {
-                return result.Error.ValidationProblem();
+                return ValidationProblem(result.Error.ToModelState());
             }
-
-            return Results.Ok(result.Value);
+            return Ok(result.Value);
 
         }
     }

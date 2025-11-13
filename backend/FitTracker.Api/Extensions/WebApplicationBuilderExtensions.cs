@@ -3,6 +3,7 @@ using Microsoft.OpenApi.Models;
 using Serilog;
 using System.Globalization;
 using FitTracker.Infrastructure;
+using FitTracker.Application;
 
 namespace FitTracker.Api.Extensions
 {
@@ -52,6 +53,12 @@ namespace FitTracker.Api.Extensions
 
             #endregion
 
+            #region Routing
+
+            builder.Services.AddRouting(options => options.LowercaseUrls = true);
+
+            #endregion
+
             #region Controllers
 
             builder.Services.AddControllers();
@@ -80,6 +87,12 @@ namespace FitTracker.Api.Extensions
             #region Infrastructure
 
             builder.Services.AddInfrastructure(builder.Configuration);
+
+            #endregion
+
+            #region Application
+
+            builder.Services.AddApplication(builder.Configuration);
 
             #endregion
 

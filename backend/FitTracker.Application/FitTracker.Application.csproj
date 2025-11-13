@@ -12,14 +12,15 @@
 
 	<ItemGroup>
 		<Folder Include="DTOs\Users\" />
-		<Folder Include="Mappings\" />
 		<Folder Include="Exceptions\" />
 		<Folder Include="Services\" />
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="AutoMapper" Version="15.1.0" />
 		<PackageReference Include="FluentValidation" Version="12.1.0" />
 		<PackageReference Include="MediatR" Version="13.1.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.0" />
 	</ItemGroup>
 
 </Project>

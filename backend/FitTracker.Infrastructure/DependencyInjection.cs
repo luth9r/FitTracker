@@ -96,6 +96,7 @@ public static class DependencyInjection
     {
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(RegisterCommand).Assembly));
         // TODO:
         // services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));

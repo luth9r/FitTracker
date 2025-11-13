@@ -9,5 +9,5 @@ using UserEntity = FitTracker.Domain.Entities.User;
 
 namespace FitTracker.Application.UseCases.User.Commands
 {
-    public record RegisterCommand(RegisterDto User) : IRequest<Result<UserEntity, ValidationResult>>;
+    public record RegisterCommand(RegisterRequest User) : IRequest<Result<RegisterResponse, ValidationResult>>;
 }

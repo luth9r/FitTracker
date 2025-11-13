@@ -16,52 +16,26 @@ namespace FitTracker.Infrastructure.Persistence.Repositories
 {
     internal class UserRepository(FitTrackerDbContext context, IMapper mapper, ILogger<UserRepository> logger) : IUserRepository
     {
-        public async Task<Result<User, ValidationResult>> GetByUsernameAsync(string username, CancellationToken cancellationToken)
+        public async Task<User?> GetByUsernameAsync(string username, CancellationToken cancellationToken)
         {
-            var userEf = await context.Users.FirstOrDefaultAsync(u => u.Username == username, cancellationToken);
+            var userEf = await context.Users
+                              .FirstOrDefaultAsync(u => u.Username == username, cancellationToken);
 
             if (userEf == null)
             {
-                var errors = new ValidationResult(new[]
-                {
-                    new ValidationFailure(nameof(username), "User with such username not found")
-                });
-                return Result.Failure<User, ValidationResult>(errors);
+                return null;
             }
 
             var user = mapper.Map<User>(userEf);
-            return Result.Success<User, ValidationResult>(user);
+            return user;
         }
 
-        public async Task<Result<User, ValidationResult>> AddAsync(User user, CancellationToken cancellationToken)
+        public async Task AddAsync(User user, CancellationToken cancellationToken)
         {
-            var existingUserEf = await GetByUsernameAsync(user.Username, cancellationToken);
-            if (existingUserEf.IsSuccess)
-            {
-                var errors = new ValidationResult(new[]
-                {
-                    new ValidationFailure(nameof(user), "User with such username already exists")
-                });
-                return Result.Failure<User, ValidationResult>(errors);
-            }
 
-            try
-            {
-                var userEf = mapper.Map<UserEf>(user);
-                await context.Users.AddAsync(userEf, cancellationToken);
-                await context.SaveChangesAsync(cancellationToken);
+            var userEf = mapper.Map<UserEf>(user);
 
-                var addedUser = mapper.Map<User>(userEf);
-                return Result.Success<User, ValidationResult>(addedUser);
-            }
-            catch (DbUpdateException exception)
-            {
-                var errors = new ValidationResult(new[]
-                {
-                    new ValidationFailure(nameof(user), "Database update error")
-                });
-                return Result.Failure<User, ValidationResult>(errors);
-            }
+            await context.Users.AddAsync(userEf, cancellationToken);
         }
 
     }

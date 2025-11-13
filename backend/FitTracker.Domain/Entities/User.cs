@@ -35,7 +35,7 @@ namespace FitTracker.Domain.Entities
         public string? Bio { get; private set; }
         public UnitSystem PreferredUnits { get; private set; }
 
-        public bool IsEmailVerefied { get; private set; }
+        public bool IsEmailVerified { get; private set; }
 
         #endregion
 
@@ -59,7 +59,7 @@ namespace FitTracker.Domain.Entities
             FirstName = firstName;
             LastName = lastName;
             PreferredUnits = UnitSystem.Metric;
-            IsEmailVerefied = false;
+            IsEmailVerified = false;
         }
 
         /// <summary>
@@ -74,11 +74,13 @@ namespace FitTracker.Domain.Entities
             string? lastName,
             string? avatar,
             string? bio,
-            UnitSystem preferredUnits) : this(username, email, passwordHash, firstName, lastName)
+            UnitSystem preferredUnits,
+            bool isEmailVerified = false) : this(username, email, passwordHash, firstName, lastName)
         {
             Avatar = avatar;
             Bio = bio;
             PreferredUnits = preferredUnits;
+            IsEmailVerified = isEmailVerified;
         }
 
         #endregion

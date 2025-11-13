@@ -4,7 +4,7 @@ using System.Text;
 
 namespace FitTracker.Application.DTOs.Auth
 {
-    public class RegisterDto
+    public class RegisterRequest
     {
         public required string Username { get; set; }
 
