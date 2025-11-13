@@ -12,7 +12,7 @@ namespace FitTracker.Api.Controllers
     {
 
         [HttpPost("register")]
-        public async Task<ActionResult<RegisterResponse>> RegisterAsync(RegisterRequest registerRequest,
+        public async Task<IActionResult> RegisterAsync(RegisterRequest registerRequest,
         CancellationToken cancellationToken)
         {
             var result = await mediator.Send(new RegisterCommand(registerRequest), cancellationToken);
@@ -26,7 +26,7 @@ namespace FitTracker.Api.Controllers
 
 
         [HttpGet("verify-email")]
-        public async Task<ActionResult<LoginResponse>> VerifyEmail([FromQuery] string token)
+        public async Task<IActionResult> VerifyEmail([FromQuery] string token)
         {
             if (string.IsNullOrEmpty(token))
             {
@@ -36,11 +36,26 @@ namespace FitTracker.Api.Controllers
             var command = new VerifyEmailCommand(token);
             var result = await mediator.Send(command);
 
-            if (result.IsSuccess)
+            if (result.IsFailure)
             {
-                return Ok(result.Value);
+                return BadRequest(result.Error.Errors.Select(e => e.ErrorMessage));
             }
-            return BadRequest(result.Error.Errors.Select(e => e.ErrorMessage));
+
+            var loginResponse = result.Value;
+            var loginToken = loginResponse.JWT;
+
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Expires = DateTime.UtcNow.AddYears(1),
+                Secure = true,
+                SameSite = SameSiteMode.Strict
+            };
+
+            Response.Cookies.Append("auth-token", loginToken, cookieOptions);
+
+
+            return Ok(result.Value);
         }
     }
 }
