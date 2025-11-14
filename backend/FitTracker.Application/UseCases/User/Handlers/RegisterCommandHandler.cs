@@ -17,6 +17,7 @@ namespace FitTracker.Application.UseCases.User.Handlers
         ILocalizationService localization,
         IJwtTokenGenerator jwtTokenGenerator,
         IEmailService emailService,
+        IPasswordHasher hasher,
         IConfiguration configuration) : IRequestHandler<RegisterCommand, Result<RegisterResponse, ValidationResult>>
     {
         public async Task<Result<RegisterResponse, ValidationResult>> Handle(RegisterCommand request, CancellationToken cancellationToken)
@@ -38,7 +39,7 @@ namespace FitTracker.Application.UseCases.User.Handlers
             var userBuilderResult = new UserEntity.UserBuilder()
                 .WithUsername(userRequest.Username)
                 .WithEmail(userRequest.Email)
-                .WithPasswordHash(userRequest.Password)
+                .WithPasswordHash(hasher.HashPassword(request.User.Password))
                 .Build();
 
             if (userBuilderResult.IsFailure)

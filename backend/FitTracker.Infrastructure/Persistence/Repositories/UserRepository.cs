@@ -25,6 +25,20 @@ namespace FitTracker.Infrastructure.Persistence.Repositories
             return user;
         }
 
+        public async Task<User?> GetByEmailReadonlyAsync(string email, CancellationToken cancellationToken)
+        {
+            var userEf = await context.Users
+                              .AsNoTracking()
+                              .FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
+
+            if (userEf == null)
+            {
+                return null;
+            }
+            var user = mapper.Map<User>(userEf);
+            return user;
+        }
+
         public async Task<User?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
         {
             var userEf = await context.Users

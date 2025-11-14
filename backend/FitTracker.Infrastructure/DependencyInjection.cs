@@ -97,7 +97,6 @@ public static class DependencyInjection
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
         services.AddScoped<IEmailService, EmailService>();
-        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(RegisterCommand).Assembly));
         // TODO:
         // services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
         // services.AddScoped<IUnitOfWork, UnitOfWork>();

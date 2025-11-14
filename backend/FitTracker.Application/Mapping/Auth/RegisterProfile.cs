@@ -8,8 +8,7 @@ namespace FitTracker.Application.Mapping
     {
         public RegisterProfile()
         {
-            CreateMap<User, RegisterResponse>()
-                .ForMember(dest => dest.JWT, opt => opt.Ignore());
+            CreateMap<User, RegisterResponse>();
         }
     }
 }
