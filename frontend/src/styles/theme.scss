@@ -1,0 +1,16 @@
+.dark-theme {
+  --color-primary: #60199f;
+  --color-primary-hover: #{lighten(#60199f, 5%)};
+  --color-primary-active: #{lighten(#60199f, 10%)};
+
+  --color-bg-dark: #0f172a;
+  --color-card-bg: #1e293b;
+  --color-input-bg: #0f172a;
+
+  --color-border: rgba(51, 65, 85, 0.5);
+  --color-border-strong: rgba(51, 65, 85, 1);
+
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #94a3b8;
+  --color-text-muted: #64748b;
+}

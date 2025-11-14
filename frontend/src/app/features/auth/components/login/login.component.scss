@@ -1,0 +1,321 @@
+// 1. Импортируем *только* миксины, которые нам нужны
+// Нам больше не нужно импортировать цвета, 
+// так как они глобально доступны через var()
+@use '../../../../../styles/mixins.scss' as m;
+
+.container {
+  min-height: 100%;
+  background: var(--color-bg-dark); // Используем CSS-переменную
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-card {
+  position: relative;
+  width: 100%;
+  max-width: 448px;
+  background: var(--color-card-bg);
+  border-radius: 24px;
+  padding: 2rem;
+  border: 1px solid var(--color-border);
+  z-index: 10;
+}
+
+
+.header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  background: var(--color-primary);
+  border-radius: 16px;
+  margin-bottom: 1rem;
+}
+
+.title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+}
+
+.toggle-container {
+  display: flex;
+  background: var(--color-input-bg);
+  border-radius: 12px;
+  padding: 4px;
+  margin-bottom: 1.5rem;
+}
+
+.toggle-btn {
+  flex: 1;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  background: transparent;
+  cursor: pointer;
+  @include m.transition-smooth; // Используем миксин через неймспейс 'm'
+
+  &:hover {
+    color: var(--color-text-primary);
+  }
+
+  &.active {
+    background: var(--color-primary);
+    color: var(--color-text-primary);
+  }
+}
+
+.form-container {
+  margin-bottom: 1.5rem;
+}
+
+.input-group {
+  margin-bottom: 1rem;
+}
+
+.input-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 12px;
+  color: var(--color-text-secondary);
+  pointer-events: none;
+}
+
+.input-field {
+  width: 100%;
+  padding: 12px 12px 12px 44px;
+  background: var(--color-input-bg);
+  border: 1px solid var(--color-border-strong);
+  border-radius: 12px;
+  color: var(--color-text-primary);
+  font-size: 0.875rem;
+  @include m.transition-smooth;
+
+  &::placeholder {
+    color: var(--color-text-muted);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px var(--color-primary);
+  }
+}
+
+.toggle-password {
+  position: absolute;
+  right: 12px;
+  background: transparent;
+  border: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  @include m.transition-smooth;
+
+  &:hover {
+    color: var(--color-text-primary);
+  }
+
+  .eye-icon {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.forgot-password-container {
+  text-align: right;
+  margin-bottom: 1rem;
+}
+
+.forgot-password {
+  background: transparent;
+  border: none;
+  color: var(--color-primary);
+  font-size: 0.875rem;
+  cursor: pointer;
+  @include m.transition-smooth;
+
+  &:hover {
+    color: var(--color-primary-active); // Используем вычисленную переменную
+  }
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 14px;
+  background: var(--color-primary);
+  color: var(--color-text-primary);
+  font-weight: 600;
+  font-size: 0.875rem;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  @include m.transition-smooth;
+
+  &:hover {
+    transform: scale(1.02);
+    background: var(--color-primary-hover); // Используем вычисленную переменную
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+
+.divider {
+  position: relative;
+  margin: 1.5rem 0;
+  text-align: center;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--color-border-strong);
+  }
+}
+
+.divider-text {
+  position: relative;
+  display: inline-block;
+  padding: 0 1rem;
+  background: var(--color-card-bg);
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+}
+
+.social-buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  margin-bottom: 1.5rem;
+}
+
+.social-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px;
+  background: var(--color-input-bg);
+  border: 1px solid var(--color-border-strong);
+  border-radius: 12px;
+  color: var(--color-text-primary);
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  @include m.transition-smooth;
+
+  &:hover {
+    background: rgba(30, 41, 59, 0.7);
+    border-color: rgba(71, 85, 105, 1);
+  }
+}
+
+.social-icon {
+  width: 20px;
+  height: 20px;
+}
+
+
+.footer-text {
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+}
+
+.footer-link {
+  background: transparent;
+  border: none;
+  color: var(--color-primary);
+  font-weight: 500;
+  cursor: pointer;
+  @include m.transition-smooth;
+
+  &:hover {
+    color: var(--color-primary-active);
+  }
+}
+
+
+.terms-text {
+  position: relative;
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  margin-top: 1.5rem;
+  line-height: 1.5;
+  z-index: 10;
+}
+
+.terms-link {
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  @include m.transition-smooth;
+
+  &:hover {
+    color: var(--color-text-primary);
+  }
+}
+
+// Медиа-запросы остаются без изменений
+@media (max-width: 640px) {
+  .login-card {
+    padding: 1.5rem;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .logo {
+    width: 56px;
+    height: 56px;
+
+    svg {
+      width: 28px;
+      height: 28px;
+    }
+  }
+}

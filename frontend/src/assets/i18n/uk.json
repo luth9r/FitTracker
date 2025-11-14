@@ -1,0 +1,28 @@
+{
+  "LOGIN": {
+    "TITLE": "FitTracker",
+    "SUBTITLE": "Твій шлях до кращої форми",
+    "SIGN_IN": "Вхід",
+    "SIGN_UP": "Реєстрація",
+    "EMAIL": "Email",
+    "EMAIL_PLACEHOLDER": "your@email.com",
+    "PASSWORD": "Пароль",
+    "PASSWORD_PLACEHOLDER": "••••••••",
+    "CONFIRM_PASSWORD": "Підтвердіть пароль",
+    "CONFIRM_PASSWORD_PLACEHOLDER": "••••••••",
+    "FORGOT_PASSWORD": "Забули пароль?",
+    "SUBMIT_BUTTON_LOGIN": "Увійти",
+    "SUBMIT_BUTTON_SIGNUP": "Створити акаунт",
+    "OR": "або",
+    "WITH_GOOGLE": "Продовжити з Google",
+    "WITH_GITHUB": "Продовжити з GitHub",
+    "FOOTER_QUESTION_LOGIN": "Немає акаунту?",
+    "FOOTER_LINK_LOGIN": "Зареєструйтесь",
+    "FOOTER_QUESTION_SIGNUP": "Вже є акаунт?",
+    "FOOTER_LINK_SIGNUP": "Увійти",
+    "TERMS_TOP_1": "Натискаючи кнопку входу, ви погоджуєтесь з нашими",
+    "TERMS_TOP_2": "та",
+    "TERMS_LINK_1": "Умовами використання",
+    "TERMS_LINK_2": "Політикою конфіденційності"
+  }
+}

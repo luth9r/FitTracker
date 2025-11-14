@@ -1,0 +1,32 @@
+{
+  "LOGIN": {
+    "TITLE": "FitTracker",
+    "SUBTITLE": "Your path to a better shape",
+    "SIGN_IN": "Sign In",
+    "SIGN_UP": "Sign Up",
+    "EMAIL": "Email",
+    "EMAIL_PLACEHOLDER": "your@email.com",
+    "PASSWORD": "Password",
+    "PASSWORD_PLACEHOLDER": "••••••••",
+    "CONFIRM_PASSWORD": "Confirm Password",
+    "CONFIRM_PASSWORD_PLACEHOLDER": "••••••••",
+    "FORGOT_PASSWORD": "Forgot password?",
+    "SUBMIT_BUTTON_LOGIN": "Sign In",
+    "SUBMIT_BUTTON_SIGNUP": "Create Account",
+    "OR": "or",
+    "WITH_GOOGLE": "Google",
+    "WITH_GITHUB": "GitHub",
+    "FOOTER_QUESTION_LOGIN": "Don't have an account?",
+    "FOOTER_LINK_LOGIN": "Register",
+    "FOOTER_QUESTION_SIGNUP": "Already have an account?",
+    "FOOTER_LINK_SIGNUP": "Log In",
+    "TERMS_TOP_1": "By signing in, you agree to our",
+    "TERMS_TOP_2": "and",
+    "TERMS_LINK_1": "Terms of Service",
+    "TERMS_LINK_2": "Privacy Policy"
+  },
+  "INFO": {
+    "TITLE": "Track. Analyze. Improve.",
+    "SUBTITLE": "Join FitTracker to monitor your workouts, analyze your progress, and achieve your fitness goals."
+  }
+}
