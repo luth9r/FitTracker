@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CSharpFunctionalExtensions;
 using FitTracker.Application.DTOs.Auth;
+using FitTracker.Application.Extensions;
 using FitTracker.Application.Interfaces;
 using FitTracker.Application.UseCases.User.Commands;
 using FitTracker.Domain.Abstract.Interfaces;
@@ -9,6 +10,7 @@ using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ResultExtensions = FitTracker.Application.Extensions.ResultExtensions;
 
 namespace FitTracker.Application.UseCases.User.Handlers
 {
@@ -27,25 +29,13 @@ namespace FitTracker.Application.UseCases.User.Handlers
 
             if (user == null || !user.IsEmailVerified)
             {
-                var errorMessage = localization.GetString("Auth.Login.InvalidCredentials");
-
-                var errors = new ValidationResult(new[]
-                {
-                    new ValidationFailure(nameof(request.Request.Email), errorMessage)
-                });
-                return Result.Failure<LoginResponse, ValidationResult>(errors);
+                return ResultExtensions.ValidationFailure<LoginResponse>(nameof(request.Request.Email), localization.GetString("Auth.Login.InvalidCredentials"));
             }
 
             var checkPassword = hasher.VerifyPassword(userPassword, user.PasswordHash);
             if (!checkPassword)
             {
-                var errorMessage = localization.GetString("Auth.Login.InvalidCredentials");
-
-                var errors = new ValidationResult(new[]
-                {
-                    new ValidationFailure(nameof(request.Request.Password), errorMessage)
-                });
-                return Result.Failure<LoginResponse, ValidationResult>(errors);
+                return ResultExtensions.ValidationFailure<LoginResponse>(nameof(request.Request.Password), localization.GetString("Auth.Login.InvalidCredentials"));
             }
 
             var loginToken = jwtTokenGenerator.GenerateToken(user);

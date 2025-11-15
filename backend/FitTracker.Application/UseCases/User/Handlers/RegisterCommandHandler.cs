@@ -1,12 +1,14 @@
 ﻿using AutoMapper;
 using CSharpFunctionalExtensions;
 using FitTracker.Application.DTOs.Auth;
+using FitTracker.Application.Extensions;
 using FitTracker.Application.Interfaces;
 using FitTracker.Application.UseCases.User.Commands;
 using FitTracker.Domain.Abstract.Interfaces;
 using FluentValidation.Results;
 using MediatR;
 using Microsoft.Extensions.Configuration;
+using ResultExtensions = FitTracker.Application.Extensions.ResultExtensions;
 using UserEntity = FitTracker.Domain.Entities.User;
 
 namespace FitTracker.Application.UseCases.User.Handlers
@@ -27,13 +29,7 @@ namespace FitTracker.Application.UseCases.User.Handlers
             var existingUser = await userRepository.GetByUsernameReadonlyAsync(userRequest.Username, cancellationToken);
             if (existingUser != null)
             {
-                var errorMessage = localization.GetString("Auth.Register.UsernameAlreadyExists");
-
-                var errors = new ValidationResult(new[]
-                {
-                    new ValidationFailure(nameof(userRequest.Username), errorMessage)
-                });
-                return Result.Failure<RegisterResponse, ValidationResult>(errors);
+                return ResultExtensions.ValidationFailure<RegisterResponse>(nameof(userRequest.Username), localization.GetString("Auth.Register.UsernameAlreadyExists"));
             }
 
             var userBuilderResult = new UserEntity.UserBuilder()
@@ -48,9 +44,7 @@ namespace FitTracker.Application.UseCases.User.Handlers
                     .Select(failure => new ValidationFailure(failure.PropertyName, localization.GetString(failure.ErrorMessage)))
                     .ToList();
 
-                var translatedValidationResult = new ValidationResult(translatedErrors);
-
-                return Result.Failure<RegisterResponse, ValidationResult>(translatedValidationResult);
+                return ResultExtensions.ValidationFailure<RegisterResponse>(nameof(userBuilderResult), translatedErrors);
             }
 
             var user = userBuilderResult.Value;
@@ -68,11 +62,11 @@ namespace FitTracker.Application.UseCases.User.Handlers
             var verificationLinkBase = configuration["App:VerificationLinkBase"];
             var verificationUrl = $"{verificationLinkBase}?token={verificationToken}";
 
-            var emailBody = $"Здравствуйте, {user.Username}!<br>" +
-                            $"Пожалуйста, подтвердите ваш email, перейдя по ссылке: <a href='{verificationUrl}'>Подтвердить</a><br>" +
-                            $"Ссылка действительна 15 минут.";
+            var emailBody = $"Hello, {user.Username}!<br>" +
+                $"Please confirm your email by clicking the link: <a href='{verificationUrl}'>Confirm</a><br>" +
+                $"The link is valid for 15 minutes.";
 
-            await emailService.SendEmailAsync(user.Email, "Подтверждение регистрации FitTracker", emailBody);
+            await emailService.SendEmailAsync(user.Email, "Registration confirmation FitTracker", emailBody);
 
             return Result.Success<RegisterResponse, ValidationResult>(response);
 

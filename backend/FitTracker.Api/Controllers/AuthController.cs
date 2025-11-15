@@ -1,7 +1,8 @@
 ﻿using CSharpFunctionalExtensions;
 using FitTracker.Api.Controllers.Extensions;
-using FitTracker.Application.DTOs.Auth;
+using FitTracker.Application.DTOs.Auth.Google;
 using FitTracker.Application.UseCases.User.Commands;
+using FitTracker.Application.UseCases.User.Commands.Google;
 using MediatR;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
@@ -15,36 +16,68 @@ namespace FitTracker.Api.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> LoginAsync([FromBody] Application.DTOs.Auth.LoginRequest loginRequest, CancellationToken cancellationToken)
         {
-            // Предполагаем, что у вас есть LoginCommand, который принимает LoginRequest
             var command = new LoginCommand(loginRequest);
             var result = await mediator.Send(command, cancellationToken);
 
             if (result.IsFailure)
             {
-                // Ошибка аутентификации (неверный логин/пароль)
-                // Возвращаем ValidationProblem, как и в RegisterAsync, для единообразия
                 return ValidationProblem(result.Error.ToModelState());
             }
 
-            // Предполагаем, что result.Value - это LoginResponse, содержащий JWT
             var loginResponse = result.Value;
             var loginToken = loginResponse.JWT;
 
-            var cookieOptions = new CookieOptions
-            {
-                HttpOnly = true, // Важно: Куки недоступны из JavaScript на клиенте
-                Expires = DateTime.UtcNow.AddDays(30), // Устанавливаем разумное время жизни
-                Secure = true, // Передача только по HTTPS
-                SameSite = SameSiteMode.Strict // Защита от CSRF
-            };
+            SetAuthCookie(loginToken);
 
-            Response.Cookies.Append("auth-token", loginToken, cookieOptions);
-
-            // Возвращаем ответ. Клиенту не обязательно видеть JWT (он в куки),
-            // но мы можем вернуть DTO с информацией о пользователе.
             return Ok(loginResponse);
         }
 
+        [HttpPost("google-login")]
+        public async Task<IActionResult> GoogleLoginAsync([FromBody] GoogleLoginRequest googleRequest,
+            CancellationToken cancellationToken)
+        {
+            var command = new GoogleLoginCommand(googleRequest);
+            var result = await mediator.Send(command, cancellationToken);
+
+            if (result.IsFailure)
+            {
+                var registrationError = result.Error.Errors
+                    .FirstOrDefault(e => e.ErrorMessage.StartsWith("NEEDS_REGISTRATION::"));
+
+                if (registrationError != null)
+                {
+                    var parts = registrationError.ErrorMessage.Split("::");
+
+                    var responseData = new
+                    {
+                        needsRegistration = true,
+                        email = parts.ElementAtOrDefault(1),
+                        firstName = parts.ElementAtOrDefault(2),
+                        lastName = parts.ElementAtOrDefault(3)
+                    };
+                    return Ok(responseData);
+                }
+
+                return ValidationProblem(result.Error.ToModelState());
+            }
+            SetAuthCookie(result.Value.JWT);
+            return Ok(result.Value);
+        }
+
+        [HttpPost("complete-google-registration")]
+        public async Task<IActionResult> CompleteGoogleRegistrationAsync([FromBody] CompleteGoogleRegistrationRequest request,
+            CancellationToken cancellationToken)
+        {
+            var command = new CompleteGoogleRegistrationCommand(request);
+            var result = await mediator.Send(command, cancellationToken);
+            if (result.IsFailure)
+            {
+                return ValidationProblem(result.Error.ToModelState());
+            }
+            SetAuthCookie(result.Value.JWT);
+            return Ok(result.Value);
+
+        }
 
 
         [HttpPost("register")]
@@ -92,6 +125,19 @@ namespace FitTracker.Api.Controllers
 
 
             return Ok(result.Value);
+        }
+
+        private void SetAuthCookie(string token)
+        {
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Expires = DateTime.UtcNow.AddDays(30),
+                Secure = true,
+                SameSite = SameSiteMode.Strict
+            };
+
+            Response.Cookies.Append("auth-token", token, cookieOptions);
         }
     }
 }

@@ -54,5 +54,10 @@
                 "InvalidUrl": "Avatar must be a valid URL"
             }
         }
+    },
+    "Google": {
+        "Auth": {
+            "InvalidToken": "Invalid Google token"
+        }
     }
 }

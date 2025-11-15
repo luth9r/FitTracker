@@ -1,5 +1,5 @@
 ﻿using CSharpFunctionalExtensions;
-using FitTracker.Application.MedaitR;
+using FitTracker.Application.Extensions.MedaitR;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using System;

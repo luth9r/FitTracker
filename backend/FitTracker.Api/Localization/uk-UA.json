@@ -54,5 +54,10 @@
                 "InvalidUrl": "URL аватара має бути дійсним"
             }
         }
+    },
+    "Google": {
+        "Auth": {
+            "InvalidToken": "Невалідний Google токен"
+        }
     }
 }

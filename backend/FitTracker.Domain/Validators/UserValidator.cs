@@ -31,16 +31,6 @@ namespace FitTracker.Domain.Validators
 
             #endregion
 
-            #region PasswordHash
-
-            RuleFor(u => u.PasswordHash)
-                .NotEmpty()
-                .WithMessage("Validation.User.PasswordHash.Required")
-                .WithName("passwordHash")
-                .OverridePropertyName("passwordHash");
-
-            #endregion
-
             #region PreferredUnits
 
             RuleFor(u => u.PreferredUnits)
@@ -75,6 +65,7 @@ namespace FitTracker.Domain.Validators
         private void EmailValidation()
         {
             RuleFor(u => u.Email)
+                .NotEmpty()
                 .EmailAddress()
                 .WithMessage("Validation.User.Email.InvalidFormat")
                 .MaximumLength(User.EmailMaxLength)
@@ -82,7 +73,7 @@ namespace FitTracker.Domain.Validators
                 .Matches("^(?=.{1,254}$)(?=.{1,64}@)[a-zA-Z0-9!#$%&'*+/=?^_{|}~-]+"
                          + @"(?:\.[a-zA-Z0-9!#$%&'*+/=?^_{|}~-]+)*@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}"
                          + @"[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
-                .WithMessage("Validation.User.Email.InvalidRFC5322")
+                .WithMessage("Validation.User.Email.InvalidFormat")
                 .WithName("email")
                 .OverridePropertyName("email");
         }
@@ -93,7 +84,7 @@ namespace FitTracker.Domain.Validators
                 .MaximumLength(User.FirstNameMaxLength)
                 .When(u => !string.IsNullOrEmpty(u.FirstName))
                 .WithMessage("Validation.User.FirstName.MaxLength")
-                .Matches(@"^[a-zA-Z\s\-'\.]+$")
+                .Matches(@"^[\p{L}\s\-'\.]+$")
                 .When(u => !string.IsNullOrEmpty(u.FirstName))
                 .WithMessage("Validation.User.FirstName.InvalidCharacters")
                 .WithName("firstName")
@@ -106,7 +97,7 @@ namespace FitTracker.Domain.Validators
                 .MaximumLength(User.LastNameMaxLength)
                 .When(u => !string.IsNullOrEmpty(u.LastName))
                 .WithMessage($"Validation.User.LastName.MaxLength")
-                .Matches(@"^[a-zA-Z\s\-'\.]+$")
+                .Matches(@"^[\p{L}\s\-'\.]+$")
                 .When(u => !string.IsNullOrEmpty(u.LastName))
                 .WithMessage("Validation.User.LastName.InvalidCharacters")
                 .WithName("lastName")

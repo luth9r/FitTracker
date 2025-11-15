@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace FitTracker.Application.MedaitR
+namespace FitTracker.Application.Extensions.MedaitR
 {
     public static class MediatRExtensions
     {

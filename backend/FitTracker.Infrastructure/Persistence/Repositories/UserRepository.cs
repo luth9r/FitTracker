@@ -38,6 +38,33 @@ namespace FitTracker.Infrastructure.Persistence.Repositories
             var user = mapper.Map<User>(userEf);
             return user;
         }
+        public async Task<User?> GetByIdReadonlyAsync(Guid id, CancellationToken cancellationToken)
+        {
+            var userEf = await context.Users
+                               .AsNoTracking()
+                               .FirstOrDefaultAsync(u => u.Id == id);
+
+            if (userEf == null)
+            {
+                return null;
+            }
+
+            var user = mapper.Map<User>(userEf);
+            return user;
+        }
+
+        public async Task<User?> GetByGoogleTokenReadonlyAsync(string token, CancellationToken cancellationToken)
+        {
+            var userEf = await context.Users
+                              .AsNoTracking()
+                              .FirstOrDefaultAsync(u => u.GoogleProviderId == token, cancellationToken);
+            if (userEf == null)
+            {
+                return null;
+            }
+            var user = mapper.Map<User>(userEf);
+            return user;
+        }
 
         public async Task<User?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
         {
@@ -53,20 +80,6 @@ namespace FitTracker.Infrastructure.Persistence.Repositories
             return user;
         }
 
-        public async Task<User?> GetByIdReadonlyAsync(Guid id, CancellationToken cancellationToken)
-        {
-            var userEf = await context.Users
-                               .AsNoTracking()
-                               .FirstOrDefaultAsync(u => u.Id == id);
-
-            if (userEf == null)
-            {
-                return null;
-            }
-
-            var user = mapper.Map<User>(userEf);
-            return user;
-        }
 
         public async Task AddAsync(User user, CancellationToken cancellationToken)
         {

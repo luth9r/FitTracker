@@ -18,7 +18,7 @@
         /// <summary>
         /// Hashed password for authentication.
         /// </summary>
-        public string PasswordHash { get; set; } = null!;
+        public string? PasswordHash { get; set; }
 
         /// <summary>
         /// Optional first name.
@@ -49,6 +49,11 @@
         /// Verification status
         /// </summary>
         public bool IsEmailVerified { get; set; }
+
+        /// <summary>
+        /// Gets the unique identifier assigned to the user by the Google authentication provider.
+        /// </summary>
+        public string? GoogleProviderId { get; private set; }
 
         /// <summary>
         /// Collection of user's workout sessions.

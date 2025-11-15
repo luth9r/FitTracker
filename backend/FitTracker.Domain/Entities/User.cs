@@ -27,7 +27,7 @@ namespace FitTracker.Domain.Entities
 
         public string Username { get; private set; }
         public string Email { get; private set; }
-        public string PasswordHash { get; private set; }
+        public string? PasswordHash { get; private set; }
         public string? FirstName { get; private set; }
         public string? LastName { get; private set; }
         public string? Avatar { get; private set; }
@@ -35,6 +35,8 @@ namespace FitTracker.Domain.Entities
         public UnitSystem PreferredUnits { get; private set; }
 
         public bool IsEmailVerified { get; private set; }
+
+        public string? GoogleProviderId { get; private set; }
 
         #endregion
 
@@ -74,12 +76,14 @@ namespace FitTracker.Domain.Entities
             string? avatar,
             string? bio,
             UnitSystem preferredUnits,
-            bool isEmailVerified = false) : this(username, email, passwordHash, firstName, lastName)
+            bool isEmailVerified = false,
+            string? googleProvidedId = null) : this(username, email, passwordHash, firstName, lastName)
         {
             Avatar = avatar;
             Bio = bio;
             PreferredUnits = preferredUnits;
             IsEmailVerified = isEmailVerified;
+            GoogleProviderId = googleProvidedId;
         }
 
         #endregion
@@ -137,6 +141,7 @@ namespace FitTracker.Domain.Entities
             private string? _avatar;
             private string? _bio;
             private UnitSystem _preferredUnits = UnitSystem.Metric;
+            private string? _googleProviderId;
 
             public UserBuilder WithUsername(string username) { _username = username; return this; }
             public UserBuilder WithEmail(string email) { _email = email; return this; }
@@ -153,6 +158,8 @@ namespace FitTracker.Domain.Entities
             public UserBuilder WithMetricUnits() { _preferredUnits = UnitSystem.Metric; return this; }
             public UserBuilder WithImperialUnits() { _preferredUnits = UnitSystem.Imperial; return this; }
 
+            public UserBuilder WithGoogleProvidedId(string? googleProviderId) { _googleProviderId = googleProviderId; return this; }
+
             public Result<User, ValidationResult> Build()
             {
                 var user = new User(
@@ -163,7 +170,8 @@ namespace FitTracker.Domain.Entities
                     _lastName,
                     _avatar,
                     _bio,
-                    _preferredUnits);
+                    _preferredUnits,
+                    googleProvidedId: _googleProviderId);
                 var validationResult = user.Validate();
                 if (!validationResult.IsValid)
                     return Result.Failure<User, ValidationResult>(validationResult);
@@ -212,6 +220,11 @@ namespace FitTracker.Domain.Entities
         public decimal ConvertWeight(decimal weight, UnitSystem targetSystem) => PreferredUnits.ConvertWeight(weight, targetSystem);
         public string GetWeightUnit() => PreferredUnits.WeightUnit;
         public string GetLengthUnit() => PreferredUnits.LengthUnit;
+
+        public void SetGoogleProviderId(string googleProviderId)
+        {
+            GoogleProviderId = googleProviderId;
+        }
 
         public string GetFullName()
         {

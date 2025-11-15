@@ -29,8 +29,7 @@ namespace FitTracker.Infrastructure.Persistence.Data.Configurations
 
             builder.Property(u => u.PasswordHash)
                 .HasColumnName("password_hash")
-                .HasMaxLength(255)
-                .IsRequired();
+                .HasMaxLength(255);
 
             builder.Property(u => u.FirstName)
                 .HasColumnName("first_name")
@@ -57,6 +56,10 @@ namespace FitTracker.Infrastructure.Persistence.Data.Configurations
                 .HasColumnName("is_email_verified")
                 .HasDefaultValue(false)
                 .IsRequired();
+
+            builder.Property(u => u.GoogleProviderId)
+                .HasColumnName("google_provider_id")
+                .HasMaxLength(255);
 
             builder.Property(u => u.CreatedAt)
                 .HasColumnName("created_at")

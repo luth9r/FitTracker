@@ -1,12 +1,14 @@
 ﻿using AutoMapper;
 using CSharpFunctionalExtensions;
 using FitTracker.Application.DTOs.Auth;
+using FitTracker.Application.Extensions;
 using FitTracker.Application.Interfaces;
 using FitTracker.Application.UseCases.User.Commands;
 using FitTracker.Domain.Abstract.Interfaces;
 using FluentValidation.Results;
 using MediatR;
 using System.Security.Claims;
+using ResultExtensions = FitTracker.Application.Extensions.ResultExtensions;
 
 namespace FitTracker.Application.UseCases.User.Handlers
 {
@@ -22,31 +24,31 @@ namespace FitTracker.Application.UseCases.User.Handlers
 
             if (claimsPrincipal == null)
             {
-                return Fail("Auth.VerifyEmail.InvalidToken");
+                return ResultExtensions.ValidationFailure<LoginResponse>("", "Auth.VerifyEmail.InvalidToken");
             }
 
             var purposeClaim = claimsPrincipal.FindFirst("purpose");
             if (purposeClaim.Value != "email_verification")
             {
-                return Fail("Auth.VerifyEmail.WrongPurposeToken");
+                return ResultExtensions.ValidationFailure<LoginResponse>("", "Auth.VerifyEmail.WrongPurposeToken");
             }
 
 
             var userIdString = claimsPrincipal.FindFirst(ClaimTypes.NameIdentifier);
             if (!Guid.TryParse(userIdString.Value, out var userId))
             {
-                return Fail("Auth.VerifyEmail.InvalidToken");
+                return ResultExtensions.ValidationFailure<LoginResponse>("", "Auth.VerifyEmail.InvalidToken");
             }
 
             var user = await userRepository.GetByIdReadonlyAsync(userId, cancellationToken);
             if (user == null)
             {
-                return Fail("Auth.VerifyEmail.UserNotFound");
+                return ResultExtensions.ValidationFailure<LoginResponse>("", "Auth.VerifyEmail.UserNotFound");
             }
 
             if (user.IsEmailVerified)
             {
-                return Fail("Auth.VerifyEmail.AlreadyVerified");
+                return ResultExtensions.ValidationFailure<LoginResponse>("", "Auth.VerifyEmail.AlreadyVerified");
             }
             user.SetEmailVerified();
 
@@ -60,13 +62,6 @@ namespace FitTracker.Application.UseCases.User.Handlers
             response.JWT = loginToken;
 
             return Result.Success<LoginResponse, ValidationResult>(response);
-        }
-
-        private Result<LoginResponse, ValidationResult> Fail(string errorKey)
-        {
-            var errorMessage = localization.GetString(errorKey);
-            var error = new ValidationResult(new[] { new ValidationFailure("", errorMessage) });
-            return Result.Failure<LoginResponse, ValidationResult>(error);
         }
     }
 }
