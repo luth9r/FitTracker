@@ -23,10 +23,42 @@
     "TERMS_TOP_1": "By signing in, you agree to our",
     "TERMS_TOP_2": "and",
     "TERMS_LINK_1": "Terms of Service",
-    "TERMS_LINK_2": "Privacy Policy"
+    "TERMS_LINK_2": "Privacy Policy",
+    "LOADING": "Loading...",
+    "SUCCESS": {
+      "REGISTER": "Registration successful! Please check your email to verify your account.",
+      "LOGIN": "Login successful! Redirecting..."
+    },
+    "ERRORS": {
+      "PASSWORDS_DO_NOT_MATCH": "Passwords do not match!",
+      "GOOGLE_NOT_IMPLEMENTED": "Google Sign-In is not yet implemented.",
+      "USERNAME_TOO_SHORT": "Username must be at least 3 characters.",
+      "API_UNREACHABLE": "Could not connect to the server. Is the API running?",
+      "UNKNOWN": "An unknown error occurred. Please try again.",
+      "PASSWORD_MIN_LENGTH": "Password must be at least 8 characters long.",
+      "PASSWORD_ONE_LETTER": "Password must contain at least one letter.",
+      "PASSWORD_ONE_NUMBER": "Password must contain at least one number.",
+      "VALIDATION_FAILED": "Please correct the errors in the form.",
+      "EMPTY_FIELDS": "Please fill in all required fields."
+    },
+    "GOOGLE_COMPLETE": {
+      "TITLE": "Complete Your Profile",
+      "SUBTITLE": "Please provide a username to complete your registration",
+      "EMAIL": "Email",
+      "SUBMIT_BUTTON": "Complete Registration",
+      "LOADING": "Completing..."
+    }
   },
-  "INFO": {
-    "TITLE": "Track. Analyze. Improve.",
-    "SUBTITLE": "Join FitTracker to monitor your workouts, analyze your progress, and achieve your fitness goals."
+  "REGISTER": {
+    "USERNAME": "Username",
+    "USERNAME_PLACEHOLDER": "your_unique_username",
+
+    "VALIDATION": {
+      "USERNAME_LENGTH": "At least 3 characters long",
+      "USERNAME_SPACES": "Cannot contain spaces",
+      "PASSWORD_LENGTH": "At least 8 characters long",
+      "PASSWORD_LETTER": "At least one letter",
+      "PASSWORD_NUMBER": "At least one number"
+    }
   }
 }

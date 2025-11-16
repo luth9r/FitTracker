@@ -1,11 +1,79 @@
-// 1. Импортируем *только* миксины, которые нам нужны
-// Нам больше не нужно импортировать цвета, 
-// так как они глобально доступны через var()
 @use '../../../../../styles/mixins.scss' as m;
+
+.error-message,
+.success-message {
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  border: 1px solid transparent;
+}
+
+.error-message {
+  background-color: var(--color-message-border-error);
+  color: var(--color-message-error);
+  border-color: var(--color-border-error);
+}
+
+.success-message {
+  background-color: var(--color-message-border-success);
+  color: var(--color-message-success);
+  border-color: var(--color-border-success);
+}
+
+.validation-checklist {
+  list-style: none;
+  padding: 0.25rem 0 0 0.25rem;
+  margin: 0.5rem 0 0 0;
+  font-size: 0.8rem; 
+  text-align: left;
+
+  li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.4rem;
+    transition: color 0.2s ease-in-out;
+
+    .validation-dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      margin-right: 0.6rem;
+      background-color: currentColor; 
+      transition: all 0.2s ease-in-out;
+      flex-shrink: 0; 
+    }
+
+    .validation-text {
+      line-height: 1.3;
+    }
+
+    &.invalid {
+      color: var(--color-text-muted);
+    }
+
+    form:not(.ng-pristine) &.invalid,
+    .ng-touched &.invalid,
+    :host:not(.is-pristine) &.invalid {
+      color: var(--color-message-error); 
+    }
+
+    &.valid {
+      color: var(--color-message-success);
+      
+      .validation-text {
+        opacity: 0.8;
+      }
+    }
+  }
+}
 
 .container {
   min-height: 100%;
-  background: var(--color-bg-dark); // Используем CSS-переменную
+  background: var(--color-bg-dark);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -39,6 +107,7 @@
   width: 64px;
   height: 64px;
   background: var(--color-primary);
+  color: var(--color-bg-dark);
   border-radius: 16px;
   margin-bottom: 1rem;
 }
@@ -73,7 +142,7 @@
   color: var(--color-text-secondary);
   background: transparent;
   cursor: pointer;
-  @include m.transition-smooth; // Используем миксин через неймспейс 'm'
+  @include m.transition-smooth;
 
   &:hover {
     color: var(--color-text-primary);
@@ -172,7 +241,7 @@
   @include m.transition-smooth;
 
   &:hover {
-    color: var(--color-primary-active); // Используем вычисленную переменную
+    color: var(--color-primary-active);
   }
 }
 
@@ -190,7 +259,7 @@
 
   &:hover {
     transform: scale(1.02);
-    background: var(--color-primary-hover); // Используем вычисленную переменную
+    background: var(--color-primary-hover);
   }
 
   &:active {
@@ -299,7 +368,6 @@
   }
 }
 
-// Медиа-запросы остаются без изменений
 @media (max-width: 640px) {
   .login-card {
     padding: 1.5rem;

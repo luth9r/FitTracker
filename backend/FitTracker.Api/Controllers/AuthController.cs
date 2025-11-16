@@ -81,7 +81,7 @@ namespace FitTracker.Api.Controllers
 
 
         [HttpPost("register")]
-        public async Task<IActionResult> RegisterAsync(Application.DTOs.Auth.RegisterRequest registerRequest,
+        public async Task<IActionResult> RegisterAsync([FromBody] Application.DTOs.Auth.RegisterRequest registerRequest,
         CancellationToken cancellationToken)
         {
             var result = await mediator.Send(new RegisterCommand(registerRequest), cancellationToken);

@@ -5,7 +5,7 @@
     "SIGN_IN": "Вхід",
     "SIGN_UP": "Реєстрація",
     "EMAIL": "Email",
-    "EMAIL_PLACEHOLDER": "your@email.com",
+    "EMAIL_PLACEHOLDER": "ваш@email.com",
     "PASSWORD": "Пароль",
     "PASSWORD_PLACEHOLDER": "••••••••",
     "CONFIRM_PASSWORD": "Підтвердіть пароль",
@@ -14,8 +14,8 @@
     "SUBMIT_BUTTON_LOGIN": "Увійти",
     "SUBMIT_BUTTON_SIGNUP": "Створити акаунт",
     "OR": "або",
-    "WITH_GOOGLE": "Продовжити з Google",
-    "WITH_GITHUB": "Продовжити з GitHub",
+    "WITH_GOOGLE": "Google",
+    "WITH_GITHUB": "GitHub",
     "FOOTER_QUESTION_LOGIN": "Немає акаунту?",
     "FOOTER_LINK_LOGIN": "Зареєструйтесь",
     "FOOTER_QUESTION_SIGNUP": "Вже є акаунт?",
@@ -23,6 +23,41 @@
     "TERMS_TOP_1": "Натискаючи кнопку входу, ви погоджуєтесь з нашими",
     "TERMS_TOP_2": "та",
     "TERMS_LINK_1": "Умовами використання",
-    "TERMS_LINK_2": "Політикою конфіденційності"
+    "TERMS_LINK_2": "Політикою конфіденційності",
+    "LOADING": "Завантаження...",
+    "SUCCESS": {
+      "REGISTER": "Реєстрація успішна! Перевірте свою пошту для верифікації облікового запису.",
+      "LOGIN": "Вхід успішний! Перенаправлення..."
+    },
+    "ERRORS": {
+      "PASSWORDS_DO_NOT_MATCH": "Паролі не збігаються!",
+      "GOOGLE_NOT_IMPLEMENTED": "Вхід через Google ще не реалізований.",
+      "USERNAME_TOO_SHORT": "Ім'я користувача має бути не менше 3 символів.",
+      "API_UNREACHABLE": "Не вдалось підключитись до серверу. Чи запущено API?",
+      "UNKNOWN": "Сталась невідома помилка. Спробуйте ще раз.",
+      "PASSWORD_MIN_LENGTH": "Пароль має бути не менше 8 символів.",
+      "PASSWORD_ONE_LETTER": "Пароль повинен містити принаймні одну букву.",
+      "PASSWORD_ONE_NUMBER": "Пароль повинен містити принаймні одну цифру.",
+      "VALIDATION_FAILED": "Виправте помилки у формі.",
+      "EMPTY_FIELDS": "Заповніть усі обов'язкові поля."
+    },
+    "GOOGLE_COMPLETE": {
+      "TITLE": "Завершіть свій профіль",
+      "SUBTITLE": "Будь ласка, надайте ім'я користувача для завершення реєстрації",
+      "EMAIL": "Email",
+      "SUBMIT_BUTTON": "Завершити реєстрацію",
+      "LOADING": "Завершення..."
+    }
+  },
+  "REGISTER": {
+    "USERNAME": "Ім'я користувача",
+    "USERNAME_PLACEHOLDER": "ваше_унікальне_ім'я_користувача",
+    "VALIDATION": {
+      "USERNAME_LENGTH": "Принаймні 3 символи",
+      "USERNAME_SPACES": "Не може містити пробіли",
+      "PASSWORD_LENGTH": "Принаймні 8 символів",
+      "PASSWORD_LETTER": "Принаймні одна буква",
+      "PASSWORD_NUMBER": "Принаймні одна цифра"
+    }
   }
 }

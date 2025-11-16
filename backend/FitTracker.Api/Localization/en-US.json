@@ -16,7 +16,8 @@
             "PasswordTooShort": "Password must be at least 8 characters long"
         },
         "Register": {
-            "UsernameAlreadyExists": "User with such username already exists"
+            "UsernameAlreadyExists": "User with such username already exists",
+            "EmailAlreadyExists": "User with such email already exists"
         }
     },
     "Validation": {

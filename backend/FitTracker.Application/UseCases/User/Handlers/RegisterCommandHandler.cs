@@ -32,6 +32,12 @@ namespace FitTracker.Application.UseCases.User.Handlers
                 return ResultExtensions.ValidationFailure<RegisterResponse>(nameof(userRequest.Username), localization.GetString("Auth.Register.UsernameAlreadyExists"));
             }
 
+            var existingUserByEmail = await userRepository.GetByEmailReadonlyAsync(userRequest.Email, cancellationToken);
+            if (existingUserByEmail != null)
+            {
+                return ResultExtensions.ValidationFailure<RegisterResponse>(nameof(userRequest.Email), localization.GetString("Auth.Register.EmailAlreadyExists"));
+            }
+
             var userBuilderResult = new UserEntity.UserBuilder()
                 .WithUsername(userRequest.Username)
                 .WithEmail(userRequest.Email)

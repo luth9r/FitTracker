@@ -1,8 +1,10 @@
+@use 'sass:color';
+
 .dark-theme {
   --color-primary: #60199f;
-  --color-primary-hover: #{lighten(#60199f, 5%)};
-  --color-primary-active: #{lighten(#60199f, 10%)};
-
+  --color-primary-hover: #{color.scale(#60199f, $lightness: 5%)};
+  --color-primary-active: #{color.scale(#60199f, $lightness: 10%)};
+  
   --color-bg-dark: #0f172a;
   --color-card-bg: #1e293b;
   --color-input-bg: #0f172a;
@@ -10,7 +12,16 @@
   --color-border: rgba(51, 65, 85, 0.5);
   --color-border-strong: rgba(51, 65, 85, 1);
 
+  --color-border-error: rgba(239, 68, 68, 0.3);
+  --color-border-success: rgba(34, 197, 94, 0.3);
+
+
   --color-text-primary: #ffffff;
   --color-text-secondary: #94a3b8;
   --color-text-muted: #64748b;
+
+  --color-message-error: #f87171;
+  --color-message-border-error: rgba(239, 68, 68, 0.3);
+  --color-message-success: #4ade80;
+  --color-message-border-success: rgba(34, 197, 94, 0.3);
 }
