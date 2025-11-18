@@ -17,7 +17,8 @@
         },
         "Register": {
             "UsernameAlreadyExists": "User with such username already exists",
-            "EmailAlreadyExists": "User with such email already exists"
+            "EmailAlreadyExists": "User with such email already exists",
+            "AccountAlreadyExists": "An account with this email already exists. Please log in instead."
         }
     },
     "Validation": {
@@ -58,7 +59,8 @@
     },
     "Google": {
         "Auth": {
-            "InvalidToken": "Invalid Google token"
+            "InvalidToken": "Invalid Google token",
+            "NotFound": "User not found"
         }
     }
 }

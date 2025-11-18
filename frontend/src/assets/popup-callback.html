@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Authenticating...</title>
+</head>
+<body>
+  <!-- 
+    That`s dummy page to receive OAuth2 redirect callbacks.
+  -->
+  <script>
+    (() => {
+    const message = location.hash || '?' + location.search;
+    if (window.opener && !window.opener.closed) {
+      window.opener.postMessage(message, window.location.origin);
+      window.close();
+    } else {
+    }
+  })();
+  </script>
+</body>
+</html>

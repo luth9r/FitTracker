@@ -14,6 +14,7 @@
 		<Folder Include="DTOs\Users\" />
 		<Folder Include="Exceptions\" />
 		<Folder Include="Services\" />
+		<Folder Include="Validators\" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -22,6 +23,7 @@
 		<PackageReference Include="Google.Apis.Auth" Version="1.72.0" />
 		<PackageReference Include="MediatR" Version="13.1.0" />
 		<PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Http" Version="10.0.0" />
 	</ItemGroup>
 
 </Project>

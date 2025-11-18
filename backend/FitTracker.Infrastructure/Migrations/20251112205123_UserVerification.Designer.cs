@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FitTracker.Infrastructure.Migrations
 {
     [DbContext(typeof(FitTrackerDbContext))]
-    [Migration("20251112205123_UserVerefication")]
-    partial class UserVerefication
+    [Migration("20251112205123_UserVerification")]
+    partial class UserVerification
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

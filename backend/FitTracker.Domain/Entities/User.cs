@@ -144,6 +144,12 @@ namespace FitTracker.Domain.Entities
             private string? _googleProviderId;
 
             public UserBuilder WithUsername(string username) { _username = username; return this; }
+
+            public UserBuilder WithUniqueUsername()
+            {
+                _username = $"user_{Guid.NewGuid().ToString("N").Substring(0, 8)}";
+                return this;
+            }
             public UserBuilder WithEmail(string email) { _email = email; return this; }
             public UserBuilder WithPasswordHash(string passwordHash) { _passwordHash = passwordHash; return this; }
             public UserBuilder WithFirstName(string? firstName) { _firstName = firstName; return this; }

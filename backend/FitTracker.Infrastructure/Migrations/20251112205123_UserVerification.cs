@@ -5,7 +5,7 @@
 namespace FitTracker.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class UserVerefication : Migration
+    public partial class UserVerification : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

@@ -16,25 +16,42 @@ using ResultExtensions = FitTracker.Application.Extensions.ResultExtensions;
 
 namespace FitTracker.Application.UseCases.User.Handlers.Google
 {
+    /// <summary>
+    /// Handler for processing Google login commands.
+    /// </summary>
+    /// <param name="logger"></param>
+    /// <param name="googleOAuthService"></param>
+    /// <param name="userRepository"></param>
+    /// <param name="jwtTokenGenerator"></param>
+    /// <param name="localization"></param>
+    /// <param name="mapper"></param>
     public class GoogleLoginCommandHandler(
         ILogger<GoogleLoginCommandHandler> logger,
-        IGoogleTokenValidator googleTokenValidator,
+        IGoogleOAuthService googleOAuthService,
         IUserRepository userRepository,
-        IUnitOfWork unitOfWork,
         IJwtTokenGenerator jwtTokenGenerator,
         ILocalizationService localization,
         IMapper mapper) : IRequestHandler<GoogleLoginCommand, Result<LoginResponse, ValidationResult>>
     {
         public async Task<Result<LoginResponse, ValidationResult>> Handle(GoogleLoginCommand request, CancellationToken cancellationToken)
         {
+            logger.LogInformation("Starting Google login process.");
+
+            var tokenResponse = await googleOAuthService.ExchangeCodeForTokensAsync(request.Request.Code, request.Request.CodeVerifier);
+            if (tokenResponse == null)
+            {
+                logger.LogWarning("Google Token validation failed.");
+                return ResultExtensions.ValidationFailure<LoginResponse>(nameof(request.Request.Code), localization.GetString("Google.Auth.InvalidToken"));
+            }
+
             logger.LogInformation("Attempting to validate Google IdToken.");
 
-            var googlePayload = await googleTokenValidator.ValidateAsync(request.Request.IdToken);
+            var googlePayload = await googleOAuthService.ValidateAsync(tokenResponse.IdToken);
 
             if (googlePayload == null)
             {
                 logger.LogWarning("Google Token validation failed.");
-                return ResultExtensions.ValidationFailure<LoginResponse>(nameof(request.Request.IdToken), localization.GetString("Google.Auth.InvalidToken"));
+                return ResultExtensions.ValidationFailure<LoginResponse>(nameof(request.Request.Code), localization.GetString("Google.Auth.InvalidToken"));
             }
 
             logger.LogInformation("Google Token validated for email: {Email}", googlePayload.Email);
@@ -49,18 +66,9 @@ namespace FitTracker.Application.UseCases.User.Handlers.Google
 
                 if (user == null)
                 {
-                    logger.LogInformation("User not found. Returning 'NEEDS_REGISTRATION' flag.");
+                    logger.LogInformation("User not found.");
 
-                    string errorCode = $"NEEDS_REGISTRATION::{googlePayload.Email}::{googlePayload.FirstName}::{googlePayload.LastName}";
-
-                    return ResultExtensions.ValidationFailure<LoginResponse>(nameof(request.Request.IdToken), errorCode);
-                }
-                else
-                {
-                    logger.LogInformation("User found by email. Linking GoogleProviderId.");
-                    user.SetGoogleProviderId(googlePayload.GoogleId);
-                    userRepository.Update(user);
-                    await unitOfWork.SaveChangesAsync(cancellationToken);
+                    return ResultExtensions.ValidationFailure<LoginResponse>(nameof(request.Request.Code), localization.GetString("Google.Auth.NotFound"));
                 }
             }
             else
@@ -72,6 +80,8 @@ namespace FitTracker.Application.UseCases.User.Handlers.Google
 
             var response = mapper.Map<LoginResponse>(user);
             response.JWT = loginToken;
+
+            logger.LogInformation("Google login process completed successfully for user: {Email}", googlePayload.Email);
 
             return Result.Success<LoginResponse, ValidationResult>(response);
         }

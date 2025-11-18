@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace FitTracker.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class OAuthGoogleVerefication : Migration
+    public partial class OAuthGoogleVerification : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

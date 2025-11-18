@@ -9,5 +9,9 @@ using System.Text;
 
 namespace FitTracker.Application.UseCases.User.Commands.Google
 {
-    public record CompleteGoogleRegistrationCommand(CompleteGoogleRegistrationRequest Request) : IRequest<Result<LoginResponse, ValidationResult>>;
+    /// <summary>
+    /// Command for registering with Google.
+    /// </summary>
+    /// <param name="Request"></param>
+    public record GoogleRegisterCommand(GoogleRegisterRequest Request) : IRequest<Result<LoginResponse, ValidationResult>>;
 }

@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FitTracker.Infrastructure.Migrations
 {
     [DbContext(typeof(FitTrackerDbContext))]
-    [Migration("20251114164118_OAuthGoogleVerefication")]
-    partial class OAuthGoogleVerefication
+    [Migration("20251114164118_OAuthGoogleVerification")]
+    partial class OAuthGoogleVerification
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -16,7 +16,9 @@
             "PasswordTooShort": "Пароль має містити щонайменше 8 символів"
         },
         "Register": {
-            "UsernameAlreadyExists": "Користувач з таким іменем вже існує"
+            "UsernameAlreadyExists": "Користувач з таким іменем вже існує",
+            "EmailAlreadyExists": "Користувач з такою електронною поштою вже існує",
+            "AccountAlreadyExists": "Обліковий запис з цією електронною поштою вже існує. Будь ласка, увійдіть замість реєстрації."
         }
     },
     "Validation": {
@@ -57,7 +59,8 @@
     },
     "Google": {
         "Auth": {
-            "InvalidToken": "Невалідний Google токен"
+            "InvalidToken": "Невалідний Google токен",
+            "NotFound": "Користувача не знайдено"
         }
     }
 }

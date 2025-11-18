@@ -368,3 +368,4 @@ FodyWeavers.xsd
 **/launchSettings.json
 /frontend/.gemini
 /frontend/.vscode
+/frontend/src/environments

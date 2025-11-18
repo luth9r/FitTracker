@@ -8,11 +8,23 @@ using FitTracker.Domain.Abstract.Interfaces;
 using FluentValidation.Results;
 using MediatR;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using ResultExtensions = FitTracker.Application.Extensions.ResultExtensions;
 using UserEntity = FitTracker.Domain.Entities.User;
 
 namespace FitTracker.Application.UseCases.User.Handlers
 {
+    /// <summary>
+    /// Handler for processing user registration commands.
+    /// </summary>
+    /// <param name="userRepository"></param>
+    /// <param name="mapper"></param>
+    /// <param name="unitOfWork"></param>
+    /// <param name="localization"></param>
+    /// <param name="jwtTokenGenerator"></param>
+    /// <param name="emailService"></param>
+    /// <param name="hasher"></param>
+    /// <param name="configuration"></param>
     public class RegisterCommandHandler(IUserRepository userRepository,
         IMapper mapper,
         IUnitOfWork unitOfWork,
@@ -20,22 +32,27 @@ namespace FitTracker.Application.UseCases.User.Handlers
         IJwtTokenGenerator jwtTokenGenerator,
         IEmailService emailService,
         IPasswordHasher hasher,
-        IConfiguration configuration) : IRequestHandler<RegisterCommand, Result<RegisterResponse, ValidationResult>>
+        IConfiguration configuration,
+        ILogger<RegisterCommandHandler> logger) : IRequestHandler<RegisterCommand, Result<LoginResponse, ValidationResult>>
     {
-        public async Task<Result<RegisterResponse, ValidationResult>> Handle(RegisterCommand request, CancellationToken cancellationToken)
+        public async Task<Result<LoginResponse, ValidationResult>> Handle(RegisterCommand request, CancellationToken cancellationToken)
         {
+            logger.LogInformation("Starting user registration process for username: {Username}", request.User.Username);
+
             var userRequest = request.User;
 
             var existingUser = await userRepository.GetByUsernameReadonlyAsync(userRequest.Username, cancellationToken);
             if (existingUser != null)
             {
-                return ResultExtensions.ValidationFailure<RegisterResponse>(nameof(userRequest.Username), localization.GetString("Auth.Register.UsernameAlreadyExists"));
+                logger.LogWarning("Registration failed: Username {Username} already exists.", userRequest.Username);
+                return ResultExtensions.ValidationFailure<LoginResponse>(nameof(userRequest.Username), localization.GetString("Auth.Register.UsernameAlreadyExists"));
             }
 
             var existingUserByEmail = await userRepository.GetByEmailReadonlyAsync(userRequest.Email, cancellationToken);
             if (existingUserByEmail != null)
             {
-                return ResultExtensions.ValidationFailure<RegisterResponse>(nameof(userRequest.Email), localization.GetString("Auth.Register.EmailAlreadyExists"));
+                logger.LogWarning("Registration failed: Email {Email} already exists.", userRequest.Email);
+                return ResultExtensions.ValidationFailure<LoginResponse>(nameof(userRequest.Email), localization.GetString("Auth.Register.EmailAlreadyExists"));
             }
 
             var userBuilderResult = new UserEntity.UserBuilder()
@@ -46,11 +63,13 @@ namespace FitTracker.Application.UseCases.User.Handlers
 
             if (userBuilderResult.IsFailure)
             {
+                logger.LogWarning("Registration failed: User entity validation errors for username: {Username}", request.User.Username);
+
                 var translatedErrors = userBuilderResult.Error.Errors
                     .Select(failure => new ValidationFailure(failure.PropertyName, localization.GetString(failure.ErrorMessage)))
                     .ToList();
 
-                return ResultExtensions.ValidationFailure<RegisterResponse>(nameof(userBuilderResult), translatedErrors);
+                return ResultExtensions.ValidationFailure<LoginResponse>(nameof(userBuilderResult), translatedErrors);
             }
 
             var user = userBuilderResult.Value;
@@ -61,7 +80,7 @@ namespace FitTracker.Application.UseCases.User.Handlers
             // Save changes to db
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            var response = mapper.Map<RegisterResponse>(user);
+            var response = mapper.Map<LoginResponse>(user);
 
             var verificationToken = jwtTokenGenerator.GenerateVerificationToken(user);
 
@@ -74,9 +93,9 @@ namespace FitTracker.Application.UseCases.User.Handlers
 
             await emailService.SendEmailAsync(user.Email, "Registration confirmation FitTracker", emailBody);
 
-            return Result.Success<RegisterResponse, ValidationResult>(response);
+            logger.LogInformation("User registration process completed successfully for username: {Username}", request.User.Username);
 
-
+            return Result.Success<LoginResponse, ValidationResult>(response);
         }
     }
 }

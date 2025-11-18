@@ -4,10 +4,19 @@ using System.Text;
 
 namespace FitTracker.Application.DTOs.Auth
 {
+    /// <summary>
+    /// DTO for user login request
+    /// </summary>
     public class LoginRequest
     {
-        public string Email { get; set; }
-
-        public string Password { get; set; }
+        /// <summary>
+        /// User's email address
+        /// </summary>
+        public string Email { get; set; } = string.Empty;
+        
+        /// <summary>
+        /// User's password
+        /// </summary>
+        public string Password { get; set; } = string.Empty;
     }
 }

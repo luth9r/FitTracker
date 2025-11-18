@@ -5,17 +5,17 @@ using System.Text;
 namespace FitTracker.Application.DTOs.Auth.Google
 {
     /// <summary>
-    /// DTO for Google login request containing authorization code and code verifier.
+    /// DTO for Google registration request.
     /// </summary>
-    public class GoogleLoginRequest
+    public class GoogleRegisterRequest
     {
         /// <summary>
-        /// The authorization code received from Google after user consent.
+        /// Authorization code received from Google.
         /// </summary>
         public string Code { get; set; } = string.Empty;
-        
+
         /// <summary>
-        /// The code verifier used in PKCE flow.
+        /// Code verifier for PKCE flow.
         /// </summary>
         public string CodeVerifier { get; set; } = string.Empty;
     }

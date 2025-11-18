@@ -9,10 +9,22 @@ using System.Text;
 
 namespace FitTracker.Application.Behaviors
 {
+    /// <summary>
+    /// Logs the execution time and outcome of MediatR requests.
+    /// </summary>
+    /// <typeparam name="TRequest"></typeparam>
+    /// <typeparam name="TResponse"></typeparam>
+    /// <param name="logger"></param>
     public class LoggingBehavior<TRequest, TResponse>(ILogger<LoggingBehavior<TRequest, TResponse>> logger) : IPipelineBehavior<TRequest, TResponse>
        where TRequest : IRequest<TResponse>
     {
-
+        /// <summary>
+        /// Handles the logging of request execution.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="next"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
         {
 

@@ -97,7 +97,7 @@ public static class DependencyInjection
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
         services.AddScoped<IEmailService, EmailService>();
-        services.AddScoped<IGoogleTokenValidator, GoogleTokenValidator>();
+        services.AddScoped<IGoogleOAuthService, GoogleOAuthService>();
         // TODO:
         // services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
         // services.AddScoped<IUnitOfWork, UnitOfWork>();

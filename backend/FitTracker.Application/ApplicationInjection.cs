@@ -13,6 +13,8 @@ namespace FitTracker.Application
 
             AddAutoMappers(services);
 
+            services.AddHttpClient();
+
             return services;
         }
 

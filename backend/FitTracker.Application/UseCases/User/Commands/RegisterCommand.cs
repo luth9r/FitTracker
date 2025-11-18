@@ -5,5 +5,9 @@ using MediatR;
 
 namespace FitTracker.Application.UseCases.User.Commands
 {
-    public record RegisterCommand(RegisterRequest User) : IRequest<Result<RegisterResponse, ValidationResult>>;
+    /// <summary>
+    /// Register Command
+    /// </summary>
+    /// <param name="User"></param>
+    public record RegisterCommand(RegisterRequest User) : IRequest<Result<LoginResponse, ValidationResult>>;
 }

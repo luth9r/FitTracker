@@ -3,18 +3,23 @@ using FitTracker.Api.Controllers.Extensions;
 using FitTracker.Application.DTOs.Auth.Google;
 using FitTracker.Application.UseCases.User.Commands;
 using FitTracker.Application.UseCases.User.Commands.Google;
+using FitTracker.Application.DTOs.Auth;
 using MediatR;
-using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FitTracker.Api.Controllers
 {
+    /// <summary>
+    /// Authentication controller
+    /// </summary>
+    /// <param name="mediator"></param>
+    /// <param name="logger"></param>
     [Route("api/[controller]")]
-    public class AuthController(IMediator mediator, ILogger<AuthController> logger) : Controller
+    public class AuthController(IMediator mediator, ILogger<AuthController> logger) : ControllerBase
     {
-
+        
         [HttpPost("login")]
-        public async Task<IActionResult> LoginAsync([FromBody] Application.DTOs.Auth.LoginRequest loginRequest, CancellationToken cancellationToken)
+        public async Task<IActionResult> LoginAsync([FromBody] LoginRequest loginRequest, CancellationToken cancellationToken)
         {
             var command = new LoginCommand(loginRequest);
             var result = await mediator.Send(command, cancellationToken);
@@ -41,34 +46,17 @@ namespace FitTracker.Api.Controllers
 
             if (result.IsFailure)
             {
-                var registrationError = result.Error.Errors
-                    .FirstOrDefault(e => e.ErrorMessage.StartsWith("NEEDS_REGISTRATION::"));
-
-                if (registrationError != null)
-                {
-                    var parts = registrationError.ErrorMessage.Split("::");
-
-                    var responseData = new
-                    {
-                        needsRegistration = true,
-                        email = parts.ElementAtOrDefault(1),
-                        firstName = parts.ElementAtOrDefault(2),
-                        lastName = parts.ElementAtOrDefault(3)
-                    };
-                    return Ok(responseData);
-                }
-
                 return ValidationProblem(result.Error.ToModelState());
             }
             SetAuthCookie(result.Value.JWT);
             return Ok(result.Value);
         }
 
-        [HttpPost("complete-google-registration")]
-        public async Task<IActionResult> CompleteGoogleRegistrationAsync([FromBody] CompleteGoogleRegistrationRequest request,
+        [HttpPost("google-register")]
+        public async Task<IActionResult> GoogleRegisterAsync([FromBody] GoogleRegisterRequest googleRegisterRequest,
             CancellationToken cancellationToken)
         {
-            var command = new CompleteGoogleRegistrationCommand(request);
+            var command = new GoogleRegisterCommand(googleRegisterRequest);
             var result = await mediator.Send(command, cancellationToken);
             if (result.IsFailure)
             {
@@ -76,12 +64,11 @@ namespace FitTracker.Api.Controllers
             }
             SetAuthCookie(result.Value.JWT);
             return Ok(result.Value);
-
         }
 
 
         [HttpPost("register")]
-        public async Task<IActionResult> RegisterAsync([FromBody] Application.DTOs.Auth.RegisterRequest registerRequest,
+        public async Task<IActionResult> RegisterAsync([FromBody] RegisterRequest registerRequest,
         CancellationToken cancellationToken)
         {
             var result = await mediator.Send(new RegisterCommand(registerRequest), cancellationToken);
@@ -127,6 +114,10 @@ namespace FitTracker.Api.Controllers
             return Ok(result.Value);
         }
 
+        /// <summary>
+        /// Sets the authentication cookie
+        /// </summary>
+        /// <param name="token"></param>
         private void SetAuthCookie(string token)
         {
             var cookieOptions = new CookieOptions
