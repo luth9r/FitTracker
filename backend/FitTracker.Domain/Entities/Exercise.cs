@@ -1,8 +1,4 @@
-using CSharpFunctionalExtensions;
 using FitTracker.Domain.Enums;
-using FitTracker.Domain.Validators;
-using FluentValidation;
-using FluentValidation.Results;
 
 namespace FitTracker.Domain.Entities
 {
@@ -11,8 +7,6 @@ namespace FitTracker.Domain.Entities
     /// </summary>
     public class Exercise : BaseEntity
     {
-        #region Constants
-
         public const int NameMaxLength = 100;
         public const int DescriptionMaxLength = 1000;
         public const int MuscleGroupMaxLength = 50;
@@ -20,174 +14,139 @@ namespace FitTracker.Domain.Entities
         public const int ImageUrlMaxLength = 500;
         public const int VideoUrlMaxLength = 500;
 
-        #endregion
+        public string Name { get; private set; } = default!;
 
-        #region Properties
-
-        public string Name { get; private set; }
         public string? Description { get; private set; }
+
         public string? ImageUrl { get; private set; }
+
         public string? VideoUrl { get; private set; }
+
         public MuscleGroup MuscleGroup { get; private set; }
+
         public Equipment Equipment { get; private set; }
-        public bool IsCustom { get; private set; }
-        public Guid? UserId { get; private set; }
 
-        #endregion
+        public Guid? CreatedByUserId { get; private set; }
 
-        #region Constructors
+        public bool IsCustomExercise() => CreatedByUserId.HasValue;
 
-        private Exercise()
-        {
-            // For ORM
-        }
-
-        public Exercise(
-            string name,
-            MuscleGroup muscleGroup,
-            Equipment equipment,
-            string? description = null,
-            string? imageUrl = null,
-            string? videoUrl = null,
-            bool isCustom = false,
-            Guid? userId = null) : base()
-        {
-            Name = name;
-            MuscleGroup = muscleGroup;
-            Equipment = equipment;
-            Description = description;
-            ImageUrl = imageUrl;
-            VideoUrl = videoUrl;
-            IsCustom = isCustom;
-            UserId = userId;
-        }
-
-        public Exercise(
+        internal Exercise(
+            Guid id,
             string name,
             string? description,
             string? imageUrl,
             string? videoUrl,
             MuscleGroup muscleGroup,
             Equipment equipment,
-            bool isCustom,
-            Guid? userId) : this(name, muscleGroup, equipment, description, imageUrl, videoUrl, isCustom, userId)
+            Guid? createdByUserId,
+            DateTime createdAt,
+            DateTime updatedAt)
+            : base(id, createdAt, updatedAt)
         {
-            // No validation here as this typically restores from persistence
+            Name = name;
+            Description = description;
+            ImageUrl = imageUrl;
+            VideoUrl = videoUrl;
+            MuscleGroup = muscleGroup;
+            Equipment = equipment;
+            CreatedByUserId = createdByUserId;
         }
 
-        #endregion
+        private Exercise()
+        {
+        }
 
-        #region Factory Method with Validation
-
-        public static Result<Exercise, ValidationResult> Create(
+        private Exercise(
             string name,
             MuscleGroup muscleGroup,
             Equipment equipment,
             string? description = null,
             string? imageUrl = null,
             string? videoUrl = null,
-            bool isCustom = false,
-            Guid? userId = null)
+            Guid? createdByUserId = null)
         {
-            var exercise = new Exercise(name, muscleGroup, equipment, description, imageUrl, videoUrl, isCustom, userId);
-            return exercise.ValidateWithResult();
+            // Guard clauses
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentException("Name is required", nameof(name));
+            }
+
+            if (name.Length > NameMaxLength)
+            {
+                throw new ArgumentException($"Name cannot exceed {NameMaxLength} characters", nameof(name));
+            }
+
+            if (description?.Length > DescriptionMaxLength)
+            {
+                throw new ArgumentException($"Description cannot exceed {DescriptionMaxLength} characters", nameof(description));
+            }
+
+            Name = name;
+            MuscleGroup = muscleGroup;
+            Equipment = equipment;
+            Description = description;
+            ImageUrl = imageUrl;
+            VideoUrl = videoUrl;
+            CreatedByUserId = createdByUserId;
         }
 
-        #endregion
-
-        #region Validation
-
-        protected override IValidator GetValidator() => new ExerciseValidator();
-
-        public ValidationResult Validate()
+        public static Exercise CreateStandard(
+            string name,
+            MuscleGroup muscleGroup,
+            Equipment equipment,
+            string? description = null,
+            string? imageUrl = null,
+            string? videoUrl = null)
         {
-            var validator = GetValidator();
-            return validator.Validate(new ValidationContext<object>(this));
+            return new Exercise(name, muscleGroup, equipment, description, imageUrl, videoUrl, null);
         }
 
-        private Result<Exercise, ValidationResult> ValidateWithResult()
+        public static Exercise CreateCustom(
+            Guid userId,
+            string name,
+            MuscleGroup muscleGroup,
+            Equipment equipment,
+            string? description = null,
+            string? imageUrl = null,
+            string? videoUrl = null)
         {
-            var result = Validate();
-            if (!result.IsValid)
-                return Result.Failure<Exercise, ValidationResult>(result);
+            if (userId == Guid.Empty)
+            {
+                throw new ArgumentException("UserId cannot be empty for custom exercise", nameof(userId));
+            }
 
-            return Result.Success<Exercise, ValidationResult>(this);
+            return new Exercise(name, muscleGroup, equipment, description, imageUrl, videoUrl, userId);
         }
 
-        #endregion
-
-        #region Domain Methods
-
-        public Result<Exercise, ValidationResult> Update(string name, MuscleGroup muscleGroup, Equipment equipment, string? description = null)
+        public void Update(string name, MuscleGroup muscleGroup, Equipment equipment, string? description = null)
         {
+            if (!IsCustomExercise())
+            {
+                throw new InvalidOperationException("Cannot update standard exercises");
+            }
+
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentException("Name is required", nameof(name));
+            }
+
+            if (name.Length > NameMaxLength)
+            {
+                throw new ArgumentException($"Name cannot exceed {NameMaxLength} characters", nameof(name));
+            }
+
             Name = name;
             MuscleGroup = muscleGroup;
             Equipment = equipment;
             Description = description;
             UpdatedAt = DateTime.UtcNow;
-
-            return ValidateWithResult();
         }
 
-        public void UpdateImageUrl(string? imageUrl)
+        public void UpdateMedia(string? imageUrl, string? videoUrl)
         {
             ImageUrl = imageUrl;
-            UpdatedAt = DateTime.UtcNow;
-        }
-
-        public void UpdateVideoUrl(string? videoUrl)
-        {
             VideoUrl = videoUrl;
             UpdatedAt = DateTime.UtcNow;
         }
-
-        #endregion
-
-        #region Builder
-
-        public static ExerciseBuilder CreateBuilder() => new ExerciseBuilder();
-
-        public class ExerciseBuilder
-        {
-            private string _name = string.Empty;
-            private string? _description;
-            private string? _imageUrl;
-            private string? _videoUrl;
-            private MuscleGroup _muscleGroup = MuscleGroup.Chest;
-            private Equipment _equipment = Equipment.Barbell;
-            private bool _isCustom;
-            private Guid? _userId;
-
-            public ExerciseBuilder WithName(string name) { _name = name; return this; }
-            public ExerciseBuilder WithDescription(string? description) { _description = description; return this; }
-            public ExerciseBuilder WithImageUrl(string? imageUrl) { _imageUrl = imageUrl; return this; }
-            public ExerciseBuilder WithVideoUrl(string? videoUrl) { _videoUrl = videoUrl; return this; }
-            public ExerciseBuilder WithMuscleGroup(MuscleGroup muscleGroup) { _muscleGroup = muscleGroup; return this; }
-            public ExerciseBuilder WithEquipment(Equipment equipment) { _equipment = equipment; return this; }
-            public ExerciseBuilder AsCustom(Guid userId) { _isCustom = true; _userId = userId; return this; }
-            public ExerciseBuilder AsStandard() { _isCustom = false; _userId = null; return this; }
-
-            public Result<Exercise, ValidationResult> Build()
-            {
-                var exercise = new Exercise(
-                    _name,
-                    _muscleGroup,
-                    _equipment,
-                    _description,
-                    _imageUrl,
-                    _videoUrl,
-                    _isCustom,
-                    _userId);
-
-                var validationResult = exercise.Validate();
-
-                if (!validationResult.IsValid)
-                    return Result.Failure<Exercise, ValidationResult>(validationResult);
-
-                return Result.Success<Exercise, ValidationResult>(exercise);
-            }
-        }
-
-        #endregion
     }
 }

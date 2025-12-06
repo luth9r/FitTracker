@@ -8,7 +8,7 @@ namespace FitTracker.Application.Mapping.Auth
     {
         public LoginProfile()
         {
-            CreateMap<User, LoginResponse>()
+            _ = CreateMap<User, LoginResponse>()
                 .ForMember(dest => dest.JWT, opt => opt.Ignore());
         }
     }

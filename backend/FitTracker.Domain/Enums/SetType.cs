@@ -12,6 +12,6 @@ namespace FitTracker.Domain.Enums
         RPT = 8, // Rest Pause Training
         Warmup = 9,
         Pyramid = 10,
-        RestPause = 11
+        RestPause = 11,
     }
 }

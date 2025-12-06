@@ -21,22 +21,16 @@ namespace FitTracker.Api.Extensions
         public static WebApplicationBuilder ConfigureApplicationBuilder(
             this WebApplicationBuilder builder)
         {
-            #region Logging
-
-            builder.Host.UseSerilog();
-
-            #endregion
-
-            #region Localization
+            _ = builder.Host.UseSerilog();
 
             var supportedCultures = new[] { "en-US", "uk-UA" };
 
-            builder.Services.AddLocalization(options =>
+            _ = builder.Services.AddLocalization(options =>
             {
                 options.ResourcesPath = "Localization";
             });
 
-            builder.Services.Configure<RequestLocalizationOptions>(options =>
+            _ = builder.Services.Configure<RequestLocalizationOptions>(options =>
             {
                 options.DefaultRequestCulture = new RequestCulture("en-US");
                 options.SupportedCultures = supportedCultures
@@ -50,21 +44,13 @@ namespace FitTracker.Api.Extensions
                 {
                     new QueryStringRequestCultureProvider(),
                     new CookieRequestCultureProvider(),
-                    new AcceptLanguageHeaderRequestCultureProvider()
+                    new AcceptLanguageHeaderRequestCultureProvider(),
                 };
             });
 
-            #endregion
+            _ = builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
-            #region Routing
-
-            builder.Services.AddRouting(options => options.LowercaseUrls = true);
-
-            #endregion
-
-            #region Authentication & Authorization
-
-            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            _ = builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
                     options.TokenValidationParameters = new TokenValidationParameters
@@ -76,7 +62,7 @@ namespace FitTracker.Api.Extensions
                         ValidIssuer = builder.Configuration["Jwt:Issuer"],
                         ValidAudience = builder.Configuration["Jwt:Audience"],
                         IssuerSigningKey = new SymmetricSecurityKey(
-                            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+                            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? throw new ArgumentNullException())),
                     };
 
                     options.Events = new JwtBearerEvents
@@ -85,23 +71,15 @@ namespace FitTracker.Api.Extensions
                         {
                             context.Token = context.Request.Cookies["auth-token"];
                             return Task.CompletedTask;
-                        }
+                        },
                     };
                 });
 
-            builder.Services.AddAuthorization();
+            _ = builder.Services.AddAuthorization();
 
-            #endregion
+            _ = builder.Services.AddControllers();
 
-            #region Controllers
-
-            builder.Services.AddControllers();
-
-            #endregion
-
-            #region Swagger
-
-            builder.Services.AddSwaggerGen(c =>
+            _ = builder.Services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
@@ -111,28 +89,16 @@ namespace FitTracker.Api.Extensions
                     Contact = new OpenApiContact
                     {
                         Name = "FitTracker Team",
-                        Email = "support@fittracker.com"
-                    }
+                        Email = "support@fittracker.com",
+                    },
                 });
             });
 
-            #endregion
+            _ = builder.Services.AddInfrastructure(builder.Configuration);
 
-            #region Infrastructure
+            _ = builder.Services.AddApplication(builder.Configuration);
 
-            builder.Services.AddInfrastructure(builder.Configuration);
-
-            #endregion
-
-            #region Application
-
-            builder.Services.AddApplication(builder.Configuration);
-
-            #endregion
-
-            #region CORS
-
-            builder.Services.AddCors(options =>
+            _ = builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowAll", policy =>
                 {
@@ -140,14 +106,12 @@ namespace FitTracker.Api.Extensions
                         .GetSection("Cors:AllowedOrigins")
                         .Get<string[]>() ?? new[] { "http://localhost:4200" };
 
-                    policy.WithOrigins(allowedOrigins)
+                    _ = policy.WithOrigins(allowedOrigins)
                         .AllowAnyMethod()
                         .AllowAnyHeader()
                         .AllowCredentials();
                 });
             });
-
-            #endregion
 
             return builder;
         }

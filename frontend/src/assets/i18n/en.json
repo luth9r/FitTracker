@@ -34,7 +34,7 @@
       "PASSWORDS_DO_NOT_MATCH": "Passwords do not match!",
       "GOOGLE_NOT_IMPLEMENTED": "Google Sign-In is not yet implemented.",
       "USERNAME_TOO_SHORT": "Username must be at least 3 characters.",
-      "API_UNREACHABLE": "Could not connect to the server. Is the API running?",
+      "API_UNREACHABLE": "Could not connect to the server.",
       "UNKNOWN": "An unknown error occurred. Please try again.",
       "PASSWORD_MIN_LENGTH": "Password must be at least 8 characters long.",
       "PASSWORD_ONE_LETTER": "Password must contain at least one letter.",

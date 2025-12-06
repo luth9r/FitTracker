@@ -16,87 +16,54 @@ namespace FitTracker.Api.Extensions
         public static async Task<WebApplication> ConfigureApplicationAsync(
             this WebApplication app)
         {
-            #region Database Migration
-
             await app.MigrateDatabaseAsync();
 
-            #endregion
-
-            #region Logging
-
-            app.UseSerilogRequestLogging(options =>
+            _ = app.UseSerilogRequestLogging(options =>
             {
                 options.MessageTemplate =
                     "HTTP {RequestMethod} {RequestPath} responded {StatusCode} " +
                     "in {Elapsed:0.0000}ms";
                 options.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>
                 {
-                    diagnosticContext.Set("RequestHost",
+                    diagnosticContext.Set(
+                        "RequestHost",
                         httpContext.Request.Host.Value);
-                    diagnosticContext.Set("ClientIP",
+                    diagnosticContext.Set(
+                        "ClientIP",
                         httpContext.Connection.RemoteIpAddress);
-                    diagnosticContext.Set("UserAgent",
+                    diagnosticContext.Set(
+                        "UserAgent",
                         httpContext.Request.Headers["User-Agent"].FirstOrDefault());
                 };
             });
 
-            #endregion
-
-            #region Swagger
-
             if (app.Environment.IsDevelopment())
             {
-                app.UseSwagger();
-                app.UseSwaggerUI(c =>
+                _ = app.UseSwagger();
+                _ = app.UseSwaggerUI(c =>
                 {
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "FitTracker API v1");
                     c.RoutePrefix = string.Empty;
                 });
             }
 
-            #endregion
-
-            #region Security
-
             if (app.Environment.IsDevelopment())
             {
-                app.UseHttpsRedirection();
+                _ = app.UseHttpsRedirection();
             }
 
-            #endregion
+            _ = app.UseExceptionHandler("/error");
 
-            #region Exception Handling
-
-            app.UseExceptionHandler("/error");
-
-            #endregion
-
-            #region CORS
-
-            app.UseCors("AllowAll");
-
-            #endregion
-
-            #region Localization
+            _ = app.UseCors("AllowAll");
 
             var locOptions = app.Services
                 .GetRequiredService<IOptions<RequestLocalizationOptions>>();
-            app.UseRequestLocalization(locOptions.Value);
+            _ = app.UseRequestLocalization(locOptions.Value);
 
-            #endregion
+            _ = app.UseAuthentication();
+            _ = app.UseAuthorization();
 
-            #region Authentication & Authorization
-
-            app.UseAuthentication();
-            app.UseAuthorization();
-
-            #endregion
-
-            #region Endpoints
-
-            app.MapControllers();
-
-            #endregion
+            _ = app.MapControllers();
 
             return app;
         }

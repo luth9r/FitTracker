@@ -1,4 +1,4 @@
-﻿using FitTracker.Domain.Entities;
+using FitTracker.Domain.Entities;
 using System.Security.Claims;
 
 namespace FitTracker.Application.Interfaces
@@ -28,6 +28,5 @@ namespace FitTracker.Application.Interfaces
         /// <param name="token"></param>
         /// <returns></returns>
         ClaimsPrincipal? ValidateToken(string token);
-
     }
 }

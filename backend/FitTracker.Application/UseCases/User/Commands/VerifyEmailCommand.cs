@@ -1,4 +1,4 @@
-﻿using CSharpFunctionalExtensions;
+using CSharpFunctionalExtensions;
 using FitTracker.Application.DTOs.Auth;
 using FluentValidation.Results;
 using MediatR;

@@ -10,7 +10,9 @@ namespace FitTracker.Infrastructure.Services
         public string HashPassword(string password)
         {
             if (string.IsNullOrWhiteSpace(password))
+            {
                 throw new ArgumentException("Password cannot be empty");
+            }
 
             return Crypt.HashPassword(password, WorkFactor);
         }
@@ -18,7 +20,9 @@ namespace FitTracker.Infrastructure.Services
         public bool VerifyPassword(string password, string hash)
         {
             if (string.IsNullOrWhiteSpace(password) || string.IsNullOrWhiteSpace(hash))
+            {
                 return false;
+            }
 
             try
             {

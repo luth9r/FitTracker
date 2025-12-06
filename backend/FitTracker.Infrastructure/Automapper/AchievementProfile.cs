@@ -9,24 +9,42 @@ namespace FitTracker.Infrastructure.Automapper
     {
         public AchievementProfile()
         {
-            CreateMap<Achievement, AchievementEf>()
-                .ForMember(dest => dest.User, opt => opt.Ignore());
-
-            CreateMap<AchievementEf, Achievement>()
+            _ = CreateMap<AchievementEf, Achievement>()
                 .ConstructUsing(src => new Achievement(
-                    src.UserId,
-                    (AchievementType)src.Type,
-                    src.Name,
-                    src.Description,
-                    src.Target,
-                    (AchievementTier)src.Tier,
-                    src.Progress,
-                    src.IsUnlocked,
-                    src.UnlockedAt))
-                .AfterMap((src, dest) =>
-                {
-                    dest.SetDatabaseFields(src.Id, src.CreatedAt, src.UpdatedAt);
-                });
+                    id: src.Id,
+                    type: (AchievementType)src.Type,
+                    name: src.Name,
+                    description: src.Description,
+                    iconUrl: src.IconUrl,
+                    target: src.Target,
+                    tier: (AchievementTier)src.Tier,
+                    createdAt: src.CreatedAt,
+                    updatedAt: src.UpdatedAt));
+
+            _ = CreateMap<Achievement, AchievementEf>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.Type, opt => opt.MapFrom(src => (int)src.Type))
+                .ForMember(dest => dest.Tier, opt => opt.MapFrom(src => (int)src.Tier))
+                .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore());
+
+            _ = CreateMap<UserAchievementEf, UserAchievement>()
+                .ConstructUsing(src => new UserAchievement(
+                    id: src.Id,
+                    achievementId: src.AchievementId,
+                    userId: src.UserId,
+                    progress: src.Progress,
+                    isUnlocked: src.IsUnlocked,
+                    unlockedAt: src.UnlockedAt,
+                    createdAt: src.CreatedAt,
+                    updatedAt: src.UpdatedAt));
+
+            _ = CreateMap<UserAchievement, UserAchievementEf>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.AchievementId, opt => opt.Ignore())
+                .ForMember(dest => dest.UserId, opt => opt.Ignore())
+                .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore());
         }
     }
 }

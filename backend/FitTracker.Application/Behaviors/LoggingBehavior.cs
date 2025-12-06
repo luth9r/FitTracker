@@ -1,4 +1,4 @@
-﻿using CSharpFunctionalExtensions;
+using CSharpFunctionalExtensions;
 using FitTracker.Application.Extensions.MedaitR;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -27,7 +27,6 @@ namespace FitTracker.Application.Behaviors
         /// <returns></returns>
         public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
         {
-
             var requestName = request.GetFormattedName();
 
             logger.LogInformation("[START] Handling {RequestName}", requestName);

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -10,12 +10,12 @@ namespace FitTracker.Application.DTOs.Auth.Google
     public class GoogleLoginRequest
     {
         /// <summary>
-        /// The authorization code received from Google after user consent.
+        /// Gets or sets the authorization code received from Google after user consent.
         /// </summary>
         public string Code { get; set; } = string.Empty;
-        
+
         /// <summary>
-        /// The code verifier used in PKCE flow.
+        /// Gets or sets the code verifier used in PKCE flow.
         /// </summary>
         public string CodeVerifier { get; set; } = string.Empty;
     }

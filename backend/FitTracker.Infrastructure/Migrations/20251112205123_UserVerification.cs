@@ -10,14 +10,14 @@ namespace FitTracker.Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<bool>(
+            _ = migrationBuilder.AddColumn<bool>(
                 name: "is_email_verified",
                 table: "users",
                 type: "boolean",
                 nullable: false,
                 defaultValue: false);
 
-            migrationBuilder.UpdateData(
+            _ = migrationBuilder.UpdateData(
                 table: "users",
                 keyColumn: "id",
                 keyValue: new Guid("11111111-1111-1111-1111-111111111111"),
@@ -28,7 +28,7 @@ namespace FitTracker.Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
+            _ = migrationBuilder.DropColumn(
                 name: "is_email_verified",
                 table: "users");
         }

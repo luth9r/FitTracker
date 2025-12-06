@@ -1,8 +1,3 @@
-using CSharpFunctionalExtensions;
-using FitTracker.Domain.Validators;
-using FluentValidation;
-using FluentValidation.Results;
-
 namespace FitTracker.Domain.Entities
 {
     /// <summary>
@@ -10,144 +5,109 @@ namespace FitTracker.Domain.Entities
     /// </summary>
     public class WorkoutTemplateExercise : BaseEntity
     {
-        #region Constants
-
         public const int NotesMaxLength = 500;
-
-        #endregion
-
-        #region Properties
+        public const int MinOrderIndex = 1;
+        public const int MaxOrderIndex = 1000;
 
         public Guid WorkoutTemplateId { get; private set; }
+
         public Guid ExerciseId { get; private set; }
+
         public int OrderIndex { get; private set; }
+
         public string? Notes { get; private set; }
 
-        #endregion
-
-        #region Constructors
-
-        private WorkoutTemplateExercise()
-        {
-            // For ORM
-        }
-
-        public WorkoutTemplateExercise(
+        internal WorkoutTemplateExercise(
+            Guid id,
             Guid workoutTemplateId,
             Guid exerciseId,
             int orderIndex,
-            string? notes = null) : base()
+            string? notes,
+            DateTime createdAt,
+            DateTime updatedAt)
         {
+            Id = id;
+            WorkoutTemplateId = workoutTemplateId;
+            ExerciseId = exerciseId;
+            OrderIndex = orderIndex;
+            Notes = notes;
+            CreatedAt = createdAt;
+            UpdatedAt = updatedAt;
+        }
+
+        private WorkoutTemplateExercise()
+        {
+        }
+
+        private WorkoutTemplateExercise(
+            Guid workoutTemplateId,
+            Guid exerciseId,
+            int orderIndex,
+            string? notes = null)
+        {
+            if (workoutTemplateId == Guid.Empty)
+            {
+                throw new ArgumentException("WorkoutTemplateId cannot be empty", nameof(workoutTemplateId));
+            }
+
+            if (exerciseId == Guid.Empty)
+            {
+                throw new ArgumentException("ExerciseId cannot be empty", nameof(exerciseId));
+            }
+
+            if (orderIndex < MinOrderIndex || orderIndex > MaxOrderIndex)
+            {
+                throw new ArgumentException($"Order index must be {MinOrderIndex}-{MaxOrderIndex}", nameof(orderIndex));
+            }
+
+            if (notes?.Length > NotesMaxLength)
+            {
+                throw new ArgumentException($"Notes cannot exceed {NotesMaxLength} characters", nameof(notes));
+            }
+
             WorkoutTemplateId = workoutTemplateId;
             ExerciseId = exerciseId;
             OrderIndex = orderIndex;
             Notes = notes;
         }
 
-        #endregion
-
-        #region Validation
-
-        protected override IValidator GetValidator()
-        {
-            return new WorkoutTemplateExerciseValidator();
-        }
-
-        public ValidationResult Validate()
-        {
-            var validator = GetValidator();
-            return validator.Validate(new ValidationContext<WorkoutTemplateExercise>(this));
-        }
-
-        private Result<WorkoutTemplateExercise, ValidationResult> ValidateWithResult()
-        {
-            var result = Validate();
-            if (!result.IsValid)
-                return Result.Failure<WorkoutTemplateExercise, ValidationResult>(result);
-            return Result.Success<WorkoutTemplateExercise, ValidationResult>(this);
-        }
-
-        #endregion
-
-        #region Factory
-
-        public static Result<WorkoutTemplateExercise, ValidationResult> Create(
+        public static WorkoutTemplateExercise Create(
             Guid workoutTemplateId,
             Guid exerciseId,
             int orderIndex,
             string? notes = null)
         {
-            var workoutTemplateExercise = new WorkoutTemplateExercise(workoutTemplateId, exerciseId, orderIndex, notes);
-            return workoutTemplateExercise.ValidateWithResult();
+            return new WorkoutTemplateExercise(workoutTemplateId, exerciseId, orderIndex, notes);
         }
 
-        #endregion
-
-        #region Domain Methods
-
-        public Result<WorkoutTemplateExercise, ValidationResult> UpdateOrder(int newOrder)
+        public void UpdateOrder(int newOrder)
         {
-            if (newOrder < 1)
-                throw new ArgumentException("Order must be at least 1", nameof(newOrder));
+            if (newOrder < MinOrderIndex || newOrder > MaxOrderIndex)
+            {
+                throw new ArgumentException($"Order index must be {MinOrderIndex}-{MaxOrderIndex}", nameof(newOrder));
+            }
 
             OrderIndex = newOrder;
             UpdatedAt = DateTime.UtcNow;
-
-            return ValidateWithResult();
         }
 
-        public Result<WorkoutTemplateExercise, ValidationResult> UpdateNotes(string? notes)
+        public void UpdateNotes(string? notes)
         {
+            if (notes?.Length > NotesMaxLength)
+            {
+                throw new ArgumentException($"Notes cannot exceed {NotesMaxLength} characters", nameof(notes));
+            }
+
             Notes = notes;
             UpdatedAt = DateTime.UtcNow;
-
-            return ValidateWithResult();
         }
 
-        #endregion
+        public bool IsFirstExercise() => OrderIndex == MinOrderIndex;
 
-        #region Builder
+        public bool IsLastExercise() => OrderIndex == MaxOrderIndex;
 
-        public static WorkoutTemplateExerciseBuilder CreateBuilder() => new WorkoutTemplateExerciseBuilder();
+        public void MoveUp() => UpdateOrder(OrderIndex - 1);
 
-        public class WorkoutTemplateExerciseBuilder
-        {
-            private Guid _templateId;
-            private Guid _exerciseId;
-            private int _orderIndex = 1;
-            private string? _notes;
-
-            public WorkoutTemplateExerciseBuilder WithTemplate(Guid templateId)
-            {
-                _templateId = templateId;
-                return this;
-            }
-
-            public WorkoutTemplateExerciseBuilder WithExercise(Guid exerciseId)
-            {
-                _exerciseId = exerciseId;
-                return this;
-            }
-
-            public WorkoutTemplateExerciseBuilder WithOrder(int orderIndex)
-            {
-                _orderIndex = orderIndex;
-                return this;
-            }
-
-            public WorkoutTemplateExerciseBuilder WithNotes(string? notes)
-            {
-                _notes = notes;
-                return this;
-            }
-
-            public Result<WorkoutTemplateExercise, ValidationResult> Build()
-            {
-                var workoutTemplateExercise = new WorkoutTemplateExercise(_templateId, _exerciseId, _orderIndex, _notes);
-                return workoutTemplateExercise.ValidateWithResult();
-            }
-        }
-
-        #endregion
+        public void MoveDown() => UpdateOrder(OrderIndex + 1);
     }
 }

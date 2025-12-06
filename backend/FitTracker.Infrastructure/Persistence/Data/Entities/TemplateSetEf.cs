@@ -6,38 +6,38 @@ namespace FitTracker.Infrastructure.Persistence.Data.Entities
     public class TemplateSetEf : BaseEntityEf
     {
         /// <summary>
-        /// ID of the workout template exercise.
+        /// Gets or sets iD of the workout template exercise.
         /// </summary>
         public Guid WorkoutTemplateExerciseId { get; set; }
 
         /// <summary>
-        /// Set number in the exercise sequence.
+        /// Gets or sets set number in the exercise sequence.
         /// </summary>
         public int SetNumber { get; set; }
 
         /// <summary>
-        /// Planned weight for this set.
+        /// Gets or sets planned weight for this set.
         /// </summary>
         public decimal PlannedWeight { get; set; }
 
         /// <summary>
-        /// Planned number of repetitions.
+        /// Gets or sets planned number of repetitions.
         /// </summary>
         public int PlannedReps { get; set; }
 
         /// <summary>
-        /// Optional rest period in seconds.
+        /// Gets or sets optional rest period in seconds.
         /// </summary>
         public int? RestSeconds { get; set; }
 
         /// <summary>
-        /// Type of the set (normal, warmup, drop set, etc.).
+        /// Gets or sets type of the set (normal, warmup, drop set, etc.).
         /// </summary>
         public int SetType { get; set; }
 
         /// <summary>
-        /// Navigation to the workout template exercise.
+        /// Gets or sets navigation to the workout template exercise.
         /// </summary>
-        public WorkoutTemplateExerciseEf? WorkoutTemplateExercise { get; set; }
+        public WorkoutTemplateExerciseEf? WorkoutTemplateExercise { get; set; } = null;
     }
 }

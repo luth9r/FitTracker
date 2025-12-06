@@ -1,4 +1,4 @@
-﻿using FitTracker.Application.Interfaces;
+using FitTracker.Application.Interfaces;
 using FitTracker.Domain.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -21,10 +21,10 @@ namespace FitTracker.Infrastructure.Services
 
             var claims = new List<Claim>
             {
-                new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-                new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new(ClaimTypes.Name, user.Username),
-                new(ClaimTypes.Email, user.Email)
+                new (JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+                new (JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new (ClaimTypes.Name, user.Username),
+                new (ClaimTypes.Email, user.Email),
             };
 
             return CreateToken(claims, expires, creds);
@@ -40,10 +40,10 @@ namespace FitTracker.Infrastructure.Services
 
             var claims = new List<Claim>
             {
-                new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-                new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new (JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+                new (JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
 
-                new("purpose", EmailVerificationPurpose)
+                new ("purpose", EmailVerificationPurpose),
             };
 
             return CreateToken(claims, expires, creds);
@@ -64,7 +64,7 @@ namespace FitTracker.Infrastructure.Services
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = key,
                     ValidateLifetime = true,
-                    ClockSkew = TimeSpan.Zero
+                    ClockSkew = TimeSpan.Zero,
                 };
 
                 var principal = tokenHandler.ValidateToken(token, validationParameters, out SecurityToken validatedToken);
@@ -83,6 +83,7 @@ namespace FitTracker.Infrastructure.Services
             {
                 throw new InvalidOperationException("JWT Key not configured");
             }
+
             return new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
         }
 
@@ -94,14 +95,12 @@ namespace FitTracker.Infrastructure.Services
                 Expires = expires,
                 Issuer = configuration["Jwt:Issuer"],
                 Audience = configuration["Jwt:Audience"],
-                SigningCredentials = creds
+                SigningCredentials = creds,
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
-
-
     }
 }

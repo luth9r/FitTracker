@@ -1,82 +1,84 @@
-﻿namespace FitTracker.Infrastructure.Persistence.Data.Entities
+using FitTracker.Domain.ValueObjects;
+
+namespace FitTracker.Infrastructure.Persistence.Data.Entities
 {
     /// <summary>
-	/// Represents a user account in the system.
-	/// </summary>
-	public class UserEf : BaseEntityEf
+    /// Represents a user account in the system.
+    /// </summary>
+    public class UserEf : BaseEntityEf
     {
         /// <summary>
-        /// Unique username.
+        /// Gets or sets unique username.
         /// </summary>
         public string Username { get; set; } = null!;
 
         /// <summary>
-        /// User email address.
+        /// Gets or sets user email address.
         /// </summary>
         public string Email { get; set; } = null!;
 
         /// <summary>
-        /// Hashed password for authentication.
+        /// Gets or sets hashed password for authentication.
         /// </summary>
         public string? PasswordHash { get; set; }
 
         /// <summary>
-        /// Optional first name.
+        /// Gets or sets optional first name.
         /// </summary>
         public string? FirstName { get; set; }
 
         /// <summary>
-        /// Optional last name.
+        /// Gets or sets optional last name.
         /// </summary>
         public string? LastName { get; set; }
 
         /// <summary>
-        /// Optional avatar image URL or path.
+        /// Gets or sets optional avatar image URL or path.
         /// </summary>
         public string? Avatar { get; set; }
 
         /// <summary>
-        /// Optional user biography.
+        /// Gets or sets optional user biography.
         /// </summary>
         public string? Bio { get; set; }
 
         /// <summary>
-        /// Preferred measurement units (metric/imperial).
+        /// Gets or sets preferred measurement units (metric/imperial).
         /// </summary>
-        public string PreferredUnits { get; set; }
+        public string PreferredUnits { get; set; } = null!;
 
         /// <summary>
-        /// Verification status
+        /// Gets or sets a value indicating whether verification status.
         /// </summary>
         public bool IsEmailVerified { get; set; }
 
         /// <summary>
-        /// Gets the unique identifier assigned to the user by the Google authentication provider.
+        /// Gets or sets the unique identifier assigned to the user by the Google authentication provider.
         /// </summary>
-        public string? GoogleProviderId { get; private set; }
+        public string? GoogleProviderId { get; set; }
 
         /// <summary>
-        /// Collection of user's workout sessions.
+        /// Gets or sets collection of user's workout sessions.
         /// </summary>
         public ICollection<WorkoutEf> Workouts { get; set; } = new HashSet<WorkoutEf>();
 
         /// <summary>
-        /// Collection of user's custom exercises.
+        /// Gets or sets collection of user's custom exercises.
         /// </summary>
         public ICollection<ExerciseEf> CustomExercises { get; set; } = new HashSet<ExerciseEf>();
 
         /// <summary>
-        /// Collection of user's workout templates.
+        /// Gets or sets collection of user's workout templates.
         /// </summary>
         public ICollection<WorkoutTemplateEf> WorkoutTemplates { get; set; } = new HashSet<WorkoutTemplateEf>();
 
         /// <summary>
-        /// Collection of user's earned achievements.
+        /// Gets or sets collection of user's earned achievements.
         /// </summary>
-        public ICollection<AchievementEf> Achievements { get; set; } = new HashSet<AchievementEf>();
+        public ICollection<UserAchievementEf> UserAchievements { get; set; } = new HashSet<UserAchievementEf>();
 
         /// <summary>
-        /// Collection of user's exercise records.
+        /// Gets or sets collection of user's exercise records.
         /// </summary>
         public ICollection<ExerciseRecordEf> ExerciseRecords { get; set; } = new HashSet<ExerciseRecordEf>();
     }

@@ -61,34 +61,22 @@ namespace FitTracker.Application.UseCases.User.Handlers.Google
                 return ResultExtensions.ValidationFailure<LoginResponse>(nameof(request.Request.Code), localization.GetString("Auth.Register.AccountAlreadyExists"));
             }
 
-            var userBuilderResult = new UserEntity.UserBuilder()
-                .WithUniqueUsername()
-                .WithEmail(googlePayload.Email)
-                .WithGoogleProvidedId(googlePayload.GoogleId)
-                .WithFirstName(googlePayload.FirstName)
-                .WithLastName(googlePayload.LastName)
-                .Build();
+            var user = UserEntity.CreateGoogleUser(
+                email: googlePayload.Email,
+                firstName: googlePayload.FirstName,
+                lastName: googlePayload.LastName,
+                googleProviderId: googlePayload.GoogleId);
 
-            if (userBuilderResult.IsFailure)
-            {
-                var translatedErrors = userBuilderResult.Error.Errors
-                    .Select(failure => new ValidationFailure(failure.PropertyName, localization.GetString(failure.ErrorMessage)))
-                    .ToList();
+            user.SetEmailVerified();
 
-                return ResultExtensions.ValidationFailure<LoginResponse>(nameof(UserEntity), translatedErrors);
-            }
+            await userRepository.AddAsync(user, cancellationToken);
+            _ = await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            var newUser = userBuilderResult.Value;
-            newUser.SetEmailVerified();
+            logger.LogInformation("Successfully created and registered user {Username} with ID {UserId}", user.Username, user.Id);
 
-            await userRepository.AddAsync(newUser, cancellationToken);
-            await unitOfWork.SaveChangesAsync(cancellationToken);
+            var loginToken = jwtTokenGenerator.GenerateToken(user);
 
-            logger.LogInformation("Successfully created and registered user {Username} with ID {UserId}", newUser.Username, newUser.Id);
-
-            var loginToken = jwtTokenGenerator.GenerateToken(newUser);
-
-            var response = mapper.Map<LoginResponse>(newUser);
+            var response = mapper.Map<LoginResponse>(user);
             response.JWT = loginToken;
 
             return Result.Success<LoginResponse, ValidationResult>(response);

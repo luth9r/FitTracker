@@ -1,57 +1,42 @@
 namespace FitTracker.Infrastructure.Persistence.Data.Entities
 {
     /// <summary>
-	/// Represents a reusable workout template.
-	/// </summary>
-	public class WorkoutTemplateEf : BaseEntityEf
+    /// Represents a reusable workout template.
+    /// </summary>
+    public class WorkoutTemplateEf : BaseEntityEf
     {
         /// <summary>
-        /// ID of the user who owns this template.
+        /// Gets or sets iD of the user who owns this template.
         /// </summary>
-        public Guid UserId
-        {
-            get; set;
-        }
+        public Guid UserId { get; set; }
 
         /// <summary>
-        /// Template name.
+        /// Gets or sets template name.
         /// </summary>
         public string Name { get; set; } = null!;
 
         /// <summary>
-        /// Optional template description.
+        /// Gets or sets optional template description.
         /// </summary>
-        public string? Description
-        {
-            get; set;
-        }
+        public string? Description { get; set; }
 
         /// <summary>
-        /// Number of times this template has been used.
+        /// Gets or sets number of times this template has been used.
         /// </summary>
-        public int UsageCount
-        {
-            get; set;
-        }
+        public int UsageCount { get; set; }
 
         /// <summary>
-        /// Timestamp of last template usage.
+        /// Gets or sets timestamp of last template usage.
         /// </summary>
-        public DateTime? LastUsedAt
-        {
-            get; set;
-        }
+        public DateTime? LastUsedAt { get; set; }
 
         /// <summary>
-        /// Navigation to the user.
+        /// Gets or sets navigation to the user.
         /// </summary>
-        public UserEf? User
-        {
-            get; set;
-        }
+        public UserEf? User { get; set; } = null!;
 
         /// <summary>
-        /// Collection of exercises in this template.
+        /// Gets or sets collection of exercises in this template.
         /// </summary>
         public ICollection<WorkoutTemplateExerciseEf> Exercises { get; set; } = new HashSet<WorkoutTemplateExerciseEf>();
     }

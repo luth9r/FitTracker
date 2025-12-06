@@ -1,4 +1,4 @@
-﻿namespace FitTracker.Application.DTOs.Auth
+namespace FitTracker.Application.DTOs.Auth
 {
     /// <summary>
     /// DTO for user registration requests.
@@ -19,6 +19,5 @@
         /// Gets or sets the password for registration.
         /// </summary>
         public string Password { get; set; } = string.Empty;
-
     }
 }

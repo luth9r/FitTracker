@@ -8,102 +8,102 @@ namespace FitTracker.Infrastructure.Persistence.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<ExerciseRecordEf> builder)
         {
-            builder.ToTable("exercise_records");
+            _ = builder.ToTable("exercise_records");
 
-            builder.HasKey(er => er.Id);
+            _ = builder.HasKey(er => er.Id);
 
-            builder.Property(er => er.Id)
+            _ = builder.Property(er => er.Id)
                 .HasColumnName("id")
                 .HasColumnType("uuid");
 
-            builder.Property(er => er.UserId)
+            _ = builder.Property(er => er.UserId)
                 .HasColumnName("user_id")
                 .HasColumnType("uuid")
                 .IsRequired();
 
-            builder.Property(er => er.ExerciseId)
+            _ = builder.Property(er => er.ExerciseId)
                 .HasColumnName("exercise_id")
                 .HasColumnType("uuid")
                 .IsRequired();
 
-            builder.Property(er => er.MaxWeightKilograms)
+            _ = builder.Property(er => er.MaxWeightKilograms)
                 .HasColumnName("max_weight_kg")
                 .HasPrecision(10, 2)
                 .IsRequired();
 
-            builder.Property(er => er.MaxReps)
+            _ = builder.Property(er => er.MaxReps)
                 .HasColumnName("max_reps")
                 .IsRequired();
 
-            builder.Property(er => er.MaxVolume)
+            _ = builder.Property(er => er.MaxVolume)
                 .HasColumnName("max_volume")
                 .IsRequired();
 
-            builder.Property(er => er.MaxTotalVolume)
+            _ = builder.Property(er => er.MaxTotalVolume)
                 .HasColumnName("max_total_volume")
                 .IsRequired();
 
-            builder.Property(er => er.MaxWeightDate)
+            _ = builder.Property(er => er.MaxWeightDate)
                 .HasColumnName("max_weight_date")
                 .IsRequired();
 
-            builder.Property(er => er.MaxRepsDate)
+            _ = builder.Property(er => er.MaxRepsDate)
                 .HasColumnName("max_reps_date")
                 .IsRequired();
 
-            builder.Property(er => er.MaxVolumeDate)
+            _ = builder.Property(er => er.MaxVolumeDate)
                 .HasColumnName("max_volume_date")
                 .IsRequired();
 
-            builder.Property(er => er.MaxTotalVolumeDate)
+            _ = builder.Property(er => er.MaxTotalVolumeDate)
                 .HasColumnName("max_total_volume_date")
                 .IsRequired();
 
-            builder.Property(er => er.TotalWorkouts)
+            _ = builder.Property(er => er.TotalWorkouts)
                 .HasColumnName("total_workouts")
                 .IsRequired();
 
-            builder.Property(er => er.TotalSets)
+            _ = builder.Property(er => er.TotalSets)
                 .HasColumnName("total_sets")
                 .IsRequired();
 
-            builder.Property(er => er.TotalReps)
+            _ = builder.Property(er => er.TotalReps)
                 .HasColumnName("total_reps")
                 .IsRequired();
 
-            builder.Property(er => er.TotalLifted)
+            _ = builder.Property(er => er.TotalLifted)
                 .HasColumnName("total_lifted")
                 .IsRequired();
 
-            builder.Property(er => er.LastPerformed)
+            _ = builder.Property(er => er.LastPerformed)
                 .HasColumnName("last_performed")
                 .IsRequired();
 
-            builder.Property(er => er.CreatedAt)
+            _ = builder.Property(er => er.CreatedAt)
                 .HasColumnName("created_at")
                 .HasColumnType("timestamp with time zone")
                 .HasDefaultValueSql("CURRENT_TIMESTAMP AT TIME ZONE 'UTC'");
 
-            builder.Property(er => er.UpdatedAt)
+            _ = builder.Property(er => er.UpdatedAt)
                 .HasColumnName("updated_at")
                 .HasColumnType("timestamp with time zone")
                 .HasDefaultValueSql("CURRENT_TIMESTAMP AT TIME ZONE 'UTC'");
 
             // Indexes
-            builder.HasIndex(er => new { er.UserId, er.ExerciseId })
+            _ = builder.HasIndex(er => new { er.UserId, er.ExerciseId })
                 .IsUnique()
                 .HasDatabaseName("IX_ExerciseRecords_User_Exercise");
 
-            builder.HasIndex(er => er.LastPerformed)
+            _ = builder.HasIndex(er => er.LastPerformed)
                 .HasDatabaseName("IX_ExerciseRecords_LastPerformed");
 
             // Relationships
-            builder.HasOne(er => er.User)
+            _ = builder.HasOne(er => er.User)
                 .WithMany(u => u.ExerciseRecords)
                 .HasForeignKey(er => er.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.HasOne(er => er.Exercise)
+            _ = builder.HasOne(er => er.Exercise)
                 .WithMany()
                 .HasForeignKey(er => er.ExerciseId)
                 .OnDelete(DeleteBehavior.Cascade);

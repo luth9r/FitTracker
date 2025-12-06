@@ -1,60 +1,42 @@
 namespace FitTracker.Infrastructure.Persistence.Data.Entities
 {
     /// <summary>
-	/// Represents an exercise within a workout template.
-	/// </summary>
-	public class WorkoutTemplateExerciseEf : BaseEntityEf
+    /// Represents an exercise within a workout template.
+    /// </summary>
+    public class WorkoutTemplateExerciseEf : BaseEntityEf
     {
         /// <summary>
-        /// ID of the workout template.
+        /// Gets or sets iD of the workout template.
         /// </summary>
-        public Guid WorkoutTemplateId
-        {
-            get; set;
-        }
+        public Guid WorkoutTemplateId { get; set; }
 
         /// <summary>
-        /// ID of the exercise.
+        /// Gets or sets iD of the exercise.
         /// </summary>
-        public Guid ExerciseId
-        {
-            get; set;
-        }
+        public Guid ExerciseId { get; set; }
 
         /// <summary>
-        /// Order of the exercise in the template.
+        /// Gets or sets order of the exercise in the template.
         /// </summary>
-        public int OrderIndex
-        {
-            get; set;
-        }
+        public int OrderIndex { get; set; }
 
         /// <summary>
-        /// Optional notes for this exercise.
+        /// Gets or sets optional notes for this exercise.
         /// </summary>
-        public string? Notes
-        {
-            get; set;
-        }
+        public string? Notes { get; set; }
 
         /// <summary>
-        /// Navigation to the workout template.
+        /// Gets or sets navigation to the workout template.
         /// </summary>
-        public WorkoutTemplateEf? WorkoutTemplate
-        {
-            get; set;
-        }
+        public WorkoutTemplateEf? WorkoutTemplate { get; set; } = null!;
 
         /// <summary>
-        /// Navigation to the exercise.
+        /// Gets or sets navigation to the exercise.
         /// </summary>
-        public ExerciseEf? Exercise
-        {
-            get; set;
-        }
+        public ExerciseEf? Exercise { get; set; } = null!;
 
         /// <summary>
-        /// Collection of planned sets for this exercise.
+        /// Gets or sets collection of planned sets for this exercise.
         /// </summary>
         public ICollection<TemplateSetEf> PlannedSets { get; set; } = new HashSet<TemplateSetEf>();
     }

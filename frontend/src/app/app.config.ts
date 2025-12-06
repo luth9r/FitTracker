@@ -20,6 +20,11 @@ const googleOidcConfig: AuthConfig = {
   responseType: 'code',
   strictDiscoveryDocumentValidation: false,
   showDebugInformation: true,
+
+  customQueryParams: {
+    prompt: 'select_account consent',
+    access_type: 'offline'
+  },
 };
 
 export function initializeOAuth(oauthService: OAuthService): () => Promise<void> {

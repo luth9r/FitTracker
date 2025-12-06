@@ -9,78 +9,56 @@ namespace FitTracker.Infrastructure.Persistence.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<ExerciseEf> builder)
         {
-            builder.ToTable("exercises");
+            _ = builder.ToTable("exercises");
 
-            builder.HasKey(e => e.Id);
+            _ = builder.HasKey(e => e.Id);
 
-            builder.Property(e => e.Id)
-                .HasColumnName("id")
-                .HasColumnType("uuid");
-
-            builder.Property(e => e.Name)
+            _ = builder.Property(e => e.Name)
                 .HasColumnName("name")
-                .HasMaxLength(Exercise.NameMaxLength)
-                .IsRequired();
+                .IsRequired()
+                .HasMaxLength(100);
 
-            builder.Property(e => e.Description)
+            _ = builder.Property(e => e.Description)
                 .HasColumnName("description")
-                .HasMaxLength(Exercise.DescriptionMaxLength);
+                .HasMaxLength(1000);
 
-            builder.Property(e => e.ImageUrl)
+            _ = builder.Property(e => e.ImageUrl)
                 .HasColumnName("image_url")
-                .HasMaxLength(Exercise.ImageUrlMaxLength);
+                .HasMaxLength(500);
 
-            builder.Property(e => e.VideoUrl)
+            _ = builder.Property(e => e.VideoUrl)
                 .HasColumnName("video_url")
-                .HasMaxLength(Exercise.VideoUrlMaxLength);
+                .HasMaxLength(500);
 
-            builder.Property(e => e.MuscleGroup)
+            _ = builder.Property(e => e.MuscleGroup)
                 .HasColumnName("muscle_group")
-                .HasConversion<int>()
                 .IsRequired();
 
-            builder.Property(e => e.Equipment)
+            _ = builder.Property(e => e.Equipment)
                 .HasColumnName("equipment")
-                .HasConversion<int>()
                 .IsRequired();
 
-            builder.Property(e => e.IsCustom)
-                .HasColumnName("is_custom")
-                .HasDefaultValue(false)
-                .IsRequired();
+            _ = builder.Property(e => e.CreatedByUserId)
+                .HasColumnName("created_by_user_id")
+                .IsRequired(false);
 
-            builder.Property(e => e.UserId)
-                .HasColumnName("user_id")
-                .HasColumnType("uuid");
-
-            builder.Property(e => e.CreatedAt)
-                .HasColumnName("created_at")
-                .HasColumnType("timestamp with time zone")
-                .HasDefaultValueSql("CURRENT_TIMESTAMP AT TIME ZONE 'UTC'");
-
-            builder.Property(e => e.UpdatedAt)
-                .HasColumnName("updated_at")
-                .HasColumnType("timestamp with time zone")
-                .HasDefaultValueSql("CURRENT_TIMESTAMP AT TIME ZONE 'UTC'");
-
-            // Indexes
-            builder.HasIndex(e => e.Name)
-                .HasDatabaseName("IX_Exercises_Name");
-
-            builder.HasIndex(e => e.MuscleGroup)
-                .HasDatabaseName("IX_Exercises_MuscleGroup");
-
-            builder.HasIndex(e => e.Equipment)
-                .HasDatabaseName("IX_Exercises_Equipment");
-
-            builder.HasIndex(e => new { e.UserId, e.IsCustom })
-                .HasDatabaseName("IX_Exercises_User_Custom");
-
-            // Relationships
-            builder.HasOne(e => e.User)
+            _ = builder.HasOne(e => e.CreatedByUser)
                 .WithMany(u => u.CustomExercises)
-                .HasForeignKey(e => e.UserId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .HasForeignKey(e => e.CreatedByUserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            _ = builder.HasIndex(e => e.Name)
+                .HasDatabaseName("IX_exercises_name");
+
+            _ = builder.HasIndex(e => e.MuscleGroup)
+                .HasDatabaseName("IX_exercises_muscle_group");
+
+            _ = builder.HasIndex(e => e.CreatedByUserId)
+                .HasDatabaseName("IX_exercises_created_by_user_id");
+
+            _ = builder.HasIndex(e => e.CreatedByUserId)
+                .HasFilter("created_by_user_id IS NULL")
+                .HasDatabaseName("IX_exercises_standard");
         }
     }
 }

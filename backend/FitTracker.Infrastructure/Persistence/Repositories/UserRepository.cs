@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using FitTracker.Domain.Abstract.Interfaces;
 using FitTracker.Domain.Entities;
 using FitTracker.Infrastructure.Persistence.Data;
@@ -35,9 +35,11 @@ namespace FitTracker.Infrastructure.Persistence.Repositories
             {
                 return null;
             }
+
             var user = mapper.Map<User>(userEf);
             return user;
         }
+
         public async Task<User?> GetByIdReadonlyAsync(Guid id, CancellationToken cancellationToken)
         {
             var userEf = await context.Users
@@ -62,6 +64,7 @@ namespace FitTracker.Infrastructure.Persistence.Repositories
             {
                 return null;
             }
+
             var user = mapper.Map<User>(userEf);
             return user;
         }
@@ -80,22 +83,18 @@ namespace FitTracker.Infrastructure.Persistence.Repositories
             return user;
         }
 
-
         public async Task AddAsync(User user, CancellationToken cancellationToken)
         {
             var userEf = mapper.Map<UserEf>(user);
 
-            await context.Users.AddAsync(userEf, cancellationToken);
+            _ = await context.Users.AddAsync(userEf, cancellationToken);
         }
 
         public void Update(User user)
         {
             var userEf = mapper.Map<UserEf>(user);
 
-            context.Users.Update(userEf);
+            _ = context.Users.Update(userEf);
         }
-
-
-
     }
 }

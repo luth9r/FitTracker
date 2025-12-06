@@ -1,8 +1,4 @@
-using CSharpFunctionalExtensions;
-using FitTracker.Domain.Validators;
 using FitTracker.Domain.ValueObjects;
-using FluentValidation;
-using FluentValidation.Results;
 
 namespace FitTracker.Domain.Entities
 {
@@ -11,168 +7,83 @@ namespace FitTracker.Domain.Entities
     /// </summary>
     public class ExerciseRecord : BaseEntity
     {
-        #region Properties
-
         /// <summary>
         /// Gets the unique identifier of the user who owns this record.
         /// </summary>
-        public Guid UserId
-        {
-            get; private set;
-        }
+        public Guid UserId { get; private set; }
 
         /// <summary>
         /// Gets the unique identifier of the exercise associated with this record.
         /// </summary>
-        public Guid ExerciseId
-        {
-            get; private set;
-        }
+        public Guid ExerciseId { get; private set; }
 
         /// <summary>
         /// Gets the maximum weight lifted for this exercise (1RM or max weight).
         /// </summary>
-        public Weight MaxWeight
-        {
-            get; private set;
-        }
+        public Weight MaxWeight { get; private set; }
 
         /// <summary>
         /// Gets the maximum number of repetitions achieved in a single set.
         /// </summary>
-        public int MaxReps
-        {
-            get; private set;
-        }
+        public int MaxReps { get; private set; }
 
         /// <summary>
         /// Gets the maximum volume (weight × reps) achieved in a single set.
         /// </summary>
-        public decimal MaxVolume
-        {
-            get; private set;
-        }
+        public decimal MaxVolume { get; private set; }
 
         /// <summary>
         /// Gets the maximum total volume achieved in a single workout session.
         /// </summary>
-        public decimal MaxTotalVolume
-        {
-            get; private set;
-        }
+        public decimal MaxTotalVolume { get; private set; }
 
         /// <summary>
         /// Gets the date and time when the maximum weight record was set.
         /// </summary>
-        public DateTime MaxWeightDate
-        {
-            get; private set;
-        }
+        public DateTime MaxWeightDate { get; private set; }
 
         /// <summary>
         /// Gets the date and time when the maximum reps record was set.
         /// </summary>
-        public DateTime MaxRepsDate
-        {
-            get; private set;
-        }
+        public DateTime MaxRepsDate { get; private set; }
 
         /// <summary>
         /// Gets the date and time when the maximum volume record was set.
         /// </summary>
-        public DateTime MaxVolumeDate
-        {
-            get; private set;
-        }
+        public DateTime MaxVolumeDate { get; private set; }
 
         /// <summary>
         /// Gets the date and time when the maximum total volume record was set.
         /// </summary>
-        public DateTime MaxTotalVolumeDate
-        {
-            get; private set;
-        }
+        public DateTime MaxTotalVolumeDate { get; private set; }
 
         /// <summary>
         /// Gets the total number of workout sessions where this exercise was performed.
         /// </summary>
-        public int TotalWorkouts
-        {
-            get; private set;
-        }
+        public int TotalWorkouts { get; private set; }
 
         /// <summary>
         /// Gets the total number of sets performed for this exercise.
         /// </summary>
-        public int TotalSets
-        {
-            get; private set;
-        }
+        public int TotalSets { get; private set; }
 
         /// <summary>
         /// Gets the total number of repetitions performed for this exercise.
         /// </summary>
-        public int TotalReps
-        {
-            get; private set;
-        }
+        public int TotalReps { get; private set; }
 
         /// <summary>
         /// Gets the total weight lifted across all sets for this exercise.
         /// </summary>
-        public decimal TotalLifted
-        {
-            get; private set;
-        }
+        public decimal TotalLifted { get; private set; }
 
         /// <summary>
         /// Gets the date and time when this exercise was last performed.
         /// </summary>
-        public DateTime LastPerformed
-        {
-            get; private set;
-        }
+        public DateTime LastPerformed { get; private set; }
 
-        #endregion
-
-        #region Constructors
-
-        /// <summary>
-        /// Parameterless constructor for ORM.
-        /// Do not use directly.
-        /// </summary>
-        private ExerciseRecord()
-        {
-        }
-
-        /// <summary>
-        /// Domain constructor used by Factory for creating new exercise records.
-        /// Contains business logic, initializes fields, and validates.
-        /// </summary>
-        public ExerciseRecord(Guid userId, Guid exerciseId) : base()
-        {
-            UserId = userId;
-            ExerciseId = exerciseId;
-            MaxWeight = Weight.FromKilograms(0);
-            MaxReps = 0;
-            MaxVolume = 0;
-            MaxTotalVolume = 0;
-            TotalWorkouts = 0;
-            TotalSets = 0;
-            TotalReps = 0;
-            TotalLifted = 0;
-            MaxWeightDate = DateTime.UtcNow;
-            MaxRepsDate = DateTime.UtcNow;
-            MaxVolumeDate = DateTime.UtcNow;
-            MaxTotalVolumeDate = DateTime.UtcNow;
-            LastPerformed = DateTime.UtcNow;
-        }
-
-        /// <summary>
-        /// Constructor for restoring exercise record from persistence layer.
-        /// Use <see cref="Create"/> for creating new exercise records.
-        /// </summary>
-        public ExerciseRecord(
+        internal ExerciseRecord(
+            Guid id,
             Guid userId,
             Guid exerciseId,
             Weight maxWeight,
@@ -187,11 +98,14 @@ namespace FitTracker.Domain.Entities
             int totalSets,
             int totalReps,
             decimal totalLifted,
-            DateTime lastPerformed) : base()
+            DateTime lastPerformed,
+            DateTime createdAt,
+            DateTime updatedAt)
+            : base(id, createdAt, updatedAt)
         {
             UserId = userId;
             ExerciseId = exerciseId;
-            MaxWeight = maxWeight ?? Weight.FromKilograms(0);
+            MaxWeight = maxWeight;
             MaxReps = maxReps;
             MaxVolume = maxVolume;
             MaxTotalVolume = maxTotalVolume;
@@ -204,58 +118,48 @@ namespace FitTracker.Domain.Entities
             TotalReps = totalReps;
             TotalLifted = totalLifted;
             LastPerformed = lastPerformed;
-
-            // No validation here since data is from persistence
         }
 
-        #endregion
-
-        #region Validation
-
-        protected override IValidator GetValidator()
+        private ExerciseRecord()
         {
-            return new ExerciseRecordValidator();
         }
 
-        private Result<ExerciseRecord, ValidationResult> ValidateWithResult()
+        private ExerciseRecord(Guid userId, Guid exerciseId)
         {
-            var result = Validate();
-            if (!result.IsValid)
-                return Result.Failure<ExerciseRecord, ValidationResult>(result);
+            if (userId == Guid.Empty)
+            {
+                throw new ArgumentException("UserId cannot be empty", nameof(userId));
+            }
 
-            return Result.Success<ExerciseRecord, ValidationResult>(this);
+            if (exerciseId == Guid.Empty)
+            {
+                throw new ArgumentException("ExerciseId cannot be empty", nameof(exerciseId));
+            }
+
+            UserId = userId;
+            ExerciseId = exerciseId;
+            MaxWeight = Weight.FromKilograms(0);
+            MaxReps = 0;
+            MaxVolume = 0;
+            MaxTotalVolume = 0;
+            TotalWorkouts = 0;
+            TotalSets = 0;
+            TotalReps = 0;
+            TotalLifted = 0;
+
+            var now = DateTime.UtcNow;
+            MaxWeightDate = now;
+            MaxRepsDate = now;
+            MaxVolumeDate = now;
+            MaxTotalVolumeDate = now;
+            LastPerformed = now;
         }
 
-        #endregion
-
-        #region Factory
-
-        /// <summary>
-        /// Creates a new exercise record for the specified user and exercise.
-        /// </summary>
-        /// <param name="userId">The unique identifier of the user.</param>
-        /// <param name="exerciseId">The unique identifier of the exercise.</param>
-        /// <returns>A new <see cref="ExerciseRecord"/> instance with initialized values.</returns>
         public static ExerciseRecord Create(Guid userId, Guid exerciseId)
         {
             return new ExerciseRecord(userId, exerciseId);
         }
 
-        #endregion
-
-        #region Domain Methods
-
-        /// <summary>
-        /// Updates the exercise records based on workout performance data.
-        /// </summary>
-        /// <param name="maxSetWeight">The maximum weight lifted in a single set during the workout.</param>
-        /// <param name="maxSetReps">The maximum number of reps achieved in a single set during the workout.</param>
-        /// <param name="maxSetVolume">The maximum volume achieved in a single set during the workout.</param>
-        /// <param name="workoutTotalVolume">The total volume for the entire workout session.</param>
-        /// <param name="workoutSets">The total number of sets performed in the workout.</param>
-        /// <param name="workoutReps">The total number of reps performed in the workout.</param>
-        /// <param name="workoutLifted">The total weight lifted during the workout.</param>
-        /// <returns><c>true</c> if any personal record was improved; otherwise, <c>false</c>.</returns>
         public bool UpdateRecords(
             Weight maxSetWeight,
             int maxSetReps,
@@ -265,13 +169,50 @@ namespace FitTracker.Domain.Entities
             int workoutReps,
             decimal workoutLifted)
         {
+            // Guard clauses
+            if (maxSetWeight == null)
+            {
+                throw new ArgumentNullException(nameof(maxSetWeight));
+            }
+
+            if (maxSetReps < 0)
+            {
+                throw new ArgumentException("Max reps cannot be negative", nameof(maxSetReps));
+            }
+
+            if (maxSetVolume < 0)
+            {
+                throw new ArgumentException("Max volume cannot be negative", nameof(maxSetVolume));
+            }
+
+            if (workoutTotalVolume < 0)
+            {
+                throw new ArgumentException("Total volume cannot be negative", nameof(workoutTotalVolume));
+            }
+
+            if (workoutSets < 0)
+            {
+                throw new ArgumentException("Sets cannot be negative", nameof(workoutSets));
+            }
+
+            if (workoutReps < 0)
+            {
+                throw new ArgumentException("Reps cannot be negative", nameof(workoutReps));
+            }
+
+            if (workoutLifted < 0)
+            {
+                throw new ArgumentException("Lifted weight cannot be negative", nameof(workoutLifted));
+            }
+
             bool newRecord = false;
+            var now = DateTime.UtcNow;
 
             // Max Weight PR
             if (maxSetWeight.ToKilograms() > MaxWeight.ToKilograms())
             {
                 MaxWeight = maxSetWeight;
-                MaxWeightDate = DateTime.UtcNow;
+                MaxWeightDate = now;
                 newRecord = true;
             }
 
@@ -279,7 +220,7 @@ namespace FitTracker.Domain.Entities
             if (maxSetReps > MaxReps)
             {
                 MaxReps = maxSetReps;
-                MaxRepsDate = DateTime.UtcNow;
+                MaxRepsDate = now;
                 newRecord = true;
             }
 
@@ -287,7 +228,7 @@ namespace FitTracker.Domain.Entities
             if (maxSetVolume > MaxVolume)
             {
                 MaxVolume = maxSetVolume;
-                MaxVolumeDate = DateTime.UtcNow;
+                MaxVolumeDate = now;
                 newRecord = true;
             }
 
@@ -295,39 +236,36 @@ namespace FitTracker.Domain.Entities
             if (workoutTotalVolume > MaxTotalVolume)
             {
                 MaxTotalVolume = workoutTotalVolume;
-                MaxTotalVolumeDate = DateTime.UtcNow;
+                MaxTotalVolumeDate = now;
                 newRecord = true;
             }
 
-            // Update stats
+            // Update cumulative stats
             TotalWorkouts++;
             TotalSets += workoutSets;
             TotalReps += workoutReps;
             TotalLifted += workoutLifted;
-            LastPerformed = DateTime.UtcNow;
-            UpdatedAt = DateTime.UtcNow;
+            LastPerformed = now;
+            UpdatedAt = now;
 
             return newRecord;
         }
 
-        /// <summary>
-        /// Calculates the average weight lifted per set.
-        /// </summary>
-        /// <returns>The average weight per set, or 0 if no sets have been performed.</returns>
         public decimal GetAverageWeightPerSet()
         {
             return TotalSets > 0 ? TotalLifted / TotalSets : 0;
         }
 
-        /// <summary>
-        /// Calculates the average number of repetitions per set.
-        /// </summary>
-        /// <returns>The average reps per set, or 0 if no sets have been performed.</returns>
         public decimal GetAverageRepsPerSet()
         {
             return TotalSets > 0 ? (decimal)TotalReps / TotalSets : 0;
         }
 
-        #endregion
+        public bool HasRecords() => TotalWorkouts > 0;
+
+        public TimeSpan GetTimeSinceLastPerformed()
+        {
+            return DateTime.UtcNow - LastPerformed;
+        }
     }
 }

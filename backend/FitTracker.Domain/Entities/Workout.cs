@@ -1,8 +1,3 @@
-using CSharpFunctionalExtensions;
-using FitTracker.Domain.Validators;
-using FluentValidation;
-using FluentValidation.Results;
-
 namespace FitTracker.Domain.Entities
 {
     /// <summary>
@@ -10,58 +5,34 @@ namespace FitTracker.Domain.Entities
     /// </summary>
     public class Workout : BaseEntity
     {
-        #region Constants
-
         public const int NameMaxLength = 100;
         public const int NameMinLength = 3;
         public const int NotesMaxLength = 2000;
         public const int MaxDurationHours = 12;
 
-        #endregion
-
-        #region Properties
-
         public Guid UserId { get; private set; }
+
         public Guid? WorkoutTemplateId { get; private set; }
-        public string Name { get; private set; }
+
+        public string Name { get; private set; } = default!;
+
         public string? Notes { get; private set; }
+
         public DateTime WorkoutDate { get; private set; }
+
         public TimeSpan Duration { get; private set; }
+
         public bool IsCompleted { get; private set; }
+
         public bool IsInProgress { get; private set; }
+
         public DateTime? StartedAt { get; private set; }
+
         public DateTime? CompletedAt { get; private set; }
+
         public decimal TotalVolumeKg { get; private set; }
 
-        #endregion
-
-        #region Constructors
-
-        private Workout()
-        {
-            // For ORM
-        }
-
-        public Workout(
-            Guid userId,
-            string name,
-            DateTime workoutDate,
-            Guid? workoutTemplateId = null,
-            string? notes = null)
-            : base()
-        {
-            UserId = userId;
-            WorkoutTemplateId = workoutTemplateId;
-            Name = name;
-            WorkoutDate = workoutDate;
-            Notes = notes;
-            Duration = TimeSpan.Zero;
-            IsCompleted = false;
-            IsInProgress = false;
-            TotalVolumeKg = 0;
-        }
-
-        public Workout(
+        internal Workout(
             Guid id,
             Guid userId,
             string name,
@@ -73,12 +44,13 @@ namespace FitTracker.Domain.Entities
             bool isInProgress,
             DateTime? startedAt,
             DateTime? completedAt,
-            decimal totalVolumeKg)
-            : base()
+            decimal totalVolumeKg,
+            DateTime createdAt,
+            DateTime updatedAt)
         {
             Id = id;
             UserId = userId;
-            Name = name ?? throw new ArgumentNullException(nameof(name));
+            Name = name;
             WorkoutDate = workoutDate;
             WorkoutTemplateId = workoutTemplateId;
             Notes = notes;
@@ -88,137 +60,185 @@ namespace FitTracker.Domain.Entities
             StartedAt = startedAt;
             CompletedAt = completedAt;
             TotalVolumeKg = totalVolumeKg;
+            CreatedAt = createdAt;
+            UpdatedAt = updatedAt;
         }
 
-        #endregion
-
-        #region Validation
-
-        protected override IValidator GetValidator()
+        private Workout()
         {
-            return new WorkoutValidator();
         }
 
-        public ValidationResult Validate()
-        {
-            var validator = GetValidator();
-            return validator.Validate(new ValidationContext<Workout>(this));
-        }
-
-        private Result<Workout, ValidationResult> ValidateWithResult()
-        {
-            var result = Validate();
-            if (!result.IsValid)
-                return Result.Failure<Workout, ValidationResult>(result);
-
-            return Result.Success<Workout, ValidationResult>(this);
-        }
-
-        #endregion
-
-        #region Factory
-
-        public static Result<Workout, ValidationResult> Create(
+        private Workout(
             Guid userId,
             string name,
             DateTime workoutDate,
             Guid? workoutTemplateId = null,
             string? notes = null)
         {
-            var workout = new Workout(userId, name, workoutDate, workoutTemplateId, notes);
-            return workout.ValidateWithResult();
+            if (userId == Guid.Empty)
+            {
+                throw new ArgumentException("UserId cannot be empty", nameof(userId));
+            }
+
+            if (string.IsNullOrWhiteSpace(name) || name.Length < NameMinLength || name.Length > NameMaxLength)
+            {
+                throw new ArgumentException($"Name must be {NameMinLength}-{NameMaxLength} characters", nameof(name));
+            }
+
+            if (notes?.Length > NotesMaxLength)
+            {
+                throw new ArgumentException($"Notes cannot exceed {NotesMaxLength} characters", nameof(notes));
+            }
+
+            UserId = userId;
+            WorkoutTemplateId = workoutTemplateId;
+            Name = name;
+            WorkoutDate = workoutDate.Date;
+            Notes = notes;
+            Duration = TimeSpan.Zero;
+            IsCompleted = false;
+            IsInProgress = false;
+            TotalVolumeKg = 0;
         }
 
-        #endregion
-
-        #region Domain Methods - Lifecycle
-
-        public Result<Workout, ValidationResult> Start()
+        public static Workout Create(
+            Guid userId,
+            string name,
+            DateTime workoutDate,
+            Guid? workoutTemplateId = null,
+            string? notes = null)
         {
+            return new Workout(userId, name, workoutDate, workoutTemplateId, notes);
+        }
+
+        public void Start()
+        {
+            if (IsCompleted)
+            {
+                throw new InvalidOperationException("Cannot start a completed workout");
+            }
+
+            if (IsInProgress)
+            {
+                return;
+            }
 
             IsInProgress = true;
             StartedAt = DateTime.UtcNow;
             Duration = TimeSpan.FromSeconds(1);
             UpdatedAt = DateTime.UtcNow;
-
-            return ValidateWithResult();
         }
 
-        public Result<Workout, ValidationResult> Pause()
+        public void Pause()
         {
+            if (!IsInProgress)
+            {
+                return;
+            }
 
             IsInProgress = false;
-
             if (StartedAt.HasValue)
+            {
                 Duration = DateTime.UtcNow - StartedAt.Value;
+            }
 
             UpdatedAt = DateTime.UtcNow;
-
-            return ValidateWithResult();
         }
 
-        public Result<Workout, ValidationResult> Resume()
+        public void Resume()
         {
+            if (IsCompleted)
+            {
+                throw new InvalidOperationException("Cannot resume a completed workout");
+            }
+
+            if (IsInProgress)
+            {
+                return;
+            }
 
             IsInProgress = true;
             StartedAt = DateTime.UtcNow - Duration;
             UpdatedAt = DateTime.UtcNow;
-
-            return ValidateWithResult();
         }
 
-        public Result<Workout, ValidationResult> Complete()
+        public void Complete()
         {
+            if (IsCompleted)
+            {
+                return;
+            }
 
             if (IsInProgress && StartedAt.HasValue)
+            {
                 Duration = DateTime.UtcNow - StartedAt.Value;
+            }
+
+            if (Duration.TotalHours > MaxDurationHours)
+            {
+                throw new InvalidOperationException($"Workout duration cannot exceed {MaxDurationHours} hours");
+            }
 
             IsCompleted = true;
             IsInProgress = false;
             CompletedAt = DateTime.UtcNow;
             UpdatedAt = DateTime.UtcNow;
-
-            return ValidateWithResult();
         }
 
-        public Result<Workout, ValidationResult> Uncomplete()
+        public void Uncomplete()
         {
+            if (!IsCompleted)
+            {
+                return;
+            }
 
             IsCompleted = false;
             CompletedAt = null;
             UpdatedAt = DateTime.UtcNow;
-
-            return ValidateWithResult();
         }
 
-        #endregion
+        public void SetDuration(TimeSpan duration)
+        {
+            if (duration.TotalHours > MaxDurationHours)
+            {
+                throw new ArgumentException($"Duration cannot exceed {MaxDurationHours} hours", nameof(duration));
+            }
 
-        #region Domain Methods - Other
+            Duration = duration;
+            UpdatedAt = DateTime.UtcNow;
+        }
+
+        public void Update(string name, DateTime workoutDate, string? notes = null)
+        {
+            if (string.IsNullOrWhiteSpace(name) || name.Length < NameMinLength || name.Length > NameMaxLength)
+            {
+                throw new ArgumentException($"Name must be {NameMinLength}-{NameMaxLength} characters", nameof(name));
+            }
+
+            if (notes?.Length > NotesMaxLength)
+            {
+                throw new ArgumentException($"Notes cannot exceed {NotesMaxLength} characters", nameof(notes));
+            }
+
+            if (IsCompleted)
+            {
+                throw new InvalidOperationException("Cannot update a completed workout");
+            }
+
+            Name = name;
+            WorkoutDate = workoutDate.Date;
+            Notes = notes;
+            UpdatedAt = DateTime.UtcNow;
+        }
 
         public TimeSpan GetCurrentDuration()
         {
             if (IsInProgress && StartedAt.HasValue)
+            {
                 return DateTime.UtcNow - StartedAt.Value;
+            }
 
             return Duration;
-        }
-
-        public Result<Workout, ValidationResult> SetDuration(TimeSpan duration)
-        {
-            Duration = duration;
-            UpdatedAt = DateTime.UtcNow;
-
-            return ValidateWithResult();
-        }
-
-        public Result<Workout, ValidationResult> Update(string name, DateTime workoutDate, string? notes = null)
-        {
-            Name = name;
-            WorkoutDate = workoutDate;
-            Notes = notes;
-            UpdatedAt = DateTime.UtcNow;
-
-            return ValidateWithResult();
         }
 
         public bool IsToday() => WorkoutDate.Date == DateTime.UtcNow.Date;
@@ -227,6 +247,8 @@ namespace FitTracker.Domain.Entities
 
         public bool IsFuture() => WorkoutDate.Date > DateTime.UtcNow.Date;
 
-        #endregion
+        public bool CanStart() => !IsCompleted && !IsInProgress;
+
+        public bool CanComplete() => IsInProgress || (Duration.TotalHours > 0);
     }
 }

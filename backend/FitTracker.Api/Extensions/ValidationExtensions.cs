@@ -1,4 +1,4 @@
-﻿using FluentValidation.Results;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace FitTracker.Api.Controllers.Extensions
@@ -6,7 +6,7 @@ namespace FitTracker.Api.Controllers.Extensions
     internal static class ValidationExtensions
     {
         /// <summary>
-        /// Transform <see cref="ValidationResult"/> to <see cref="ModelStateDictionary"/>
+        /// Transform <see cref="ValidationResult"/> to <see cref="ModelStateDictionary"/>.
         /// </summary>
         /// <param name="validationResult"></param>
         /// <returns></returns>

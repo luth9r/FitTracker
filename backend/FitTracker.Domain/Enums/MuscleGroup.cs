@@ -13,6 +13,6 @@ namespace FitTracker.Domain.Enums
         Hamstrings = 9,
         Glutes = 10,
         Calves = 11,
-        Legs = 12
+        Legs = 12,
     }
 }

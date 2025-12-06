@@ -13,72 +13,56 @@ namespace FitTracker.Infrastructure.Persistence.Data
         {
         }
 
-        public DbSet<UserEf> Users
-        {
-            get; set;
-        }
-        public DbSet<WorkoutEf> Workouts
-        {
-            get; set;
-        }
-        public DbSet<WorkoutTemplateEf> WorkoutTemplates
-        {
-            get; set;
-        }
-        public DbSet<WorkoutExerciseEf> WorkoutExercises
-        {
-            get; set;
-        }
-        public DbSet<WorkoutTemplateExerciseEf> WorkoutTemplateExercises
-        {
-            get; set;
-        }
-        public DbSet<SetEf> Sets
-        {
-            get; set;
-        }
-        public DbSet<TemplateSetEf> TemplateSets
-        {
-            get; set;
-        }
-        public DbSet<ExerciseEf> Exercises
-        {
-            get; set;
-        }
-        public DbSet<AchievementEf> Achievements
-        {
-            get; set;
-        }
-        public DbSet<ExerciseRecordEf> ExerciseRecords
-        {
-            get; set;
-        }
+        public DbSet<UserEf> Users { get; set; } = null!;
+
+        public DbSet<WorkoutEf> Workouts { get; set; } = null!;
+
+        public DbSet<WorkoutTemplateEf> WorkoutTemplates { get; set; } = null!;
+
+        public DbSet<WorkoutExerciseEf> WorkoutExercises { get; set; } = null!;
+
+        public DbSet<WorkoutTemplateExerciseEf> WorkoutTemplateExercises { get; set; } = null!;
+
+        public DbSet<SetEf> Sets { get; set; } = null!;
+
+        public DbSet<TemplateSetEf> TemplateSets { get; set; } = null!;
+
+        public DbSet<ExerciseEf> Exercises { get; set; } = null!;
+
+        public DbSet<AchievementEf> Achievements { get; set; } = null!;
+
+        public DbSet<UserAchievementEf> UserAchievements { get; set; } = null!;
+
+        public DbSet<ExerciseRecordEf> ExerciseRecords { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Ignore<UnitSystem>();
-            modelBuilder.Ignore<Weight>();
+            _ = modelBuilder.Ignore<UnitSystem>();
+            _ = modelBuilder.Ignore<Weight>();
 
             // Apply all entity configurations
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(FitTrackerDbContext).Assembly);
+            _ = modelBuilder.ApplyConfigurationsFromAssembly(typeof(FitTrackerDbContext).Assembly);
 
             FitTrackerSeeder.SeedData(modelBuilder);
         }
+
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             // Automatically set UpdatedAt for modified entities
-            var modifiedEntries = ChangeTracker
-                .Entries()
-                .Where(e => e.State == EntityState.Modified);
-
-            foreach (var entry in modifiedEntries)
+            foreach (var entry in ChangeTracker.Entries<BaseEntityEf>())
             {
-                var property = entry.Properties.FirstOrDefault(p => p.Metadata.Name == "UpdatedAt");
-                if (property != null)
+                switch (entry.State)
                 {
-                    property.CurrentValue = DateTime.UtcNow;
+                    case EntityState.Added:
+                        entry.Entity.CreatedAt = DateTime.UtcNow;
+                        entry.Entity.UpdatedAt = DateTime.UtcNow;
+                        break;
+
+                    case EntityState.Modified:
+                        entry.Entity.UpdatedAt = DateTime.UtcNow;
+                        break;
                 }
             }
 

@@ -8,21 +8,27 @@ namespace FitTracker.Infrastructure.Automapper
     {
         public WorkoutTemplateExerciseProfile()
         {
-            CreateMap<WorkoutTemplateExercise, WorkoutTemplateExerciseEf>()
+            _ = CreateMap<WorkoutTemplateExerciseEf, WorkoutTemplateExercise>()
+                .ConstructUsing(src => new WorkoutTemplateExercise(
+                    id: src.Id,
+                    workoutTemplateId: src.WorkoutTemplateId,
+                    exerciseId: src.ExerciseId,
+                    orderIndex: src.OrderIndex,
+                    notes: src.Notes,
+                    createdAt: src.CreatedAt,
+                    updatedAt: src.UpdatedAt));
+
+            _ = CreateMap<WorkoutTemplateExercise, WorkoutTemplateExerciseEf>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.WorkoutTemplateId, opt => opt.MapFrom(src => src.WorkoutTemplateId))
+                .ForMember(dest => dest.ExerciseId, opt => opt.MapFrom(src => src.ExerciseId))
+                .ForMember(dest => dest.OrderIndex, opt => opt.MapFrom(src => src.OrderIndex))
+                .ForMember(dest => dest.Notes, opt => opt.MapFrom(src => src.Notes))
                 .ForMember(dest => dest.WorkoutTemplate, opt => opt.Ignore())
                 .ForMember(dest => dest.Exercise, opt => opt.Ignore())
-                .ForMember(dest => dest.PlannedSets, opt => opt.Ignore());
-
-            CreateMap<WorkoutTemplateExerciseEf, WorkoutTemplateExercise>()
-                .ConstructUsing(src => new WorkoutTemplateExercise(
-                    src.WorkoutTemplateId,
-                    src.ExerciseId,
-                    src.OrderIndex,
-                    src.Notes))
-                .AfterMap((src, dest) =>
-                {
-                    dest.SetDatabaseFields(src.Id, src.CreatedAt, src.UpdatedAt);
-                });
+                .ForMember(dest => dest.PlannedSets, opt => opt.Ignore())
+                .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore());
         }
     }
 }

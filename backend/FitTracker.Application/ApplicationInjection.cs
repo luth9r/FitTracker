@@ -13,24 +13,24 @@ namespace FitTracker.Application
 
             AddAutoMappers(services);
 
-            services.AddHttpClient();
+            _ = services.AddHttpClient();
 
             return services;
         }
 
         private static void AddMediatR(IServiceCollection services)
         {
-            services.AddMediatR(cfg =>
+            _ = services.AddMediatR(cfg =>
             {
-                cfg.RegisterServicesFromAssembly(typeof(ApplicationInjection).Assembly);
+                _ = cfg.RegisterServicesFromAssembly(typeof(ApplicationInjection).Assembly);
             });
 
-            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
+            _ = services.AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
         }
 
         private static void AddAutoMappers(IServiceCollection services)
         {
-            services.AddAutoMapper(cfg =>
+            _ = services.AddAutoMapper(cfg =>
             {
                 cfg.AddMaps(typeof(ApplicationInjection).Assembly);
             });

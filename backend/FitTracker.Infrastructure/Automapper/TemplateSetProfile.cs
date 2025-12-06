@@ -10,23 +10,29 @@ namespace FitTracker.Infrastructure.Automapper
     {
         public TemplateSetProfile()
         {
-            CreateMap<TemplateSet, TemplateSetEf>()
-                .ForMember(dest => dest.PlannedWeight, opt => opt.MapFrom(src => src.PlannedWeight.ToKilograms()))
-                .ForMember(dest => dest.WorkoutTemplateExercise, opt => opt.Ignore());
-
-            CreateMap<TemplateSetEf, TemplateSet>()
+            _ = CreateMap<TemplateSetEf, TemplateSet>()
                 .ConstructUsing(src => new TemplateSet(
-                    src.WorkoutTemplateExerciseId,
-                    src.SetNumber,
-                    Weight.FromKilograms(src.PlannedWeight),
-                    src.PlannedReps,
-                    src.RestSeconds,
-                    (SetType)src.SetType))
-                .ForMember(dest => dest.PlannedWeight, opt => opt.Ignore())
-                .AfterMap((src, dest) =>
-                {
-                    dest.SetDatabaseFields(src.Id, src.CreatedAt, src.UpdatedAt);
-                });
+                    id: src.Id,
+                    workoutTemplateExerciseId: src.WorkoutTemplateExerciseId,
+                    setNumber: src.SetNumber,
+                    plannedWeight: Weight.FromKilograms(src.PlannedWeight),
+                    plannedReps: src.PlannedReps,
+                    restSeconds: src.RestSeconds,
+                    setType: (SetType)src.SetType,
+                    createdAt: src.CreatedAt,
+                    updatedAt: src.UpdatedAt));
+
+            _ = CreateMap<TemplateSet, TemplateSetEf>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.PlannedWeight, opt => opt.MapFrom(src => src.PlannedWeight.ToKilograms()))
+                .ForMember(dest => dest.WorkoutTemplateExerciseId, opt => opt.MapFrom(src => src.WorkoutTemplateExerciseId))
+                .ForMember(dest => dest.SetNumber, opt => opt.MapFrom(src => src.SetNumber))
+                .ForMember(dest => dest.PlannedReps, opt => opt.MapFrom(src => src.PlannedReps))
+                .ForMember(dest => dest.RestSeconds, opt => opt.MapFrom(src => src.RestSeconds))
+                .ForMember(dest => dest.SetType, opt => opt.MapFrom(src => (int)src.SetType))
+                .ForMember(dest => dest.WorkoutTemplateExercise, opt => opt.Ignore())
+                .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore());
         }
     }
 }

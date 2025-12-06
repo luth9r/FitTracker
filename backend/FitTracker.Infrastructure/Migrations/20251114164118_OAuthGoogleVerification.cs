@@ -11,7 +11,7 @@ namespace FitTracker.Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterColumn<string>(
+            _ = migrationBuilder.AlterColumn<string>(
                 name: "password_hash",
                 table: "users",
                 type: "character varying(255)",
@@ -21,14 +21,14 @@ namespace FitTracker.Infrastructure.Migrations
                 oldType: "character varying(255)",
                 oldMaxLength: 255);
 
-            migrationBuilder.AddColumn<string>(
+            _ = migrationBuilder.AddColumn<string>(
                 name: "google_provider_id",
                 table: "users",
                 type: "character varying(255)",
                 maxLength: 255,
                 nullable: true);
 
-            migrationBuilder.UpdateData(
+            _ = migrationBuilder.UpdateData(
                 table: "users",
                 keyColumn: "id",
                 keyValue: new Guid("11111111-1111-1111-1111-111111111111"),
@@ -39,17 +39,17 @@ namespace FitTracker.Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
+            _ = migrationBuilder.DropColumn(
                 name: "google_provider_id",
                 table: "users");
 
-            migrationBuilder.AlterColumn<string>(
+            _ = migrationBuilder.AlterColumn<string>(
                 name: "password_hash",
                 table: "users",
                 type: "character varying(255)",
                 maxLength: 255,
                 nullable: false,
-                defaultValue: "",
+                defaultValue: string.Empty,
                 oldClrType: typeof(string),
                 oldType: "character varying(255)",
                 oldMaxLength: 255,

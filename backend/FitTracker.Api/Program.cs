@@ -17,12 +17,12 @@ try
     var builder = WebApplication.CreateBuilder(args);
 
     // Configure services
-    builder.ConfigureApplicationBuilder();
+    _ = builder.ConfigureApplicationBuilder();
 
     var app = builder.Build();
 
     // Configure pipeline
-    await app.ConfigureApplicationAsync();
+    _ = await app.ConfigureApplicationAsync();
 
     // Run application
     app.Run();

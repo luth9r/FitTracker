@@ -55,30 +55,16 @@ namespace FitTracker.Application.UseCases.User.Handlers
                 return ResultExtensions.ValidationFailure<LoginResponse>(nameof(userRequest.Email), localization.GetString("Auth.Register.EmailAlreadyExists"));
             }
 
-            var userBuilderResult = new UserEntity.UserBuilder()
-                .WithUsername(userRequest.Username)
-                .WithEmail(userRequest.Email)
-                .WithPasswordHash(hasher.HashPassword(request.User.Password))
-                .Build();
-
-            if (userBuilderResult.IsFailure)
-            {
-                logger.LogWarning("Registration failed: User entity validation errors for username: {Username}", request.User.Username);
-
-                var translatedErrors = userBuilderResult.Error.Errors
-                    .Select(failure => new ValidationFailure(failure.PropertyName, localization.GetString(failure.ErrorMessage)))
-                    .ToList();
-
-                return ResultExtensions.ValidationFailure<LoginResponse>(nameof(userBuilderResult), translatedErrors);
-            }
-
-            var user = userBuilderResult.Value;
+            var user = UserEntity.Create(
+                username: userRequest.Username,
+                email: userRequest.Email,
+                passwordHash: hasher.HashPassword(userRequest.Password));
 
             // Add to trackings
             await userRepository.AddAsync(user, cancellationToken);
 
             // Save changes to db
-            await unitOfWork.SaveChangesAsync(cancellationToken);
+            _ = await unitOfWork.SaveChangesAsync(cancellationToken);
 
             var response = mapper.Map<LoginResponse>(user);
 

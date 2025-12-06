@@ -1,79 +1,78 @@
-﻿namespace FitTracker.Infrastructure.Persistence.Data.Entities
+namespace FitTracker.Infrastructure.Persistence.Data.Entities
 {
     /// <summary>
-	/// Represents a workout session.
-	/// </summary>
-	public class WorkoutEf : BaseEntityEf
+    /// Represents a workout session.
+    /// </summary>
+    public class WorkoutEf : BaseEntityEf
     {
         /// <summary>
-        /// ID of the user performing the workout.
+        /// Gets or sets iD of the user performing the workout.
         /// </summary>
         public Guid UserId { get; set; }
 
         /// <summary>
-        /// Optional ID of the template used to create this workout.
+        /// Gets or sets optional ID of the template used to create this workout.
         /// </summary>
         public Guid? WorkoutTemplateId { get; set; }
 
         /// <summary>
-        /// Workout name.
+        /// Gets or sets workout name.
         /// </summary>
         public string Name { get; set; } = null!;
 
         /// <summary>
-        /// Optional workout notes.
+        /// Gets or sets optional workout notes.
         /// </summary>
         public string? Notes { get; set; }
 
         /// <summary>
-        /// Date of the workout.
+        /// Gets or sets date of the workout.
         /// </summary>
         public DateTime WorkoutDate { get; set; }
 
         /// <summary>
-        /// Total duration of the workout.
+        /// Gets or sets total duration of the workout.
         /// </summary>
         public TimeSpan Duration { get; set; }
 
         /// <summary>
-        /// Indicates if the workout is completed.
+        /// Gets or sets a value indicating whether indicates if the workout is completed.
         /// </summary>
         public bool IsCompleted { get; set; }
 
         /// <summary>
-        /// Indicates if the workout is currently in progress.
+        /// Gets or sets a value indicating whether indicates if the workout is currently in progress.
         /// </summary>
         public bool IsInProgress { get; set; }
 
         /// <summary>
-        /// Timestamp when the workout was started.
+        /// Gets or sets timestamp when the workout was started.
         /// </summary>
         public DateTime? StartedAt { get; set; }
 
         /// <summary>
-        /// Timestamp when the workout was completed.
+        /// Gets or sets timestamp when the workout was completed.
         /// </summary>
         public DateTime? CompletedAt { get; set; }
 
         /// <summary>
-        /// Total volume lifted in kilograms.
+        /// Gets or sets total volume lifted in kilograms.
         /// </summary>
         public decimal TotalVolumeKg { get; set; }
 
         /// <summary>
-        /// Navigation to the user.
+        /// Gets or sets navigation to the user.
         /// </summary>
-        public UserEf? User { get; set; }
+        public UserEf? User { get; set; } = null!;
 
         /// <summary>
-        /// Navigation to the workout template (if used).
+        /// Gets or sets navigation to the workout template (if used).
         /// </summary>
         public WorkoutTemplateEf? WorkoutTemplate { get; set; }
 
         /// <summary>
-        /// Collection of exercises performed in this workout.
+        /// Gets or sets collection of exercises performed in this workout.
         /// </summary>
         public ICollection<WorkoutExerciseEf> Exercises { get; set; } = new HashSet<WorkoutExerciseEf>();
     }
-
 }

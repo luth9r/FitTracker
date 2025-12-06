@@ -8,63 +8,63 @@ namespace FitTracker.Infrastructure.Persistence.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<TemplateSetEf> builder)
         {
-            builder.ToTable("template_sets");
+            _ = builder.ToTable("template_sets");
 
-            builder.HasKey(ts => ts.Id);
+            _ = builder.HasKey(ts => ts.Id);
 
-            builder.Property(ts => ts.Id)
+            _ = builder.Property(ts => ts.Id)
                 .HasColumnName("id")
                 .HasColumnType("uuid");
 
-            builder.Property(ts => ts.WorkoutTemplateExerciseId)
+            _ = builder.Property(ts => ts.WorkoutTemplateExerciseId)
                 .HasColumnName("workout_template_exercise_id")
                 .HasColumnType("uuid")
                 .IsRequired();
 
-            builder.Property(ts => ts.SetNumber)
+            _ = builder.Property(ts => ts.SetNumber)
                 .HasColumnName("set_number")
                 .IsRequired();
 
-            builder.Property(ts => ts.PlannedWeight)
+            _ = builder.Property(ts => ts.PlannedWeight)
                 .HasColumnName("planned_weight")
-                .HasPrecision(10, 2)
+                .HasColumnType("decimal(10,2)")
                 .IsRequired();
 
-            builder.Property(ts => ts.PlannedReps)
+            _ = builder.Property(ts => ts.PlannedReps)
                 .HasColumnName("planned_reps")
                 .IsRequired();
 
-            builder.Property(ts => ts.RestSeconds)
+            _ = builder.Property(ts => ts.RestSeconds)
                 .HasColumnName("rest_seconds");
 
-            builder.Property(ts => ts.SetType)
+            _ = builder.Property(ts => ts.SetType)
                 .HasColumnName("set_type")
                 .HasConversion<int>()
                 .IsRequired();
 
-            builder.Property(ts => ts.CreatedAt)
+            _ = builder.Property(ts => ts.CreatedAt)
                 .HasColumnName("created_at")
                 .HasColumnType("timestamp with time zone")
                 .HasDefaultValueSql("CURRENT_TIMESTAMP AT TIME ZONE 'UTC'");
 
-            builder.Property(ts => ts.UpdatedAt)
+            _ = builder.Property(ts => ts.UpdatedAt)
                 .HasColumnName("updated_at")
                 .HasColumnType("timestamp with time zone")
                 .HasDefaultValueSql("CURRENT_TIMESTAMP AT TIME ZONE 'UTC'");
 
-            // Indexes
-            builder.HasIndex(ts => ts.WorkoutTemplateExerciseId)
-                .HasDatabaseName("IX_TemplateSets_TemplateExerciseId");
-
-            builder.HasIndex(ts => new { ts.WorkoutTemplateExerciseId, ts.SetNumber })
-                .IsUnique()
-                .HasDatabaseName("IX_TemplateSets_TemplateExercise_SetNumber");
-
             // Relationships
-            builder.HasOne(ts => ts.WorkoutTemplateExercise)
+            _ = builder.HasOne(ts => ts.WorkoutTemplateExercise)
                 .WithMany(te => te.PlannedSets)
                 .HasForeignKey(ts => ts.WorkoutTemplateExerciseId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            // Indexes
+            _ = builder.HasIndex(ts => ts.WorkoutTemplateExerciseId)
+                .HasDatabaseName("IX_TemplateSets_TemplateExerciseId");
+
+            _ = builder.HasIndex(ts => new { ts.WorkoutTemplateExerciseId, ts.SetNumber })
+                .IsUnique()
+                .HasDatabaseName("IX_TemplateSets_TemplateExercise_SetNumber");
         }
     }
 }

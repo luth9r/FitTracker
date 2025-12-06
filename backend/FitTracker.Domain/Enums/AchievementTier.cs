@@ -8,6 +8,6 @@ namespace FitTracker.Domain.Enums
         Platinum,
         Diamond,
         Emerald,
-        Titan
+        Titan,
     }
 }

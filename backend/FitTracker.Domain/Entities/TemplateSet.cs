@@ -1,9 +1,5 @@
-using CSharpFunctionalExtensions;
 using FitTracker.Domain.Enums;
-using FitTracker.Domain.Validators;
 using FitTracker.Domain.ValueObjects;
-using FluentValidation;
-using FluentValidation.Results;
 
 namespace FitTracker.Domain.Entities
 {
@@ -12,15 +8,9 @@ namespace FitTracker.Domain.Entities
     /// </summary>
     public class TemplateSet : BaseEntity
     {
-        #region Constants
-
-        public const decimal MaxWeightKg = 3000m;
+        public const decimal MaxWeightKg = 10000m;
         public const int MaxReps = 1000;
         public const int MaxRestSeconds = 3600;
-
-        #endregion
-
-        #region Properties
 
         /// <summary>
         /// Gets the unique identifier of the workout template exercise this set belongs to.
@@ -52,49 +42,17 @@ namespace FitTracker.Domain.Entities
         /// </summary>
         public SetType SetType { get; private set; }
 
-        #endregion
-
-        #region Constructors
-
-        /// <summary>
-        /// Parameterless constructor for ORM.
-        /// Do not use directly.
-        /// </summary>
-        private TemplateSet()
-        {
-        }
-
-        /// <summary>
-        /// Domain constructor used by Builder for creating new template sets.
-        /// Contains business logic, initializes fields, and validates.
-        /// </summary>
-        private TemplateSet(
-            Guid templateExerciseId,
-            int setNumber,
-            decimal plannedWeight,
-            int plannedReps,
-            int? restSeconds,
-            SetType setType = SetType.Normal) : base()
-        {
-            WorkoutTemplateExerciseId = templateExerciseId;
-            SetNumber = setNumber;
-            PlannedWeight = Weight.FromKilograms(plannedWeight);
-            PlannedReps = plannedReps;
-            RestSeconds = restSeconds;
-            SetType = setType;
-        }
-
-        /// <summary>
-        /// Constructor for restoring template set from persistence layer.
-        /// Use <see cref="Create"/> for creating new template sets.
-        /// </summary>
-        public TemplateSet(
+        internal TemplateSet(
+            Guid id,
             Guid workoutTemplateExerciseId,
             int setNumber,
             Weight plannedWeight,
             int plannedReps,
             int? restSeconds,
-            SetType setType) : base()
+            SetType setType,
+            DateTime createdAt,
+            DateTime updatedAt)
+            : base(id, createdAt, updatedAt)
         {
             WorkoutTemplateExerciseId = workoutTemplateExerciseId;
             SetNumber = setNumber;
@@ -104,128 +62,143 @@ namespace FitTracker.Domain.Entities
             SetType = setType;
         }
 
-        #endregion
-
-        #region Validation
-
-        protected override IValidator GetValidator()
+        private TemplateSet()
         {
-            return new TemplateSetValidator();
         }
 
-        public ValidationResult Validate()
-        {
-            var validator = GetValidator();
-            return validator.Validate(new ValidationContext<TemplateSet>(this));
-        }
-
-        private Result<TemplateSet, ValidationResult> ValidateWithResult()
-        {
-            var result = Validate();
-            if (!result.IsValid)
-                return Result.Failure<TemplateSet, ValidationResult>(result);
-
-            return Result.Success<TemplateSet, ValidationResult>(this);
-        }
-
-        #endregion
-
-        #region Factory
-
-        public static Result<TemplateSet, ValidationResult> Create(
+        private TemplateSet(
             Guid workoutTemplateExerciseId,
             int setNumber,
-            decimal plannedWeight,
+            Weight plannedWeight,
             int plannedReps,
             int? restSeconds,
             SetType setType = SetType.Normal)
         {
-            var templateSet = new TemplateSet(workoutTemplateExerciseId, setNumber, plannedWeight, plannedReps, restSeconds, setType);
-            return templateSet.ValidateWithResult();
+            if (workoutTemplateExerciseId == Guid.Empty)
+            {
+                throw new ArgumentException("WorkoutTemplateExerciseId cannot be empty", nameof(workoutTemplateExerciseId));
+            }
+
+            if (setNumber <= 0)
+            {
+                throw new ArgumentException("Set number must be greater than 0", nameof(setNumber));
+            }
+
+            if (plannedWeight == null)
+            {
+                throw new ArgumentNullException(nameof(plannedWeight));
+            }
+
+            if (plannedWeight.ToKilograms() > MaxWeightKg)
+            {
+                throw new ArgumentException($"Planned weight cannot exceed {MaxWeightKg} kg", nameof(plannedWeight));
+            }
+
+            if (plannedReps <= 0)
+            {
+                throw new ArgumentException("Planned reps must be greater than 0", nameof(plannedReps));
+            }
+
+            if (plannedReps > MaxReps)
+            {
+                throw new ArgumentException($"Planned reps cannot exceed {MaxReps}", nameof(plannedReps));
+            }
+
+            if (restSeconds.HasValue && restSeconds.Value < 0)
+            {
+                throw new ArgumentException("Rest seconds cannot be negative", nameof(restSeconds));
+            }
+
+            if (restSeconds.HasValue && restSeconds.Value > MaxRestSeconds)
+            {
+                throw new ArgumentException($"Rest cannot exceed {MaxRestSeconds} seconds", nameof(restSeconds));
+            }
+
+            WorkoutTemplateExerciseId = workoutTemplateExerciseId;
+            SetNumber = setNumber;
+            PlannedWeight = plannedWeight;
+            PlannedReps = plannedReps;
+            RestSeconds = restSeconds;
+            SetType = setType;
         }
 
-        #endregion
+        public static TemplateSet Create(
+            Guid workoutTemplateExerciseId,
+            int setNumber,
+            Weight plannedWeight,
+            int plannedReps,
+            int? restSeconds = null,
+            SetType setType = SetType.Normal)
+        {
+            return new TemplateSet(workoutTemplateExerciseId, setNumber, plannedWeight, plannedReps, restSeconds, setType);
+        }
 
-        #region Domain Methods
-
-        public Result<TemplateSet, ValidationResult> Update(
-            decimal plannedWeight,
+        public void Update(
+            Weight plannedWeight,
             int plannedReps,
             int? restSeconds = null)
         {
-            PlannedWeight = Weight.FromKilograms(plannedWeight);
+            if (plannedWeight == null)
+            {
+                throw new ArgumentNullException(nameof(plannedWeight));
+            }
+
+            if (plannedWeight.ToKilograms() > MaxWeightKg)
+            {
+                throw new ArgumentException($"Planned weight cannot exceed {MaxWeightKg} kg", nameof(plannedWeight));
+            }
+
+            if (plannedReps <= 0)
+            {
+                throw new ArgumentException("Planned reps must be greater than 0", nameof(plannedReps));
+            }
+
+            if (plannedReps > MaxReps)
+            {
+                throw new ArgumentException($"Planned reps cannot exceed {MaxReps}", nameof(plannedReps));
+            }
+
+            if (restSeconds.HasValue && restSeconds.Value < 0)
+            {
+                throw new ArgumentException("Rest seconds cannot be negative", nameof(restSeconds));
+            }
+
+            if (restSeconds.HasValue && restSeconds.Value > MaxRestSeconds)
+            {
+                throw new ArgumentException($"Rest cannot exceed {MaxRestSeconds} seconds", nameof(restSeconds));
+            }
+
+            PlannedWeight = plannedWeight;
             PlannedReps = plannedReps;
             RestSeconds = restSeconds;
             UpdatedAt = DateTime.UtcNow;
-
-            return ValidateWithResult();
         }
 
-        #endregion
-
-        #region Builder
-
-        public static TemplateSetBuilder CreateBuilder() => new TemplateSetBuilder();
-
-        public class TemplateSetBuilder
+        public void UpdateSetNumber(int newSetNumber)
         {
-            private Guid _templateExerciseId;
-            private int _setNumber;
-            private decimal _plannedWeight;
-            private int _plannedReps;
-            private int? _restSeconds;
-            private SetType _setType = SetType.Normal;
-
-            public TemplateSetBuilder WithTemplateExercise(Guid id)
+            if (newSetNumber <= 0)
             {
-                _templateExerciseId = id;
-                return this;
+                throw new ArgumentException("Set number must be greater than 0", nameof(newSetNumber));
             }
 
-            public TemplateSetBuilder WithSetNumber(int number)
-            {
-                _setNumber = number;
-                return this;
-            }
-
-            public TemplateSetBuilder WithPlannedWeight(decimal weight)
-            {
-                _plannedWeight = weight;
-                return this;
-            }
-
-            public TemplateSetBuilder WithPlannedReps(int reps)
-            {
-                _plannedReps = reps;
-                return this;
-            }
-
-            public TemplateSetBuilder WithRest(int? seconds)
-            {
-                _restSeconds = seconds;
-                return this;
-            }
-
-            public TemplateSetBuilder WithSetType(SetType type)
-            {
-                _setType = type;
-                return this;
-            }
-
-            public Result<TemplateSet, ValidationResult> Build()
-            {
-                var set = new TemplateSet(
-                    _templateExerciseId,
-                    _setNumber,
-                    _plannedWeight,
-                    _plannedReps,
-                    _restSeconds,
-                    _setType);
-
-                return set.ValidateWithResult();
-            }
+            SetNumber = newSetNumber;
+            UpdatedAt = DateTime.UtcNow;
         }
 
-        #endregion
+        public void ChangeSetType(SetType setType)
+        {
+            SetType = setType;
+            UpdatedAt = DateTime.UtcNow;
+        }
+
+        public decimal CalculatePlannedVolume() => PlannedWeight.ToKilograms() * PlannedReps;
+
+        public decimal CalculatePlannedVolumeLbs() => PlannedWeight.ToPounds() * PlannedReps;
+
+        public bool IsWarmupSet() => SetType == SetType.Warmup;
+
+        public bool IsWorkingSet() => SetType == SetType.Normal;
+
+        public bool HasRestPeriod() => RestSeconds.HasValue;
     }
 }

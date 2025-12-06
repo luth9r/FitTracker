@@ -1,9 +1,9 @@
 @use 'sass:color';
 
 .dark-theme {
-  --color-primary: #60199f;
-  --color-primary-hover: #{color.scale(#60199f, $lightness: 5%)};
-  --color-primary-active: #{color.scale(#60199f, $lightness: 10%)};
+  --color-primary: #5B4B8A;
+  --color-primary-hover: #{color.scale(#5B4B8A, $lightness: 5%)};
+  --color-primary-active: #{color.scale(#5B4B8A, $lightness: 10%)};
   
   --color-bg-dark: #0f172a;
   --color-card-bg: #1e293b;

@@ -1,17 +1,17 @@
-﻿using AutoMapper;
-using CSharpFunctionalExtensions;
-using FitTracker.Application.DTOs.Auth;
-using FitTracker.Application.Interfaces;
-using FitTracker.Domain.Abstract.Interfaces;
-using MediatR;
-using Google.Apis.Auth;
-using Microsoft.Extensions.Logging;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using FluentValidation.Results;
-using FitTracker.Application.UseCases.User.Commands.Google;
+using AutoMapper;
+using CSharpFunctionalExtensions;
+using FitTracker.Application.DTOs.Auth;
 using FitTracker.Application.Extensions;
+using FitTracker.Application.Interfaces;
+using FitTracker.Application.UseCases.User.Commands.Google;
+using FitTracker.Domain.Abstract.Interfaces;
+using FluentValidation.Results;
+using Google.Apis.Auth;
+using MediatR;
+using Microsoft.Extensions.Logging;
 using ResultExtensions = FitTracker.Application.Extensions.ResultExtensions;
 
 namespace FitTracker.Application.UseCases.User.Handlers.Google

@@ -14,6 +14,6 @@ namespace FitTracker.Domain.Enums
         NightOwl,
         WeightMilestone,
         RepsMilestone,
-        PowerLifter
+        PowerLifter,
     }
 }

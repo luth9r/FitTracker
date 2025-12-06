@@ -9,24 +9,27 @@ namespace FitTracker.Infrastructure.Automapper
     {
         public ExerciseProfile()
         {
-            CreateMap<Exercise, ExerciseEf>()
-                .ForMember(dest => dest.User, opt => opt.Ignore())
-                .ForMember(dest => dest.WorkoutExercises, opt => opt.Ignore());
-
-            CreateMap<ExerciseEf, Exercise>()
+            _ = CreateMap<ExerciseEf, Exercise>()
                 .ConstructUsing(src => new Exercise(
-                    src.Name,
-                    src.Description,
-                    src.ImageUrl,
-                    src.VideoUrl,
-                    (MuscleGroup)src.MuscleGroup,
-                    (Equipment)src.Equipment,
-                    src.IsCustom,
-                    src.UserId))
-                .AfterMap((src, dest) =>
-                {
-                    dest.SetDatabaseFields(src.Id, src.CreatedAt, src.UpdatedAt);
-                });
+                    id: src.Id,
+                    name: src.Name,
+                    description: src.Description,
+                    imageUrl: src.ImageUrl,
+                    videoUrl: src.VideoUrl,
+                    muscleGroup: (MuscleGroup)src.MuscleGroup,
+                    equipment: (Equipment)src.Equipment,
+                    createdByUserId: src.CreatedByUserId,
+                    createdAt: src.CreatedAt,
+                    updatedAt: src.UpdatedAt));
+
+            _ = CreateMap<Exercise, ExerciseEf>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.MuscleGroup, opt => opt.MapFrom(src => (int)src.MuscleGroup))
+                .ForMember(dest => dest.Equipment, opt => opt.MapFrom(src => (int)src.Equipment))
+                .ForMember(dest => dest.CreatedByUserId, opt => opt.MapFrom(src => src.CreatedByUserId))
+                .ForMember(dest => dest.CreatedByUser, opt => opt.Ignore())
+                .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore());
         }
     }
 }

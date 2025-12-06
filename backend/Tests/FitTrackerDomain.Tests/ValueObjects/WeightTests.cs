@@ -5,15 +5,13 @@ namespace FitTracker.Tests.Domain.ValueObjects
 {
     public class WeightTests
     {
-        #region Factory Methods Tests
-
         [Fact]
         public void FromKilograms_Should_Create_Weight_With_Correct_Value()
         {
             var weight = Weight.FromKilograms(50m);
 
-            weight.ValueInKg.Should().Be(50m);
-            weight.ToKilograms().Should().Be(50m);
+            _ = weight.ValueInKg.Should().Be(50m);
+            _ = weight.ToKilograms().Should().Be(50m);
         }
 
         [Fact]
@@ -21,7 +19,7 @@ namespace FitTracker.Tests.Domain.ValueObjects
         {
             var weight = Weight.FromKilograms(50.12345m);
 
-            weight.ValueInKg.Should().Be(50.12m);
+            _ = weight.ValueInKg.Should().Be(50.12m);
         }
 
         [Fact]
@@ -29,7 +27,7 @@ namespace FitTracker.Tests.Domain.ValueObjects
         {
             Action act = () => Weight.FromKilograms(-10m);
 
-            act.Should().Throw<ArgumentException>()
+            _ = act.Should().Throw<ArgumentException>()
                .WithMessage("Weight cannot be negative*");
         }
 
@@ -38,7 +36,7 @@ namespace FitTracker.Tests.Domain.ValueObjects
         {
             var weight = Weight.FromPounds(220.462m);
 
-            weight.ValueInKg.Should().BeApproximately(100m, 0.01m);
+            _ = weight.ValueInKg.Should().BeApproximately(100m, 0.01m);
         }
 
         [Fact]
@@ -46,20 +44,16 @@ namespace FitTracker.Tests.Domain.ValueObjects
         {
             Action act = () => Weight.FromPounds(-10m);
 
-            act.Should().Throw<ArgumentException>()
+            _ = act.Should().Throw<ArgumentException>()
                .WithMessage("Weight cannot be negative*");
         }
-
-        #endregion
-
-        #region Conversion Tests
 
         [Fact]
         public void ToKilograms_Should_Return_Value_In_Kg()
         {
             var weight = Weight.FromKilograms(75m);
 
-            weight.ToKilograms().Should().Be(75m);
+            _ = weight.ToKilograms().Should().Be(75m);
         }
 
         [Fact]
@@ -67,7 +61,7 @@ namespace FitTracker.Tests.Domain.ValueObjects
         {
             var weight = Weight.FromKilograms(100m);
 
-            weight.ToPounds().Should().BeApproximately(220.46m, 0.01m);
+            _ = weight.ToPounds().Should().BeApproximately(220.46m, 0.01m);
         }
 
         [Fact]
@@ -76,12 +70,8 @@ namespace FitTracker.Tests.Domain.ValueObjects
             var weight = Weight.FromKilograms(45.5m);
             var pounds = weight.ToPounds();
 
-            Math.Round(pounds, 2).Should().Be(pounds);
+            _ = Math.Round(pounds, 2).Should().Be(pounds);
         }
-
-        #endregion
-
-        #region Arithmetic Operations Tests
 
         [Fact]
         public void Add_Should_Combine_Two_Weights()
@@ -91,7 +81,7 @@ namespace FitTracker.Tests.Domain.ValueObjects
 
             var result = weight1.Add(weight2);
 
-            result.ValueInKg.Should().Be(75m);
+            _ = result.ValueInKg.Should().Be(75m);
         }
 
         [Fact]
@@ -101,7 +91,7 @@ namespace FitTracker.Tests.Domain.ValueObjects
 
             Action act = () => weight.Add(null);
 
-            act.Should().Throw<ArgumentNullException>();
+            _ = act.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -112,7 +102,7 @@ namespace FitTracker.Tests.Domain.ValueObjects
 
             var result = weight1.Subtract(weight2);
 
-            result.ValueInKg.Should().Be(70m);
+            _ = result.ValueInKg.Should().Be(70m);
         }
 
         [Fact]
@@ -123,7 +113,7 @@ namespace FitTracker.Tests.Domain.ValueObjects
 
             Action act = () => weight1.Subtract(weight2);
 
-            act.Should().Throw<InvalidOperationException>()
+            _ = act.Should().Throw<InvalidOperationException>()
                .WithMessage("Result cannot be negative");
         }
 
@@ -134,7 +124,7 @@ namespace FitTracker.Tests.Domain.ValueObjects
 
             Action act = () => weight.Subtract(null);
 
-            act.Should().Throw<ArgumentNullException>();
+            _ = act.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -144,7 +134,7 @@ namespace FitTracker.Tests.Domain.ValueObjects
 
             var result = weight.Multiply(3m);
 
-            result.ValueInKg.Should().Be(75m);
+            _ = result.ValueInKg.Should().Be(75m);
         }
 
         [Fact]
@@ -154,13 +144,9 @@ namespace FitTracker.Tests.Domain.ValueObjects
 
             Action act = () => weight.Multiply(-2m);
 
-            act.Should().Throw<ArgumentException>()
+            _ = act.Should().Throw<ArgumentException>()
                .WithMessage("Multiplier cannot be negative*");
         }
-
-        #endregion
-
-        #region Operator Overload Tests
 
         [Fact]
         public void Operator_Plus_Should_Add_Weights()
@@ -170,7 +156,7 @@ namespace FitTracker.Tests.Domain.ValueObjects
 
             var result = weight1 + weight2;
 
-            result.ValueInKg.Should().Be(75m);
+            _ = result.ValueInKg.Should().Be(75m);
         }
 
         [Fact]
@@ -181,7 +167,7 @@ namespace FitTracker.Tests.Domain.ValueObjects
 
             var result = weight1 - weight2;
 
-            result.ValueInKg.Should().Be(50m);
+            _ = result.ValueInKg.Should().Be(50m);
         }
 
         [Fact]
@@ -191,7 +177,7 @@ namespace FitTracker.Tests.Domain.ValueObjects
 
             var result = weight * 2.5m;
 
-            result.ValueInKg.Should().Be(50m);
+            _ = result.ValueInKg.Should().Be(50m);
         }
 
         [Fact]
@@ -200,8 +186,8 @@ namespace FitTracker.Tests.Domain.ValueObjects
             var weight1 = Weight.FromKilograms(100m);
             var weight2 = Weight.FromKilograms(50m);
 
-            (weight1 > weight2).Should().BeTrue();
-            (weight2 > weight1).Should().BeFalse();
+            _ = (weight1 > weight2).Should().BeTrue();
+            _ = (weight2 > weight1).Should().BeFalse();
         }
 
         [Fact]
@@ -210,8 +196,8 @@ namespace FitTracker.Tests.Domain.ValueObjects
             var weight1 = Weight.FromKilograms(50m);
             var weight2 = Weight.FromKilograms(100m);
 
-            (weight1 < weight2).Should().BeTrue();
-            (weight2 < weight1).Should().BeFalse();
+            _ = (weight1 < weight2).Should().BeTrue();
+            _ = (weight2 < weight1).Should().BeFalse();
         }
 
         [Fact]
@@ -221,9 +207,9 @@ namespace FitTracker.Tests.Domain.ValueObjects
             var weight2 = Weight.FromKilograms(100m);
             var weight3 = Weight.FromKilograms(50m);
 
-            (weight1 >= weight2).Should().BeTrue();
-            (weight1 >= weight3).Should().BeTrue();
-            (weight3 >= weight1).Should().BeFalse();
+            _ = (weight1 >= weight2).Should().BeTrue();
+            _ = (weight1 >= weight3).Should().BeTrue();
+            _ = (weight3 >= weight1).Should().BeFalse();
         }
 
         [Fact]
@@ -233,14 +219,10 @@ namespace FitTracker.Tests.Domain.ValueObjects
             var weight2 = Weight.FromKilograms(50m);
             var weight3 = Weight.FromKilograms(100m);
 
-            (weight1 <= weight2).Should().BeTrue();
-            (weight1 <= weight3).Should().BeTrue();
-            (weight3 <= weight1).Should().BeFalse();
+            _ = (weight1 <= weight2).Should().BeTrue();
+            _ = (weight1 <= weight3).Should().BeTrue();
+            _ = (weight3 <= weight1).Should().BeFalse();
         }
-
-        #endregion
-
-        #region Equality and Comparison Tests
 
         [Fact]
         public void Equals_Should_Return_True_For_Same_Values_Within_Tolerance()
@@ -248,8 +230,8 @@ namespace FitTracker.Tests.Domain.ValueObjects
             var weight1 = Weight.FromKilograms(50.00m);
             var weight2 = Weight.FromKilograms(50.00m);
 
-            weight1.Equals(weight2).Should().BeTrue();
-            (weight1 == weight2).Should().BeTrue();
+            _ = weight1.Equals(weight2).Should().BeTrue();
+            _ = (weight1 == weight2).Should().BeTrue();
         }
 
         [Fact]
@@ -258,8 +240,8 @@ namespace FitTracker.Tests.Domain.ValueObjects
             var weight1 = Weight.FromKilograms(50m);
             var weight2 = Weight.FromKilograms(75m);
 
-            weight1.Equals(weight2).Should().BeFalse();
-            (weight1 == weight2).Should().BeFalse();
+            _ = weight1.Equals(weight2).Should().BeFalse();
+            _ = (weight1 == weight2).Should().BeFalse();
         }
 
         [Fact]
@@ -267,8 +249,8 @@ namespace FitTracker.Tests.Domain.ValueObjects
         {
             var weight = Weight.FromKilograms(50m);
 
-            weight.Equals(null).Should().BeFalse();
-            (weight == null).Should().BeFalse();
+            _ = weight.Equals(null).Should().BeFalse();
+            _ = (weight == null).Should().BeFalse();
         }
 
         [Fact]
@@ -277,7 +259,7 @@ namespace FitTracker.Tests.Domain.ValueObjects
             var weight1 = Weight.FromKilograms(50m);
             var weight2 = Weight.FromKilograms(75m);
 
-            (weight1 != weight2).Should().BeTrue();
+            _ = (weight1 != weight2).Should().BeTrue();
         }
 
         [Fact]
@@ -287,9 +269,9 @@ namespace FitTracker.Tests.Domain.ValueObjects
             var weight2 = Weight.FromKilograms(75m);
             var weight3 = Weight.FromKilograms(50m);
 
-            weight1.CompareTo(weight2).Should().BeLessThan(0);
-            weight2.CompareTo(weight1).Should().BeGreaterThan(0);
-            weight1.CompareTo(weight3).Should().Be(0);
+            _ = weight1.CompareTo(weight2).Should().BeLessThan(0);
+            _ = weight2.CompareTo(weight1).Should().BeGreaterThan(0);
+            _ = weight1.CompareTo(weight3).Should().Be(0);
         }
 
         [Fact]
@@ -297,7 +279,7 @@ namespace FitTracker.Tests.Domain.ValueObjects
         {
             var weight = Weight.FromKilograms(50m);
 
-            weight.CompareTo(null).Should().Be(1);
+            _ = weight.CompareTo(null).Should().Be(1);
         }
 
         [Fact]
@@ -306,19 +288,15 @@ namespace FitTracker.Tests.Domain.ValueObjects
             var weight1 = Weight.FromKilograms(50m);
             var weight2 = Weight.FromKilograms(50m);
 
-            weight1.GetHashCode().Should().Be(weight2.GetHashCode());
+            _ = weight1.GetHashCode().Should().Be(weight2.GetHashCode());
         }
-
-        #endregion
-
-        #region String Representation Tests
 
         [Fact]
         public void ToString_Should_Return_Value_In_Kg_With_Two_Decimals()
         {
             var weight = Weight.FromKilograms(75.5m);
 
-            weight.ToString().Should().Be("75.50 kg");
+            _ = weight.ToString().Should().Be("75.50 kg");
         }
 
         [Fact]
@@ -326,7 +304,7 @@ namespace FitTracker.Tests.Domain.ValueObjects
         {
             var weight = Weight.FromKilograms(80m);
 
-            weight.ToString("kg").Should().Be("80.00 kg");
+            _ = weight.ToString("kg").Should().Be("80.00 kg");
         }
 
         [Fact]
@@ -334,7 +312,7 @@ namespace FitTracker.Tests.Domain.ValueObjects
         {
             var weight = Weight.FromKilograms(100m);
 
-            weight.ToString("lbs").Should().Be("220.46 lbs");
+            _ = weight.ToString("lbs").Should().Be("220.46 lbs");
         }
 
         [Fact]
@@ -342,9 +320,7 @@ namespace FitTracker.Tests.Domain.ValueObjects
         {
             var weight = Weight.FromKilograms(50m);
 
-            weight.ToString("unknown").Should().Be("50.00 kg");
+            _ = weight.ToString("unknown").Should().Be("50.00 kg");
         }
-
-        #endregion
     }
 }

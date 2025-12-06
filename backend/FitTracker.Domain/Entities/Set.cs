@@ -1,9 +1,5 @@
-using CSharpFunctionalExtensions;
 using FitTracker.Domain.Enums;
-using FitTracker.Domain.Validators;
 using FitTracker.Domain.ValueObjects;
-using FluentValidation;
-using FluentValidation.Results;
 
 namespace FitTracker.Domain.Entities
 {
@@ -12,15 +8,9 @@ namespace FitTracker.Domain.Entities
     /// </summary>
     public class Set : BaseEntity
     {
-        #region Constants
-
         public const int MaxReps = 1000;
         public const int MaxRestSeconds = 3600; // 1 hour
-        public const decimal MaxWeightKg = 3000m;
-
-        #endregion
-
-        #region Properties
+        public const decimal MaxWeightKg = 10000m;
 
         /// <summary>
         /// Gets the unique identifier of the workout exercise this set belongs to.
@@ -62,45 +52,8 @@ namespace FitTracker.Domain.Entities
         /// </summary>
         public DateTime? CompletedAt { get; private set; }
 
-        #endregion
-
-        #region Constructors
-
-        /// <summary>
-        /// Parameterless constructor for ORM.
-        /// Do not use directly.
-        /// </summary>
-        private Set()
-        {
-        }
-
-        /// <summary>
-        /// Domain constructor used by Builder for creating new sets.
-        /// Contains business logic, initializes fields, and validates.
-        /// </summary>
-        private Set(
-            Guid workoutExerciseId,
-            int setNumber,
-            Weight weight,
-            int reps,
-            int? restSeconds,
-            SetType setType = SetType.Normal) : base()
-        {
-            WorkoutExerciseId = workoutExerciseId;
-            SetNumber = setNumber;
-            Weight = weight ?? throw new ArgumentNullException(nameof(weight));
-            Reps = reps;
-            RestSeconds = restSeconds;
-            SetType = setType;
-            IsCompleted = false;
-
-        }
-
-        /// <summary>
-        /// Constructor for restoring set from persistence layer.
-        /// Use <see cref="Create"/> for creating new sets.
-        /// </summary>
-        public Set(
+        internal Set(
+            Guid id,
             Guid workoutExerciseId,
             int setNumber,
             Weight weight,
@@ -108,7 +61,10 @@ namespace FitTracker.Domain.Entities
             int? restSeconds,
             SetType setType,
             bool isCompleted,
-            DateTime? completedAt) : base()
+            DateTime? completedAt,
+            DateTime createdAt,
+            DateTime updatedAt)
+            : base(id, createdAt, updatedAt)
         {
             WorkoutExerciseId = workoutExerciseId;
             SetNumber = setNumber;
@@ -118,42 +74,13 @@ namespace FitTracker.Domain.Entities
             SetType = setType;
             IsCompleted = isCompleted;
             CompletedAt = completedAt;
-
-            // No validation here since data is from persistence
         }
 
-        #endregion
-
-        #region Validation
-
-        protected override IValidator GetValidator()
+        private Set()
         {
-            return new SetValidator();
         }
 
-        public ValidationResult Validate()
-        {
-            var validator = GetValidator();
-            return validator.Validate(new ValidationContext<Set>(this));
-        }
-
-        private Result<Set, ValidationResult> ValidateWithResult()
-        {
-            var result = Validate();
-            if (!result.IsValid)
-                return Result.Failure<Set, ValidationResult>(result);
-
-            return Result.Success<Set, ValidationResult>(this);
-        }
-
-        #endregion
-
-        #region Factory
-
-        /// <summary>
-        /// Creates a new set with validation.
-        /// </summary>
-        public static Result<Set, ValidationResult> Create(
+        private Set(
             Guid workoutExerciseId,
             int setNumber,
             Weight weight,
@@ -161,86 +88,160 @@ namespace FitTracker.Domain.Entities
             int? restSeconds,
             SetType setType = SetType.Normal)
         {
-            var set = new Set(workoutExerciseId, setNumber, weight, reps, restSeconds, setType);
-            return set.ValidateWithResult();
+            if (workoutExerciseId == Guid.Empty)
+            {
+                throw new ArgumentException("WorkoutExerciseId cannot be empty", nameof(workoutExerciseId));
+            }
+
+            if (setNumber <= 0)
+            {
+                throw new ArgumentException("Set number must be greater than 0", nameof(setNumber));
+            }
+
+            if (weight == null)
+            {
+                throw new ArgumentNullException(nameof(weight));
+            }
+
+            if (weight.ToKilograms() > MaxWeightKg)
+            {
+                throw new ArgumentException($"Weight cannot exceed {MaxWeightKg} kg", nameof(weight));
+            }
+
+            if (reps <= 0)
+            {
+                throw new ArgumentException("Reps must be greater than 0", nameof(reps));
+            }
+
+            if (reps > MaxReps)
+            {
+                throw new ArgumentException($"Reps cannot exceed {MaxReps}", nameof(reps));
+            }
+
+            if (restSeconds.HasValue && restSeconds.Value < 0)
+            {
+                throw new ArgumentException("Rest seconds cannot be negative", nameof(restSeconds));
+            }
+
+            if (restSeconds.HasValue && restSeconds.Value > MaxRestSeconds)
+            {
+                throw new ArgumentException($"Rest cannot exceed {MaxRestSeconds} seconds", nameof(restSeconds));
+            }
+
+            WorkoutExerciseId = workoutExerciseId;
+            SetNumber = setNumber;
+            Weight = weight;
+            Reps = reps;
+            RestSeconds = restSeconds;
+            SetType = setType;
+            IsCompleted = false;
         }
 
-        #endregion
+        public static Set Create(
+            Guid workoutExerciseId,
+            int setNumber,
+            Weight weight,
+            int reps,
+            int? restSeconds = null,
+            SetType setType = SetType.Normal)
+        {
+            return new Set(workoutExerciseId, setNumber, weight, reps, restSeconds, setType);
+        }
 
-        #region Domain Methods
-
-        public Result<Set, ValidationResult> UpdateSetNumber(int newSetNumber)
+        public void UpdateSetNumber(int newSetNumber)
         {
             if (newSetNumber <= 0)
-                throw new ArgumentException("Set number must be greater than 0");
+            {
+                throw new ArgumentException("Set number must be greater than 0", nameof(newSetNumber));
+            }
 
             SetNumber = newSetNumber;
             UpdatedAt = DateTime.UtcNow;
-
-            return ValidateWithResult();
-
         }
 
-        public Result<Set, ValidationResult> UpdateWeight(Weight weight)
+        public void UpdateWeight(Weight weight)
         {
-            Weight = weight ?? throw new ArgumentNullException(nameof(weight));
+            if (weight == null)
+            {
+                throw new ArgumentNullException(nameof(weight));
+            }
+
+            if (weight.ToKilograms() > MaxWeightKg)
+            {
+                throw new ArgumentException($"Weight cannot exceed {MaxWeightKg} kg", nameof(weight));
+            }
+
+            Weight = weight;
             UpdatedAt = DateTime.UtcNow;
-            return ValidateWithResult();
         }
 
-        public Result<Set, ValidationResult> IncreaseWeightKg(decimal amountKg)
+        public void IncreaseWeight(decimal amountKg)
         {
-            if (amountKg < 0)
-                throw new ArgumentException("Amount cannot be negative");
+            if (amountKg <= 0)
+            {
+                throw new ArgumentException("Amount must be positive", nameof(amountKg));
+            }
 
             var newWeightKg = Weight.ToKilograms() + amountKg;
+            if (newWeightKg > MaxWeightKg)
+            {
+                throw new InvalidOperationException($"New weight would exceed maximum of {MaxWeightKg} kg");
+            }
+
             Weight = Weight.FromKilograms(newWeightKg);
             UpdatedAt = DateTime.UtcNow;
-            return ValidateWithResult();
         }
 
-        public Result<Set, ValidationResult> DecreaseWeightKg(decimal amountKg)
+        public void DecreaseWeight(decimal amountKg)
         {
-            if (amountKg < 0)
-                throw new ArgumentException("Amount cannot be negative");
+            if (amountKg <= 0)
+            {
+                throw new ArgumentException("Amount must be positive", nameof(amountKg));
+            }
 
             var newWeightKg = Weight.ToKilograms() - amountKg;
             if (newWeightKg < 0)
+            {
                 throw new InvalidOperationException("Weight cannot be negative");
+            }
 
             Weight = Weight.FromKilograms(newWeightKg);
             UpdatedAt = DateTime.UtcNow;
-            return ValidateWithResult();
         }
 
-        public Result<Set, ValidationResult> UpdateReps(int reps)
+        public void UpdateReps(int reps)
         {
             if (reps <= 0)
-                throw new ArgumentException("Reps must be greater than 0");
+            {
+                throw new ArgumentException("Reps must be greater than 0", nameof(reps));
+            }
 
             if (reps > MaxReps)
-                throw new ArgumentException($"Reps cannot exceed {MaxReps}");
+            {
+                throw new ArgumentException($"Reps cannot exceed {MaxReps}", nameof(reps));
+            }
 
             Reps = reps;
             UpdatedAt = DateTime.UtcNow;
-            return ValidateWithResult();
         }
 
-        public Result<Set, ValidationResult> UpdateRest(int? seconds)
+        public void UpdateRest(int? seconds)
         {
             if (seconds.HasValue)
             {
                 if (seconds.Value < 0)
-                    throw new ArgumentException("Rest seconds cannot be negative");
+                {
+                    throw new ArgumentException("Rest seconds cannot be negative", nameof(seconds));
+                }
 
                 if (seconds.Value > MaxRestSeconds)
-                    throw new ArgumentException($"Rest cannot exceed {MaxRestSeconds} seconds");
+                {
+                    throw new ArgumentException($"Rest cannot exceed {MaxRestSeconds} seconds", nameof(seconds));
+                }
             }
 
             RestSeconds = seconds;
             UpdatedAt = DateTime.UtcNow;
-
-            return ValidateWithResult();
         }
 
         public void ChangeSetType(SetType setType)
@@ -251,6 +252,11 @@ namespace FitTracker.Domain.Entities
 
         public void Complete()
         {
+            if (IsCompleted)
+            {
+                return;
+            }
+
             IsCompleted = true;
             CompletedAt = DateTime.UtcNow;
             UpdatedAt = DateTime.UtcNow;
@@ -258,101 +264,33 @@ namespace FitTracker.Domain.Entities
 
         public void Uncomplete()
         {
+            if (!IsCompleted)
+            {
+                return;
+            }
+
             IsCompleted = false;
             CompletedAt = null;
             UpdatedAt = DateTime.UtcNow;
         }
 
-        public decimal CalculateVolume()
-        {
-            return Weight.ToKilograms() * Reps;
-        }
+        public decimal CalculateVolume() => Weight.ToKilograms() * Reps;
 
-        public decimal CalculateVolumeLbs()
-        {
-            return Weight.ToPounds() * Reps;
-        }
+        public decimal CalculateVolumeLbs() => Weight.ToPounds() * Reps;
 
         public bool IsPR(IEnumerable<Set> previousSets)
         {
             if (previousSets == null || !previousSets.Any())
+            {
                 return true;
+            }
 
             var maxPreviousWeight = previousSets.Max(s => s.Weight.ToKilograms());
             return Weight.ToKilograms() > maxPreviousWeight;
         }
 
-        #endregion
+        public bool IsWarmupSet() => SetType == SetType.Warmup;
 
-        #region Builder
-
-        public static SetBuilder CreateBuilder() => new SetBuilder();
-
-        public class SetBuilder
-        {
-            private Guid _workoutExerciseId;
-            private int _setNumber;
-            private Weight _weight = Weight.FromKilograms(0);
-            private int _reps;
-            private int? _restSeconds;
-            private SetType _setType = SetType.Normal;
-
-            public SetBuilder WithWorkoutExercise(Guid id)
-            {
-                _workoutExerciseId = id;
-                return this;
-            }
-
-            public SetBuilder WithSetNumber(int number)
-            {
-                _setNumber = number;
-                return this;
-            }
-
-            public SetBuilder WithWeight(Weight weight)
-            {
-                _weight = weight;
-                return this;
-            }
-
-            public SetBuilder WithWeightKg(decimal kg)
-            {
-                _weight = Weight.FromKilograms(kg);
-                return this;
-            }
-
-            public SetBuilder WithWeightLbs(decimal lbs)
-            {
-                _weight = Weight.FromPounds(lbs);
-                return this;
-            }
-
-            public SetBuilder WithReps(int reps)
-            {
-                _reps = reps;
-                return this;
-            }
-
-            public SetBuilder WithRest(int seconds)
-            {
-                _restSeconds = seconds;
-                return this;
-            }
-
-            public SetBuilder WithSetType(SetType setType)
-            {
-                _setType = setType;
-                return this;
-            }
-
-            public Result<Set, ValidationResult> Build()
-            {
-                var set = new Set(_workoutExerciseId, _setNumber, _weight, _reps, _restSeconds, _setType);
-
-                return set.ValidateWithResult();
-            }
-        }
-
-        #endregion
+        public bool IsWorkingSet() => SetType == SetType.Normal;
     }
 }

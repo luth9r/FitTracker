@@ -12,6 +12,6 @@ namespace FitTracker.Domain.Enums
         TRX = 8,
         Medicine_Ball = 9,
         None = 10,
-        Other = 11
+        Other = 11,
     }
 }

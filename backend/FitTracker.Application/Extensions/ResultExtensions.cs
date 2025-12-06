@@ -14,7 +14,7 @@ namespace FitTracker.Application.Extensions
         {
             var errors = new ValidationResult(new[]
             {
-                new ValidationFailure(propertyName, errorMessage)
+                new ValidationFailure(propertyName, errorMessage),
             });
             return Result.Failure<TValue, ValidationResult>(errors);
         }

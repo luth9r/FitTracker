@@ -37,7 +37,6 @@ public static class DependencyInjection
         // ============================================
         AddAutoMappers(services);
 
-
         return services;
     }
 
@@ -53,28 +52,25 @@ public static class DependencyInjection
                 "Database connection string 'DefaultConnection' is not configured.");
         }
 
-        services.AddDbContext<FitTrackerDbContext>(options =>
+        _ = services.AddDbContext<FitTrackerDbContext>(options =>
         {
-            options.UseNpgsql(
+            _ = options.UseNpgsql(
                 connectionString,
                 npgsqlOptions =>
                 {
-                    npgsqlOptions.MigrationsAssembly("FitTracker.Infrastructure");
-                    npgsqlOptions.CommandTimeout(30);
-                    npgsqlOptions.EnableRetryOnFailure(
+                    _ = npgsqlOptions.MigrationsAssembly("FitTracker.Infrastructure");
+                    _ = npgsqlOptions.CommandTimeout(30);
+                    _ = npgsqlOptions.EnableRetryOnFailure(
                         maxRetryCount: 3,
                         maxRetryDelay: TimeSpan.FromSeconds(30),
-                        errorCodesToAdd: null
-                    );
-
-                }
-            );
+                        errorCodesToAdd: null);
+                });
 
             var isDevelopment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
 
             if (isDevelopment)
             {
-                options.LogTo(Console.WriteLine, Microsoft.Extensions.Logging.LogLevel.Information)
+                _ = options.LogTo(Console.WriteLine, Microsoft.Extensions.Logging.LogLevel.Information)
                     .EnableSensitiveDataLogging()
                     .EnableDetailedErrors();
             }
@@ -83,21 +79,22 @@ public static class DependencyInjection
 
     private static void AddLocalization(IServiceCollection services)
     {
-        services.AddHttpContextAccessor();
+        _ = services.AddHttpContextAccessor();
 
-        services.AddSingleton<JsonLocalizationProvider>();
+        _ = services.AddSingleton<JsonLocalizationProvider>();
 
-        services.AddScoped<ILocalizationService, LocalizationService>();
+        _ = services.AddScoped<ILocalizationService, LocalizationService>();
     }
 
     private static void AddRepositories(IServiceCollection services)
     {
-        services.AddScoped<IPasswordHasher, PasswordHasher>();
-        services.AddScoped<IUserRepository, UserRepository>();
-        services.AddScoped<IUnitOfWork, UnitOfWork>();
-        services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
-        services.AddScoped<IEmailService, EmailService>();
-        services.AddScoped<IGoogleOAuthService, GoogleOAuthService>();
+        _ = services.AddScoped<IPasswordHasher, PasswordHasher>();
+        _ = services.AddScoped<IUserRepository, UserRepository>();
+        _ = services.AddScoped<IUnitOfWork, UnitOfWork>();
+        _ = services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
+        _ = services.AddScoped<IEmailService, EmailService>();
+        _ = services.AddScoped<IGoogleOAuthService, GoogleOAuthService>();
+
         // TODO:
         // services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
         // services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -107,7 +104,7 @@ public static class DependencyInjection
 
     private static void AddAutoMappers(IServiceCollection services)
     {
-        services.AddAutoMapper(cfg =>
+        _ = services.AddAutoMapper(cfg =>
         {
             cfg.AddMaps(typeof(DependencyInjection).Assembly);
         });

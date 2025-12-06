@@ -23,9 +23,8 @@ namespace FitTracker.Infrastructure.Services
             return provider.GetString(key, culture);
         }
 
-
         /// <summary>
-        /// Get current culture from Accept-Language Header
+        /// Get current culture from Accept-Language Header.
         /// </summary>
         /// <returns></returns>
         private string GetCurrentCulture()
@@ -68,6 +67,5 @@ namespace FitTracker.Infrastructure.Services
                 return "en-US";
             }
         }
-
     }
 }

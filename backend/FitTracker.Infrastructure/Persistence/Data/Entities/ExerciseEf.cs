@@ -1,57 +1,52 @@
 namespace FitTracker.Infrastructure.Persistence.Data.Entities
 {
     /// <summary>
-	/// Represents a physical exercise.
-	/// </summary>
-	public class ExerciseEf : BaseEntityEf
+    /// Represents a physical exercise.
+    /// </summary>
+    public class ExerciseEf : BaseEntityEf
     {
         /// <summary>
-        /// Exercise name.
+        /// Gets or sets exercise name.
         /// </summary>
         public string Name { get; set; } = null!;
 
         /// <summary>
-        /// Optional exercise description.
+        /// Gets or sets optional exercise description.
         /// </summary>
         public string? Description { get; set; }
 
         /// <summary>
-        /// Optional URL to exercise demonstration image.
+        /// Gets or sets optional URL to exercise demonstration image.
         /// </summary>
         public string? ImageUrl { get; set; }
 
         /// <summary>
-        /// Optional URL to exercise demonstration video.
+        /// Gets or sets optional URL to exercise demonstration video.
         /// </summary>
         public string? VideoUrl { get; set; }
 
         /// <summary>
-        /// Primary muscle group targeted by this exercise.
+        /// Gets or sets primary muscle group targeted by this exercise.
         /// </summary>
         public int MuscleGroup { get; set; }
 
         /// <summary>
-        /// Equipment required for this exercise.
+        /// Gets or sets equipment required for this exercise.
         /// </summary>
         public int Equipment { get; set; }
 
         /// <summary>
-        /// Indicates if this is a user-created custom exercise.
+        /// Gets or sets iD of the user who created this custom exercise (null for default exercises).
         /// </summary>
-        public bool IsCustom { get; set; }
+        public Guid? CreatedByUserId { get; set; }
 
         /// <summary>
-        /// ID of the user who created this custom exercise (null for default exercises).
+        /// Gets or sets navigation to the user (for custom exercises).
         /// </summary>
-        public Guid? UserId { get; set; }
+        public UserEf? CreatedByUser { get; set; }
 
         /// <summary>
-        /// Navigation to the user (for custom exercises).
-        /// </summary>
-        public UserEf? User { get; set; }
-
-        /// <summary>
-        /// Collection of workout exercises using this exercise.
+        /// Gets or sets collection of workout exercises using this exercise.
         /// </summary>
         public ICollection<WorkoutExerciseEf> WorkoutExercises { get; set; }
     }

@@ -9,33 +9,36 @@ namespace FitTracker.Infrastructure.Automapper
     {
         public ExerciseRecordProfile()
         {
-            CreateMap<ExerciseRecord, ExerciseRecordEf>()
-                .ForMember(dest => dest.MaxWeightKilograms, opt => opt.MapFrom(src => src.MaxWeight.ToKilograms()))
-                .ForMember(dest => dest.User, opt => opt.Ignore())
-                .ForMember(dest => dest.Exercise, opt => opt.Ignore());
-
-            CreateMap<ExerciseRecordEf, ExerciseRecord>()
+            _ = CreateMap<ExerciseRecordEf, ExerciseRecord>()
                 .ConstructUsing(src => new ExerciseRecord(
-                    src.UserId,
-                    src.ExerciseId,
-                    Weight.FromKilograms(src.MaxWeightKilograms),
-                    src.MaxReps,
-                    src.MaxVolume,
-                    src.MaxTotalVolume,
-                    src.MaxWeightDate,
-                    src.MaxRepsDate,
-                    src.MaxVolumeDate,
-                    src.MaxTotalVolumeDate,
-                    src.TotalWorkouts,
-                    src.TotalSets,
-                    src.TotalReps,
-                    src.TotalLifted,
-                    src.LastPerformed))
-                .ForMember(dest => dest.MaxWeight, opt => opt.Ignore())
-                .AfterMap((src, dest) =>
-                {
-                    dest.SetDatabaseFields(src.Id, src.CreatedAt, src.UpdatedAt);
-                });
+                    id: src.Id,
+                    userId: src.UserId,
+                    exerciseId: src.ExerciseId,
+                    maxWeight: Weight.FromKilograms(src.MaxWeightKilograms),
+                    maxReps: src.MaxReps,
+                    maxVolume: src.MaxVolume,
+                    maxTotalVolume: src.MaxTotalVolume,
+                    maxWeightDate: src.MaxWeightDate,
+                    maxRepsDate: src.MaxRepsDate,
+                    maxVolumeDate: src.MaxVolumeDate,
+                    maxTotalVolumeDate: src.MaxTotalVolumeDate,
+                    totalWorkouts: src.TotalWorkouts,
+                    totalSets: src.TotalSets,
+                    totalReps: src.TotalReps,
+                    totalLifted: src.TotalLifted,
+                    lastPerformed: src.LastPerformed,
+                    createdAt: src.CreatedAt,
+                    updatedAt: src.UpdatedAt));
+
+            _ = CreateMap<ExerciseRecord, ExerciseRecordEf>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.MaxWeightKilograms, opt => opt.MapFrom(src => src.MaxWeight.ToKilograms()))
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
+                .ForMember(dest => dest.ExerciseId, opt => opt.MapFrom(src => src.ExerciseId))
+                .ForMember(dest => dest.User, opt => opt.Ignore())
+                .ForMember(dest => dest.Exercise, opt => opt.Ignore())
+                .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore());
         }
     }
 }

@@ -39,6 +39,7 @@ export class LoginComponent {
   errorMessage: string | null = null;
   successMessage: string | null = null;
   isFormPristine = true;
+  activeField: string | null = null;
 
   usernameValidationState = { minLength: false, noSpaces: false };
   passwordValidationState = { minLength: false, oneLetter: false, oneNumber: false };
@@ -89,6 +90,14 @@ export class LoginComponent {
         this.isLoading = false;
       }
     });
+  }
+
+  setActiveField(fieldName: string) {
+    this.activeField = fieldName;
+  }
+
+  clearActiveField() {
+    this.activeField = null;
   }
 
   toggleMode(mode: 'login' | 'register') {

@@ -10,7 +10,7 @@ namespace FitTracker.Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "users",
                 columns: table => new
                 {
@@ -24,14 +24,14 @@ namespace FitTracker.Infrastructure.Migrations
                     bio = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
                     preferred_units = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP AT TIME ZONE 'UTC'"),
-                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP AT TIME ZONE 'UTC'")
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP AT TIME ZONE 'UTC'"),
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_users", x => x.id);
+                    _ = table.PrimaryKey("PK_users", x => x.id);
                 });
 
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "achievements",
                 columns: table => new
                 {
@@ -47,12 +47,12 @@ namespace FitTracker.Infrastructure.Migrations
                     unlocked_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     tier = table.Column<int>(type: "integer", nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP AT TIME ZONE 'UTC'"),
-                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP AT TIME ZONE 'UTC'")
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP AT TIME ZONE 'UTC'"),
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_achievements", x => x.id);
-                    table.ForeignKey(
+                    _ = table.PrimaryKey("PK_achievements", x => x.id);
+                    _ = table.ForeignKey(
                         name: "FK_achievements_users_user_id",
                         column: x => x.user_id,
                         principalTable: "users",
@@ -60,7 +60,7 @@ namespace FitTracker.Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "exercises",
                 columns: table => new
                 {
@@ -74,12 +74,12 @@ namespace FitTracker.Infrastructure.Migrations
                     is_custom = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
                     user_id = table.Column<Guid>(type: "uuid", nullable: true),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP AT TIME ZONE 'UTC'"),
-                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP AT TIME ZONE 'UTC'")
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP AT TIME ZONE 'UTC'"),
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_exercises", x => x.id);
-                    table.ForeignKey(
+                    _ = table.PrimaryKey("PK_exercises", x => x.id);
+                    _ = table.ForeignKey(
                         name: "FK_exercises_users_user_id",
                         column: x => x.user_id,
                         principalTable: "users",
@@ -87,7 +87,7 @@ namespace FitTracker.Infrastructure.Migrations
                         onDelete: ReferentialAction.SetNull);
                 });
 
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "workout_templates",
                 columns: table => new
                 {
@@ -98,12 +98,12 @@ namespace FitTracker.Infrastructure.Migrations
                     usage_count = table.Column<int>(type: "integer", nullable: false),
                     last_used_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP AT TIME ZONE 'UTC'"),
-                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP AT TIME ZONE 'UTC'")
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP AT TIME ZONE 'UTC'"),
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_workout_templates", x => x.id);
-                    table.ForeignKey(
+                    _ = table.PrimaryKey("PK_workout_templates", x => x.id);
+                    _ = table.ForeignKey(
                         name: "FK_workout_templates_users_user_id",
                         column: x => x.user_id,
                         principalTable: "users",
@@ -111,7 +111,7 @@ namespace FitTracker.Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "exercise_records",
                 columns: table => new
                 {
@@ -132,18 +132,18 @@ namespace FitTracker.Infrastructure.Migrations
                     total_lifted = table.Column<decimal>(type: "numeric", nullable: false),
                     last_performed = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_exercise_records", x => x.id);
-                    table.ForeignKey(
+                    _ = table.PrimaryKey("PK_exercise_records", x => x.id);
+                    _ = table.ForeignKey(
                         name: "FK_exercise_records_exercises_exercise_id",
                         column: x => x.exercise_id,
                         principalTable: "exercises",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
+                    _ = table.ForeignKey(
                         name: "FK_exercise_records_users_user_id",
                         column: x => x.user_id,
                         principalTable: "users",
@@ -151,7 +151,7 @@ namespace FitTracker.Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "workout_template_exercises",
                 columns: table => new
                 {
@@ -161,18 +161,18 @@ namespace FitTracker.Infrastructure.Migrations
                     order_index = table.Column<int>(type: "integer", nullable: false),
                     notes = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP AT TIME ZONE 'UTC'"),
-                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP AT TIME ZONE 'UTC'")
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP AT TIME ZONE 'UTC'"),
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_workout_template_exercises", x => x.id);
-                    table.ForeignKey(
+                    _ = table.PrimaryKey("PK_workout_template_exercises", x => x.id);
+                    _ = table.ForeignKey(
                         name: "FK_workout_template_exercises_exercises_exercise_id",
                         column: x => x.exercise_id,
                         principalTable: "exercises",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
+                    _ = table.ForeignKey(
                         name: "FK_workout_template_exercises_workout_templates_workout_templa~",
                         column: x => x.workout_template_id,
                         principalTable: "workout_templates",
@@ -180,7 +180,7 @@ namespace FitTracker.Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "workouts",
                 columns: table => new
                 {
@@ -197,18 +197,18 @@ namespace FitTracker.Infrastructure.Migrations
                     completed_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     total_volume_kg = table.Column<decimal>(type: "numeric(10,2)", precision: 10, scale: 2, nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP AT TIME ZONE 'UTC'"),
-                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP AT TIME ZONE 'UTC'")
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP AT TIME ZONE 'UTC'"),
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_workouts", x => x.id);
-                    table.ForeignKey(
+                    _ = table.PrimaryKey("PK_workouts", x => x.id);
+                    _ = table.ForeignKey(
                         name: "FK_workouts_users_user_id",
                         column: x => x.user_id,
                         principalTable: "users",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
+                    _ = table.ForeignKey(
                         name: "FK_workouts_workout_templates_workout_template_id",
                         column: x => x.workout_template_id,
                         principalTable: "workout_templates",
@@ -216,7 +216,7 @@ namespace FitTracker.Infrastructure.Migrations
                         onDelete: ReferentialAction.SetNull);
                 });
 
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "template_sets",
                 columns: table => new
                 {
@@ -228,12 +228,12 @@ namespace FitTracker.Infrastructure.Migrations
                     rest_seconds = table.Column<int>(type: "integer", nullable: true),
                     set_type = table.Column<int>(type: "integer", nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP AT TIME ZONE 'UTC'"),
-                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP AT TIME ZONE 'UTC'")
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP AT TIME ZONE 'UTC'"),
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_template_sets", x => x.id);
-                    table.ForeignKey(
+                    _ = table.PrimaryKey("PK_template_sets", x => x.id);
+                    _ = table.ForeignKey(
                         name: "FK_template_sets_workout_template_exercises_workout_template_e~",
                         column: x => x.workout_template_exercise_id,
                         principalTable: "workout_template_exercises",
@@ -241,7 +241,7 @@ namespace FitTracker.Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "workout_exercises",
                 columns: table => new
                 {
@@ -251,18 +251,18 @@ namespace FitTracker.Infrastructure.Migrations
                     order_index = table.Column<int>(type: "integer", nullable: false),
                     notes = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP AT TIME ZONE 'UTC'"),
-                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP AT TIME ZONE 'UTC'")
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP AT TIME ZONE 'UTC'"),
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_workout_exercises", x => x.id);
-                    table.ForeignKey(
+                    _ = table.PrimaryKey("PK_workout_exercises", x => x.id);
+                    _ = table.ForeignKey(
                         name: "FK_workout_exercises_exercises_exercise_id",
                         column: x => x.exercise_id,
                         principalTable: "exercises",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
+                    _ = table.ForeignKey(
                         name: "FK_workout_exercises_workouts_workout_id",
                         column: x => x.workout_id,
                         principalTable: "workouts",
@@ -270,7 +270,7 @@ namespace FitTracker.Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "sets",
                 columns: table => new
                 {
@@ -284,12 +284,12 @@ namespace FitTracker.Infrastructure.Migrations
                     is_completed = table.Column<bool>(type: "boolean", nullable: false),
                     completed_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP AT TIME ZONE 'UTC'"),
-                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP AT TIME ZONE 'UTC'")
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP AT TIME ZONE 'UTC'"),
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_sets", x => x.id);
-                    table.ForeignKey(
+                    _ = table.PrimaryKey("PK_sets", x => x.id);
+                    _ = table.ForeignKey(
                         name: "FK_sets_workout_exercises_workout_exercise_id",
                         column: x => x.workout_exercise_id,
                         principalTable: "workout_exercises",
@@ -297,159 +297,159 @@ namespace FitTracker.Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_Achievements_IsUnlocked",
                 table: "achievements",
                 column: "is_unlocked");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_Achievements_User_Type",
                 table: "achievements",
                 columns: new[] { "user_id", "type" });
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_Achievements_UserId",
                 table: "achievements",
                 column: "user_id");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_exercise_records_exercise_id",
                 table: "exercise_records",
                 column: "exercise_id");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_ExerciseRecords_LastPerformed",
                 table: "exercise_records",
                 column: "last_performed");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_ExerciseRecords_User_Exercise",
                 table: "exercise_records",
                 columns: new[] { "user_id", "exercise_id" },
                 unique: true);
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_Exercises_Equipment",
                 table: "exercises",
                 column: "equipment");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_Exercises_MuscleGroup",
                 table: "exercises",
                 column: "muscle_group");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_Exercises_Name",
                 table: "exercises",
                 column: "name");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_Exercises_User_Custom",
                 table: "exercises",
                 columns: new[] { "user_id", "is_custom" });
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_Sets_IsCompleted",
                 table: "sets",
                 column: "is_completed");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_Sets_WorkoutExercise_SetNumber",
                 table: "sets",
                 columns: new[] { "workout_exercise_id", "set_number" },
                 unique: true);
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_Sets_WorkoutExerciseId",
                 table: "sets",
                 column: "workout_exercise_id");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_TemplateSets_TemplateExercise_SetNumber",
                 table: "template_sets",
                 columns: new[] { "workout_template_exercise_id", "set_number" },
                 unique: true);
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_TemplateSets_TemplateExerciseId",
                 table: "template_sets",
                 column: "workout_template_exercise_id");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_Users_Email",
                 table: "users",
                 column: "email",
                 unique: true);
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_Users_Username",
                 table: "users",
                 column: "username",
                 unique: true);
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_WorkoutExercises_ExerciseId",
                 table: "workout_exercises",
                 column: "exercise_id");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_WorkoutExercises_Workout_Order",
                 table: "workout_exercises",
                 columns: new[] { "workout_id", "order_index" },
                 unique: true);
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_WorkoutExercises_WorkoutId",
                 table: "workout_exercises",
                 column: "workout_id");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_WorkoutTemplateExercises_ExerciseId",
                 table: "workout_template_exercises",
                 column: "exercise_id");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_WorkoutTemplateExercises_Template_Order",
                 table: "workout_template_exercises",
                 columns: new[] { "workout_template_id", "order_index" },
                 unique: true);
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_WorkoutTemplateExercises_TemplateId",
                 table: "workout_template_exercises",
                 column: "workout_template_id");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_WorkoutTemplates_User_LastUsed",
                 table: "workout_templates",
                 columns: new[] { "user_id", "last_used_at" });
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_WorkoutTemplates_UserId",
                 table: "workout_templates",
                 column: "user_id");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_Workouts_IsCompleted",
                 table: "workouts",
                 column: "is_completed");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_Workouts_TemplateId",
                 table: "workouts",
                 column: "workout_template_id");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_Workouts_User_Date",
                 table: "workouts",
                 columns: new[] { "user_id", "workout_date" });
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_Workouts_UserId",
                 table: "workouts",
                 column: "user_id");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_Workouts_WorkoutDate",
                 table: "workouts",
                 column: "workout_date");
@@ -458,34 +458,34 @@ namespace FitTracker.Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "achievements");
 
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "exercise_records");
 
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "sets");
 
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "template_sets");
 
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "workout_exercises");
 
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "workout_template_exercises");
 
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "workouts");
 
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "exercises");
 
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "workout_templates");
 
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "users");
         }
     }

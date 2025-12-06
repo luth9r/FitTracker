@@ -27,7 +27,7 @@ namespace FitTracker.Infrastructure.Services
                 ["client_secret"] = configuration["Google:ClientSecret"],
                 ["redirect_uri"] = configuration["Google:RedirectUri"],
                 ["grant_type"] = "authorization_code",
-                ["code_verifier"] = codeVerifier
+                ["code_verifier"] = codeVerifier,
             });
 
             var response = await httpClient.PostAsync(tokenEndpoint, content);
@@ -45,8 +45,6 @@ namespace FitTracker.Infrastructure.Services
             return body;
         }
 
-
-
         public async Task<GoogleTokenPayload?> ValidateAsync(string idToken)
         {
             try
@@ -61,7 +59,7 @@ namespace FitTracker.Infrastructure.Services
 
                 var settings = new GoogleJsonWebSignature.ValidationSettings
                 {
-                    Audience = new[] { googleClientId }
+                    Audience = new[] { googleClientId },
                 };
 
                 var payload = await GoogleJsonWebSignature.ValidateAsync(idToken, settings);
@@ -71,7 +69,7 @@ namespace FitTracker.Infrastructure.Services
                     GoogleId = payload.Subject,
                     Email = payload.Email,
                     FirstName = payload.GivenName,
-                    LastName = payload.FamilyName
+                    LastName = payload.FamilyName,
                 };
             }
             catch (InvalidJwtException ex)

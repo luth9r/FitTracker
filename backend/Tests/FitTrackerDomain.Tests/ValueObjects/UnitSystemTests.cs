@@ -8,15 +8,15 @@ namespace FitTrackerDomain.Tests.ValueObjects
         [Fact]
         public void Predefined_Units_Should_Have_Correct_Properties()
         {
-            UnitSystem.Metric.Name.Should().Be("metric");
-            UnitSystem.Metric.WeightUnit.Should().Be("kg");
-            UnitSystem.Metric.LengthUnit.Should().Be("cm");
-            UnitSystem.Metric.DistanceUnit.Should().Be("km");
+            _ = UnitSystem.Metric.Name.Should().Be("metric");
+            _ = UnitSystem.Metric.WeightUnit.Should().Be("kg");
+            _ = UnitSystem.Metric.LengthUnit.Should().Be("cm");
+            _ = UnitSystem.Metric.DistanceUnit.Should().Be("km");
 
-            UnitSystem.Imperial.Name.Should().Be("imperial");
-            UnitSystem.Imperial.WeightUnit.Should().Be("lbs");
-            UnitSystem.Imperial.LengthUnit.Should().Be("in");
-            UnitSystem.Imperial.DistanceUnit.Should().Be("mi");
+            _ = UnitSystem.Imperial.Name.Should().Be("imperial");
+            _ = UnitSystem.Imperial.WeightUnit.Should().Be("lbs");
+            _ = UnitSystem.Imperial.LengthUnit.Should().Be("in");
+            _ = UnitSystem.Imperial.DistanceUnit.Should().Be("mi");
         }
 
         [Theory]
@@ -30,13 +30,13 @@ namespace FitTrackerDomain.Tests.ValueObjects
             if (isValid)
             {
                 var unitSystem = UnitSystem.FromString(value);
-                unitSystem.Should().NotBeNull();
-                unitSystem.Name.Should().Be(value.ToLower());
+                _ = unitSystem.Should().NotBeNull();
+                _ = unitSystem.Name.Should().Be(value.ToLower());
             }
             else
             {
                 Action act = () => UnitSystem.FromString(value);
-                act.Should().Throw<ArgumentException>().WithMessage($"Invalid unit system: {value}");
+                _ = act.Should().Throw<ArgumentException>().WithMessage($"Invalid unit system: {value}");
             }
         }
 
@@ -45,19 +45,19 @@ namespace FitTrackerDomain.Tests.ValueObjects
         {
             var all = UnitSystem.GetAll().ToList();
 
-            all.Should().Contain(UnitSystem.Metric);
-            all.Should().Contain(UnitSystem.Imperial);
-            all.Should().HaveCount(2);
+            _ = all.Should().Contain(UnitSystem.Metric);
+            _ = all.Should().Contain(UnitSystem.Imperial);
+            _ = all.Should().HaveCount(2);
         }
 
         [Fact]
         public void Equality_Should_Work_Correctly()
         {
-            UnitSystem.Metric.Equals(UnitSystem.Metric).Should().BeTrue();
-            UnitSystem.Metric.Equals(UnitSystem.Imperial).Should().BeFalse();
-            UnitSystem.Metric.Should().Be(UnitSystem.FromString("metric"));
-            (UnitSystem.Metric == UnitSystem.FromString("metric")).Should().BeTrue();
-            (UnitSystem.Metric != UnitSystem.Imperial).Should().BeTrue();
+            _ = UnitSystem.Metric.Equals(UnitSystem.Metric).Should().BeTrue();
+            _ = UnitSystem.Metric.Equals(UnitSystem.Imperial).Should().BeFalse();
+            _ = UnitSystem.Metric.Should().Be(UnitSystem.FromString("metric"));
+            _ = (UnitSystem.Metric == UnitSystem.FromString("metric")).Should().BeTrue();
+            _ = (UnitSystem.Metric != UnitSystem.Imperial).Should().BeTrue();
         }
 
         [Theory]
@@ -70,7 +70,7 @@ namespace FitTrackerDomain.Tests.ValueObjects
 
             var convertedLength = fromUnit.ConvertLength(value, toUnit);
 
-            convertedLength.Should().BeApproximately(expected, 0.0001m);
+            _ = convertedLength.Should().BeApproximately(expected, 0.0001m);
         }
 
         [Theory]
@@ -83,7 +83,7 @@ namespace FitTrackerDomain.Tests.ValueObjects
 
             var convertedWeight = fromUnit.ConvertWeight(value, toUnit);
 
-            convertedWeight.Should().BeApproximately(expected, 0.0001m);
+            _ = convertedWeight.Should().BeApproximately(expected, 0.0001m);
         }
     }
 }

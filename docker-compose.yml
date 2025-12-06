@@ -29,6 +29,19 @@ services:
       ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
       ASPNETCORE_URLS: ${ASPNETCORE_URLS}
       ConnectionStrings__DefaultConnection: "Host=${DB_HOST};Port=${DB_PORT};Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD}"
+      Jwt__Key: ${Jwt__Key}
+      Jwt__Issuer: ${Jwt__Issuer}
+      Jwt__Audience: ${Jwt__Audience}
+      Jwt__EmailVerificationTokenValidityInMinutes: ${Jwt__EmailVerificationTokenValidityInMinutes}
+      Jwt__TokenValidityInDays: ${Jwt__TokenValidityInDays}
+
+      # App Settings
+      App__VerificationLinkBase: ${App__VerificationLinkBase}
+      
+      # Google OAuth
+      Google__ClientId: ${Google__ClientId}
+      Google__ClientSecret: ${Google__ClientSecret}
+      Google__RedirectUri: ${Google__RedirectUri}
     ports:
       - "${BACKEND_PORT}:5000"
     depends_on:
