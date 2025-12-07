@@ -62,7 +62,6 @@ namespace FitTracker.Api.Controllers
             return Ok(result.Value);
         }
 
-
         /// <summary>
         /// Registers a new user using Google credentials.
         /// </summary>

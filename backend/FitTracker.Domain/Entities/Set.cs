@@ -123,6 +123,7 @@ namespace FitTracker.Domain.Entities
             int reps,
             int? restSeconds,
             SetType setType = SetType.Normal)
+            : base()
         {
             if (workoutExerciseId == Guid.Empty)
             {

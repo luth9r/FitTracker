@@ -7,6 +7,20 @@
         },
         "Live": "Live"
     },
+    "Auth": {
+        "Login": {
+            "InvalidCredentials": "Invalid email or password",
+            "EmailRequired": "Email is required",
+            "PasswordRequired": "Password is required",
+            "InvalidEmail": "Email must be a valid email address",
+            "PasswordTooShort": "Password must be at least 8 characters long"
+        },
+        "Register": {
+            "UsernameAlreadyExists": "User with such username already exists",
+            "EmailAlreadyExists": "User with such email already exists",
+            "AccountAlreadyExists": "An account with this email already exists. Please log in instead."
+        }
+    },
     "Validation": {
         "User": {
             "Username": {

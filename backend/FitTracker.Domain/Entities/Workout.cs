@@ -147,6 +147,7 @@ namespace FitTracker.Domain.Entities
             DateTime workoutDate,
             Guid? workoutTemplateId = null,
             string? notes = null)
+            : base()
         {
             if (userId == Guid.Empty)
             {

@@ -9,10 +9,12 @@ namespace FitTracker.Domain.Entities
         /// The maximum length allowed for the template name.
         /// </summary>
         public const int NameMaxLength = 100;
+
         /// <summary>
         /// The minimum length required for the template name.
         /// </summary>
         public const int NameMinLength = 3;
+
         /// <summary>
         /// The maximum length allowed for the template description.
         /// </summary>
@@ -87,7 +89,11 @@ namespace FitTracker.Domain.Entities
         /// <param name="userId">The unique identifier of the user.</param>
         /// <param name="name">The name of the template.</param>
         /// <param name="description">The description of the template.</param>
-        private WorkoutTemplate(Guid userId, string name, string? description = null)
+        private WorkoutTemplate(
+            Guid userId,
+            string name,
+            string? description = null)
+            : base()
         {
             if (userId == Guid.Empty)
             {

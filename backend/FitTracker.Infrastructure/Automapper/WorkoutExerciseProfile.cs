@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using FitTracker.Domain.Entities;
 using FitTracker.Infrastructure.Persistence.Data.Entities;
 
@@ -19,7 +19,7 @@ namespace FitTracker.Infrastructure.Automapper
                     updatedAt: src.UpdatedAt));
 
             _ = CreateMap<WorkoutExercise, WorkoutExerciseEf>()
-                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.WorkoutId, opt => opt.MapFrom(src => src.WorkoutId))
                 .ForMember(dest => dest.ExerciseId, opt => opt.MapFrom(src => src.ExerciseId))
                 .ForMember(dest => dest.OrderIndex, opt => opt.MapFrom(src => src.OrderIndex))

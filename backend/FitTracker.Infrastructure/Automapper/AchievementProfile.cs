@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using FitTracker.Domain.Entities;
 using FitTracker.Domain.Enums;
 using FitTracker.Infrastructure.Persistence.Data.Entities;
@@ -22,7 +22,7 @@ namespace FitTracker.Infrastructure.Automapper
                     updatedAt: src.UpdatedAt));
 
             _ = CreateMap<Achievement, AchievementEf>()
-                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Type, opt => opt.MapFrom(src => (int)src.Type))
                 .ForMember(dest => dest.Tier, opt => opt.MapFrom(src => (int)src.Tier))
                 .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
@@ -40,9 +40,9 @@ namespace FitTracker.Infrastructure.Automapper
                     updatedAt: src.UpdatedAt));
 
             _ = CreateMap<UserAchievement, UserAchievementEf>()
-                .ForMember(dest => dest.Id, opt => opt.Ignore())
-                .ForMember(dest => dest.AchievementId, opt => opt.Ignore())
-                .ForMember(dest => dest.UserId, opt => opt.Ignore())
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.AchievementId, opt => opt.MapFrom(src => src.AchievementId))
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
                 .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
                 .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore());
         }

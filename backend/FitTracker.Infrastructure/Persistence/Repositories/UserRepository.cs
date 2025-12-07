@@ -94,7 +94,10 @@ namespace FitTracker.Infrastructure.Persistence.Repositories
         {
             var userEf = mapper.Map<UserEf>(user);
 
-            _ = context.Users.Update(userEf);
+            context.Users.Attach(userEf);
+            context.Entry(userEf).State = EntityState.Modified;
+
+            context.Entry(userEf).Property(x => x.CreatedAt).IsModified = false;
         }
     }
 }

@@ -71,7 +71,10 @@ namespace FitTracker.Domain.Entities
         /// </summary>
         /// <param name="userId">The unique identifier of the user.</param>
         /// <param name="achievementId">The unique identifier of the achievement.</param>
-        private UserAchievement(Guid userId, Guid achievementId)
+        private UserAchievement(
+            Guid userId,
+            Guid achievementId)
+            : base()
         {
             if (userId == Guid.Empty)
             {

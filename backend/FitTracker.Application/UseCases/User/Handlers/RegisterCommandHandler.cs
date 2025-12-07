@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using CSharpFunctionalExtensions;
 using FitTracker.Application.DTOs.Auth;
 using FitTracker.Application.Extensions;
@@ -67,11 +67,15 @@ namespace FitTracker.Application.UseCases.User.Handlers
                 email: userRequest.Email,
                 passwordHash: hasher.HashPassword(userRequest.Password));
 
+            logger.LogDebug("BEFORE SaveChanges: {Id}", user.Id);
+
             // Add to trackings
             await userRepository.AddAsync(user, cancellationToken);
 
             // Save changes to db
             _ = await unitOfWork.SaveChangesAsync(cancellationToken);
+
+            logger.LogDebug("AFTER SaveChanges: {Id}", user.Id);
 
             var response = mapper.Map<LoginResponse>(user);
 

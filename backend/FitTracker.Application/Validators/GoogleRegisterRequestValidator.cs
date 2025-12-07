@@ -1,19 +1,24 @@
 using FitTracker.Application.DTOs.Auth.Google;
+using FitTracker.Application.Interfaces;
 using FluentValidation;
 
 namespace FitTracker.Application.Validators
 {
     public class GoogleRegisterRequestValidator : AbstractValidator<GoogleRegisterRequest>
     {
-        public GoogleRegisterRequestValidator()
+        private readonly ILocalizationService _localization;
+
+        public GoogleRegisterRequestValidator(ILocalizationService localization)
         {
+            _localization = localization;
+
             RuleFor(x => x.Code)
                 .NotEmpty()
-                .WithMessage("Validation.Google.Code.Required");
+                .WithMessage(_ => _localization.GetString("Validation.Google.Code.Required"));
 
             RuleFor(x => x.CodeVerifier)
                 .NotEmpty()
-                .WithMessage("Validation.Google.CodeVerifier.Required");
+                .WithMessage(_ => _localization.GetString("Validation.Google.CodeVerifier.Required"));
         }
     }
 }

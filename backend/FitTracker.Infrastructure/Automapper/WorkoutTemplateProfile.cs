@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using FitTracker.Domain.Entities;
 using FitTracker.Infrastructure.Persistence.Data.Entities;
 
@@ -20,7 +20,7 @@ namespace FitTracker.Infrastructure.Automapper
                     updatedAt: src.UpdatedAt));
 
             _ = CreateMap<WorkoutTemplate, WorkoutTemplateEf>()
-                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))

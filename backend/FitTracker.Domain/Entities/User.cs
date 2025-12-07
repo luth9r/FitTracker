@@ -151,6 +151,7 @@ namespace FitTracker.Domain.Entities
             string passwordHash,
             string? firstName = null,
             string? lastName = null)
+            : base()
         {
             if (string.IsNullOrWhiteSpace(username) || username.Length < UsernameMinLength || username.Length > UsernameMaxLength)
             {

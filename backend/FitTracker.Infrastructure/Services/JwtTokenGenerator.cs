@@ -26,6 +26,7 @@ namespace FitTracker.Infrastructure.Services
                 new (JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new (ClaimTypes.Name, user.Username),
                 new (ClaimTypes.Email, user.Email),
+                new ("is_email_verified", user.IsEmailVerified ? "true" : "false"),
             };
 
             return CreateToken(claims, expires, creds);

@@ -1,29 +1,34 @@
 using FitTracker.Application.DTOs.Auth;
+using FitTracker.Application.Interfaces;
 using FluentValidation;
 
 namespace FitTracker.Application.Validators
 {
     public class RegisterRequestValidator : AbstractValidator<RegisterRequest>
     {
-        public RegisterRequestValidator()
+        private readonly ILocalizationService _localization;
+
+        public RegisterRequestValidator(ILocalizationService localization)
         {
+            _localization = localization;
+
             RuleFor(x => x.Username)
                 .NotEmpty()
-                .WithMessage("Validation.User.Username.Required")
+                .WithMessage(_ => _localization.GetString("Validation.User.Username.Required"))
                 .MinimumLength(3)
-                .WithMessage("Validation.User.Username.Length");
+                .WithMessage(_ => _localization.GetString("Validation.User.Username.Length"));
 
             RuleFor(x => x.Email)
                 .NotEmpty()
-                .WithMessage("Validation.User.Email.Required")
+                .WithMessage(_ => _localization.GetString("Validation.User.Email.Required"))
                 .EmailAddress()
-                .WithMessage("Validation.User.Email.InvalidFormat");
+                .WithMessage(_ => _localization.GetString("Validation.User.Email.InvalidFormat"));
 
             RuleFor(x => x.Password)
                 .NotEmpty()
-                .WithMessage("Validation.User.Password.Required")
+                .WithMessage(_ => _localization.GetString("Validation.User.Password.Required"))
                 .MinimumLength(6)
-                .WithMessage("Validation.User.Password.Length");
+                .WithMessage(_ => _localization.GetString("Validation.User.Password.Length"));
         }
     }
 }

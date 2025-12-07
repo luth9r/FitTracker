@@ -25,7 +25,7 @@ namespace FitTracker.Infrastructure.Automapper
                     updatedAt: src.UpdatedAt));
 
             _ = CreateMap<Set, SetEf>()
-                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.WeightKg, opt => opt.MapFrom(src => src.Weight.ToKilograms()))
                 .ForMember(dest => dest.WorkoutExerciseId, opt => opt.MapFrom(src => src.WorkoutExerciseId))
                 .ForMember(dest => dest.SetNumber, opt => opt.MapFrom(src => src.SetNumber))

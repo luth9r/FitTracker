@@ -133,6 +133,7 @@ namespace FitTracker.Domain.Entities
             string? imageUrl = null,
             string? videoUrl = null,
             Guid? createdByUserId = null)
+            : base()
         {
             // Guard clauses
             if (string.IsNullOrWhiteSpace(name))

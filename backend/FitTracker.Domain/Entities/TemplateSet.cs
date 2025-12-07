@@ -106,6 +106,7 @@ namespace FitTracker.Domain.Entities
             int plannedReps,
             int? restSeconds,
             SetType setType = SetType.Normal)
+            : base()
         {
             if (workoutTemplateExerciseId == Guid.Empty)
             {

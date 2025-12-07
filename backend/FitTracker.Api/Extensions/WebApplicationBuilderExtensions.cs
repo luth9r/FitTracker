@@ -1,10 +1,12 @@
 using System.Globalization;
 using System.Text;
+using FitTracker.Api.Authorization;
 using FitTracker.Application;
 using FitTracker.Application.Validators;
 using FitTracker.Infrastructure;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -78,7 +80,17 @@ namespace FitTracker.Api.Extensions
                     };
                 });
 
-            _ = builder.Services.AddAuthorization();
+            _ = builder.Services.AddSingleton<IAuthorizationHandler, EmailVerifiedHandler>();
+
+            _ = builder.Services.AddAuthorization(options =>
+            {
+                var defaultAuthorizationPolicyBuilder = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme);
+
+                defaultAuthorizationPolicyBuilder.RequireAuthenticatedUser()
+                                                 .RequireClaim("is_email_verified", "true");
+
+                options.DefaultPolicy = defaultAuthorizationPolicyBuilder.Build();
+            });
 
             _ = builder.Services.AddControllers();
 

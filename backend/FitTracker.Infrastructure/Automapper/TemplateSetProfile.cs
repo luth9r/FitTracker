@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using FitTracker.Domain.Entities;
 using FitTracker.Domain.Enums;
 using FitTracker.Domain.ValueObjects;
@@ -23,7 +23,7 @@ namespace FitTracker.Infrastructure.Automapper
                     updatedAt: src.UpdatedAt));
 
             _ = CreateMap<TemplateSet, TemplateSetEf>()
-                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.PlannedWeight, opt => opt.MapFrom(src => src.PlannedWeight.ToKilograms()))
                 .ForMember(dest => dest.WorkoutTemplateExerciseId, opt => opt.MapFrom(src => src.WorkoutTemplateExerciseId))
                 .ForMember(dest => dest.SetNumber, opt => opt.MapFrom(src => src.SetNumber))

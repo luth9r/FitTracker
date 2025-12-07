@@ -153,7 +153,10 @@ namespace FitTracker.Domain.Entities
         /// </summary>
         /// <param name="userId">The unique identifier of the user.</param>
         /// <param name="exerciseId">The unique identifier of the exercise.</param>
-        private ExerciseRecord(Guid userId, Guid exerciseId)
+        private ExerciseRecord(
+            Guid userId,
+            Guid exerciseId)
+            : base()
         {
             if (userId == Guid.Empty)
             {

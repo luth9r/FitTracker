@@ -9,6 +9,7 @@ namespace FitTracker.Domain.Entities
         /// The maximum length allowed for the notes.
         /// </summary>
         public const int NotesMaxLength = 500;
+
         /// <summary>
         /// The maximum order index allowed for an exercise in a workout.
         /// </summary>
@@ -81,6 +82,7 @@ namespace FitTracker.Domain.Entities
             Guid exerciseId,
             int orderIndex,
             string? notes = null)
+            : base()
         {
             if (workoutId == Guid.Empty)
             {
