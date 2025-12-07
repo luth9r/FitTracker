@@ -12,19 +12,19 @@ namespace FitTracker.Application.Behaviors
     /// <summary>
     /// Logs the execution time and outcome of MediatR requests.
     /// </summary>
-    /// <typeparam name="TRequest"></typeparam>
-    /// <typeparam name="TResponse"></typeparam>
-    /// <param name="logger"></param>
+    /// <typeparam name="TRequest">The type of the request.</typeparam>
+    /// <typeparam name="TResponse">The type of the response.</typeparam>
+    /// <param name="logger">The logger.</param>
     public class LoggingBehavior<TRequest, TResponse>(ILogger<LoggingBehavior<TRequest, TResponse>> logger) : IPipelineBehavior<TRequest, TResponse>
        where TRequest : IRequest<TResponse>
     {
         /// <summary>
         /// Handles the logging of request execution.
         /// </summary>
-        /// <param name="request"></param>
-        /// <param name="next"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
+        /// <param name="request">The <see cref="IRequest{TResponse}"/>.</param>
+        /// <param name="next">The <see cref="RequestHandlerDelegate{TResponse}"/>.</param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/>.</param>
+        /// <returns>The <typeparamref name="TResponse"/>.</returns>
         public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
         {
             var requestName = request.GetFormattedName();

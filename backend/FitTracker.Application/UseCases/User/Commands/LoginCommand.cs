@@ -9,8 +9,8 @@ using System.Text;
 namespace FitTracker.Application.UseCases.User.Commands
 {
     /// <summary>
-    /// Login Command
+    /// Command for logging in.
     /// </summary>
-    /// <param name="Request"></param>
+    /// <param name="Request">The <see cref="LoginRequest"/>.</param>
     public record LoginCommand(LoginRequest Request) : IRequest<Result<LoginResponse, ValidationResult>>;
 }

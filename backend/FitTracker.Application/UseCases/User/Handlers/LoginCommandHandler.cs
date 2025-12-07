@@ -18,11 +18,12 @@ namespace FitTracker.Application.UseCases.User.Handlers
     /// <summary>
     /// Handler for processing login commands.
     /// </summary>
-    /// <param name="repository"></param>
-    /// <param name="mapper"></param>
-    /// <param name="hasher"></param>
-    /// <param name="jwtTokenGenerator"></param>
-    /// <param name="localization"></param>
+    /// <param name="repository">The <see cref="IUserRepository"/>.</param>
+    /// <param name="mapper">The <see cref="IMapper"/>.</param>
+    /// <param name="hasher">The <see cref="IPasswordHasher"/>.</param>
+    /// <param name="jwtTokenGenerator">The <see cref="IJwtTokenGenerator"/>.</param>
+    /// <param name="localization">The <see cref="ILocalizationService"/>.</param>
+    /// <param name="logger">The <see cref="ILogger{LoginCommandHandler}"/>.</param>
     public class LoginCommandHandler(
         IUserRepository repository,
         IMapper mapper,
@@ -31,9 +32,15 @@ namespace FitTracker.Application.UseCases.User.Handlers
         ILocalizationService localization,
         ILogger<LoginCommandHandler> logger) : IRequestHandler<LoginCommand, Result<LoginResponse, ValidationResult>>
     {
+        /// <summary>
+        /// Handles the login command.
+        /// </summary>
+        /// <param name="request">The <see cref="LoginCommand"/>.</param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/>.</param>
+        /// <returns>The <see cref="LoginResponse"/> result.</returns>
         public async Task<Result<LoginResponse, ValidationResult>> Handle(LoginCommand request, CancellationToken cancellationToken)
         {
-            logger.LogInformation("Starting login process for email: {Email}", request.Request.Email);
+            logger.LogDebug("Starting login process for email: {Email}", request.Request.Email);
 
             var userEmail = request.Request.Email;
             var userPassword = request.Request.Password;

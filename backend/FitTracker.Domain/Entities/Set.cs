@@ -1,3 +1,4 @@
+
 using FitTracker.Domain.Enums;
 using FitTracker.Domain.ValueObjects;
 
@@ -8,8 +9,17 @@ namespace FitTracker.Domain.Entities
     /// </summary>
     public class Set : BaseEntity
     {
+        /// <summary>
+        /// The maximum number of reps allowed in a set.
+        /// </summary>
         public const int MaxReps = 1000;
+        /// <summary>
+        /// The maximum rest time allowed in seconds.
+        /// </summary>
         public const int MaxRestSeconds = 3600; // 1 hour
+        /// <summary>
+        /// The maximum weight allowed in kilograms.
+        /// </summary>
         public const decimal MaxWeightKg = 10000m;
 
         /// <summary>
@@ -52,6 +62,20 @@ namespace FitTracker.Domain.Entities
         /// </summary>
         public DateTime? CompletedAt { get; private set; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Set"/> class.
+        /// </summary>
+        /// <param name="id">The unique identifier.</param>
+        /// <param name="workoutExerciseId">The unique identifier of the workout exercise.</param>
+        /// <param name="setNumber">The sequential number of the set.</param>
+        /// <param name="weight">The weight used.</param>
+        /// <param name="reps">The number of repetitions.</param>
+        /// <param name="restSeconds">The rest period in seconds.</param>
+        /// <param name="setType">The type of the set.</param>
+        /// <param name="isCompleted">Whether the set is completed.</param>
+        /// <param name="completedAt">The date and time of completion.</param>
+        /// <param name="createdAt">The date and time of creation.</param>
+        /// <param name="updatedAt">The date and time of the last update.</param>
         internal Set(
             Guid id,
             Guid workoutExerciseId,
@@ -76,10 +100,22 @@ namespace FitTracker.Domain.Entities
             CompletedAt = completedAt;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Set"/> class.
+        /// </summary>
         private Set()
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Set"/> class.
+        /// </summary>
+        /// <param name="workoutExerciseId">The unique identifier of the workout exercise.</param>
+        /// <param name="setNumber">The sequential number of the set.</param>
+        /// <param name="weight">The weight used.</param>
+        /// <param name="reps">The number of repetitions.</param>
+        /// <param name="restSeconds">The rest period in seconds.</param>
+        /// <param name="setType">The type of the set.</param>
         private Set(
             Guid workoutExerciseId,
             int setNumber,
@@ -137,6 +173,16 @@ namespace FitTracker.Domain.Entities
             IsCompleted = false;
         }
 
+        /// <summary>
+        /// Creates a new <see cref="Set"/>.
+        /// </summary>
+        /// <param name="workoutExerciseId">The unique identifier of the workout exercise.</param>
+        /// <param name="setNumber">The sequential number of the set.</param>
+        /// <param name="weight">The weight used.</param>
+        /// <param name="reps">The number of repetitions.</param>
+        /// <param name="restSeconds">The rest period in seconds.</param>
+        /// <param name="setType">The type of the set.</param>
+        /// <returns>A new instance of <see cref="Set"/>.</returns>
         public static Set Create(
             Guid workoutExerciseId,
             int setNumber,
@@ -148,6 +194,10 @@ namespace FitTracker.Domain.Entities
             return new Set(workoutExerciseId, setNumber, weight, reps, restSeconds, setType);
         }
 
+        /// <summary>
+        /// Updates the sequential number of the set.
+        /// </summary>
+        /// <param name="newSetNumber">The new set number.</param>
         public void UpdateSetNumber(int newSetNumber)
         {
             if (newSetNumber <= 0)
@@ -159,6 +209,10 @@ namespace FitTracker.Domain.Entities
             UpdatedAt = DateTime.UtcNow;
         }
 
+        /// <summary>
+        /// Updates the weight used in the set.
+        /// </summary>
+        /// <param name="weight">The new weight.</param>
         public void UpdateWeight(Weight weight)
         {
             if (weight == null)
@@ -175,6 +229,10 @@ namespace FitTracker.Domain.Entities
             UpdatedAt = DateTime.UtcNow;
         }
 
+        /// <summary>
+        /// Increases the weight used in the set by a specified amount in kilograms.
+        /// </summary>
+        /// <param name="amountKg">The amount to increase in kilograms.</param>
         public void IncreaseWeight(decimal amountKg)
         {
             if (amountKg <= 0)
@@ -192,6 +250,10 @@ namespace FitTracker.Domain.Entities
             UpdatedAt = DateTime.UtcNow;
         }
 
+        /// <summary>
+        /// Decreases the weight used in the set by a specified amount in kilograms.
+        /// </summary>
+        /// <param name="amountKg">The amount to decrease in kilograms.</param>
         public void DecreaseWeight(decimal amountKg)
         {
             if (amountKg <= 0)
@@ -209,6 +271,10 @@ namespace FitTracker.Domain.Entities
             UpdatedAt = DateTime.UtcNow;
         }
 
+        /// <summary>
+        /// Updates the number of repetitions performed in the set.
+        /// </summary>
+        /// <param name="reps">The new number of repetitions.</param>
         public void UpdateReps(int reps)
         {
             if (reps <= 0)
@@ -225,6 +291,10 @@ namespace FitTracker.Domain.Entities
             UpdatedAt = DateTime.UtcNow;
         }
 
+        /// <summary>
+        /// Updates the rest period for the set.
+        /// </summary>
+        /// <param name="seconds">The new rest period in seconds.</param>
         public void UpdateRest(int? seconds)
         {
             if (seconds.HasValue)
@@ -244,12 +314,19 @@ namespace FitTracker.Domain.Entities
             UpdatedAt = DateTime.UtcNow;
         }
 
+        /// <summary>
+        /// Changes the type of the set.
+        /// </summary>
+        /// <param name="setType">The new set type.</param>
         public void ChangeSetType(SetType setType)
         {
             SetType = setType;
             UpdatedAt = DateTime.UtcNow;
         }
 
+        /// <summary>
+        /// Marks the set as completed.
+        /// </summary>
         public void Complete()
         {
             if (IsCompleted)
@@ -262,6 +339,9 @@ namespace FitTracker.Domain.Entities
             UpdatedAt = DateTime.UtcNow;
         }
 
+        /// <summary>
+        /// Marks the set as not completed.
+        /// </summary>
         public void Uncomplete()
         {
             if (!IsCompleted)
@@ -274,10 +354,23 @@ namespace FitTracker.Domain.Entities
             UpdatedAt = DateTime.UtcNow;
         }
 
+        /// <summary>
+        /// Calculates the total volume (weight * reps) in kilograms.
+        /// </summary>
+        /// <returns>The total volume in kilograms.</returns>
         public decimal CalculateVolume() => Weight.ToKilograms() * Reps;
 
+        /// <summary>
+        /// Calculates the total volume (weight * reps) in pounds.
+        /// </summary>
+        /// <returns>The total volume in pounds.</returns>
         public decimal CalculateVolumeLbs() => Weight.ToPounds() * Reps;
 
+        /// <summary>
+        /// Determines whether this set is a personal record compared to previous sets.
+        /// </summary>
+        /// <param name="previousSets">A collection of previous sets to compare against.</param>
+        /// <returns><c>true</c> if this set is a personal record; otherwise, <c>false</c>.</returns>
         public bool IsPR(IEnumerable<Set> previousSets)
         {
             if (previousSets == null || !previousSets.Any())
@@ -289,8 +382,16 @@ namespace FitTracker.Domain.Entities
             return Weight.ToKilograms() > maxPreviousWeight;
         }
 
+        /// <summary>
+        /// Determines whether this set is a warmup set.
+        /// </summary>
+        /// <returns><c>true</c> if this set is a warmup set; otherwise, <c>false</c>.</returns>
         public bool IsWarmupSet() => SetType == SetType.Warmup;
 
+        /// <summary>
+        /// Determines whether this set is a working set.
+        /// </summary>
+        /// <returns><c>true</c> if this set is a working set; otherwise, <c>false</c>.</returns>
         public bool IsWorkingSet() => SetType == SetType.Normal;
     }
 }

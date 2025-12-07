@@ -27,6 +27,7 @@
 		<PackageReference Include="Serilog.Sinks.Console" Version="6.1.1" />
 		<PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
 		<PackageReference Include="Serilog.Sinks.Seq" Version="9.0.0" />
+		<PackageReference Include="SharpGrip.FluentValidation.AutoValidation.Mvc" Version="1.5.0" />
 		<PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -42,8 +43,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="Middlewares\" />
 		<Folder Include="Filters\" />
+		<Folder Include="Middlewares\" />
 		<Folder Include="Helpers\" />
 		<Folder Include="Swagger\" />
 	</ItemGroup>

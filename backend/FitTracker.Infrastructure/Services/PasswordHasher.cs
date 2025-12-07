@@ -7,6 +7,7 @@ namespace FitTracker.Infrastructure.Services
     {
         private const int WorkFactor = 11;
 
+        /// <inheritdoc/>
         public string HashPassword(string password)
         {
             if (string.IsNullOrWhiteSpace(password))
@@ -17,6 +18,7 @@ namespace FitTracker.Infrastructure.Services
             return Crypt.HashPassword(password, WorkFactor);
         }
 
+        /// <inheritdoc/>
         public bool VerifyPassword(string password, string hash)
         {
             if (string.IsNullOrWhiteSpace(password) || string.IsNullOrWhiteSpace(hash))

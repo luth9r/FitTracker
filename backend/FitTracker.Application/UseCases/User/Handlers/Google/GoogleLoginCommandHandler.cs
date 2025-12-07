@@ -19,12 +19,12 @@ namespace FitTracker.Application.UseCases.User.Handlers.Google
     /// <summary>
     /// Handler for processing Google login commands.
     /// </summary>
-    /// <param name="logger"></param>
-    /// <param name="googleOAuthService"></param>
-    /// <param name="userRepository"></param>
-    /// <param name="jwtTokenGenerator"></param>
-    /// <param name="localization"></param>
-    /// <param name="mapper"></param>
+    /// <param name="logger">The <see cref="ILogger{GoogleLoginCommandHandler}"/>.</param>
+    /// <param name="googleOAuthService">The <see cref="IGoogleOAuthService"/>.</param>
+    /// <param name="userRepository">The <see cref="IUserRepository"/>.</param>
+    /// <param name="jwtTokenGenerator">The <see cref="IJwtTokenGenerator"/>.</param>
+    /// <param name="localization">The <see cref="ILocalizationService"/>.</param>
+    /// <param name="mapper">The <see cref="IMapper"/>.</param>
     public class GoogleLoginCommandHandler(
         ILogger<GoogleLoginCommandHandler> logger,
         IGoogleOAuthService googleOAuthService,
@@ -33,9 +33,15 @@ namespace FitTracker.Application.UseCases.User.Handlers.Google
         ILocalizationService localization,
         IMapper mapper) : IRequestHandler<GoogleLoginCommand, Result<LoginResponse, ValidationResult>>
     {
+        /// <summary>
+        /// Handles the Google login command.
+        /// </summary>
+        /// <param name="request">The <see cref="GoogleLoginCommand"/>.</param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/>.</param>
+        /// <returns>The <see cref="LoginResponse"/> result.</returns>
         public async Task<Result<LoginResponse, ValidationResult>> Handle(GoogleLoginCommand request, CancellationToken cancellationToken)
         {
-            logger.LogInformation("Starting Google login process.");
+            logger.LogDebug("Starting Google login process.");
 
             var tokenResponse = await googleOAuthService.ExchangeCodeForTokensAsync(request.Request.Code, request.Request.CodeVerifier);
             if (tokenResponse == null)
@@ -44,7 +50,7 @@ namespace FitTracker.Application.UseCases.User.Handlers.Google
                 return ResultExtensions.ValidationFailure<LoginResponse>(nameof(request.Request.Code), localization.GetString("Google.Auth.InvalidToken"));
             }
 
-            logger.LogInformation("Attempting to validate Google IdToken.");
+            logger.LogDebug("Attempting to validate Google IdToken.");
 
             var googlePayload = await googleOAuthService.ValidateAsync(tokenResponse.IdToken);
 
@@ -54,26 +60,26 @@ namespace FitTracker.Application.UseCases.User.Handlers.Google
                 return ResultExtensions.ValidationFailure<LoginResponse>(nameof(request.Request.Code), localization.GetString("Google.Auth.InvalidToken"));
             }
 
-            logger.LogInformation("Google Token validated for email: {Email}", googlePayload.Email);
+            logger.LogDebug("Google Token validated for email: {Email}", googlePayload.Email);
 
             var user = await userRepository.GetByGoogleTokenReadonlyAsync(googlePayload.GoogleId, cancellationToken);
 
             if (user == null)
             {
-                logger.LogInformation("User not found by GoogleId. Checking by email: {Email}", googlePayload.Email);
+                logger.LogDebug("User not found by GoogleId. Checking by email: {Email}", googlePayload.Email);
 
                 user = await userRepository.GetByEmailReadonlyAsync(googlePayload.Email, cancellationToken);
 
                 if (user == null)
                 {
-                    logger.LogInformation("User not found.");
+                    logger.LogDebug("User not found.");
 
                     return ResultExtensions.ValidationFailure<LoginResponse>(nameof(request.Request.Code), localization.GetString("Google.Auth.NotFound"));
                 }
             }
             else
             {
-                logger.LogInformation("User found by GoogleId. Skipping lookup.");
+                logger.LogDebug("User found by GoogleId. Skipping lookup.");
             }
 
             var loginToken = jwtTokenGenerator.GenerateToken(user);

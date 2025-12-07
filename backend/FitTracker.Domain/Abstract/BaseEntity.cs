@@ -1,13 +1,28 @@
 namespace FitTracker.Domain.Entities
 {
+    /// <summary>
+    /// Represents the base entity with common properties.
+    /// </summary>
     public abstract class BaseEntity
     {
+        /// <summary>
+        /// Gets or sets the unique identifier.
+        /// </summary>
         public Guid Id { get; protected set; }
 
+        /// <summary>
+        /// Gets or sets the date and time when the entity was created.
+        /// </summary>
         public DateTime CreatedAt { get; protected set; }
 
+        /// <summary>
+        /// Gets or sets the date and time when the entity was last updated.
+        /// </summary>
         public DateTime UpdatedAt { get; protected set; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BaseEntity"/> class.
+        /// </summary>
         protected BaseEntity()
         {
             Id = Guid.NewGuid();
@@ -15,6 +30,10 @@ namespace FitTracker.Domain.Entities
             UpdatedAt = DateTime.UtcNow;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BaseEntity"/> class with a specified identifier.
+        /// </summary>
+        /// <param name="id">The unique identifier.</param>
         protected BaseEntity(Guid id)
         {
             Id = id;
@@ -22,6 +41,12 @@ namespace FitTracker.Domain.Entities
             UpdatedAt = DateTime.UtcNow;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BaseEntity"/> class with specified details.
+        /// </summary>
+        /// <param name="id">The unique identifier.</param>
+        /// <param name="createdAt">The date and time of creation.</param>
+        /// <param name="updatedAt">The date and time of the last update.</param>
         protected BaseEntity(Guid id, DateTime createdAt, DateTime updatedAt)
             : this(id)
         {
@@ -29,13 +54,11 @@ namespace FitTracker.Domain.Entities
             UpdatedAt = updatedAt;
         }
 
-        public void SetDatabaseFields(Guid id, DateTime createdAt, DateTime updatedAt)
-        {
-            Id = id;
-            CreatedAt = createdAt;
-            UpdatedAt = updatedAt;
-        }
-
+        /// <summary>
+        /// Determines whether the specified object is equal to the current object.
+        /// </summary>
+        /// <param name="obj">The object to compare with the current object.</param>
+        /// <returns><c>true</c> if the specified object is equal to the current object; otherwise, <c>false</c>.</returns>
         public override bool Equals(object? obj)
         {
             if (obj is not BaseEntity other)
@@ -61,6 +84,10 @@ namespace FitTracker.Domain.Entities
             return Id == other.Id;
         }
 
+        /// <summary>
+        /// Serves as the default hash function.
+        /// </summary>
+        /// <returns>A hash code for the current object.</returns>
         public override int GetHashCode()
         {
             return (GetType().ToString() + Id).GetHashCode();

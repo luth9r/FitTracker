@@ -7,17 +7,20 @@ namespace FitTracker.Infrastructure.Services
 {
     public class LocalizationService(JsonLocalizationProvider provider, IHttpContextAccessor httpContextAccessor, ILogger<LocalizationService> logger) : ILocalizationService
     {
+        /// <inheritdoc/>
         public IEnumerable<string> GetAvailableCultures()
         {
             return provider.GetAvailableCultures();
         }
 
+        /// <inheritdoc/>
         public string GetString(string key)
         {
             var culture = GetCurrentCulture();
             return provider.GetString(key, culture);
         }
 
+        /// <inheritdoc/>
         public string GetString(string key, string culture)
         {
             return provider.GetString(key, culture);

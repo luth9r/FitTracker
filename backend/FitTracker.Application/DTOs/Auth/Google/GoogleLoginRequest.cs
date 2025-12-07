@@ -12,11 +12,11 @@ namespace FitTracker.Application.DTOs.Auth.Google
         /// <summary>
         /// Gets or sets the authorization code received from Google after user consent.
         /// </summary>
-        public string Code { get; set; } = string.Empty;
+        public string Code { get; set; } = default!;
 
         /// <summary>
         /// Gets or sets the code verifier used in PKCE flow.
         /// </summary>
-        public string CodeVerifier { get; set; } = string.Empty;
+        public string CodeVerifier { get; set; } = default!;
     }
 }

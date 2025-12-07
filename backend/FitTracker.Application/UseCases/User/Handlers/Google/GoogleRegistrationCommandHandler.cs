@@ -18,15 +18,15 @@ namespace FitTracker.Application.UseCases.User.Handlers.Google
     /// <summary>
     /// Handler for processing Google registration commands.
     /// </summary>
-    /// <param name="logger"></param>
-    /// <param name="googleOAuthService"></param>
-    /// <param name="userRepository"></param>
-    /// <param name="unitOfWork"></param>
-    /// <param name="jwtTokenGenerator"></param>
-    /// <param name="localization"></param>
-    /// <param name="mapper"></param>
+    /// <param name="logger">The <see cref="ILogger{GoogleRegistrationCommandHandler}"/>.</param>
+    /// <param name="googleOAuthService">The <see cref="IGoogleOAuthService"/>.</param>
+    /// <param name="userRepository">The <see cref="IUserRepository"/>.</param>
+    /// <param name="unitOfWork">The <see cref="IUnitOfWork"/>.</param>
+    /// <param name="jwtTokenGenerator">The <see cref="IJwtTokenGenerator"/>.</param>
+    /// <param name="localization">The <see cref="ILocalizationService"/>.</param>
+    /// <param name="mapper">The <see cref="IMapper"/>.</param>
     public class GoogleRegistrationCommandHandler(
-        ILogger<GoogleLoginCommandHandler> logger,
+        ILogger<GoogleRegistrationCommandHandler> logger,
         IGoogleOAuthService googleOAuthService,
         IUserRepository userRepository,
         IUnitOfWork unitOfWork,
@@ -34,9 +34,15 @@ namespace FitTracker.Application.UseCases.User.Handlers.Google
         ILocalizationService localization,
         IMapper mapper) : IRequestHandler<GoogleRegisterCommand, Result<LoginResponse, ValidationResult>>
     {
+        /// <summary>
+        /// Handles the Google registration command.
+        /// </summary>
+        /// <param name="request">The <see cref="GoogleRegisterCommand"/>.</param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/>.</param>
+        /// <returns>The <see cref="LoginResponse"/> result.</returns>
         public async Task<Result<LoginResponse, ValidationResult>> Handle(GoogleRegisterCommand request, CancellationToken cancellationToken)
         {
-            logger.LogInformation("Starting Google registration process.");
+            logger.LogDebug("Starting Google registration process.");
             var tokenResponse = await googleOAuthService.ExchangeCodeForTokensAsync(request.Request.Code, request.Request.CodeVerifier);
             if (tokenResponse == null)
             {
@@ -44,7 +50,7 @@ namespace FitTracker.Application.UseCases.User.Handlers.Google
                 return ResultExtensions.ValidationFailure<LoginResponse>(nameof(request.Request.Code), localization.GetString("Google.Auth.InvalidToken"));
             }
 
-            logger.LogInformation("Attempting to validate Google IdToken.");
+            logger.LogDebug("Attempting to validate Google IdToken.");
 
             var googlePayload = await googleOAuthService.ValidateAsync(tokenResponse.IdToken);
 

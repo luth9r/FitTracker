@@ -16,6 +16,7 @@ namespace FitTracker.Infrastructure.Services
         ILogger<GoogleOAuthService> logger,
         IConfiguration configuration) : IGoogleOAuthService
     {
+        /// <inheritdoc/>
         public async Task<Application.DTOs.Auth.Google.TokenResponse> ExchangeCodeForTokensAsync(string code, string codeVerifier)
         {
             var tokenEndpoint = "https://oauth2.googleapis.com/token";
@@ -45,6 +46,7 @@ namespace FitTracker.Infrastructure.Services
             return body;
         }
 
+        /// <inheritdoc/>
         public async Task<GoogleTokenPayload?> ValidateAsync(string idToken)
         {
             try

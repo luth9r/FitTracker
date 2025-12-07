@@ -12,13 +12,17 @@ namespace FitTracker.Api.Controllers
     /// <summary>
     /// Authentication controller.
     /// </summary>
-    /// <param name="mediator"></param>
-    /// <param name="logger"></param>
+    [ApiController]
     [Route("api/[controller]")]
     public class AuthController(
         IMediator mediator,
         ILogger<AuthController> logger) : ControllerBase
     {
+        /// <summary>
+        /// Logs in a user.
+        /// </summary>
+        /// <param name="loginRequest">The <see cref="LoginRequest"/>.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         [HttpPost("login")]
         public async Task<ActionResult<LoginResponse>> LoginAsync(
             [FromBody] LoginRequest loginRequest,
@@ -36,6 +40,11 @@ namespace FitTracker.Api.Controllers
             return Ok(result.Value);
         }
 
+        /// <summary>
+        /// Logs in a user using Google credentials.
+        /// </summary>
+        /// <param name="googleRequest">The <see cref="GoogleLoginRequest"/>.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         [HttpPost("google-login")]
         public async Task<IActionResult> GoogleLoginAsync(
             [FromBody] GoogleLoginRequest googleRequest,
@@ -53,6 +62,12 @@ namespace FitTracker.Api.Controllers
             return Ok(result.Value);
         }
 
+
+        /// <summary>
+        /// Registers a new user using Google credentials.
+        /// </summary>
+        /// <param name="googleRegisterRequest">The <see cref="GoogleRegisterRequest"/>.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         [HttpPost("google-register")]
         public async Task<IActionResult> GoogleRegisterAsync(
             [FromBody] GoogleRegisterRequest googleRegisterRequest,
@@ -69,6 +84,11 @@ namespace FitTracker.Api.Controllers
             return Ok(result.Value);
         }
 
+        /// <summary>
+        /// Registers a new user.
+        /// </summary>
+        /// <param name="registerRequest">The <see cref="RegisterRequest"/>.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         [HttpPost("register")]
         public async Task<IActionResult> RegisterAsync(
             [FromBody] RegisterRequest registerRequest,
@@ -83,6 +103,11 @@ namespace FitTracker.Api.Controllers
             return Ok(result.Value);
         }
 
+        /// <summary>
+        /// Verifies a user's email address.
+        /// </summary>
+        /// <param name="token">The verification token.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         [HttpGet("verify-email")]
         public async Task<IActionResult> VerifyEmail(
             [FromQuery] string token,
@@ -108,7 +133,7 @@ namespace FitTracker.Api.Controllers
         /// <summary>
         /// Sets the authentication cookie.
         /// </summary>
-        /// <param name="token"></param>
+        /// <param name="token">The authentication token (JWT).</param>
         private void SetAuthCookie(string token)
         {
             var cookieOptions = new CookieOptions

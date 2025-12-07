@@ -16,11 +16,12 @@ namespace FitTracker.Application.UseCases.User.Handlers
     /// <summary>
     /// Handler for processing email verification commands.
     /// </summary>
-    /// <param name="jwtTokenGenerator"></param>
-    /// <param name="userRepository"></param>
-    /// <param name="unitOfWork"></param>
-    /// <param name="localization"></param>
-    /// <param name="mapper"></param>
+    /// <param name="jwtTokenGenerator">The <see cref="IJwtTokenGenerator"/>.</param>
+    /// <param name="userRepository">The <see cref="IUserRepository"/>.</param>
+    /// <param name="unitOfWork">The <see cref="IUnitOfWork"/>.</param>
+    /// <param name="localization">The <see cref="ILocalizationService"/>.</param>
+    /// <param name="mapper">The <see cref="IMapper"/>.</param>
+    /// <param name="logger">The <see cref="ILogger{VerifyEmailCommandHandler}"/>.</param>
     public class VerifyEmailCommandHandler(IJwtTokenGenerator jwtTokenGenerator,
         IUserRepository userRepository,
         IUnitOfWork unitOfWork,
@@ -28,9 +29,15 @@ namespace FitTracker.Application.UseCases.User.Handlers
         IMapper mapper,
         ILogger<VerifyEmailCommandHandler> logger) : IRequestHandler<VerifyEmailCommand, Result<LoginResponse, ValidationResult>>
     {
+        /// <summary>
+        /// Handles the verify email command.
+        /// </summary>
+        /// <param name="request">The <see cref="VerifyEmailCommand"/>.</param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/>.</param>
+        /// <returns>The <see cref="LoginResponse"/> result.</returns>
         public async Task<Result<LoginResponse, ValidationResult>> Handle(VerifyEmailCommand request, CancellationToken cancellationToken)
         {
-            logger.LogInformation("Starting email verification process.");
+            logger.LogDebug("Starting email verification process.");
 
             var claimsPrincipal = jwtTokenGenerator.ValidateToken(request.Token);
 

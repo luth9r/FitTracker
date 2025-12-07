@@ -12,6 +12,6 @@ namespace FitTracker.Application.UseCases.User.Commands.Google
     /// <summary>
     /// Command for registering with Google.
     /// </summary>
-    /// <param name="Request"></param>
+    /// <param name="Request">The <see cref="GoogleRegisterRequest"/>.</param>
     public record GoogleRegisterCommand(GoogleRegisterRequest Request) : IRequest<Result<LoginResponse, ValidationResult>>;
 }

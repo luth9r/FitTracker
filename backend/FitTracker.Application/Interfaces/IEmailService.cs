@@ -8,10 +8,9 @@
         /// <summary>
         /// Sends an email.
         /// </summary>
-        /// <param name="to"></param>
-        /// <param name="subject"></param>
-        /// <param name="body"></param>
-        /// <returns></returns>
+        /// <param name="to">The recipient email address.</param>
+        /// <param name="subject">The email subject.</param>
+        /// <param name="body">The email body.</param>
         Task SendEmailAsync(string to, string subject, string body);
     }
 }

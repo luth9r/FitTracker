@@ -6,8 +6,8 @@ using MediatR;
 namespace FitTracker.Application.UseCases.User.Commands
 {
     /// <summary>
-    /// Verify Email Command
+    /// Command for verifying an email address.
     /// </summary>
-    /// <param name="Token"></param>
+    /// <param name="Token">The verification token.</param>
     public record VerifyEmailCommand(string Token) : IRequest<Result<LoginResponse, ValidationResult>>;
 }

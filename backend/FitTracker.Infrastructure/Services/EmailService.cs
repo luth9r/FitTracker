@@ -5,6 +5,7 @@ namespace FitTracker.Infrastructure.Services
 {
     public class EmailService(ILogger<EmailService> logger) : IEmailService
     {
+        /// <inheritdoc/>
         public Task SendEmailAsync(string to, string subject, string body)
         {
             logger.LogInformation("--- NEW EMAIL (SIMULATION) ---");

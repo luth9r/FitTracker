@@ -7,25 +7,11 @@
         },
         "Live": "Live"
     },
-    "Auth": {
-        "Login": {
-            "InvalidCredentials": "Invalid email or password",
-            "EmailRequired": "Email is required",
-            "PasswordRequired": "Password is required",
-            "InvalidEmail": "Email must be a valid email address",
-            "PasswordTooShort": "Password must be at least 8 characters long"
-        },
-        "Register": {
-            "UsernameAlreadyExists": "User with such username already exists",
-            "EmailAlreadyExists": "User with such email already exists",
-            "AccountAlreadyExists": "An account with this email already exists. Please log in instead."
-        }
-    },
     "Validation": {
         "User": {
             "Username": {
                 "Required": "Username is required",
-                "Length": "Username must be between {MinLength} and {MaxLength} characters",
+                "Length": "Username must be longer than {MinLength} characters",
                 "InvalidCharacters": "Username can only contain letters, numbers, underscores and hyphens"
             },
             "Email": {
@@ -33,8 +19,9 @@
                 "InvalidFormat": "Email must be a valid email address",
                 "MaxLength": "Email cannot exceed {MaxLength} characters"
             },
-            "PasswordHash": {
-                "Required": "Password hash is required"
+            "Password": {
+                "Required": "Password is required",
+                "Length": "Password must be longer than {MinLength} characters"
             },
             "PreferredUnits": {
                 "Required": "Preferred units are required",
@@ -54,6 +41,14 @@
             "Avatar": {
                 "MaxLength": "Avatar URL cannot exceed {MaxLength} characters",
                 "InvalidUrl": "Avatar must be a valid URL"
+            }
+        },
+        "Google": {
+            "Code": {
+                "Required": "Code is required"
+            },
+            "CodeVerifier": {
+                "Required": "Code verifier is required"
             }
         }
     },

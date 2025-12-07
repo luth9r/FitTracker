@@ -1,12 +1,15 @@
+using System.Globalization;
+using System.Text;
 using FitTracker.Application;
+using FitTracker.Application.Validators;
 using FitTracker.Infrastructure;
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
-using System.Globalization;
-using System.Text;
+using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 
 namespace FitTracker.Api.Extensions
 {
@@ -78,6 +81,11 @@ namespace FitTracker.Api.Extensions
             _ = builder.Services.AddAuthorization();
 
             _ = builder.Services.AddControllers();
+
+            _ = builder.Services.AddValidatorsFromAssembly(
+                    typeof(LoginRequestValidator).Assembly);
+
+            _ = builder.Services.AddFluentValidationAutoValidation();
 
             _ = builder.Services.AddSwaggerGen(c =>
             {

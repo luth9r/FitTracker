@@ -1,4 +1,5 @@
-﻿using FitTracker.Application.Behaviors;
+using FitTracker.Application.Behaviors;
+using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,6 +11,8 @@ namespace FitTracker.Application
         public static IServiceCollection AddApplication(this IServiceCollection services, IConfiguration configuration)
         {
             AddMediatR(services);
+
+            AddValidators(services);
 
             AddAutoMappers(services);
 
@@ -23,9 +26,13 @@ namespace FitTracker.Application
             _ = services.AddMediatR(cfg =>
             {
                 _ = cfg.RegisterServicesFromAssembly(typeof(ApplicationInjection).Assembly);
+                _ = cfg.AddOpenBehavior(typeof(LoggingBehavior<,>));
             });
+        }
 
-            _ = services.AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
+        private static void AddValidators(IServiceCollection services)
+        {
+            _ = services.AddValidatorsFromAssembly(typeof(ApplicationInjection).Assembly);
         }
 
         private static void AddAutoMappers(IServiceCollection services)

@@ -12,6 +12,7 @@ namespace FitTracker.Infrastructure.Services
     {
         private const string EmailVerificationPurpose = "email_verification";
 
+        /// <inheritdoc/>
         public string GenerateToken(User user)
         {
             var key = GetSymmetricSecurityKey();
@@ -30,6 +31,7 @@ namespace FitTracker.Infrastructure.Services
             return CreateToken(claims, expires, creds);
         }
 
+        /// <inheritdoc/>
         public string GenerateVerificationToken(User user)
         {
             var key = GetSymmetricSecurityKey();
@@ -49,6 +51,7 @@ namespace FitTracker.Infrastructure.Services
             return CreateToken(claims, expires, creds);
         }
 
+        /// <inheritdoc/>
         public ClaimsPrincipal? ValidateToken(string token)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -76,6 +79,9 @@ namespace FitTracker.Infrastructure.Services
             }
         }
 
+        /// <summary>
+        /// Gets the symmetric security key from the configuration.
+        /// </summary>
         private SymmetricSecurityKey GetSymmetricSecurityKey()
         {
             var jwtKey = configuration["Jwt:Key"];
@@ -87,6 +93,13 @@ namespace FitTracker.Infrastructure.Services
             return new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
         }
 
+        /// <summary>
+        /// Creates a JWT token.
+        /// </summary>
+        /// <param name="claims">The claims to include in the token.</param>
+        /// <param name="expires">The expiration date of the token.</param>
+        /// <param name="creds">The signing credentials for the token.</param>
+        /// <returns>The created JWT token.</returns>
         private string CreateToken(List<Claim> claims, DateTime expires, SigningCredentials creds)
         {
             var tokenDescriptor = new SecurityTokenDescriptor
