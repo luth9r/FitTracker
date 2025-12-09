@@ -13,10 +13,12 @@ namespace FitTracker.Domain.Entities
         /// The maximum number of reps allowed in a set.
         /// </summary>
         public const int MaxReps = 1000;
+
         /// <summary>
         /// The maximum rest time allowed in seconds.
         /// </summary>
         public const int MaxRestSeconds = 3600; // 1 hour
+
         /// <summary>
         /// The maximum weight allowed in kilograms.
         /// </summary>

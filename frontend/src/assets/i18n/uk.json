@@ -54,11 +54,12 @@
     "USERNAME": "Ім'я користувача",
     "USERNAME_PLACEHOLDER": "ваше_унікальне_ім'я_користувача",
     "VALIDATION": {
-      "USERNAME_LENGTH": "Принаймні 3 символи",
-      "USERNAME_SPACES": "Не може містити пробіли",
-      "PASSWORD_LENGTH": "Принаймні 8 символів",
-      "PASSWORD_LETTER": "Принаймні одна буква",
-      "PASSWORD_NUMBER": "Принаймні одна цифра"
+      "USERNAME_MINLENGTH": "Принаймні 3 символи",
+      "USERNAME_NOSPACES": "Не може містити пробіли",
+      "PASSWORD_MINLENGTH": "Принаймні 8 символів",
+      "PASSWORD_ONELETTER": "Принаймні одна буква",
+      "PASSWORD_ONENUMBER": "Принаймні одна цифра",
+      "CONFIRM_MATCHES": "Паролі не збігаються"
     }
   }
 }

@@ -23,54 +23,6 @@
   border-color: var(--color-border-success);
 }
 
-.validation-checklist {
-  list-style: none;
-  padding: 0.25rem 0 0 0.25rem;
-  margin: 0.5rem 0 0 0;
-  font-size: 0.8rem; 
-  text-align: left;
-
-  li {
-    display: flex;
-    align-items: center;
-    margin-bottom: 0.4rem;
-    transition: color 0.2s ease-in-out;
-
-    .validation-dot {
-      display: inline-block;
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      margin-right: 0.6rem;
-      background-color: currentColor; 
-      transition: all 0.2s ease-in-out;
-      flex-shrink: 0; 
-    }
-
-    .validation-text {
-      line-height: 1.3;
-    }
-
-    &.invalid {
-      color: var(--color-text-muted);
-    }
-
-    form:not(.ng-pristine) &.invalid,
-    .ng-touched &.invalid,
-    :host:not(.is-pristine) &.invalid {
-      color: var(--color-message-error); 
-    }
-
-    &.valid {
-      color: var(--color-message-success);
-      
-      .validation-text {
-        opacity: 0.8;
-      }
-    }
-  }
-}
-
 .container {
   min-height: 100%;
   background: var(--color-bg-dark);
@@ -93,7 +45,6 @@
   border: 1px solid var(--color-border);
   z-index: 10;
 }
-
 
 .header {
   text-align: center;
@@ -129,7 +80,7 @@
   background: var(--color-input-bg);
   border-radius: 12px;
   padding: 4px;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .toggle-btn {
@@ -153,120 +104,6 @@
     color: var(--color-text-primary);
   }
 }
-
-.form-container {
-  margin-bottom: 1.5rem;
-}
-
-.input-group {
-  margin-bottom: 1rem;
-}
-
-.input-label {
-  display: block;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--color-text-secondary);
-  margin-bottom: 0.5rem;
-}
-
-.input-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.input-icon {
-  position: absolute;
-  left: 12px;
-  color: var(--color-text-secondary);
-  pointer-events: none;
-}
-
-.input-field {
-  width: 100%;
-  padding: 12px 12px 12px 44px;
-  background: var(--color-input-bg);
-  border: 1px solid var(--color-border-strong);
-  border-radius: 12px;
-  color: var(--color-text-primary);
-  font-size: 0.875rem;
-  @include m.transition-smooth;
-
-  &::placeholder {
-    color: var(--color-text-muted);
-  }
-
-  &:focus {
-    outline: none;
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 2px var(--color-primary);
-  }
-}
-
-.toggle-password {
-  position: absolute;
-  right: 12px;
-  background: transparent;
-  border: none;
-  color: var(--color-text-secondary);
-  cursor: pointer;
-  padding: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  @include m.transition-smooth;
-
-  &:hover {
-    color: var(--color-text-primary);
-  }
-
-  .eye-icon {
-    width: 20px;
-    height: 20px;
-  }
-}
-
-.forgot-password-container {
-  text-align: right;
-  margin-bottom: 1rem;
-}
-
-.forgot-password {
-  background: transparent;
-  border: none;
-  color: var(--color-primary);
-  font-size: 0.875rem;
-  cursor: pointer;
-  @include m.transition-smooth;
-
-  &:hover {
-    color: var(--color-primary-active);
-  }
-}
-
-.submit-btn {
-  width: 100%;
-  padding: 14px;
-  background: var(--color-primary);
-  color: var(--color-text-primary);
-  font-weight: 600;
-  font-size: 0.875rem;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  @include m.transition-smooth;
-
-  &:hover {
-    transform: scale(1.02);
-    background: var(--color-primary-hover);
-  }
-
-  &:active {
-    transform: scale(0.98);
-  }
-}
-
 
 .divider {
   position: relative;
@@ -327,7 +164,6 @@
   height: 20px;
 }
 
-
 .footer-text {
   text-align: center;
   font-size: 0.875rem;
@@ -346,7 +182,6 @@
     color: var(--color-primary-active);
   }
 }
-
 
 .terms-text {
   position: relative;
@@ -369,21 +204,69 @@
 }
 
 @media (max-width: 640px) {
-  .login-card {
-    padding: 1.5rem;
+  .container {
+    padding: 0;
+    background: var(--color-card-bg);
+    min-height: 100vh;
+    justify-content: center;
   }
 
-  .title {
-    font-size: 1.5rem;
+  .login-card {
+    max-width: 100%;
+    border-radius: 0;
+    border: none;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding-top: 2rem;
+  }
+
+  .header {
+    margin-bottom: 1.25rem;
   }
 
   .logo {
     width: 56px;
     height: 56px;
+    margin-bottom: 0.75rem;
 
     svg {
       width: 28px;
       height: 28px;
     }
+  }
+
+  .title {
+    font-size: 1.5rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .subtitle {
+    font-size: 0.813rem;
+  }
+
+  .toggle-container {
+    margin-bottom: 0.75rem;
+  }
+
+  .divider {
+    margin: 1rem 0;
+  }
+
+  .social-buttons {
+    margin-bottom: 1rem;
+  }
+
+  .footer-text {
+    font-size: 0.813rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .terms-text {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    font-size: 0.688rem;
+    background: var(--color-card-bg);
   }
 }

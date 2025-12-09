@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { catchError, map, Observable, of } from 'rxjs';
 
 export interface LoginResponse {
   username: string;
@@ -21,20 +21,25 @@ export interface RegisterPayload {
 export class AuthService {
   private http = inject(HttpClient);
   private apiUrl = 'http://localhost:5000/api/auth'; // Base URL for API
+  private userApiUrl = 'http://localhost:5000/api/user'; // Base URL for user API
 
   /**
    * 1. Regular Login
    */
   login(email: string, password: string): Observable<LoginResponse> {
     const payload = { email, password };
-    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, payload);
+    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, payload, {
+      withCredentials: true
+    });
   }
 
   /**
    * 2. Regular Registration
    */
   register(payload: RegisterPayload): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.apiUrl}/register`, payload);
+    return this.http.post<LoginResponse>(`${this.apiUrl}/register`, payload, {
+      withCredentials: true
+    });
   }
 
   /**
@@ -42,7 +47,9 @@ export class AuthService {
    */
   googleLogin(code: string, codeVerifier: string): Observable<LoginResponse> {
     const payload = { code, codeVerifier };
-    return this.http.post<LoginResponse>(`${this.apiUrl}/google-login`, payload);
+    return this.http.post<LoginResponse>(`${this.apiUrl}/google-login`, payload, {
+      withCredentials: true
+    });
   }
 
   /**
@@ -50,6 +57,19 @@ export class AuthService {
    */
   googleRegister(code: string, codeVerifier: string): Observable<LoginResponse> {
     const payload = { code, codeVerifier };
-    return this.http.post<LoginResponse>(`${this.apiUrl}/google-register`, payload);
+    return this.http.post<LoginResponse>(`${this.apiUrl}/google-register`, payload, {
+      withCredentials: true
+    });
+  }
+
+  checkAuth(): Observable<boolean> {
+    return this.http
+      .get<{ userId: string | null }>(`${this.userApiUrl}/me`, {
+        withCredentials: true
+      })
+      .pipe(
+        map(res => !!res.userId),
+        catchError(() => of(false))
+      );
   }
 }

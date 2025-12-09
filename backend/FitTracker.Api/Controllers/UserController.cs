@@ -10,9 +10,14 @@ namespace FitTracker.Api.Controllers
     public class UserController : ControllerBase
     {
         [HttpGet("me")]
-        public IActionResult GetCurrentUser()
+        public async Task<IActionResult> GetCurrentUser()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized();
+            }
+
             return Ok(new { UserId = userId });
         }
     }

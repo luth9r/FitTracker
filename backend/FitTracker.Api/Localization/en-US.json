@@ -35,7 +35,9 @@
             },
             "Password": {
                 "Required": "Password is required",
-                "Length": "Password must be longer than {MinLength} characters"
+                "Length": "Password must be longer than {MinLength} characters",
+                "LetterRequired": "Password must contain at least 1 letter",
+                "NumberRequired": "Password must contain at least 1 number"
             },
             "PreferredUnits": {
                 "Required": "Preferred units are required",

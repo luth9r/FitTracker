@@ -1,0 +1,49 @@
+@use '../../../../../../styles/mixins.scss' as m;
+
+.validation-checklist {
+  list-style: none;
+  padding: 0.25rem 0 0 0.25rem;
+  margin: -0.75rem 0 0 0;
+  font-size: 0.8rem; 
+  text-align: left;
+
+  li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.4rem;
+    transition: color 0.2s ease-in-out;
+
+    .validation-dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      margin-right: 0.6rem;
+      background-color: currentColor; 
+      transition: all 0.2s ease-in-out;
+      flex-shrink: 0; 
+    }
+
+    .validation-text {
+      line-height: 1.3;
+    }
+
+    &.invalid {
+      color: var(--color-text-muted);
+    }
+
+    form:not(.ng-pristine) &.invalid,
+    .ng-touched &.invalid,
+    :host:not(.is-pristine) &.invalid {
+      color: var(--color-message-error); 
+    }
+
+    &.valid {
+      color: var(--color-message-success);
+      
+      .validation-text {
+        opacity: 0.8;
+      }
+    }
+  }
+}

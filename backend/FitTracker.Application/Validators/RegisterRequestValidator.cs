@@ -27,8 +27,12 @@ namespace FitTracker.Application.Validators
             RuleFor(x => x.Password)
                 .NotEmpty()
                 .WithMessage(_ => _localization.GetString("Validation.User.Password.Required"))
-                .MinimumLength(6)
-                .WithMessage(_ => _localization.GetString("Validation.User.Password.Length"));
+                .MinimumLength(8)
+                .WithMessage(_ => _localization.GetString("Validation.User.Password.Length"))
+                .Matches(@"[a-zA-Z]")
+                .WithMessage(_ => _localization.GetString("Validation.User.Password.LetterRequired"))
+                .Matches(@"\d")
+                .WithMessage(_ => _localization.GetString("Validation.User.Password.NumberRequired"));
         }
     }
 }

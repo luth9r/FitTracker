@@ -55,11 +55,12 @@
     "USERNAME_PLACEHOLDER": "your_unique_username",
 
     "VALIDATION": {
-      "USERNAME_LENGTH": "At least 3 characters long",
-      "USERNAME_SPACES": "Cannot contain spaces",
-      "PASSWORD_LENGTH": "At least 8 characters long",
-      "PASSWORD_LETTER": "At least one letter",
-      "PASSWORD_NUMBER": "At least one number"
+      "USERNAME_MINLENGTH": "At least 3 characters long",
+      "USERNAME_NOSPACES": "Cannot contain spaces",
+      "PASSWORD_MINLENGTH": "At least 8 characters long",
+      "PASSWORD_ONELETTER": "At least one letter",
+      "PASSWORD_ONENUMBER": "At least one number",
+      "CONFIRM_MATCHES": "Passwords do not match"
     }
   }
 }

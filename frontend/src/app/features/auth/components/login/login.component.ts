@@ -1,12 +1,14 @@
 import { Component, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { HttpErrorResponse } from '@angular/common/http';
 import { finalize } from 'rxjs/operators';
-import { AuthService, LoginResponse, RegisterPayload } from '../services/auth.service';
+import { AuthService, LoginResponse, RegisterPayload } from '../../services/auth.service';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { Router } from '@angular/router';
+import { ValidationService } from '../../services/validation.service';
+import { ErrorHandlingService } from '../../services/error-handling.service';
+import { LoginFormComponent, LoginFormData } from './forms/login-form/login-form.component';
+import { RegisterFormComponent, RegisterFormData } from './forms/register-form/register-form.component';
 
 type AuthMode = 'login' | 'register';
 
@@ -15,8 +17,9 @@ type AuthMode = 'login' | 'register';
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
-    TranslateModule
+    TranslateModule,
+    LoginFormComponent,
+    RegisterFormComponent
   ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
@@ -26,23 +29,24 @@ export class LoginComponent {
   private translate = inject(TranslateService);
   private oauthService = inject(OAuthService);
   private router = inject(Router);
+  private validationService = inject(ValidationService);
+  private errorHandlingService = inject(ErrorHandlingService);
 
-  email = '';
-  password = '';
-  confirmPassword = '';
-  username = '';
-
-  showPassword = false;
-  showConfirmPassword = false;
+  // UI state
   authMode: AuthMode = 'login';
   isLoading = false;
   errorMessage: string | null = null;
   successMessage: string | null = null;
-  isFormPristine = true;
   activeField: string | null = null;
 
+  // Validation states (только для register)
   usernameValidationState = { minLength: false, noSpaces: false };
   passwordValidationState = { minLength: false, oneLetter: false, oneNumber: false };
+  confirmPasswordValidationState = { matches: false };
+
+  // Temporary state for validation
+  private registerPassword = '';
+  private registerConfirmPassword = '';
 
   private googleIntent: AuthMode = 'login';
 
@@ -50,9 +54,7 @@ export class LoginComponent {
     console.log('[INFO] LoginComponent initialized, OAuthService already configured');
 
     window.addEventListener('message', (event) => {
-      if (event.origin !== window.location.origin) {
-        return; 
-      }
+      if (event.origin !== window.location.origin) return;
 
       const message = event.data;
       const queryString = message.startsWith('?') || message.startsWith('??')
@@ -69,7 +71,6 @@ export class LoginComponent {
         console.log(`[INFO] Google Flow: received code and verifier. Intent: ${this.googleIntent}`);
 
         const isRegistration = this.googleIntent === 'register';
-        
         const action = isRegistration
           ? this.authService.googleRegister(code, codeVerifier)
           : this.authService.googleLogin(code, codeVerifier);
@@ -83,7 +84,6 @@ export class LoginComponent {
           next: (response) => this.handleLoginSuccess(response, isRegistration),
           error: (err) => this.handleError(err, `google-${this.googleIntent}`)
         });
-
       } else {
         if (!code) console.warn('[WARN] Google Flow: "code" not found in message.');
         if (!codeVerifier) console.warn('[WARN] Google Flow: "codeVerifier" not found in sessionStorage.');
@@ -92,6 +92,7 @@ export class LoginComponent {
     });
   }
 
+  // Field management
   setActiveField(fieldName: string) {
     this.activeField = fieldName;
   }
@@ -100,92 +101,103 @@ export class LoginComponent {
     this.activeField = null;
   }
 
-  toggleMode(mode: 'login' | 'register') {
+  toggleMode(mode: AuthMode) {
     this.authMode = mode;
     this.resetState();
-    this.isFormPristine = true;
-    this.email = '';
-    this.password = '';
-    this.confirmPassword = '';
-    this.username = '';
+    this.clearActiveField();
+    this.resetValidationState();
   }
 
-  togglePassword() { this.showPassword = !this.showPassword; }
-  toggleConfirmPassword() { this.showConfirmPassword = !this.showConfirmPassword; }
-
-  validateUsernameOnTheFly(username: string) {
-    this.isFormPristine = false;
-    this.usernameValidationState.minLength = username.length >= 3;
-    this.usernameValidationState.noSpaces = !/\s/.test(username);
-  }
-
-  validatePasswordOnTheFly(password: string) {
-    this.isFormPristine = false;
-    this.passwordValidationState.minLength = password.length >= 8;
-    this.passwordValidationState.oneLetter = /[a-zA-Z]/.test(password);
-    this.passwordValidationState.oneNumber = /\d/.test(password);
-  }
-
-  handleSubmit() {
-    this.isFormPristine = false;
-    this.resetState(true);
-
-    if (this.authMode === 'login') {
-      if (!this.email.trim() || !this.password.trim()) {
-        this.errorMessage = 'LOGIN.ERRORS.EMPTY_FIELDS';
-        this.isLoading = false;
-        return;
-      }
-
-      this.authService.login(this.email, this.password)
-        .pipe(finalize(() => this.isLoading = false))
-        .subscribe({
-          next: (response) => this.handleLoginSuccess(response),
-          error: (err) => this.handleError(err, 'login')
-        });
-
-    } else if (this.authMode === 'register') {
-      if (!this.username.trim() || !this.email.trim() || !this.password.trim()) {
-        this.errorMessage = 'LOGIN.ERRORS.EMPTY_FIELDS';
-        this.isLoading = false;
-        return;
-      }
-
-      this.validateUsernameOnTheFly(this.username);
-      this.validatePasswordOnTheFly(this.password);
-
-      const isUsernameValid = Object.values(this.usernameValidationState).every(v => v);
-      const isPasswordValid = Object.values(this.passwordValidationState).every(v => v);
-
-      if (this.password !== this.confirmPassword) {
-        this.errorMessage = 'LOGIN.ERRORS.PASSWORDS_DO_NOT_MATCH';
-        this.isLoading = false;
-        return;
-      }
-
-      if (!isUsernameValid || !isPasswordValid) {
-        this.errorMessage = 'LOGIN.ERRORS.VALIDATION_FAILED';
-        this.isLoading = false;
-        return;
-      }
-
-      const payload: RegisterPayload = { username: this.username, email: this.email, password: this.password };
-      this.authService.register(payload)
-        .pipe(finalize(() => this.isLoading = false))
-        .subscribe({
-          next: (response) => this.handleLoginSuccess(response, true),
-          error: (err) => this.handleError(err, 'register')
-        });
+  // Validation handler for register form
+  onValidateChange(field: string, value: string) {
+    switch (field) {
+      case 'username':
+        this.usernameValidationState = this.validationService.validateUsername(value);
+        break;
+      case 'password':
+        this.registerPassword = value;
+        this.passwordValidationState = this.validationService.validatePassword(value);
+        
+        if (this.registerConfirmPassword) {
+          this.confirmPasswordValidationState = this.validationService.validateConfirmPassword(
+            this.registerPassword,
+            this.registerConfirmPassword
+          );
+        }
+        break;
+      case 'confirmPassword':
+        this.registerConfirmPassword = value;
+        this.confirmPasswordValidationState = this.validationService.validateConfirmPassword(
+          this.registerPassword,
+          value
+        );
+        break;
     }
   }
 
-  // ===================================================================
-  // This method now ONLY opens the window and saves the "intent".
-  // It does not process idToken.
-  // ===================================================================
+  // Login form submit
+  onLoginSubmit(formData: LoginFormData) {
+    this.resetState(true);
+
+    if (!formData.email.trim() || !formData.password.trim()) {
+      this.errorMessage = 'LOGIN.ERRORS.EMPTY_FIELDS';
+      this.isLoading = false;
+      return;
+    }
+
+    this.authService.login(formData.email, formData.password)
+      .pipe(finalize(() => this.isLoading = false))
+      .subscribe({
+        next: (response) => this.handleLoginSuccess(response),
+        error: (err) => this.handleError(err, 'login')
+      });
+  }
+
+  // Register form submit
+  onRegisterSubmit(formData: RegisterFormData) {
+    this.resetState(true);
+
+    if (!formData.username.trim() || !formData.email.trim() || 
+        !formData.password.trim() || !formData.confirmPassword.trim()) {
+      this.errorMessage = 'LOGIN.ERRORS.EMPTY_FIELDS';
+      this.isLoading = false;
+      return;
+    }
+
+    // Validate
+    this.usernameValidationState = this.validationService.validateUsername(formData.username);
+    this.passwordValidationState = this.validationService.validatePassword(formData.password);
+    this.confirmPasswordValidationState = this.validationService.validateConfirmPassword(
+      formData.password, 
+      formData.confirmPassword
+    );
+
+    const isUsernameValid = Object.values(this.usernameValidationState).every(v => v);
+    const isPasswordValid = Object.values(this.passwordValidationState).every(v => v);
+    const isConfirmPasswordValid = this.confirmPasswordValidationState.matches;
+
+    if (!isUsernameValid || !isPasswordValid || !isConfirmPasswordValid) {
+      this.errorMessage = 'LOGIN.ERRORS.VALIDATION_FAILED';
+      this.isLoading = false;
+      return;
+    }
+
+    const payload: RegisterPayload = { 
+      username: formData.username, 
+      email: formData.email, 
+      password: formData.password 
+    };
+    
+    this.authService.register(payload)
+      .pipe(finalize(() => this.isLoading = false))
+      .subscribe({
+        next: (response) => this.handleLoginSuccess(response, true),
+        error: (err) => this.handleError(err, 'register')
+      });
+  }
+
   handleGoogleLogin(intent: 'login' | 'register') {
     this.resetState(true);
-    // 1. Save the "intent"
     this.googleIntent = intent;
 
     if (!this.oauthService.issuer) {
@@ -203,12 +215,11 @@ export class LoginComponent {
           console.warn('[WARN] Google Sign-In: Popup closed or unsuccessful.');
           this.isLoading = false;
         }
-        // Doing nothing here, as the message event listener will handle the rest.
       })
       .catch((err) => {
-        const oauthError = err as any;
-        if (oauthError?.type === 'popup_closed') {
-          console.log('[INFO] Google Sign-In (init): Popup closed by user (err).');
+        if (this.errorHandlingService.isPopupClosedError(err)) {
+          console.log('[INFO] Google Sign-In (init): Popup closed by user.');
+          this.isLoading = false;
         } else {
           console.error('[ERROR] Google Sign-In (init) Error:', err); 
         }
@@ -217,37 +228,18 @@ export class LoginComponent {
 
   private handleLoginSuccess(response: LoginResponse, isRegistration = false) {
     this.successMessage = isRegistration ? 'LOGIN.SUCCESS.REGISTER' : 'LOGIN.SUCCESS.LOGIN';
-
     setTimeout(() => {
-      this.router.navigate(['/home']);
+      this.router.navigate(['/']);
     }, 1000);
   }
 
   private handleError(err: unknown, context: string) {
-    console.error(`[ERROR] Error in context "${context}":`, err);
-
-    if (err instanceof HttpErrorResponse) {
-      if (err.status === 400 && err.error && err.error.errors) {
-        // .Net validation error
-        const errors = err.error.errors;
-        const firstErrorKey = Object.keys(errors)[0];
-        this.errorMessage = errors[firstErrorKey][0];
-      } else if (err.status === 0) {
-        // API unreachable
-        this.errorMessage = 'LOGIN.ERRORS.API_UNREACHABLE';
-      } else if (err.status === 401 || err.status === 404 || err.status === 409) {
-        this.errorMessage = err.error?.messageKey || 'LOGIN.ERRORS.UNKNOWN';
-      } else {
-        this.errorMessage = 'LOGIN.ERRORS.UNKNOWN';
-      }
+    const errorMessage = this.errorHandlingService.handleAuthError(err, context);
+    
+    if (errorMessage) {
+      this.errorMessage = errorMessage;
     } else {
-      const maybeError = (err as any)?.error;
-      if (maybeError === 'popup_closed_by_user') {
-        console.log('[INFO] User closed the popup without completing Google Sign-In.');
-        this.isLoading = false;
-        return;
-      }
-      this.errorMessage = 'LOGIN.ERRORS.UNKNOWN_GOOGLE';
+      this.isLoading = false;
     }
   }
 
@@ -255,5 +247,13 @@ export class LoginComponent {
     this.isLoading = isLoading;
     this.errorMessage = null;
     this.successMessage = null;
+  }
+
+  private resetValidationState() {
+    this.registerPassword = '';
+    this.registerConfirmPassword = '';
+    this.usernameValidationState = { minLength: false, noSpaces: false };
+    this.passwordValidationState = { minLength: false, oneLetter: false, oneNumber: false };
+    this.confirmPasswordValidationState = { matches: false };
   }
 }

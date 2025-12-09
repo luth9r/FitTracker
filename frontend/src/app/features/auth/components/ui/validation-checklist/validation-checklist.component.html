@@ -1,0 +1,7 @@
+<ul class="validation-checklist" *ngIf="shouldShow">
+  <li *ngFor="let check of validationChecks" 
+      [ngClass]="check.isValid ? 'valid' : 'invalid'">
+    <span class="validation-dot"></span>
+    <span class="validation-text">{{ check.label }}</span>
+  </li>
+</ul>

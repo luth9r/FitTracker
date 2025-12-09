@@ -1,0 +1,33 @@
+@use '../../../../../../../styles/mixins.scss' as m;
+
+.form-container {
+  margin-bottom: 1.5rem;
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 14px;
+  background: var(--color-primary);
+  color: var(--color-text-primary);
+  font-weight: 600;
+  font-size: 0.875rem;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  @include m.transition-smooth;
+
+  &:hover {
+    transform: scale(1.02);
+    background: var(--color-primary-hover);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+}

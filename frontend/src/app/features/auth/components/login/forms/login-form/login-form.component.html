@@ -1,0 +1,43 @@
+<div class="form-container">
+  <!-- Email -->
+  <app-auth-input-field
+    [labelKey]="'LOGIN.EMAIL'"
+    [placeholderKey]="'LOGIN.EMAIL_PLACEHOLDER'"
+    fieldName="email"
+    type="email"
+    [(value)]="formData.email"
+    (focus)="onFieldFocus('email')"
+    (blur)="onFieldBlur()">
+  </app-auth-input-field>
+
+  <!-- Password -->
+  <app-auth-input-field
+    [labelKey]="'LOGIN.PASSWORD'"
+    [placeholderKey]="'LOGIN.PASSWORD_PLACEHOLDER'"
+    fieldName="password"
+    type="password"
+    [(value)]="formData.password"
+    [(showPassword)]="showPassword"
+    (focus)="onFieldFocus('password')"
+    (blur)="onFieldBlur()">
+  </app-auth-input-field>
+
+  <!-- Forgot Password -->
+  <div class="forgot-password-container">
+    <button type="button" class="forgot-password">
+      {{ 'LOGIN.FORGOT_PASSWORD' | translate }}
+    </button>
+  </div>
+
+  <!-- Submit -->
+  <button 
+    type="submit" 
+    class="submit-btn" 
+    [disabled]="isLoading"
+    (click)="onSubmit()">
+    <span *ngIf="!isLoading">
+      {{ 'LOGIN.SUBMIT_BUTTON_LOGIN' | translate }}
+    </span>
+    <span *ngIf="isLoading">{{ 'LOGIN.LOADING' | translate }}</span>
+  </button>
+</div>

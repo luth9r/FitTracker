@@ -1,0 +1,75 @@
+@use '../../../../../../styles/mixins.scss' as m;
+
+.input-group {
+  margin-bottom: 1rem;
+}
+
+.input-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 12px;
+  color: var(--color-text-secondary);
+  pointer-events: none;
+}
+
+.input-field {
+  width: 100%;
+  padding: 12px 12px 12px 44px;
+  background: var(--color-input-bg);
+  border: 1px solid var(--color-border-strong);
+  border-radius: 12px;
+  color: var(--color-text-primary);
+  font-size: 0.875rem;
+  @include m.transition-smooth;
+
+  &::placeholder {
+    color: var(--color-text-muted);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px var(--color-primary);
+  }
+}
+
+.toggle-password {
+  position: absolute;
+  right: 12px;
+  background: transparent;
+  border: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  @include m.transition-smooth;
+
+  &:hover {
+    color: var(--color-text-primary);
+  }
+
+  .eye-icon {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.forgot-password-container {
+  text-align: right;
+  margin-bottom: 1rem;
+}
