@@ -55,7 +55,7 @@ namespace FitTracker.Infrastructure.Persistence.Data
                     Id = userId,
                     Username = "fitness_pro",
                     Email = "fitnesspro@example.com",
-                    PasswordHash = "$2a$11$X5wFuQE5cCcYKfZ1EE.IbeQQfFhVxR4rL8CxKgE8X9Y.wU3jZ9r4C",
+                    PasswordHash = "$2a$11$20pVjNtw/EknLSvVjig.z.7aFDUPZhUajZoFvr2lncrVgR2/kNJMW",
                     FirstName = "John",
                     LastName = "Athlete",
                     Avatar = "https://example.com/avatars/john.jpg",

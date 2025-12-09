@@ -16,8 +16,13 @@ namespace FitTracker.Application.DTOs.Auth
         public string Email { get; set; } = string.Empty;
 
         /// <summary>
-        /// Gets or sets jWT token for authenticated sessions.
+        /// Gets or sets JWT token for authenticated sessions.
         /// </summary>
         public string JWT { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets preferred units for user.
+        /// </summary>
+        public string PreferredUnits { get; set; } = string.Empty;
     }
 }

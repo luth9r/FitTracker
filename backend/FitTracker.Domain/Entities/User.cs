@@ -11,26 +11,32 @@ namespace FitTracker.Domain.Entities
         /// The maximum length allowed for the username.
         /// </summary>
         public const int UsernameMaxLength = 50;
+
         /// <summary>
         /// The minimum length required for the username.
         /// </summary>
         public const int UsernameMinLength = 3;
+
         /// <summary>
         /// The maximum length allowed for the email address.
         /// </summary>
         public const int EmailMaxLength = 100;
+
         /// <summary>
         /// The maximum length allowed for the first name.
         /// </summary>
         public const int FirstNameMaxLength = 50;
+
         /// <summary>
         /// The maximum length allowed for the last name.
         /// </summary>
         public const int LastNameMaxLength = 50;
+
         /// <summary>
         /// The maximum length allowed for the biography.
         /// </summary>
         public const int BioMaxLength = 500;
+
         /// <summary>
         /// The maximum length allowed for the avatar URL.
         /// </summary>

@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using CSharpFunctionalExtensions;
 using FitTracker.Application.DTOs.Auth;
 using FitTracker.Application.Extensions;
@@ -13,19 +13,19 @@ using System.Collections.Generic;
 using System.Text;
 using ResultExtensions = FitTracker.Application.Extensions.ResultExtensions;
 
-namespace FitTracker.Application.UseCases.User.Handlers
+namespace FitTracker.Application.UseCases.User.Handlers.Commands
 {
     /// <summary>
     /// Handler for processing login commands.
     /// </summary>
-    /// <param name="repository">The <see cref="IUserRepository"/>.</param>
+    /// <param name="userReadRepository">The <see cref="IUserReadRepository"/>.</param>
     /// <param name="mapper">The <see cref="IMapper"/>.</param>
     /// <param name="hasher">The <see cref="IPasswordHasher"/>.</param>
     /// <param name="jwtTokenGenerator">The <see cref="IJwtTokenGenerator"/>.</param>
     /// <param name="localization">The <see cref="ILocalizationService"/>.</param>
     /// <param name="logger">The <see cref="ILogger{LoginCommandHandler}"/>.</param>
     public class LoginCommandHandler(
-        IUserRepository repository,
+        IUserReadRepository userReadRepository,
         IMapper mapper,
         IPasswordHasher hasher,
         IJwtTokenGenerator jwtTokenGenerator,
@@ -45,7 +45,7 @@ namespace FitTracker.Application.UseCases.User.Handlers
             var userEmail = request.Request.Email;
             var userPassword = request.Request.Password;
 
-            var user = await repository.GetByEmailReadonlyAsync(userEmail, cancellationToken);
+            var user = await userReadRepository.GetByEmailReadonlyAsync(userEmail, cancellationToken);
 
             if (user == null || !user.IsEmailVerified)
             {

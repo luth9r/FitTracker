@@ -11,6 +11,7 @@ namespace FitTracker.Domain.Entities
         /// The maximum length allowed for the achievement name.
         /// </summary>
         public const int NameMaxLength = 100;
+
         /// <summary>
         /// The maximum length allowed for the achievement description.
         /// </summary>

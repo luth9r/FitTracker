@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using AutoMapper;
@@ -14,21 +14,21 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using ResultExtensions = FitTracker.Application.Extensions.ResultExtensions;
 
-namespace FitTracker.Application.UseCases.User.Handlers.Google
+namespace FitTracker.Application.UseCases.User.Handlers.Commands.Google
 {
     /// <summary>
     /// Handler for processing Google login commands.
     /// </summary>
     /// <param name="logger">The <see cref="ILogger{GoogleLoginCommandHandler}"/>.</param>
     /// <param name="googleOAuthService">The <see cref="IGoogleOAuthService"/>.</param>
-    /// <param name="userRepository">The <see cref="IUserRepository"/>.</param>
+    /// <param name="userReadRepository">The <see cref="IUserReadRepository"/>.</param>
     /// <param name="jwtTokenGenerator">The <see cref="IJwtTokenGenerator"/>.</param>
     /// <param name="localization">The <see cref="ILocalizationService"/>.</param>
     /// <param name="mapper">The <see cref="IMapper"/>.</param>
     public class GoogleLoginCommandHandler(
         ILogger<GoogleLoginCommandHandler> logger,
         IGoogleOAuthService googleOAuthService,
-        IUserRepository userRepository,
+        IUserReadRepository userReadRepository,
         IJwtTokenGenerator jwtTokenGenerator,
         ILocalizationService localization,
         IMapper mapper) : IRequestHandler<GoogleLoginCommand, Result<LoginResponse, ValidationResult>>
@@ -62,13 +62,13 @@ namespace FitTracker.Application.UseCases.User.Handlers.Google
 
             logger.LogDebug("Google Token validated for email: {Email}", googlePayload.Email);
 
-            var user = await userRepository.GetByGoogleTokenReadonlyAsync(googlePayload.GoogleId, cancellationToken);
+            var user = await userReadRepository.GetByGoogleTokenReadonlyAsync(googlePayload.GoogleId, cancellationToken);
 
             if (user == null)
             {
                 logger.LogDebug("User not found by GoogleId. Checking by email: {Email}", googlePayload.Email);
 
-                user = await userRepository.GetByEmailReadonlyAsync(googlePayload.Email, cancellationToken);
+                user = await userReadRepository.GetByEmailReadonlyAsync(googlePayload.Email, cancellationToken);
 
                 if (user == null)
                 {

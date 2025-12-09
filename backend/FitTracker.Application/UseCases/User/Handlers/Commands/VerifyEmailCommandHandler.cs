@@ -11,23 +11,27 @@ using Microsoft.Extensions.Logging;
 using System.Security.Claims;
 using ResultExtensions = FitTracker.Application.Extensions.ResultExtensions;
 
-namespace FitTracker.Application.UseCases.User.Handlers
+namespace FitTracker.Application.UseCases.User.Handlers.Commands
 {
     /// <summary>
     /// Handler for processing email verification commands.
     /// </summary>
     /// <param name="jwtTokenGenerator">The <see cref="IJwtTokenGenerator"/>.</param>
-    /// <param name="userRepository">The <see cref="IUserRepository"/>.</param>
+    /// <param name="userReadRepository">The <see cref="IUserReadRepository"/>.</param>
+    /// <param name="userWriteRepository">The <see cref="IUserWriteRepository"/>.</param>
     /// <param name="unitOfWork">The <see cref="IUnitOfWork"/>.</param>
     /// <param name="localization">The <see cref="ILocalizationService"/>.</param>
     /// <param name="mapper">The <see cref="IMapper"/>.</param>
     /// <param name="logger">The <see cref="ILogger{VerifyEmailCommandHandler}"/>.</param>
-    public class VerifyEmailCommandHandler(IJwtTokenGenerator jwtTokenGenerator,
-        IUserRepository userRepository,
+    public class VerifyEmailCommandHandler(
+        IJwtTokenGenerator jwtTokenGenerator,
+        IUserReadRepository userReadRepository,
+        IUserWriteRepository userWriteRepository,
         IUnitOfWork unitOfWork,
         ILocalizationService localization,
         IMapper mapper,
-        ILogger<VerifyEmailCommandHandler> logger) : IRequestHandler<VerifyEmailCommand, Result<LoginResponse, ValidationResult>>
+        ILogger<VerifyEmailCommandHandler> logger)
+        : IRequestHandler<VerifyEmailCommand, Result<LoginResponse, ValidationResult>>
     {
         /// <summary>
         /// Handles the verify email command.
@@ -61,7 +65,7 @@ namespace FitTracker.Application.UseCases.User.Handlers
                 return ResultExtensions.ValidationFailure<LoginResponse>(string.Empty, localization.GetString("Auth.VerifyEmail.InvalidToken"));
             }
 
-            var user = await userRepository.GetByIdReadonlyAsync(userId, cancellationToken);
+            var user = await userReadRepository.GetByIdReadonlyAsync(userId, cancellationToken);
             if (user == null)
             {
                 logger.LogWarning("User not found for email verification. UserId: {UserId}", userId);
@@ -76,7 +80,7 @@ namespace FitTracker.Application.UseCases.User.Handlers
 
             user.SetEmailVerified();
 
-            userRepository.Update(user);
+            userWriteRepository.Update(user);
 
             _ = await unitOfWork.SaveChangesAsync(cancellationToken);
 

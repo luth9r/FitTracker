@@ -23,6 +23,7 @@ namespace FitTracker.Api.Controllers
         /// </summary>
         /// <param name="loginRequest">The <see cref="LoginRequest"/>.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>The <see cref="LoginResponse"/>. or <see cref="ValidationProblemDetails"/> if the login fails.</returns>
         [HttpPost("login")]
         public async Task<ActionResult<LoginResponse>> LoginAsync(
             [FromBody] LoginRequest loginRequest,
@@ -36,7 +37,7 @@ namespace FitTracker.Api.Controllers
                 return ValidationProblem(result.Error.ToModelState());
             }
 
-            SetAuthCookie(result.Value.JWT);
+            SetAuthCookie(result.Value.JWT, result.Value.PreferredUnits);
             return Ok(result.Value);
         }
 
@@ -45,6 +46,7 @@ namespace FitTracker.Api.Controllers
         /// </summary>
         /// <param name="googleRequest">The <see cref="GoogleLoginRequest"/>.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>The <see cref="LoginResponse"/> or <see cref="ValidationProblemDetails"/> if the login fails.</returns>
         [HttpPost("google-login")]
         public async Task<IActionResult> GoogleLoginAsync(
             [FromBody] GoogleLoginRequest googleRequest,
@@ -58,7 +60,7 @@ namespace FitTracker.Api.Controllers
                 return ValidationProblem(result.Error.ToModelState());
             }
 
-            SetAuthCookie(result.Value.JWT);
+            SetAuthCookie(result.Value.JWT, result.Value.PreferredUnits);
             return Ok(result.Value);
         }
 
@@ -67,6 +69,7 @@ namespace FitTracker.Api.Controllers
         /// </summary>
         /// <param name="googleRegisterRequest">The <see cref="GoogleRegisterRequest"/>.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>The <see cref="LoginResponse"/> or <see cref="ValidationProblemDetails"/> if the registration fails.</returns>
         [HttpPost("google-register")]
         public async Task<IActionResult> GoogleRegisterAsync(
             [FromBody] GoogleRegisterRequest googleRegisterRequest,
@@ -79,7 +82,7 @@ namespace FitTracker.Api.Controllers
                 return ValidationProblem(result.Error.ToModelState());
             }
 
-            SetAuthCookie(result.Value.JWT);
+            SetAuthCookie(result.Value.JWT, result.Value.PreferredUnits);
             return Ok(result.Value);
         }
 
@@ -88,6 +91,7 @@ namespace FitTracker.Api.Controllers
         /// </summary>
         /// <param name="registerRequest">The <see cref="RegisterRequest"/>.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>The <see cref="LoginResponse"/> or <see cref="ValidationProblemDetails"/> if the registration fails.</returns>
         [HttpPost("register")]
         public async Task<IActionResult> RegisterAsync(
             [FromBody] RegisterRequest registerRequest,
@@ -107,6 +111,7 @@ namespace FitTracker.Api.Controllers
         /// </summary>
         /// <param name="token">The verification token.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>The <see cref="LoginResponse"/> or <see cref="ValidationProblemDetails"/> if the verification fails.</returns>
         [HttpGet("verify-email")]
         public async Task<IActionResult> VerifyEmail(
             [FromQuery] string token,
@@ -125,7 +130,7 @@ namespace FitTracker.Api.Controllers
                 return BadRequest(result.Error.ToModelState());
             }
 
-            SetAuthCookie(result.Value.JWT);
+            SetAuthCookie(result.Value.JWT, result.Value.PreferredUnits);
             return Ok(result.Value);
         }
 
@@ -133,7 +138,8 @@ namespace FitTracker.Api.Controllers
         /// Sets the authentication cookie.
         /// </summary>
         /// <param name="token">The authentication token (JWT).</param>
-        private void SetAuthCookie(string token)
+        /// <param name="preferredUnits">The preferred units.</param>
+        private void SetAuthCookie(string token, string preferredUnits)
         {
             var cookieOptions = new CookieOptions
             {
@@ -144,6 +150,7 @@ namespace FitTracker.Api.Controllers
             };
 
             Response.Cookies.Append("auth-token", token, cookieOptions);
+            Response.Cookies.Append("preferred-units", preferredUnits, cookieOptions);
         }
     }
 }

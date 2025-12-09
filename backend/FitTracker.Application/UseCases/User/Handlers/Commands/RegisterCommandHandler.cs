@@ -12,12 +12,13 @@ using Microsoft.Extensions.Logging;
 using ResultExtensions = FitTracker.Application.Extensions.ResultExtensions;
 using UserEntity = FitTracker.Domain.Entities.User;
 
-namespace FitTracker.Application.UseCases.User.Handlers
+namespace FitTracker.Application.UseCases.User.Handlers.Commands
 {
     /// <summary>
     /// Handler for processing user registration commands.
     /// </summary>
-    /// <param name="userRepository">The <see cref="IUserRepository"/>.</param>
+    /// <param name="userReadRepository">The <see cref="IUserReadRepository"/>.</param>
+    /// <param name="userWriteRepository">The <see cref="IUserWriteRepository"/>.</param>
     /// <param name="mapper">The <see cref="IMapper"/>.</param>
     /// <param name="unitOfWork">The <see cref="IUnitOfWork"/>.</param>
     /// <param name="localization">The <see cref="ILocalizationService"/>.</param>
@@ -26,7 +27,9 @@ namespace FitTracker.Application.UseCases.User.Handlers
     /// <param name="hasher">The <see cref="IPasswordHasher"/>.</param>
     /// <param name="configuration">The <see cref="IConfiguration"/>.</param>
     /// <param name="logger">The <see cref="ILogger{RegisterCommandHandler}"/>.</param>
-    public class RegisterCommandHandler(IUserRepository userRepository,
+    public class RegisterCommandHandler(
+        IUserReadRepository userReadRepository,
+        IUserWriteRepository userWriteRepository,
         IMapper mapper,
         IUnitOfWork unitOfWork,
         ILocalizationService localization,
@@ -48,14 +51,14 @@ namespace FitTracker.Application.UseCases.User.Handlers
 
             var userRequest = request.User;
 
-            var existingUser = await userRepository.GetByUsernameReadonlyAsync(userRequest.Username, cancellationToken);
+            var existingUser = await userReadRepository.GetByUsernameReadonlyAsync(userRequest.Username, cancellationToken);
             if (existingUser != null)
             {
                 logger.LogWarning("Registration failed: Username {Username} already exists.", userRequest.Username);
                 return ResultExtensions.ValidationFailure<LoginResponse>(nameof(userRequest.Username), localization.GetString("Auth.Register.UsernameAlreadyExists"));
             }
 
-            var existingUserByEmail = await userRepository.GetByEmailReadonlyAsync(userRequest.Email, cancellationToken);
+            var existingUserByEmail = await userReadRepository.GetByEmailReadonlyAsync(userRequest.Email, cancellationToken);
             if (existingUserByEmail != null)
             {
                 logger.LogWarning("Registration failed: Email {Email} already exists.", userRequest.Email);
@@ -70,7 +73,7 @@ namespace FitTracker.Application.UseCases.User.Handlers
             logger.LogDebug("BEFORE SaveChanges: {Id}", user.Id);
 
             // Add to trackings
-            await userRepository.AddAsync(user, cancellationToken);
+            await userWriteRepository.AddAsync(user, cancellationToken);
 
             // Save changes to db
             _ = await unitOfWork.SaveChangesAsync(cancellationToken);

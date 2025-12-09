@@ -11,22 +11,27 @@ namespace FitTracker.Domain.Entities
         /// The maximum length allowed for the exercise name.
         /// </summary>
         public const int NameMaxLength = 100;
+
         /// <summary>
         /// The maximum length allowed for the exercise description.
         /// </summary>
         public const int DescriptionMaxLength = 1000;
+
         /// <summary>
         /// The maximum length allowed for the muscle group name.
         /// </summary>
         public const int MuscleGroupMaxLength = 50;
+
         /// <summary>
         /// The maximum length allowed for the equipment name.
         /// </summary>
         public const int EquipmentMaxLength = 50;
+
         /// <summary>
         /// The maximum length allowed for the image URL.
         /// </summary>
         public const int ImageUrlMaxLength = 500;
+
         /// <summary>
         /// The maximum length allowed for the video URL.
         /// </summary>

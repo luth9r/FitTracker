@@ -11,7 +11,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="DTOs\Users\" />
 		<Folder Include="Exceptions\" />
 		<Folder Include="Services\" />
 		<Folder Include="Validators\" />

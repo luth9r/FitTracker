@@ -12,10 +12,12 @@ namespace FitTracker.Domain.Entities
         /// The maximum weight allowed in kilograms.
         /// </summary>
         public const decimal MaxWeightKg = 10000m;
+
         /// <summary>
         /// The maximum number of planned reps allowed.
         /// </summary>
         public const int MaxReps = 1000;
+
         /// <summary>
         /// The maximum rest time allowed in seconds.
         /// </summary>

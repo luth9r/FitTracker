@@ -89,11 +89,16 @@ public static class DependencyInjection
     private static void AddRepositories(IServiceCollection services)
     {
         _ = services.AddScoped<IPasswordHasher, PasswordHasher>();
-        _ = services.AddScoped<IUserRepository, UserRepository>();
+
+        _ = services.AddScoped<IUserWriteRepository, UserWriteRepository>();
+        _ = services.AddScoped<IUserReadRepository, UserReadRepository>();
+        _ = services.AddScoped<IWorkoutReadRepository, WorkoutReadRepository>();
+        _ = services.AddScoped<ISetReadRepository, SetReadRepository>();
+
         _ = services.AddScoped<IUnitOfWork, UnitOfWork>();
-        _ = services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
         _ = services.AddScoped<IEmailService, EmailService>();
         _ = services.AddScoped<IGoogleOAuthService, GoogleOAuthService>();
+        _ = services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
 
         // TODO:
         // services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));

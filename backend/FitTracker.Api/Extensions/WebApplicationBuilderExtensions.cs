@@ -1,6 +1,6 @@
 using System.Globalization;
+using System.Security.Claims;
 using System.Text;
-using FitTracker.Api.Authorization;
 using FitTracker.Application;
 using FitTracker.Application.Validators;
 using FitTracker.Infrastructure;
@@ -80,14 +80,13 @@ namespace FitTracker.Api.Extensions
                     };
                 });
 
-            _ = builder.Services.AddSingleton<IAuthorizationHandler, EmailVerifiedHandler>();
-
             _ = builder.Services.AddAuthorization(options =>
             {
                 var defaultAuthorizationPolicyBuilder = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme);
 
                 defaultAuthorizationPolicyBuilder.RequireAuthenticatedUser()
-                                                 .RequireClaim("is_email_verified", "true");
+                                                 .RequireClaim("is_email_verified", "true")
+                                                 .RequireClaim(ClaimTypes.NameIdentifier);
 
                 options.DefaultPolicy = defaultAuthorizationPolicyBuilder.Build();
             });

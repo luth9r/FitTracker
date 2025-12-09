@@ -9,14 +9,17 @@ namespace FitTracker.Domain.Entities
         /// The maximum length allowed for the workout name.
         /// </summary>
         public const int NameMaxLength = 100;
+
         /// <summary>
         /// The minimum length required for the workout name.
         /// </summary>
         public const int NameMinLength = 3;
+
         /// <summary>
         /// The maximum length allowed for the workout notes.
         /// </summary>
         public const int NotesMaxLength = 2000;
+
         /// <summary>
         /// The maximum duration allowed for a workout in hours.
         /// </summary>

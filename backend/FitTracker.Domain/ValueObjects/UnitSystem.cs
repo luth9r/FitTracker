@@ -97,6 +97,11 @@ namespace FitTracker.Domain.ValueObjects
             return weight;
         }
 
+        public static decimal ConvertFromMetric(decimal weightInMetric, UnitSystem targetSystem)
+        {
+            return Metric.ConvertWeight(weightInMetric, targetSystem);
+        }
+
         public decimal ConvertLength(decimal length, UnitSystem targetSystem)
         {
             if (this == targetSystem)

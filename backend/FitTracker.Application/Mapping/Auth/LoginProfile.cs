@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using FitTracker.Application.DTOs.Auth;
 using FitTracker.Domain.Entities;
 
@@ -9,7 +9,8 @@ namespace FitTracker.Application.Mapping.Auth
         public LoginProfile()
         {
             _ = CreateMap<User, LoginResponse>()
-                .ForMember(dest => dest.JWT, opt => opt.Ignore());
+                .ForMember(dest => dest.JWT, opt => opt.Ignore())
+                .ForMember(dest => dest.PreferredUnits, opt => opt.MapFrom(src => src.PreferredUnits.ToString()));
         }
     }
 }

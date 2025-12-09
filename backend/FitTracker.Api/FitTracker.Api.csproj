@@ -43,6 +43,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Folder Include="Authorization\" />
 		<Folder Include="Middlewares\" />
 		<Folder Include="Helpers\" />
 		<Folder Include="Swagger\" />

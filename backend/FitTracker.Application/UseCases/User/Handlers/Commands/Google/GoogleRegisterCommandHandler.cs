@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using CSharpFunctionalExtensions;
 using FitTracker.Application.DTOs.Auth;
 using FitTracker.Application.Interfaces;
@@ -13,22 +13,23 @@ using System.Text;
 using ResultExtensions = FitTracker.Application.Extensions.ResultExtensions;
 using UserEntity = FitTracker.Domain.Entities.User;
 
-namespace FitTracker.Application.UseCases.User.Handlers.Google
+namespace FitTracker.Application.UseCases.User.Handlers.Commands.Google
 {
     /// <summary>
     /// Handler for processing Google registration commands.
     /// </summary>
     /// <param name="logger">The <see cref="ILogger{GoogleRegistrationCommandHandler}"/>.</param>
     /// <param name="googleOAuthService">The <see cref="IGoogleOAuthService"/>.</param>
-    /// <param name="userRepository">The <see cref="IUserRepository"/>.</param>
+    /// <param name="userReadRepository">The <see cref="IUserReadRepository"/>.</param>
     /// <param name="unitOfWork">The <see cref="IUnitOfWork"/>.</param>
     /// <param name="jwtTokenGenerator">The <see cref="IJwtTokenGenerator"/>.</param>
     /// <param name="localization">The <see cref="ILocalizationService"/>.</param>
     /// <param name="mapper">The <see cref="IMapper"/>.</param>
-    public class GoogleRegistrationCommandHandler(
-        ILogger<GoogleRegistrationCommandHandler> logger,
+    public class GoogleRegisterCommandHandler(
+        ILogger<GoogleRegisterCommandHandler> logger,
         IGoogleOAuthService googleOAuthService,
-        IUserRepository userRepository,
+        IUserReadRepository userReadRepository,
+        IUserWriteRepository userWriteRepository,
         IUnitOfWork unitOfWork,
         IJwtTokenGenerator jwtTokenGenerator,
         ILocalizationService localization,
@@ -60,8 +61,8 @@ namespace FitTracker.Application.UseCases.User.Handlers.Google
                 return ResultExtensions.ValidationFailure<LoginResponse>(nameof(request.Request.Code), localization.GetString("Google.Auth.InvalidToken"));
             }
 
-            if (await userRepository.GetByEmailReadonlyAsync(googlePayload.Email, cancellationToken) != null ||
-                await userRepository.GetByGoogleTokenReadonlyAsync(googlePayload.GoogleId, cancellationToken) != null)
+            if (await userReadRepository.GetByEmailReadonlyAsync(googlePayload.Email, cancellationToken) != null ||
+                await userReadRepository.GetByGoogleTokenReadonlyAsync(googlePayload.GoogleId, cancellationToken) != null)
             {
                 logger.LogWarning("Account already exists for {Email} or {GoogleId}", googlePayload.Email, googlePayload.GoogleId);
                 return ResultExtensions.ValidationFailure<LoginResponse>(nameof(request.Request.Code), localization.GetString("Auth.Register.AccountAlreadyExists"));
@@ -75,7 +76,7 @@ namespace FitTracker.Application.UseCases.User.Handlers.Google
 
             user.SetEmailVerified();
 
-            await userRepository.AddAsync(user, cancellationToken);
+            await userWriteRepository.AddAsync(user, cancellationToken);
             _ = await unitOfWork.SaveChangesAsync(cancellationToken);
 
             logger.LogInformation("Successfully created and registered user {Username} with ID {UserId}", user.Username, user.Id);
