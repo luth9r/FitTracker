@@ -1,6 +1,6 @@
 using AutoMapper;
 using FitTracker.Application.DTOs.Auth;
-using FitTracker.Domain.Entities;
+using UserEntity = FitTracker.Domain.Entities.User;
 
 namespace FitTracker.Application.Mapping.Auth
 {
@@ -8,7 +8,7 @@ namespace FitTracker.Application.Mapping.Auth
     {
         public LoginProfile()
         {
-            _ = CreateMap<User, LoginResponse>()
+            _ = CreateMap<UserEntity, LoginResponse>()
                 .ForMember(dest => dest.JWT, opt => opt.Ignore())
                 .ForMember(dest => dest.PreferredUnits, opt => opt.MapFrom(src => src.PreferredUnits.ToString()));
         }

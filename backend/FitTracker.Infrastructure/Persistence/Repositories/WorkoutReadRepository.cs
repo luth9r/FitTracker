@@ -5,6 +5,7 @@ using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using FitTracker.Domain.Abstract.Interfaces;
 using FitTracker.Domain.Entities;
+using FitTracker.Domain.ReadModels;
 using FitTracker.Infrastructure.Persistence.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -17,7 +18,7 @@ namespace FitTracker.Infrastructure.Persistence.Repositories
         ILogger<UserReadRepository> logger) : IWorkoutReadRepository
     {
         /// <inheritdoc/>
-        public async Task<IReadOnlyList<Workout>> GetCompletedByUserAsync(Guid userId, CancellationToken cancelationToken)
+        public async Task<IReadOnlyList<Workout>> GetCompletedByUserIdAsync(Guid userId, CancellationToken cancelationToken)
         {
             var workoutsEf = await context.Workouts
                                     .AsNoTracking()
@@ -25,6 +26,19 @@ namespace FitTracker.Infrastructure.Persistence.Repositories
                                     .OrderBy(w => w.WorkoutDate)
                                     .ProjectTo<Workout>(mapper.ConfigurationProvider)
                                     .ToListAsync(cancelationToken);
+
+            return workoutsEf;
+        }
+
+        /// <inheritdoc/>
+        public async Task<IReadOnlyList<WorkoutSummary>> GetRecentByUserIdAsync(Guid userId, int take, CancellationToken cancellationToken)
+        {
+            var workoutsEf = await context.Workouts
+                                    .AsNoTracking()
+                                    .OrderByDescending(w => w.WorkoutDate)
+                                    .Take(take)
+                                    .ProjectTo<WorkoutSummary>(mapper.ConfigurationProvider)
+                                    .ToListAsync(cancellationToken);
 
             return workoutsEf;
         }

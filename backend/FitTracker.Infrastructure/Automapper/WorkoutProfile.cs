@@ -1,5 +1,6 @@
 using AutoMapper;
 using FitTracker.Domain.Entities;
+using FitTracker.Domain.ReadModels;
 using FitTracker.Infrastructure.Persistence.Data.Entities;
 
 namespace FitTracker.Infrastructure.Automapper
@@ -43,6 +44,18 @@ namespace FitTracker.Infrastructure.Automapper
                 .ForMember(dest => dest.Exercises, opt => opt.Ignore())
                 .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
                 .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore());
+
+            // For Read model
+            _ = CreateMap<WorkoutEf, WorkoutSummary>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.WorkoutDate, opt => opt.MapFrom(src => src.CreatedAt))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.IsCompleted, opt => opt.MapFrom(src => src.IsCompleted))
+                .ForMember(dest => dest.DurationMinutes, opt => opt.MapFrom(src =>
+                    src.StartedAt.HasValue && src.CompletedAt.HasValue
+                        ? (int)(src.CompletedAt.Value - src.StartedAt.Value).TotalMinutes
+                        : 0))
+                .ForMember(dest => dest.TotalVolumeKg, opt => opt.MapFrom(src => src.TotalVolumeKg));
         }
     }
 }

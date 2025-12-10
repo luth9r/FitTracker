@@ -45,7 +45,7 @@ namespace FitTracker.Application.UseCases.User.Handlers.Queries
                 return Result.Failure<UserStatsResponse>("INVALID_UNIT_SYSTEM");
             }
 
-            var workouts = await workoutReadRepository.GetCompletedByUserAsync(request.UserId, cancellationToken);
+            var workouts = await workoutReadRepository.GetCompletedByUserIdAsync(request.UserId, cancellationToken);
 
             if (workouts.Count == 0)
             {
