@@ -3,21 +3,8 @@ namespace FitTracker.Application.DTOs.Auth
     /// <summary>
     /// DTO for user registration requests.
     /// </summary>
-    public class RegisterRequest
-    {
-        /// <summary>
-        /// Gets or sets the username for registration.
-        /// </summary>
-        public string Username { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Gets or sets the email for registration.
-        /// </summary>
-        public string Email { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Gets or sets the password for registration.
-        /// </summary>
-        public string Password { get; set; } = string.Empty;
-    }
+    /// <param name="Username">The username for registration.</param>
+    /// <param name="Email">The email for registration.</param>
+    /// <param name="Password">The password for registration.</param>
+    public sealed record RegisterRequest(string Username, string Email, string Password);
 }

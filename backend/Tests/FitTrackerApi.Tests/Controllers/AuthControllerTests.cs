@@ -39,17 +39,9 @@ public class AuthControllerTests
     public async Task LoginAsync_ShouldReturnOk_WhenCredentialsAreValid()
     {
         // Arrange
-        var request = new LoginRequest
-        {
-            Email = "test@example.com",
-            Password = "Password123!"
-        };
-        var expectedResponse = new LoginResponse
-        {
-            JWT = "jwt-token",
-            PreferredUnits = "metric",
-            Email = "test@example.com"
-        };
+        var request = new LoginRequest("test@example.com", "Password123!");
+
+        var expectedResponse = new LoginResponse("test", "test@example.com", "jwt-token", "metric");
 
         _mediatorMock
             .Setup(m => m.Send(It.IsAny<LoginCommand>(), It.IsAny<CancellationToken>()))
@@ -75,11 +67,8 @@ public class AuthControllerTests
     public async Task LoginAsync_ShouldReturnBadRequest_WhenCredentialsAreInvalid()
     {
         // Arrange
-        var request = new LoginRequest
-        {
-            Email = "test@example.com",
-            Password = "ValidPassword123!"
-        };
+        var request = new LoginRequest("test@example.com", "ValidPassword123!");
+
         var validationResult = new ValidationResult(
             new[] { new ValidationFailure("", "Invalid email or password") });
 
@@ -103,18 +92,8 @@ public class AuthControllerTests
     public async Task RegisterAsync_ShouldReturnOk_WhenRegistrationIsSuccessful()
     {
         // Arrange
-        var request = new RegisterRequest
-        {
-            Username = "testuser",
-            Email = "test@example.com",
-            Password = "Password123!"
-        };
-        var expectedResponse = new LoginResponse
-        {
-            JWT = "jwt-token",
-            PreferredUnits = "metric",
-            Email = "test@example.com"
-        };
+        var request = new RegisterRequest("testuser", "test@example.com", "Password123!");
+        var expectedResponse = new LoginResponse("test", "test@example.com", "jwt-token", "metric");
 
         _mediatorMock
             .Setup(m => m.Send(It.IsAny<RegisterCommand>(), It.IsAny<CancellationToken>()))
@@ -136,12 +115,8 @@ public class AuthControllerTests
     public async Task RegisterAsync_ShouldReturnBadRequest_WhenUserAlreadyExists()
     {
         // Arrange
-        var request = new RegisterRequest
-        {
-            Username = "existinguser",
-            Email = "existing@example.com",
-            Password = "ValidPassword123!"
-        };
+        var request = new RegisterRequest("existinguser", "existing@example.com", "ValidPassword123!");
+
         var validationResult = new ValidationResult(
             new[] { new ValidationFailure("Email", "User with this email already exists") });
 
@@ -152,10 +127,9 @@ public class AuthControllerTests
         // Act
         var result = await _controller.RegisterAsync(request, CancellationToken.None);
 
-        // Assert - используем более гибкую проверку
+        // Assert
         result.Should().NotBeNull();
 
-        // Получаем ObjectResult и проверяем его содержимое
         var objectResult = Assert.IsAssignableFrom<ObjectResult>(result);
         Assert.IsType<ValidationProblemDetails>(objectResult.Value);
     }
@@ -164,17 +138,9 @@ public class AuthControllerTests
     public async Task GoogleLoginAsync_ShouldReturnOk_WhenSuccessful()
     {
         // Arrange
-        var request = new GoogleLoginRequest
-        {
-            Code = "valid-code",
-            CodeVerifier = "verifier"
-        };
-        var expectedResponse = new LoginResponse
-        {
-            JWT = "jwt-token",
-            PreferredUnits = "metric",
-            Email = "test@gmail.com"
-        };
+        var request = new GoogleLoginRequest("valid-code", "verifier");
+
+        var expectedResponse = new LoginResponse("test", "test@example.com", "jwt-token", "metric");
 
         _mediatorMock
             .Setup(m => m.Send(It.IsAny<GoogleLoginCommand>(), It.IsAny<CancellationToken>()))
@@ -198,17 +164,9 @@ public class AuthControllerTests
     public async Task GoogleRegisterAsync_ShouldReturnOk_WhenSuccessful()
     {
         // Arrange
-        var request = new GoogleRegisterRequest
-        {
-            Code = "valid-code",
-            CodeVerifier = "verifier",
-        };
-        var expectedResponse = new LoginResponse
-        {
-            JWT = "jwt-token",
-            PreferredUnits = "imperial",
-            Email = "test@gmail.com"
-        };
+        var request = new GoogleRegisterRequest("valid-code", "verifier");
+
+        var expectedResponse = new LoginResponse("test", "test@example.com", "jwt-token", "imperial");
 
         _mediatorMock
             .Setup(m => m.Send(It.IsAny<GoogleRegisterCommand>(), It.IsAny<CancellationToken>()))
@@ -233,12 +191,7 @@ public class AuthControllerTests
     {
         // Arrange
         var token = "valid-verification-token";
-        var expectedResponse = new LoginResponse
-        {
-            JWT = "jwt-token",
-            PreferredUnits = "metric",
-            Email = "test@example.com"
-        };
+        var expectedResponse = new LoginResponse("test", "test@example.com", "jwt-token", "metric");
 
         _mediatorMock
             .Setup(m => m.Send(It.IsAny<VerifyEmailCommand>(), It.IsAny<CancellationToken>()))

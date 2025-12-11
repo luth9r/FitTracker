@@ -64,13 +64,7 @@ public class UserControllerTests
         // Arrange
         var userId = Guid.NewGuid();
         SetupUser(userId, "imperial");
-        var expectedStats = new UserStatsResponse 
-        { 
-            TotalWorkouts = 10, 
-            TotalWeightLifted = 5000, 
-            TrainingDays = 20,
-            LongestStreak = 5
-        };
+        var expectedStats = new UserStatsResponse(10, 5000, 20, 5);
 
         _mediatorMock
             .Setup(m => m.Send(It.Is<GetUserStatsQuery>(q => q.UserId == userId && q.PreferredUnits == "imperial"), It.IsAny<CancellationToken>()))
@@ -93,15 +87,7 @@ public class UserControllerTests
         SetupUser(userId);
         var expectedWorkouts = new List<RecentWorkoutResponse>
         {
-            new RecentWorkoutResponse 
-            { 
-                Id = Guid.NewGuid(), 
-                Name = "Workout 1", 
-                WorkoutDate = DateTime.UtcNow, 
-                IsCompleted = true,
-                DurationMinutes = 60,
-                TotalVolume = 1000
-            }
+            new RecentWorkoutResponse(Guid.NewGuid(), DateTime.UtcNow, "Workout 1", true, 60, 1000)
         };
 
         _mediatorMock

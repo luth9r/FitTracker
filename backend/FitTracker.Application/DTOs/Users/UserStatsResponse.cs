@@ -5,28 +5,11 @@ using System.Text;
 namespace FitTracker.Application.DTOs.Users
 {
     /// <summary>
-    /// Response for user stats.
+    /// DTO representing user workout statistics.
     /// </summary>
-    public class UserStatsResponse
-    {
-        /// <summary>
-        /// The total number of workouts.
-        /// </summary>
-        public int TotalWorkouts { get; init; }
-
-        /// <summary>
-        /// The total number of training days.
-        /// </summary>
-        public int TrainingDays { get; init; }
-
-        /// <summary>
-        /// The longest streak of workouts.
-        /// </summary>
-        public int LongestStreak { get; init; }
-
-        /// <summary>
-        /// The total weight lifted.
-        /// </summary>
-        public double TotalWeightLifted { get; init; }
-    }
+    /// <param name="TotalWorkouts">The total number of workouts completed.</param>
+    /// <param name="TrainingDays">The total number of training days.</param>
+    /// <param name="LongestStreak">The longest consecutive streak of workouts.</param>
+    /// <param name="TotalWeightLifted">The total weight lifted across all workouts.</param>
+    public sealed record UserStatsResponse(int TotalWorkouts, int TrainingDays, int LongestStreak, double TotalWeightLifted);
 }

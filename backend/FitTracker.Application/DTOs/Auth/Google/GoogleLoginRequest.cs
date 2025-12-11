@@ -7,16 +7,7 @@ namespace FitTracker.Application.DTOs.Auth.Google
     /// <summary>
     /// DTO for Google login request containing authorization code and code verifier.
     /// </summary>
-    public class GoogleLoginRequest
-    {
-        /// <summary>
-        /// Gets or sets the authorization code received from Google after user consent.
-        /// </summary>
-        public string Code { get; set; } = default!;
-
-        /// <summary>
-        /// Gets or sets the code verifier used in PKCE flow.
-        /// </summary>
-        public string CodeVerifier { get; set; } = default!;
-    }
+    /// <param name="Code">The authorization code received from Google after user consent.</param>
+    /// <param name="CodeVerifier">The code verifier used in PKCE flow.</param>
+    public sealed record GoogleLoginRequest(string Code, string CodeVerifier);
 }

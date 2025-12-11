@@ -50,13 +50,7 @@ namespace FitTracker.Application.UseCases.User.Handlers.Queries
             if (workouts.Count == 0)
             {
                 logger.LogWarning("No workouts found for user: {UserId}", request.UserId);
-                return Result.Success(new UserStatsResponse
-                {
-                    TotalWorkouts = 0,
-                    TrainingDays = 0,
-                    LongestStreak = 0,
-                    TotalWeightLifted = 0,
-                });
+                return Result.Success(new UserStatsResponse(0, 0, 0, 0));
             }
 
             var orderedDates = workouts
@@ -73,13 +67,7 @@ namespace FitTracker.Application.UseCases.User.Handlers.Queries
             var totalWeightUserUnits = UnitSystem.ConvertFromMetric(totalWeightKg, preferredUnits);
             var roundedTotalWeight = (double)Math.Round(totalWeightUserUnits, 1);
 
-            return Result.Success(new UserStatsResponse
-            {
-                TotalWorkouts = totalWorkouts,
-                TrainingDays = trainingDays,
-                LongestStreak = longestStreak,
-                TotalWeightLifted = roundedTotalWeight,
-            });
+            return Result.Success(new UserStatsResponse(totalWorkouts, trainingDays, longestStreak, roundedTotalWeight));
         }
 
         /// <summary>

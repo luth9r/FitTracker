@@ -1,4 +1,4 @@
-﻿using FitTracker.Application.DTOs.Auth.Google;
+using FitTracker.Application.DTOs.Auth.Google;
 using FitTracker.Application.Interfaces;
 using Google.Apis.Auth;
 using Google.Apis.Auth.OAuth2.Responses;
@@ -66,13 +66,7 @@ namespace FitTracker.Infrastructure.Services
 
                 var payload = await GoogleJsonWebSignature.ValidateAsync(idToken, settings);
 
-                return new GoogleTokenPayload
-                {
-                    GoogleId = payload.Subject,
-                    Email = payload.Email,
-                    FirstName = payload.GivenName,
-                    LastName = payload.FamilyName,
-                };
+                return new GoogleTokenPayload(payload.Subject, payload.Email, payload.GivenName, payload.FamilyName);
             }
             catch (InvalidJwtException ex)
             {

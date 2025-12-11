@@ -84,8 +84,10 @@ namespace FitTracker.Application.UseCases.User.Handlers.Commands.Google
 
             var loginToken = jwtTokenGenerator.GenerateToken(user);
 
-            var response = mapper.Map<LoginResponse>(user);
-            response.JWT = loginToken;
+            var response = mapper.Map<LoginResponse>(user) with
+            {
+                JWT = loginToken
+            };
 
             logger.LogInformation("Google login process completed successfully for user: {Email}", googlePayload.Email);
 

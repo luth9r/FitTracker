@@ -7,21 +7,8 @@ namespace FitTracker.Application.DTOs.Auth.Google
     /// <summary>
     /// DTO for Google registration response.
     /// </summary>
-    public class GoogleRegisterResponse
-    {
-        /// <summary>
-        /// Gets or sets user's email address.
-        /// </summary>
-        public string Email { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Gets or sets user's first name.
-        /// </summary>
-        public string FirstName { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Gets or sets user's last name.
-        /// </summary>
-        public string LastName { get; set; } = string.Empty;
-    }
+    /// <param name="Email">User's email address.</param>
+    /// <param name="FirstName">User's first name.</param>
+    /// <param name="LastName">User's last name.</param>
+    public sealed record GoogleRegisterResponse(string Email, string FirstName, string LastName);
 }

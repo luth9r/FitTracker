@@ -7,16 +7,7 @@ namespace FitTracker.Application.DTOs.Auth
     /// <summary>
     /// DTO for user login request.
     /// </summary>
-    public class LoginRequest
-    {
-        /// <summary>
-        /// Gets or sets user's email address.
-        /// </summary>
-        public string Email { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Gets or sets user's password.
-        /// </summary>
-        public string Password { get; set; } = string.Empty;
-    }
+    /// <param name="Email">User's email address.</param>
+    /// <param name="Password">User's password.</param>
+    public sealed record LoginRequest(string Email, string Password);
 }

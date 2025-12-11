@@ -4,18 +4,14 @@ using System.Text;
 
 namespace FitTracker.Application.DTOs.Users
 {
-    public class RecentWorkoutResponse
-    {
-        public Guid Id { get; init; }
-
-        public DateTime WorkoutDate { get; init; }
-
-        public string Name { get; init; } = default!;
-
-        public bool IsCompleted { get; init; }
-
-        public int DurationMinutes { get; init; }
-
-        public double TotalVolume { get; init; }
-    }
+    /// <summary>
+    /// DTO representing a recent workout summary.
+    /// </summary>
+    /// <param name="Id">Unique identifier of the workout.</param>
+    /// <param name="WorkoutDate">Date and time when the workout occurred.</param>
+    /// <param name="Name">Name of the workout.</param>
+    /// <param name="IsCompleted">Indicates whether the workout was completed.</param>
+    /// <param name="DurationMinutes">Duration of the workout in minutes.</param>
+    /// <param name="TotalVolume">Total volume (weight × reps) for the workout.</param>
+    public sealed record RecentWorkoutResponse(Guid Id, DateTime WorkoutDate, string Name, bool IsCompleted, int DurationMinutes, double TotalVolume);
 }

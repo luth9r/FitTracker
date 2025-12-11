@@ -62,8 +62,10 @@ namespace FitTracker.Application.UseCases.User.Handlers.Commands
 
             var loginToken = jwtTokenGenerator.GenerateToken(user);
 
-            var response = mapper.Map<LoginResponse>(user);
-            response.JWT = loginToken;
+            var response = mapper.Map<LoginResponse>(user) with
+            {
+                JWT = loginToken
+            };
 
             logger.LogInformation("Login process completed successfully for email: {Email}", userEmail);
 

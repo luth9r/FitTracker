@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -8,42 +8,42 @@ namespace FitTracker.Application.DTOs.Auth.Google
     /// <summary>
     /// DTO representing the response from Google's API.
     /// </summary>
-    public class TokenResponse
+    public sealed record TokenResponse
     {
         /// <summary>
-        /// Gets or sets the access token issued by Google.
+        /// Gets the access token issued by Google.
         /// </summary>
         [JsonPropertyName("access_token")]
-        public string AccessToken { get; set; }
+        public string AccessToken { get; init; }
 
         /// <summary>
-        /// Gets or sets the lifetime in seconds of the access token.
+        /// Gets the lifetime in seconds of the access token.
         /// </summary>
         [JsonPropertyName("expires_in")]
-        public int ExpiresIn { get; set; }
+        public int ExpiresIn { get; init; }
 
         /// <summary>
-        /// Gets or sets the scope of the access token.
+        /// Gets the scope of the access token.
         /// </summary>
         [JsonPropertyName("scope")]
-        public string Scope { get; set; }
+        public string Scope { get; init; }
 
         /// <summary>
-        /// Gets or sets the type of the token.
+        /// Gets the type of the token.
         /// </summary>
         [JsonPropertyName("token_type")]
-        public string TokenType { get; set; }
+        public string TokenType { get; init; }
 
         /// <summary>
-        /// Gets or sets the ID token issued by Google.
+        /// Gets the ID token issued by Google.
         /// </summary>
         [JsonPropertyName("id_token")]
-        public string IdToken { get; set; }
+        public string IdToken { get; init; }
 
         /// <summary>
-        /// Gets or sets the refresh token issued by Google.
+        /// Gets the refresh token issued by Google.
         /// </summary>
         [JsonPropertyName("refresh_token")]
-        public string RefreshToken { get; set; }
+        public string RefreshToken { get; init; }
     }
 }
