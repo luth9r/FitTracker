@@ -1,9 +1,11 @@
+using System.Diagnostics.CodeAnalysis;
 using FitTracker.Application.Interfaces;
 using FitTracker.Infrastructure.Persistence.Data;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FitTracker.Api.Controllers
 {
+    [ExcludeFromCodeCoverage]
     [Route("api/[controller]")]
     [ApiController]
     public class HealthController(

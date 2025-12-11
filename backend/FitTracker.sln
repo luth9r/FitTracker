@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.0.31903.59
+# Visual Studio Version 18
+VisualStudioVersion = 18.1.11304.174 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FitTracker.Api", "FitTracker.Api\FitTracker.Api.csproj", "{E3BBF01E-51E0-4148-A3AE-D616313F939E}"
 EndProject
@@ -16,6 +16,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FitTrackerInfrastructure.Tests", "Tests\FitTrackerInfrastructure.Tests\FitTrackerInfrastructure.Tests.csproj", "{6846A56C-E70B-4885-8390-C29F70F63852}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FitTracker.Tests", "FitTracker.Tests", "{7FB9AB62-4035-47B7-94D6-DB281FA4B179}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FitTrackerApi.Tests", "Tests\FitTrackerApi.Tests\FitTrackerApi.Tests.csproj", "{67098A13-DFD5-4854-ABE2-D84AC0CB88BA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -99,6 +101,18 @@ Global
 		{6846A56C-E70B-4885-8390-C29F70F63852}.Release|x64.Build.0 = Release|Any CPU
 		{6846A56C-E70B-4885-8390-C29F70F63852}.Release|x86.ActiveCfg = Release|Any CPU
 		{6846A56C-E70B-4885-8390-C29F70F63852}.Release|x86.Build.0 = Release|Any CPU
+		{67098A13-DFD5-4854-ABE2-D84AC0CB88BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67098A13-DFD5-4854-ABE2-D84AC0CB88BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67098A13-DFD5-4854-ABE2-D84AC0CB88BA}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{67098A13-DFD5-4854-ABE2-D84AC0CB88BA}.Debug|x64.Build.0 = Debug|Any CPU
+		{67098A13-DFD5-4854-ABE2-D84AC0CB88BA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{67098A13-DFD5-4854-ABE2-D84AC0CB88BA}.Debug|x86.Build.0 = Debug|Any CPU
+		{67098A13-DFD5-4854-ABE2-D84AC0CB88BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67098A13-DFD5-4854-ABE2-D84AC0CB88BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{67098A13-DFD5-4854-ABE2-D84AC0CB88BA}.Release|x64.ActiveCfg = Release|Any CPU
+		{67098A13-DFD5-4854-ABE2-D84AC0CB88BA}.Release|x64.Build.0 = Release|Any CPU
+		{67098A13-DFD5-4854-ABE2-D84AC0CB88BA}.Release|x86.ActiveCfg = Release|Any CPU
+		{67098A13-DFD5-4854-ABE2-D84AC0CB88BA}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -106,6 +120,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{E902D2D6-E739-424E-B1D7-E6318CBA6133} = {7FB9AB62-4035-47B7-94D6-DB281FA4B179}
 		{6846A56C-E70B-4885-8390-C29F70F63852} = {7FB9AB62-4035-47B7-94D6-DB281FA4B179}
+		{67098A13-DFD5-4854-ABE2-D84AC0CB88BA} = {7FB9AB62-4035-47B7-94D6-DB281FA4B179}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1FC66A9E-9448-4D76-8B2D-7705E2284B74}
