@@ -18,7 +18,7 @@ namespace FitTracker.Infrastructure.Persistence.Data.Entities
         /// <summary>
         /// Gets or sets weight used in kilograms.
         /// </summary>
-        public decimal WeightKg { get; set; }
+        public double WeightKg { get; set; }
 
         /// <summary>
         /// Gets or sets number of repetitions completed.

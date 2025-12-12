@@ -1,5 +1,3 @@
-using FitTracker.Domain.ValueObjects;
-
 namespace FitTracker.Infrastructure.Persistence.Data.Entities
 {
     /// <summary>
@@ -41,11 +39,6 @@ namespace FitTracker.Infrastructure.Persistence.Data.Entities
         /// Gets or sets optional user biography.
         /// </summary>
         public string? Bio { get; set; }
-
-        /// <summary>
-        /// Gets or sets preferred measurement units (metric/imperial).
-        /// </summary>
-        public string PreferredUnits { get; set; } = null!;
 
         /// <summary>
         /// Gets or sets a value indicating whether verification status.

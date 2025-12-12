@@ -54,6 +54,7 @@ namespace FitTracker.Application.UseCases.User.Handlers.Commands
             }
 
             var checkPassword = hasher.VerifyPassword(userPassword, user.PasswordHash ?? string.Empty); // If PasswordHash is null (e.g., social login), treat as invalid
+
             if (!checkPassword)
             {
                 logger.LogWarning("Login failed for email: {Email}. Invalid password.", userEmail);

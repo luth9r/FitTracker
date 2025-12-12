@@ -1,5 +1,3 @@
-using FitTracker.Domain.ValueObjects;
-
 namespace FitTracker.Domain.Entities
 {
     /// <summary>
@@ -78,11 +76,6 @@ namespace FitTracker.Domain.Entities
         public string? Bio { get; private set; }
 
         /// <summary>
-        /// Gets the user's preferred unit system (Metric or Imperial).
-        /// </summary>
-        public UnitSystem PreferredUnits { get; private set; }
-
-        /// <summary>
         /// Gets a value indicating whether the user's email address has been verified.
         /// </summary>
         public bool IsEmailVerified { get; private set; }
@@ -103,7 +96,6 @@ namespace FitTracker.Domain.Entities
         /// <param name="lastName">The last name.</param>
         /// <param name="avatar">The avatar URL.</param>
         /// <param name="bio">The biography.</param>
-        /// <param name="preferredUnits">The preferred unit system.</param>
         /// <param name="isEmailVerified">Whether the email is verified.</param>
         /// <param name="googleProviderId">The Google provider ID.</param>
         /// <param name="createdAt">The date and time of creation.</param>
@@ -117,7 +109,6 @@ namespace FitTracker.Domain.Entities
             string? lastName,
             string? avatar,
             string? bio,
-            UnitSystem preferredUnits,
             bool isEmailVerified,
             string? googleProviderId,
             DateTime createdAt,
@@ -131,7 +122,6 @@ namespace FitTracker.Domain.Entities
             LastName = lastName;
             Avatar = avatar;
             Bio = bio;
-            PreferredUnits = preferredUnits;
             IsEmailVerified = isEmailVerified;
             GoogleProviderId = googleProviderId;
         }
@@ -184,7 +174,6 @@ namespace FitTracker.Domain.Entities
             PasswordHash = passwordHash;
             FirstName = firstName;
             LastName = lastName;
-            PreferredUnits = UnitSystem.Metric;
             IsEmailVerified = false;
         }
 
@@ -299,16 +288,6 @@ namespace FitTracker.Domain.Entities
         }
 
         /// <summary>
-        /// Updates the user's preferred units.
-        /// </summary>
-        /// <param name="units">The new preferred unit system.</param>
-        public void UpdatePreferredUnits(UnitSystem units)
-        {
-            PreferredUnits = units;
-            UpdatedAt = DateTime.UtcNow;
-        }
-
-        /// <summary>
         /// Marks the user's email as verified.
         /// </summary>
         public void SetEmailVerified()
@@ -355,18 +334,6 @@ namespace FitTracker.Domain.Entities
 
             return Username;
         }
-
-        /// <summary>
-        /// Determines whether the user uses metric units.
-        /// </summary>
-        /// <returns><c>true</c> if metric; otherwise, <c>false</c>.</returns>
-        public bool UsesMetric() => PreferredUnits == UnitSystem.Metric;
-
-        /// <summary>
-        /// Determines whether the user uses imperial units.
-        /// </summary>
-        /// <returns><c>true</c> if imperial; otherwise, <c>false</c>.</returns>
-        public bool UsesImperial() => PreferredUnits == UnitSystem.Imperial;
 
         /// <summary>
         /// Gets the display name of the user (alias for GetFullName).

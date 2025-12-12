@@ -9,8 +9,9 @@ namespace FitTracker.Application.Mapping.Auth
         public LoginProfile()
         {
             _ = CreateMap<UserEntity, LoginResponse>()
-                .ForMember(dest => dest.JWT, opt => opt.Ignore())
-                .ForMember(dest => dest.PreferredUnits, opt => opt.MapFrom(src => src.PreferredUnits.ToString()));
+            .ForCtorParam("Username", opt => opt.MapFrom(src => src.Username))
+            .ForCtorParam("Email", opt => opt.MapFrom(src => src.Email))
+            .ForCtorParam("JWT", opt => opt.MapFrom(src => string.Empty));
         }
     }
 }

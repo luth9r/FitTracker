@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Text.Json.Serialization;
 
@@ -8,6 +9,7 @@ namespace FitTracker.Application.DTOs.Auth.Google
     /// <summary>
     /// DTO representing the response from Google's API.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public sealed record TokenResponse
     {
         /// <summary>

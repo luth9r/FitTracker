@@ -6,19 +6,15 @@ namespace FitTracker.Application.Validators
 {
     public class GoogleRegisterRequestValidator : AbstractValidator<GoogleRegisterRequest>
     {
-        private readonly ILocalizationService _localization;
-
         public GoogleRegisterRequestValidator(ILocalizationService localization)
         {
-            _localization = localization;
-
             RuleFor(x => x.Code)
                 .NotEmpty()
-                .WithMessage(_ => _localization.GetString("Validation.Google.Code.Required"));
+                .WithMessage(_ => localization.GetString("Validation.Google.Code.Required"));
 
             RuleFor(x => x.CodeVerifier)
                 .NotEmpty()
-                .WithMessage(_ => _localization.GetString("Validation.Google.CodeVerifier.Required"));
+                .WithMessage(_ => localization.GetString("Validation.Google.CodeVerifier.Required"));
         }
     }
 }

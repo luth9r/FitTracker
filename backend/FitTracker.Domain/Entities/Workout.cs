@@ -78,7 +78,7 @@ namespace FitTracker.Domain.Entities
         /// <summary>
         /// Gets the total volume lifted during the workout in kilograms.
         /// </summary>
-        public decimal TotalVolumeKg { get; private set; }
+        public double TotalVolumeKg { get; private set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Workout"/> class.
@@ -109,7 +109,7 @@ namespace FitTracker.Domain.Entities
             bool isInProgress,
             DateTime? startedAt,
             DateTime? completedAt,
-            decimal totalVolumeKg,
+            double totalVolumeKg,
             DateTime createdAt,
             DateTime updatedAt)
         {

@@ -1,5 +1,4 @@
 using FitTracker.Domain.Entities;
-using FitTracker.Domain.ValueObjects;
 using FitTracker.Infrastructure.Persistence.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -47,12 +46,6 @@ namespace FitTracker.Infrastructure.Persistence.Data.Configurations
             _ = builder.Property(u => u.Bio)
                 .HasColumnName("bio")
                 .HasMaxLength(User.BioMaxLength);
-
-            _ = builder.Property<string>("PreferredUnits")
-                .HasColumnName("preferred_units")
-                .HasMaxLength(10)
-                .IsRequired()
-                .HasDefaultValue("metric");
 
             _ = builder.Property(u => u.IsEmailVerified)
                 .HasColumnName("is_email_verified")

@@ -67,7 +67,7 @@ public class UserControllerTests
         var expectedStats = new UserStatsResponse(10, 5000, 20, 5);
 
         _mediatorMock
-            .Setup(m => m.Send(It.Is<GetUserStatsQuery>(q => q.UserId == userId && q.PreferredUnits == "imperial"), It.IsAny<CancellationToken>()))
+            .Setup(m => m.Send(It.Is<GetUserStatsQuery>(q => q.UserId == userId), It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Success(expectedStats));
 
         // Act

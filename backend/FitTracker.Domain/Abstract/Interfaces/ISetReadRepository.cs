@@ -15,6 +15,6 @@ namespace FitTracker.Domain.Abstract.Interfaces
         /// <param name="userId">The ID of the user.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The total weight lifted by the user.</returns>
-        Task<decimal> GetTotalWeightLiftedAsync(Guid userId, CancellationToken cancellationToken);
+        Task<double> GetTotalWeightLiftedAsync(Guid userId, CancellationToken cancellationToken);
     }
 }

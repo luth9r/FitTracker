@@ -26,16 +26,5 @@ namespace FitTracker.Api.Controllers
                 return Guid.Parse(id);
             }
         }
-
-        /// <summary>
-        /// Gets the current user preferred units.
-        /// </summary>
-        protected string CurrentUserPreferredUnits
-        {
-            get
-            {
-                return User.FindFirstValue("preferred-units") ?? "metric";
-            }
-        }
     }
 }

@@ -41,7 +41,7 @@ public class AuthControllerTests
         // Arrange
         var request = new LoginRequest("test@example.com", "Password123!");
 
-        var expectedResponse = new LoginResponse("test", "test@example.com", "jwt-token", "metric");
+        var expectedResponse = new LoginResponse("test", "test@example.com", "jwt-token");
 
         _mediatorMock
             .Setup(m => m.Send(It.IsAny<LoginCommand>(), It.IsAny<CancellationToken>()))
@@ -58,7 +58,6 @@ public class AuthControllerTests
         // Verify cookies were set
         var cookies = _httpContext.Response.Headers.SetCookie;
         cookies.Should().Contain(c => c.Contains("auth-token=jwt-token"));
-        cookies.Should().Contain(c => c.Contains("preferred-units=metric"));
         cookies.Should().Contain(c => c.Contains("httponly"));
         cookies.Should().Contain(c => c.Contains("secure"));
     }
@@ -93,7 +92,7 @@ public class AuthControllerTests
     {
         // Arrange
         var request = new RegisterRequest("testuser", "test@example.com", "Password123!");
-        var expectedResponse = new LoginResponse("test", "test@example.com", "jwt-token", "metric");
+        var expectedResponse = new LoginResponse("test", "test@example.com", "jwt-token");
 
         _mediatorMock
             .Setup(m => m.Send(It.IsAny<RegisterCommand>(), It.IsAny<CancellationToken>()))
@@ -140,7 +139,7 @@ public class AuthControllerTests
         // Arrange
         var request = new GoogleLoginRequest("valid-code", "verifier");
 
-        var expectedResponse = new LoginResponse("test", "test@example.com", "jwt-token", "metric");
+        var expectedResponse = new LoginResponse("test", "test@example.com", "jwt-token");
 
         _mediatorMock
             .Setup(m => m.Send(It.IsAny<GoogleLoginCommand>(), It.IsAny<CancellationToken>()))
@@ -157,7 +156,6 @@ public class AuthControllerTests
         // Verify cookies were set
         var cookies = _httpContext.Response.Headers.SetCookie;
         cookies.Should().Contain(c => c.Contains("auth-token=jwt-token"));
-        cookies.Should().Contain(c => c.Contains("preferred-units=metric"));
     }
 
     [Fact]
@@ -166,7 +164,7 @@ public class AuthControllerTests
         // Arrange
         var request = new GoogleRegisterRequest("valid-code", "verifier");
 
-        var expectedResponse = new LoginResponse("test", "test@example.com", "jwt-token", "imperial");
+        var expectedResponse = new LoginResponse("test", "test@example.com", "jwt-token");
 
         _mediatorMock
             .Setup(m => m.Send(It.IsAny<GoogleRegisterCommand>(), It.IsAny<CancellationToken>()))
@@ -183,7 +181,6 @@ public class AuthControllerTests
         // Verify cookies were set
         var cookies = _httpContext.Response.Headers.SetCookie;
         cookies.Should().Contain(c => c.Contains("auth-token=jwt-token"));
-        cookies.Should().Contain(c => c.Contains("preferred-units=imperial"));
     }
 
     [Fact]
@@ -191,7 +188,7 @@ public class AuthControllerTests
     {
         // Arrange
         var token = "valid-verification-token";
-        var expectedResponse = new LoginResponse("test", "test@example.com", "jwt-token", "metric");
+        var expectedResponse = new LoginResponse("test", "test@example.com", "jwt-token");
 
         _mediatorMock
             .Setup(m => m.Send(It.IsAny<VerifyEmailCommand>(), It.IsAny<CancellationToken>()))
@@ -208,7 +205,6 @@ public class AuthControllerTests
         // Verify cookies were set
         var cookies = _httpContext.Response.Headers.SetCookie;
         cookies.Should().Contain(c => c.Contains("auth-token=jwt-token"));
-        cookies.Should().Contain(c => c.Contains("preferred-units=metric"));
     }
 
     [Fact]

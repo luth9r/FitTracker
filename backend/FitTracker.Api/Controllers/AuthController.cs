@@ -37,7 +37,7 @@ namespace FitTracker.Api.Controllers
                 return ValidationProblem(result.Error.ToModelState());
             }
 
-            SetAuthCookie(result.Value.JWT, result.Value.PreferredUnits);
+            SetAuthCookie(result.Value.JWT);
             return Ok(result.Value);
         }
 
@@ -60,7 +60,7 @@ namespace FitTracker.Api.Controllers
                 return ValidationProblem(result.Error.ToModelState());
             }
 
-            SetAuthCookie(result.Value.JWT, result.Value.PreferredUnits);
+            SetAuthCookie(result.Value.JWT);
             return Ok(result.Value);
         }
 
@@ -82,7 +82,7 @@ namespace FitTracker.Api.Controllers
                 return ValidationProblem(result.Error.ToModelState());
             }
 
-            SetAuthCookie(result.Value.JWT, result.Value.PreferredUnits);
+            SetAuthCookie(result.Value.JWT);
             return Ok(result.Value);
         }
 
@@ -130,7 +130,7 @@ namespace FitTracker.Api.Controllers
                 return BadRequest(result.Error.ToModelState());
             }
 
-            SetAuthCookie(result.Value.JWT, result.Value.PreferredUnits);
+            SetAuthCookie(result.Value.JWT);
             return Ok(result.Value);
         }
 
@@ -138,8 +138,7 @@ namespace FitTracker.Api.Controllers
         /// Sets the authentication cookie.
         /// </summary>
         /// <param name="token">The authentication token (JWT).</param>
-        /// <param name="preferredUnits">The preferred units.</param>
-        private void SetAuthCookie(string token, string preferredUnits)
+        private void SetAuthCookie(string token)
         {
             var cookieOptions = new CookieOptions
             {
@@ -150,7 +149,6 @@ namespace FitTracker.Api.Controllers
             };
 
             Response.Cookies.Append("auth-token", token, cookieOptions);
-            Response.Cookies.Append("preferred-units", preferredUnits, cookieOptions);
         }
     }
 }

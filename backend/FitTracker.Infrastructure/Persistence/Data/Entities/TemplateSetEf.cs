@@ -18,7 +18,7 @@ namespace FitTracker.Infrastructure.Persistence.Data.Entities
         /// <summary>
         /// Gets or sets planned weight for this set.
         /// </summary>
-        public decimal PlannedWeight { get; set; }
+        public double PlannedWeightKg { get; set; }
 
         /// <summary>
         /// Gets or sets planned number of repetitions.

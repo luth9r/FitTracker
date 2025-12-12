@@ -1,4 +1,3 @@
-using FitTracker.Domain.ValueObjects;
 using FitTracker.Infrastructure.Persistence.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics.CodeAnalysis;
@@ -39,9 +38,6 @@ namespace FitTracker.Infrastructure.Persistence.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            _ = modelBuilder.Ignore<UnitSystem>();
-            _ = modelBuilder.Ignore<Weight>();
-
             // Apply all entity configurations
             _ = modelBuilder.ApplyConfigurationsFromAssembly(typeof(FitTrackerDbContext).Assembly);
 
@@ -56,13 +52,13 @@ namespace FitTracker.Infrastructure.Persistence.Data
                 switch (entry.State)
                 {
                     case EntityState.Added:
-                        entry.Entity.CreatedAt = DateTime.UtcNow;
-                        entry.Entity.UpdatedAt = DateTime.UtcNow;
-                        break;
+                    entry.Entity.CreatedAt = DateTime.UtcNow;
+                    entry.Entity.UpdatedAt = DateTime.UtcNow;
+                    break;
 
                     case EntityState.Modified:
-                        entry.Entity.UpdatedAt = DateTime.UtcNow;
-                        break;
+                    entry.Entity.UpdatedAt = DateTime.UtcNow;
+                    break;
                 }
             }
 

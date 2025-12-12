@@ -4,7 +4,6 @@ using System.Text;
 using AutoMapper;
 using FitTracker.Application.DTOs.Users;
 using FitTracker.Domain.ReadModels;
-using FitTracker.Domain.ValueObjects;
 
 namespace FitTracker.Application.Mapping.User
 {
@@ -12,15 +11,13 @@ namespace FitTracker.Application.Mapping.User
     {
         public WorkoutProfile()
         {
-            _ = CreateMap<WorkoutSummary, RecentWorkoutResponse>()
-                .ForMember(
-                dest => dest.TotalVolume,
-                opt => opt.MapFrom((src, dest, destMember, ctx) =>
-                {
-                    var unitsStr = (string?)ctx.Items["preferredUnits"] ?? "metric";
-                    var units = UnitSystem.FromString(unitsStr);
-                    return (double)UnitSystem.ConvertFromMetric(src.TotalVolumeKg, units);
-                }));
+            CreateMap<WorkoutSummary, RecentWorkoutResponse>()
+                .ForCtorParam("Id", opt => opt.MapFrom(src => src.Id))
+                .ForCtorParam("WorkoutDate", opt => opt.MapFrom(src => src.WorkoutDate))
+                .ForCtorParam("Name", opt => opt.MapFrom(src => src.Name))
+                .ForCtorParam("IsCompleted", opt => opt.MapFrom(src => src.IsCompleted))
+                .ForCtorParam("DurationMinutes", opt => opt.MapFrom(src => src.DurationMinutes))
+                .ForCtorParam("TotalVolumeKg", opt => opt.MapFrom(src => src.TotalVolumeKg));
         }
     }
 }

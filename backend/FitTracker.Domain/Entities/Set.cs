@@ -1,6 +1,4 @@
-
 using FitTracker.Domain.Enums;
-using FitTracker.Domain.ValueObjects;
 
 namespace FitTracker.Domain.Entities
 {
@@ -22,7 +20,7 @@ namespace FitTracker.Domain.Entities
         /// <summary>
         /// The maximum weight allowed in kilograms.
         /// </summary>
-        public const decimal MaxWeightKg = 10000m;
+        public const double MaxWeightKg = 10000d;
 
         /// <summary>
         /// Gets the unique identifier of the workout exercise this set belongs to.
@@ -37,7 +35,7 @@ namespace FitTracker.Domain.Entities
         /// <summary>
         /// Gets the weight used for this set.
         /// </summary>
-        public Weight Weight { get; private set; }
+        public double Weight { get; private set; }
 
         /// <summary>
         /// Gets the number of repetitions performed in this set.
@@ -82,7 +80,7 @@ namespace FitTracker.Domain.Entities
             Guid id,
             Guid workoutExerciseId,
             int setNumber,
-            Weight weight,
+            double weight,
             int reps,
             int? restSeconds,
             SetType setType,
@@ -121,7 +119,7 @@ namespace FitTracker.Domain.Entities
         private Set(
             Guid workoutExerciseId,
             int setNumber,
-            Weight weight,
+            double weight,
             int reps,
             int? restSeconds,
             SetType setType = SetType.Normal)
@@ -137,12 +135,12 @@ namespace FitTracker.Domain.Entities
                 throw new ArgumentException("Set number must be greater than 0", nameof(setNumber));
             }
 
-            if (weight == null)
+            if (weight == 0)
             {
                 throw new ArgumentNullException(nameof(weight));
             }
 
-            if (weight.ToKilograms() > MaxWeightKg)
+            if (weight > MaxWeightKg)
             {
                 throw new ArgumentException($"Weight cannot exceed {MaxWeightKg} kg", nameof(weight));
             }
@@ -189,7 +187,7 @@ namespace FitTracker.Domain.Entities
         public static Set Create(
             Guid workoutExerciseId,
             int setNumber,
-            Weight weight,
+            double weight,
             int reps,
             int? restSeconds = null,
             SetType setType = SetType.Normal)
@@ -216,14 +214,14 @@ namespace FitTracker.Domain.Entities
         /// Updates the weight used in the set.
         /// </summary>
         /// <param name="weight">The new weight.</param>
-        public void UpdateWeight(Weight weight)
+        public void UpdateWeight(double weight)
         {
-            if (weight == null)
+            if (weight == 0)
             {
                 throw new ArgumentNullException(nameof(weight));
             }
 
-            if (weight.ToKilograms() > MaxWeightKg)
+            if (weight > MaxWeightKg)
             {
                 throw new ArgumentException($"Weight cannot exceed {MaxWeightKg} kg", nameof(weight));
             }
@@ -236,20 +234,20 @@ namespace FitTracker.Domain.Entities
         /// Increases the weight used in the set by a specified amount in kilograms.
         /// </summary>
         /// <param name="amountKg">The amount to increase in kilograms.</param>
-        public void IncreaseWeight(decimal amountKg)
+        public void IncreaseWeight(double amountKg)
         {
             if (amountKg <= 0)
             {
                 throw new ArgumentException("Amount must be positive", nameof(amountKg));
             }
 
-            var newWeightKg = Weight.ToKilograms() + amountKg;
+            var newWeightKg = Weight + amountKg;
             if (newWeightKg > MaxWeightKg)
             {
                 throw new InvalidOperationException($"New weight would exceed maximum of {MaxWeightKg} kg");
             }
 
-            Weight = Weight.FromKilograms(newWeightKg);
+            Weight = newWeightKg;
             UpdatedAt = DateTime.UtcNow;
         }
 
@@ -257,20 +255,20 @@ namespace FitTracker.Domain.Entities
         /// Decreases the weight used in the set by a specified amount in kilograms.
         /// </summary>
         /// <param name="amountKg">The amount to decrease in kilograms.</param>
-        public void DecreaseWeight(decimal amountKg)
+        public void DecreaseWeight(double amountKg)
         {
             if (amountKg <= 0)
             {
                 throw new ArgumentException("Amount must be positive", nameof(amountKg));
             }
 
-            var newWeightKg = Weight.ToKilograms() - amountKg;
+            var newWeightKg = Weight - amountKg;
             if (newWeightKg < 0)
             {
                 throw new InvalidOperationException("Weight cannot be negative");
             }
 
-            Weight = Weight.FromKilograms(newWeightKg);
+            Weight = newWeightKg;
             UpdatedAt = DateTime.UtcNow;
         }
 
@@ -358,18 +356,6 @@ namespace FitTracker.Domain.Entities
         }
 
         /// <summary>
-        /// Calculates the total volume (weight * reps) in kilograms.
-        /// </summary>
-        /// <returns>The total volume in kilograms.</returns>
-        public decimal CalculateVolume() => Weight.ToKilograms() * Reps;
-
-        /// <summary>
-        /// Calculates the total volume (weight * reps) in pounds.
-        /// </summary>
-        /// <returns>The total volume in pounds.</returns>
-        public decimal CalculateVolumeLbs() => Weight.ToPounds() * Reps;
-
-        /// <summary>
         /// Determines whether this set is a personal record compared to previous sets.
         /// </summary>
         /// <param name="previousSets">A collection of previous sets to compare against.</param>
@@ -381,8 +367,8 @@ namespace FitTracker.Domain.Entities
                 return true;
             }
 
-            var maxPreviousWeight = previousSets.Max(s => s.Weight.ToKilograms());
-            return Weight.ToKilograms() > maxPreviousWeight;
+            var maxPreviousWeight = previousSets.Max(s => s.Weight);
+            return Weight > maxPreviousWeight;
         }
 
         /// <summary>

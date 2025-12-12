@@ -21,8 +21,7 @@ namespace FitTracker.Infrastructure.Persistence.Repositories
             (FitTrackerDbContext dbContext, Guid userId) =>
                 dbContext.Users
                          .AsNoTracking()
-                         .Where(u => u.Id == userId)
-        );
+                         .Where(u => u.Id == userId));
 
         /// <inheritdoc/>
         public async Task<User?> GetByIdReadonlyAsync(Guid id, CancellationToken cancellationToken)
@@ -77,6 +76,7 @@ namespace FitTracker.Infrastructure.Persistence.Repositories
             var userEf = await context.Users
                               .AsNoTracking()
                               .FirstOrDefaultAsync(u => u.GoogleProviderId == token, cancellationToken);
+
             if (userEf == null)
             {
                 return null;

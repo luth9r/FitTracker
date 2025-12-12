@@ -18,7 +18,7 @@ namespace FitTracker.Infrastructure.Persistence.Data.Entities
         /// <summary>
         /// Gets or sets maximum weight lifted in kilograms.
         /// </summary>
-        public decimal MaxWeightKilograms { get; set; }
+        public double MaxWeightKg { get; set; }
 
         /// <summary>
         /// Gets or sets maximum repetitions achieved.
@@ -28,12 +28,12 @@ namespace FitTracker.Infrastructure.Persistence.Data.Entities
         /// <summary>
         /// Gets or sets maximum volume in a single set (weight × reps).
         /// </summary>
-        public decimal MaxVolume { get; set; }
+        public double MaxVolumeKg { get; set; }
 
         /// <summary>
         /// Gets or sets maximum total volume in a single workout.
         /// </summary>
-        public decimal MaxTotalVolume { get; set; }
+        public double MaxTotalVolumeKg { get; set; }
 
         /// <summary>
         /// Gets or sets date when max weight was achieved.
@@ -73,7 +73,7 @@ namespace FitTracker.Infrastructure.Persistence.Data.Entities
         /// <summary>
         /// Gets or sets total weight lifted across all workouts.
         /// </summary>
-        public decimal TotalLifted { get; set; }
+        public double TotalLiftedKg { get; set; }
 
         /// <summary>
         /// Gets or sets date when this exercise was last performed.

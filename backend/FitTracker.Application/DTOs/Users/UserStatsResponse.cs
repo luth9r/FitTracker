@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace FitTracker.Application.DTOs.Users
@@ -10,6 +11,7 @@ namespace FitTracker.Application.DTOs.Users
     /// <param name="TotalWorkouts">The total number of workouts completed.</param>
     /// <param name="TrainingDays">The total number of training days.</param>
     /// <param name="LongestStreak">The longest consecutive streak of workouts.</param>
-    /// <param name="TotalWeightLifted">The total weight lifted across all workouts.</param>
-    public sealed record UserStatsResponse(int TotalWorkouts, int TrainingDays, int LongestStreak, double TotalWeightLifted);
+    /// <param name="TotalWeightLiftedKg">The total weight lifted across all workouts.</param>
+    [ExcludeFromCodeCoverage]
+    public sealed record UserStatsResponse(int TotalWorkouts, int TrainingDays, int LongestStreak, double TotalWeightLiftedKg);
 }

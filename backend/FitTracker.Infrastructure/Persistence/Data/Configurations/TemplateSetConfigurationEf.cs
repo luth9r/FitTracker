@@ -25,7 +25,7 @@ namespace FitTracker.Infrastructure.Persistence.Data.Configurations
                 .HasColumnName("set_number")
                 .IsRequired();
 
-            _ = builder.Property(ts => ts.PlannedWeight)
+            _ = builder.Property(ts => ts.PlannedWeightKg)
                 .HasColumnName("planned_weight")
                 .HasColumnType("decimal(10,2)")
                 .IsRequired();

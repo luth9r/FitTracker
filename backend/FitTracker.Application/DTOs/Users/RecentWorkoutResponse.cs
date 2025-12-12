@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace FitTracker.Application.DTOs.Users
@@ -12,6 +13,7 @@ namespace FitTracker.Application.DTOs.Users
     /// <param name="Name">Name of the workout.</param>
     /// <param name="IsCompleted">Indicates whether the workout was completed.</param>
     /// <param name="DurationMinutes">Duration of the workout in minutes.</param>
-    /// <param name="TotalVolume">Total volume (weight × reps) for the workout.</param>
-    public sealed record RecentWorkoutResponse(Guid Id, DateTime WorkoutDate, string Name, bool IsCompleted, int DurationMinutes, double TotalVolume);
+    /// <param name="TotalVolumeKg">Total volume (weight × reps) for the workout.</param>
+    [ExcludeFromCodeCoverage]
+    public sealed record RecentWorkoutResponse(Guid Id, DateTime WorkoutDate, string Name, bool IsCompleted, int DurationMinutes, double TotalVolumeKg);
 }

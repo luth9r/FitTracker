@@ -26,7 +26,7 @@ namespace FitTracker.Infrastructure.Persistence.Data.Configurations
                 .HasColumnType("uuid")
                 .IsRequired();
 
-            _ = builder.Property(er => er.MaxWeightKilograms)
+            _ = builder.Property(er => er.MaxWeightKg)
                 .HasColumnName("max_weight_kg")
                 .HasPrecision(10, 2)
                 .IsRequired();
@@ -35,11 +35,11 @@ namespace FitTracker.Infrastructure.Persistence.Data.Configurations
                 .HasColumnName("max_reps")
                 .IsRequired();
 
-            _ = builder.Property(er => er.MaxVolume)
+            _ = builder.Property(er => er.MaxVolumeKg)
                 .HasColumnName("max_volume")
                 .IsRequired();
 
-            _ = builder.Property(er => er.MaxTotalVolume)
+            _ = builder.Property(er => er.MaxTotalVolumeKg)
                 .HasColumnName("max_total_volume")
                 .IsRequired();
 
@@ -71,7 +71,7 @@ namespace FitTracker.Infrastructure.Persistence.Data.Configurations
                 .HasColumnName("total_reps")
                 .IsRequired();
 
-            _ = builder.Property(er => er.TotalLifted)
+            _ = builder.Property(er => er.TotalLiftedKg)
                 .HasColumnName("total_lifted")
                 .IsRequired();
 

@@ -58,7 +58,7 @@ namespace FitTracker.Infrastructure.Persistence.Data.Entities
         /// <summary>
         /// Gets or sets total volume lifted in kilograms.
         /// </summary>
-        public decimal TotalVolumeKg { get; set; }
+        public double TotalVolumeKg { get; set; }
 
         /// <summary>
         /// Gets or sets navigation to the user.

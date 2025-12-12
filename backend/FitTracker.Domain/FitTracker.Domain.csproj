@@ -10,6 +10,7 @@
 		<Folder Include="Exceptions\" />
 		<Folder Include="Shared\" />
 		<Folder Include="Specifications\" />
+		<Folder Include="ValueObjects\" />
 		<InternalsVisibleTo Include="FitTracker.Infrastructure" />
 	</ItemGroup>
 

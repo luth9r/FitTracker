@@ -16,7 +16,7 @@ namespace FitTracker.Infrastructure.Persistence.Repositories
         ILogger<SetReadRepository> logger) : ISetReadRepository
     {
         /// <inheritdoc/>
-        public async Task<decimal> GetTotalWeightLiftedAsync(Guid userId, CancellationToken cancellationToken)
+        public async Task<double> GetTotalWeightLiftedAsync(Guid userId, CancellationToken cancellationToken)
         {
             return await context.Sets
                                 .Where(s => s.WorkoutExercise!.Workout!.UserId == userId)

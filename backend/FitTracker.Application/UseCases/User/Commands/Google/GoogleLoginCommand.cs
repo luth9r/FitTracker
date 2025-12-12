@@ -1,10 +1,11 @@
-﻿using CSharpFunctionalExtensions;
+using CSharpFunctionalExtensions;
 using FitTracker.Application.DTOs.Auth;
 using FitTracker.Application.DTOs.Auth.Google;
 using FluentValidation.Results;
 using MediatR;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace FitTracker.Application.UseCases.User.Commands.Google
@@ -13,5 +14,6 @@ namespace FitTracker.Application.UseCases.User.Commands.Google
     /// Command for logging in with Google.
     /// </summary>
     /// <param name="Request">The <see cref="GoogleLoginRequest"/>.</param>
+    [ExcludeFromCodeCoverage]
     public record GoogleLoginCommand(GoogleLoginRequest Request) : IRequest<Result<LoginResponse, ValidationResult>>;
 }

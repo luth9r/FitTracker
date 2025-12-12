@@ -6,7 +6,6 @@ using FitTracker.Application.DTOs.Users;
 using FitTracker.Application.UseCases.User.Queries;
 using FitTracker.Domain.Abstract.Interfaces;
 using FitTracker.Domain.Entities;
-using FitTracker.Domain.ValueObjects;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -34,17 +33,6 @@ namespace FitTracker.Application.UseCases.User.Handlers.Queries
         {
             logger.LogDebug("Starting get user stats process for user: {UserId}", request.UserId);
 
-            UnitSystem preferredUnits;
-            try
-            {
-                preferredUnits = UnitSystem.FromString(request.PreferredUnits);
-            }
-            catch (ArgumentException ex)
-            {
-                logger.LogWarning(ex, "Invalid unit system: {Unit}", request.PreferredUnits);
-                return Result.Failure<UserStatsResponse>("INVALID_UNIT_SYSTEM");
-            }
-
             var workouts = await workoutReadRepository.GetCompletedByUserIdAsync(request.UserId, cancellationToken);
 
             if (workouts.Count == 0)
@@ -64,10 +52,7 @@ namespace FitTracker.Application.UseCases.User.Handlers.Queries
 
             var totalWeightKg = await setReadRepository.GetTotalWeightLiftedAsync(request.UserId, cancellationToken);
 
-            var totalWeightUserUnits = UnitSystem.ConvertFromMetric(totalWeightKg, preferredUnits);
-            var roundedTotalWeight = (double)Math.Round(totalWeightUserUnits, 1);
-
-            return Result.Success(new UserStatsResponse(totalWorkouts, trainingDays, longestStreak, roundedTotalWeight));
+            return Result.Success(new UserStatsResponse(totalWorkouts, trainingDays, longestStreak, totalWeightKg));
         }
 
         /// <summary>

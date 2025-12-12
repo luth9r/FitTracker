@@ -1,5 +1,4 @@
 using FitTracker.Domain.Enums;
-using FitTracker.Domain.ValueObjects;
 
 namespace FitTracker.Domain.Entities
 {
@@ -11,7 +10,7 @@ namespace FitTracker.Domain.Entities
         /// <summary>
         /// The maximum weight allowed in kilograms.
         /// </summary>
-        public const decimal MaxWeightKg = 10000m;
+        public const double MaxWeightKg = 10000d;
 
         /// <summary>
         /// The maximum number of planned reps allowed.
@@ -36,7 +35,7 @@ namespace FitTracker.Domain.Entities
         /// <summary>
         /// Gets the planned weight for this set.
         /// </summary>
-        public Weight PlannedWeight { get; private set; }
+        public double PlannedWeightKg { get; private set; }
 
         /// <summary>
         /// Gets the planned number of repetitions for this set.
@@ -69,7 +68,7 @@ namespace FitTracker.Domain.Entities
             Guid id,
             Guid workoutTemplateExerciseId,
             int setNumber,
-            Weight plannedWeight,
+            double plannedWeight,
             int plannedReps,
             int? restSeconds,
             SetType setType,
@@ -79,7 +78,7 @@ namespace FitTracker.Domain.Entities
         {
             WorkoutTemplateExerciseId = workoutTemplateExerciseId;
             SetNumber = setNumber;
-            PlannedWeight = plannedWeight;
+            PlannedWeightKg = plannedWeight;
             PlannedReps = plannedReps;
             RestSeconds = restSeconds;
             SetType = setType;
@@ -104,7 +103,7 @@ namespace FitTracker.Domain.Entities
         private TemplateSet(
             Guid workoutTemplateExerciseId,
             int setNumber,
-            Weight plannedWeight,
+            double plannedWeight,
             int plannedReps,
             int? restSeconds,
             SetType setType = SetType.Normal)
@@ -120,12 +119,12 @@ namespace FitTracker.Domain.Entities
                 throw new ArgumentException("Set number must be greater than 0", nameof(setNumber));
             }
 
-            if (plannedWeight == null)
+            if (plannedWeight == 0)
             {
                 throw new ArgumentNullException(nameof(plannedWeight));
             }
 
-            if (plannedWeight.ToKilograms() > MaxWeightKg)
+            if (plannedWeight > MaxWeightKg)
             {
                 throw new ArgumentException($"Planned weight cannot exceed {MaxWeightKg} kg", nameof(plannedWeight));
             }
@@ -152,7 +151,7 @@ namespace FitTracker.Domain.Entities
 
             WorkoutTemplateExerciseId = workoutTemplateExerciseId;
             SetNumber = setNumber;
-            PlannedWeight = plannedWeight;
+            PlannedWeightKg = plannedWeight;
             PlannedReps = plannedReps;
             RestSeconds = restSeconds;
             SetType = setType;
@@ -171,7 +170,7 @@ namespace FitTracker.Domain.Entities
         public static TemplateSet Create(
             Guid workoutTemplateExerciseId,
             int setNumber,
-            Weight plannedWeight,
+            double plannedWeight,
             int plannedReps,
             int? restSeconds = null,
             SetType setType = SetType.Normal)
@@ -186,16 +185,16 @@ namespace FitTracker.Domain.Entities
         /// <param name="plannedReps">The new planned reps.</param>
         /// <param name="restSeconds">The new rest period in seconds.</param>
         public void Update(
-            Weight plannedWeight,
+            double plannedWeight,
             int plannedReps,
             int? restSeconds = null)
         {
-            if (plannedWeight == null)
+            if (plannedWeight == 0d)
             {
                 throw new ArgumentNullException(nameof(plannedWeight));
             }
 
-            if (plannedWeight.ToKilograms() > MaxWeightKg)
+            if (plannedWeight > MaxWeightKg)
             {
                 throw new ArgumentException($"Planned weight cannot exceed {MaxWeightKg} kg", nameof(plannedWeight));
             }
@@ -220,7 +219,7 @@ namespace FitTracker.Domain.Entities
                 throw new ArgumentException($"Rest cannot exceed {MaxRestSeconds} seconds", nameof(restSeconds));
             }
 
-            PlannedWeight = plannedWeight;
+            PlannedWeightKg = plannedWeight;
             PlannedReps = plannedReps;
             RestSeconds = restSeconds;
             UpdatedAt = DateTime.UtcNow;
@@ -250,18 +249,6 @@ namespace FitTracker.Domain.Entities
             SetType = setType;
             UpdatedAt = DateTime.UtcNow;
         }
-
-        /// <summary>
-        /// Calculates the planned volume (weight * reps) in kilograms.
-        /// </summary>
-        /// <returns>The planned volume in kilograms.</returns>
-        public decimal CalculatePlannedVolume() => PlannedWeight.ToKilograms() * PlannedReps;
-
-        /// <summary>
-        /// Calculates the planned volume (weight * reps) in pounds.
-        /// </summary>
-        /// <returns>The planned volume in pounds.</returns>
-        public decimal CalculatePlannedVolumeLbs() => PlannedWeight.ToPounds() * PlannedReps;
 
         /// <summary>
         /// Determines whether this set is a warmup set.

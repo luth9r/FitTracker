@@ -36,6 +36,7 @@ namespace FitTracker.Infrastructure.Persistence.Repositories
             var workoutsEf = await context.Workouts
                                     .AsNoTracking()
                                     .OrderByDescending(w => w.WorkoutDate)
+                                    .Where(w => w.UserId == userId)
                                     .Take(take)
                                     .ProjectTo<WorkoutSummary>(mapper.ConfigurationProvider)
                                     .ToListAsync(cancellationToken);

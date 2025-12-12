@@ -1,7 +1,6 @@
 using AutoMapper;
 using FitTracker.Domain.Entities;
 using FitTracker.Domain.Enums;
-using FitTracker.Domain.ValueObjects;
 using FitTracker.Infrastructure.Persistence.Data.Entities;
 
 namespace FitTracker.Infrastructure.Automapper
@@ -15,7 +14,7 @@ namespace FitTracker.Infrastructure.Automapper
                     id: src.Id,
                     workoutExerciseId: src.WorkoutExerciseId,
                     setNumber: src.SetNumber,
-                    weight: Weight.FromKilograms(src.WeightKg),
+                    weight: src.WeightKg,
                     reps: src.Reps,
                     restSeconds: src.RestSeconds,
                     setType: (SetType)src.SetType,
@@ -26,7 +25,7 @@ namespace FitTracker.Infrastructure.Automapper
 
             _ = CreateMap<Set, SetEf>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.WeightKg, opt => opt.MapFrom(src => src.Weight.ToKilograms()))
+                .ForMember(dest => dest.WeightKg, opt => opt.MapFrom(src => src.Weight))
                 .ForMember(dest => dest.WorkoutExerciseId, opt => opt.MapFrom(src => src.WorkoutExerciseId))
                 .ForMember(dest => dest.SetNumber, opt => opt.MapFrom(src => src.SetNumber))
                 .ForMember(dest => dest.Reps, opt => opt.MapFrom(src => src.Reps))

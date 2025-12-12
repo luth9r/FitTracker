@@ -70,9 +70,9 @@ namespace FitTracker.Application.UseCases.User.Handlers.Commands.Google
 
             var user = UserEntity.CreateGoogleUser(
                 email: googlePayload.Email,
+                googleProviderId: googlePayload.GoogleId,
                 firstName: googlePayload.FirstName,
-                lastName: googlePayload.LastName,
-                googleProviderId: googlePayload.GoogleId);
+                lastName: googlePayload.LastName);
 
             user.SetEmailVerified();
 
