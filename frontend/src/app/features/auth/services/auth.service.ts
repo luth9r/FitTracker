@@ -14,9 +14,8 @@ export interface RegisterPayload {
   password: string;
 }
 
-
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
   private http = inject(HttpClient);
@@ -29,7 +28,7 @@ export class AuthService {
   login(email: string, password: string): Observable<LoginResponse> {
     const payload = { email, password };
     return this.http.post<LoginResponse>(`${this.apiUrl}/login`, payload, {
-      withCredentials: true
+      withCredentials: true,
     });
   }
 
@@ -38,7 +37,7 @@ export class AuthService {
    */
   register(payload: RegisterPayload): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${this.apiUrl}/register`, payload, {
-      withCredentials: true
+      withCredentials: true,
     });
   }
 
@@ -48,7 +47,7 @@ export class AuthService {
   googleLogin(code: string, codeVerifier: string): Observable<LoginResponse> {
     const payload = { code, codeVerifier };
     return this.http.post<LoginResponse>(`${this.apiUrl}/google-login`, payload, {
-      withCredentials: true
+      withCredentials: true,
     });
   }
 
@@ -58,17 +57,17 @@ export class AuthService {
   googleRegister(code: string, codeVerifier: string): Observable<LoginResponse> {
     const payload = { code, codeVerifier };
     return this.http.post<LoginResponse>(`${this.apiUrl}/google-register`, payload, {
-      withCredentials: true
+      withCredentials: true,
     });
   }
 
   checkAuth(): Observable<boolean> {
     return this.http
       .get<{ userId: string | null }>(`${this.userApiUrl}/me`, {
-        withCredentials: true
+        withCredentials: true,
       })
       .pipe(
-        map(res => !!res.userId),
+        map((res) => !!res.userId),
         catchError(() => of(false))
       );
   }

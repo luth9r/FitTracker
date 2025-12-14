@@ -8,21 +8,19 @@ import { Router } from '@angular/router';
 import { ValidationService } from '../../services/validation.service';
 import { ErrorHandlingService } from '../../services/error-handling.service';
 import { LoginFormComponent, LoginFormData } from './forms/login-form/login-form.component';
-import { RegisterFormComponent, RegisterFormData } from './forms/register-form/register-form.component';
+import {
+  RegisterFormComponent,
+  RegisterFormData,
+} from './forms/register-form/register-form.component';
 
 type AuthMode = 'login' | 'register';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [
-    CommonModule,
-    TranslateModule,
-    LoginFormComponent,
-    RegisterFormComponent
-  ],
+  imports: [CommonModule, TranslateModule, LoginFormComponent, RegisterFormComponent],
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+  styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent {
   private authService = inject(AuthService);
@@ -57,9 +55,8 @@ export class LoginComponent {
       if (event.origin !== window.location.origin) return;
 
       const message = event.data;
-      const queryString = message.startsWith('?') || message.startsWith('??')
-        ? message.replace(/^\?+/, '')
-        : message;
+      const queryString =
+        message.startsWith('?') || message.startsWith('??') ? message.replace(/^\?+/, '') : message;
       const params = new URLSearchParams(queryString);
       const code = params.get('code');
       const codeVerifier = sessionStorage.getItem('PKCE_verifier');
@@ -75,18 +72,21 @@ export class LoginComponent {
           ? this.authService.googleRegister(code, codeVerifier)
           : this.authService.googleLogin(code, codeVerifier);
 
-        action.pipe(
-          finalize(() => {
-            this.isLoading = false;
-            sessionStorage.removeItem('pkce_verifier');
-          })
-        ).subscribe({
-          next: (response) => this.handleLoginSuccess(response, isRegistration),
-          error: (err) => this.handleError(err, `google-${this.googleIntent}`)
-        });
+        action
+          .pipe(
+            finalize(() => {
+              this.isLoading = false;
+              sessionStorage.removeItem('pkce_verifier');
+            })
+          )
+          .subscribe({
+            next: (response) => this.handleLoginSuccess(response, isRegistration),
+            error: (err) => this.handleError(err, `google-${this.googleIntent}`),
+          });
       } else {
         if (!code) console.warn('[WARN] Google Flow: "code" not found in message.');
-        if (!codeVerifier) console.warn('[WARN] Google Flow: "codeVerifier" not found in sessionStorage.');
+        if (!codeVerifier)
+          console.warn('[WARN] Google Flow: "codeVerifier" not found in sessionStorage.');
         this.isLoading = false;
       }
     });
@@ -117,7 +117,7 @@ export class LoginComponent {
       case 'password':
         this.registerPassword = value;
         this.passwordValidationState = this.validationService.validatePassword(value);
-        
+
         if (this.registerConfirmPassword) {
           this.confirmPasswordValidationState = this.validationService.validateConfirmPassword(
             this.registerPassword,
@@ -145,11 +145,12 @@ export class LoginComponent {
       return;
     }
 
-    this.authService.login(formData.email, formData.password)
-      .pipe(finalize(() => this.isLoading = false))
+    this.authService
+      .login(formData.email, formData.password)
+      .pipe(finalize(() => (this.isLoading = false)))
       .subscribe({
         next: (response) => this.handleLoginSuccess(response),
-        error: (err) => this.handleError(err, 'login')
+        error: (err) => this.handleError(err, 'login'),
       });
   }
 
@@ -157,8 +158,12 @@ export class LoginComponent {
   onRegisterSubmit(formData: RegisterFormData) {
     this.resetState(true);
 
-    if (!formData.username.trim() || !formData.email.trim() || 
-        !formData.password.trim() || !formData.confirmPassword.trim()) {
+    if (
+      !formData.username.trim() ||
+      !formData.email.trim() ||
+      !formData.password.trim() ||
+      !formData.confirmPassword.trim()
+    ) {
       this.errorMessage = 'LOGIN.ERRORS.EMPTY_FIELDS';
       this.isLoading = false;
       return;
@@ -168,12 +173,12 @@ export class LoginComponent {
     this.usernameValidationState = this.validationService.validateUsername(formData.username);
     this.passwordValidationState = this.validationService.validatePassword(formData.password);
     this.confirmPasswordValidationState = this.validationService.validateConfirmPassword(
-      formData.password, 
+      formData.password,
       formData.confirmPassword
     );
 
-    const isUsernameValid = Object.values(this.usernameValidationState).every(v => v);
-    const isPasswordValid = Object.values(this.passwordValidationState).every(v => v);
+    const isUsernameValid = Object.values(this.usernameValidationState).every((v) => v);
+    const isPasswordValid = Object.values(this.passwordValidationState).every((v) => v);
     const isConfirmPasswordValid = this.confirmPasswordValidationState.matches;
 
     if (!isUsernameValid || !isPasswordValid || !isConfirmPasswordValid) {
@@ -182,17 +187,18 @@ export class LoginComponent {
       return;
     }
 
-    const payload: RegisterPayload = { 
-      username: formData.username, 
-      email: formData.email, 
-      password: formData.password 
+    const payload: RegisterPayload = {
+      username: formData.username,
+      email: formData.email,
+      password: formData.password,
     };
-    
-    this.authService.register(payload)
-      .pipe(finalize(() => this.isLoading = false))
+
+    this.authService
+      .register(payload)
+      .pipe(finalize(() => (this.isLoading = false)))
       .subscribe({
         next: (response) => this.handleLoginSuccess(response, true),
-        error: (err) => this.handleError(err, 'register')
+        error: (err) => this.handleError(err, 'register'),
       });
   }
 
@@ -208,8 +214,9 @@ export class LoginComponent {
     }
 
     console.log(`[INFO] Starting Google Sign-In (PKCE) with intent: ${intent}`);
-    
-    this.oauthService.initLoginFlowInPopup()
+
+    this.oauthService
+      .initLoginFlowInPopup()
       .then((result) => {
         if (!result) {
           console.warn('[WARN] Google Sign-In: Popup closed or unsuccessful.');
@@ -221,7 +228,7 @@ export class LoginComponent {
           console.log('[INFO] Google Sign-In (init): Popup closed by user.');
           this.isLoading = false;
         } else {
-          console.error('[ERROR] Google Sign-In (init) Error:', err); 
+          console.error('[ERROR] Google Sign-In (init) Error:', err);
         }
       });
   }
@@ -235,7 +242,7 @@ export class LoginComponent {
 
   private handleError(err: unknown, context: string) {
     const errorMessage = this.errorHandlingService.handleAuthError(err, context);
-    
+
     if (errorMessage) {
       this.errorMessage = errorMessage;
     } else {

@@ -17,15 +17,14 @@ export interface ConfirmPasswordValidationState {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ValidationService {
-
   // Username validation
   validateUsername(username: string): UsernameValidationState {
     return {
       minLength: username.length >= 3,
-      noSpaces: !/\s/.test(username)
+      noSpaces: !/\s/.test(username),
     };
   }
 
@@ -34,14 +33,17 @@ export class ValidationService {
     return {
       minLength: password.length >= 8,
       oneLetter: /[a-zA-Z]/.test(password),
-      oneNumber: /\d/.test(password)
+      oneNumber: /\d/.test(password),
     };
   }
 
   // Confirm password validation
-  validateConfirmPassword(password: string, confirmPassword: string): ConfirmPasswordValidationState {
+  validateConfirmPassword(
+    password: string,
+    confirmPassword: string
+  ): ConfirmPasswordValidationState {
     return {
-      matches: confirmPassword === password && confirmPassword.length > 0
+      matches: confirmPassword === password && confirmPassword.length > 0,
     };
   }
 
@@ -50,7 +52,7 @@ export class ValidationService {
     return (control: AbstractControl): ValidationErrors | null => {
       const value = control.value || '';
       const state = this.validateUsername(value);
-      
+
       if (!state.minLength || !state.noSpaces) {
         return { username: state };
       }
@@ -63,7 +65,7 @@ export class ValidationService {
     return (control: AbstractControl): ValidationErrors | null => {
       const value = control.value || '';
       const state = this.validatePassword(value);
-      
+
       if (!state.minLength || !state.oneLetter || !state.oneNumber) {
         return { password: state };
       }
@@ -77,7 +79,7 @@ export class ValidationService {
       const password = passwordControl.value || '';
       const confirmPassword = control.value || '';
       const state = this.validateConfirmPassword(password, confirmPassword);
-      
+
       if (!state.matches) {
         return { confirmPassword: state };
       }

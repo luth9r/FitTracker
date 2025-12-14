@@ -7,10 +7,9 @@ export interface ErrorContext {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ErrorHandlingService {
-
   /**
    * Handles errors and returns a translation key for display to the user
    */
@@ -63,7 +62,6 @@ export class ErrorHandlingService {
    */
   isPopupClosedError(err: unknown): boolean {
     const oauthError = err as any;
-    return oauthError?.type === 'popup_closed' || 
-           oauthError?.error === 'popup_closed_by_user';
+    return oauthError?.type === 'popup_closed' || oauthError?.error === 'popup_closed_by_user';
   }
 }

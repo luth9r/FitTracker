@@ -8,9 +8,8 @@ describe('AuthInputFieldComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AuthInputFieldComponent]
-    })
-    .compileComponents();
+      imports: [AuthInputFieldComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(AuthInputFieldComponent);
     component = fixture.componentInstance;

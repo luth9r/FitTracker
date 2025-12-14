@@ -8,14 +8,16 @@
     [(value)]="formData.username"
     (focus)="onFieldFocus('username')"
     (blur)="onFieldBlur()"
-    (validateOnChange)="onValidateChange('username', $event)">
+    (validateOnChange)="onValidateChange('username', $event)"
+  >
   </app-auth-input-field>
 
   <!-- Username Validation -->
   <app-validation-checklist
     [validationState]="usernameValidationState"
     translationPrefix="REGISTER.VALIDATION.USERNAME_"
-    [shouldShow]="showUsernameValidation">
+    [shouldShow]="showUsernameValidation"
+  >
   </app-validation-checklist>
 
   <!-- Email -->
@@ -26,7 +28,8 @@
     type="email"
     [(value)]="formData.email"
     (focus)="onFieldFocus('email')"
-    (blur)="onFieldBlur()">
+    (blur)="onFieldBlur()"
+  >
   </app-auth-input-field>
 
   <!-- Password -->
@@ -39,14 +42,16 @@
     [(showPassword)]="showPassword"
     (focus)="onFieldFocus('password')"
     (blur)="onFieldBlur()"
-    (validateOnChange)="onValidateChange('password', $event)">
+    (validateOnChange)="onValidateChange('password', $event)"
+  >
   </app-auth-input-field>
 
   <!-- Password Validation -->
   <app-validation-checklist
     [validationState]="passwordValidationState"
     translationPrefix="REGISTER.VALIDATION.PASSWORD_"
-    [shouldShow]="showPasswordValidation">
+    [shouldShow]="showPasswordValidation"
+  >
   </app-validation-checklist>
 
   <!-- Confirm Password -->
@@ -59,22 +64,20 @@
     [(showPassword)]="showConfirmPassword"
     (focus)="onFieldFocus('confirmPassword')"
     (blur)="onFieldBlur()"
-    (validateOnChange)="onValidateChange('confirmPassword', $event)">
+    (validateOnChange)="onValidateChange('confirmPassword', $event)"
+  >
   </app-auth-input-field>
 
   <!-- Confirm Password Validation -->
   <app-validation-checklist
     [validationState]="confirmPasswordValidationState"
     translationPrefix="REGISTER.VALIDATION.CONFIRM_"
-    [shouldShow]="showConfirmPasswordValidation">
+    [shouldShow]="showConfirmPasswordValidation"
+  >
   </app-validation-checklist>
 
   <!-- Submit -->
-  <button 
-    type="submit" 
-    class="submit-btn" 
-    [disabled]="isLoading"
-    (click)="onSubmit()">
+  <button type="submit" class="submit-btn" [disabled]="isLoading" (click)="onSubmit()">
     <span *ngIf="!isLoading">
       {{ 'LOGIN.SUBMIT_BUTTON_SIGNUP' | translate }}
     </span>

@@ -20,10 +20,10 @@ export interface RegisterFormData {
     FormsModule,
     TranslateModule,
     AuthInputFieldComponent,
-    ValidationChecklistComponent
+    ValidationChecklistComponent,
   ],
   templateUrl: './register-form.component.html',
-  styleUrls: ['./register-form.component.scss']
+  styleUrls: ['./register-form.component.scss'],
 })
 export class RegisterFormComponent {
   @Input() isLoading = false;
@@ -41,28 +41,34 @@ export class RegisterFormComponent {
     username: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
   };
 
   showPassword = false;
   showConfirmPassword = false;
 
   get showUsernameValidation(): boolean {
-    return this.activeField === 'username' && 
-           this.formData.username.length > 0 &&
-           !Object.values(this.usernameValidationState).every(v => v);
+    return (
+      this.activeField === 'username' &&
+      this.formData.username.length > 0 &&
+      !Object.values(this.usernameValidationState).every((v) => v)
+    );
   }
 
   get showPasswordValidation(): boolean {
-    return this.activeField === 'password' && 
-           this.formData.password.length > 0 &&
-           !Object.values(this.passwordValidationState).every(v => v);
+    return (
+      this.activeField === 'password' &&
+      this.formData.password.length > 0 &&
+      !Object.values(this.passwordValidationState).every((v) => v)
+    );
   }
 
   get showConfirmPasswordValidation(): boolean {
-    return this.activeField === 'confirmPassword' && 
-           this.formData.confirmPassword.length > 0 &&
-           !this.confirmPasswordValidationState.matches;
+    return (
+      this.activeField === 'confirmPassword' &&
+      this.formData.confirmPassword.length > 0 &&
+      !this.confirmPasswordValidationState.matches
+    );
   }
 
   onFieldFocus(fieldName: string) {

@@ -17,20 +17,22 @@ interface ValidationCheck {
   standalone: true,
   imports: [CommonModule, TranslateModule],
   templateUrl: './validation-checklist.component.html',
-  styleUrls: ['./validation-checklist.component.scss'] 
+  styleUrls: ['./validation-checklist.component.scss'],
 })
 export class ValidationChecklistComponent {
   private translate = inject(TranslateService);
-  
+
   @Input() validationState!: ValidationState;
   @Input() translationPrefix = '';
   @Input() shouldShow = false;
 
   get validationChecks(): ValidationCheck[] {
-    return Object.keys(this.validationState).map(key => ({
-      key,
-      isValid: this.validationState[key as keyof ValidationState] ?? false,
-      label: this.translate.instant(`${this.translationPrefix}${key.toUpperCase()}`)
-    })).filter(check => check.isValid !== undefined);
+    return Object.keys(this.validationState)
+      .map((key) => ({
+        key,
+        isValid: this.validationState[key as keyof ValidationState] ?? false,
+        label: this.translate.instant(`${this.translationPrefix}${key.toUpperCase()}`),
+      }))
+      .filter((check) => check.isValid !== undefined);
   }
 }

@@ -7,7 +7,8 @@
     type="email"
     [(value)]="formData.email"
     (focus)="onFieldFocus('email')"
-    (blur)="onFieldBlur()">
+    (blur)="onFieldBlur()"
+  >
   </app-auth-input-field>
 
   <!-- Password -->
@@ -19,7 +20,8 @@
     [(value)]="formData.password"
     [(showPassword)]="showPassword"
     (focus)="onFieldFocus('password')"
-    (blur)="onFieldBlur()">
+    (blur)="onFieldBlur()"
+  >
   </app-auth-input-field>
 
   <!-- Forgot Password -->
@@ -30,11 +32,7 @@
   </div>
 
   <!-- Submit -->
-  <button 
-    type="submit" 
-    class="submit-btn" 
-    [disabled]="isLoading"
-    (click)="onSubmit()">
+  <button type="submit" class="submit-btn" [disabled]="isLoading" (click)="onSubmit()">
     <span *ngIf="!isLoading">
       {{ 'LOGIN.SUBMIT_BUTTON_LOGIN' | translate }}
     </span>

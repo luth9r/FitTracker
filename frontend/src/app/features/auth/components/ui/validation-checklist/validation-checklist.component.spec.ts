@@ -8,9 +8,8 @@ describe('ValidationChecklistComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ValidationChecklistComponent]
-    })
-    .compileComponents();
+      imports: [ValidationChecklistComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(ValidationChecklistComponent);
     component = fixture.componentInstance;

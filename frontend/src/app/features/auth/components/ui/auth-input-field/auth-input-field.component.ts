@@ -15,7 +15,7 @@ export interface InputValidationState {
   standalone: true,
   imports: [CommonModule, FormsModule, TranslateModule],
   templateUrl: './auth-input-field.component.html',
-  styleUrls: ['./auth-input-field.component.scss']
+  styleUrls: ['./auth-input-field.component.scss'],
 })
 export class AuthInputFieldComponent {
   @Input() labelKey!: string;
@@ -40,9 +40,13 @@ export class AuthInputFieldComponent {
     this.showPasswordChange.emit(this.showPassword);
   }
 
-  onFocus() { this.focus.emit(); }
-  onBlur() { this.blur.emit(); }
-  
+  onFocus() {
+    this.focus.emit();
+  }
+  onBlur() {
+    this.blur.emit();
+  }
+
   onValueChange(value: string) {
     this.value = value;
     this.valueChange.emit(value);

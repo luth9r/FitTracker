@@ -40,7 +40,9 @@
       "PASSWORD_ONE_LETTER": "Пароль повинен містити принаймні одну букву.",
       "PASSWORD_ONE_NUMBER": "Пароль повинен містити принаймні одну цифру.",
       "VALIDATION_FAILED": "Виправте помилки у формі.",
-      "EMPTY_FIELDS": "Заповніть усі обов'язкові поля."
+      "EMPTY_FIELDS": "Заповніть усі обов'язкові поля.",
+      "UNKNOWN_GOOGLE": "Невідома помилка Google",
+      "GOOGLE_CONFIG_ERROR": "Помилка налаштування Google"
     },
     "GOOGLE_COMPLETE": {
       "TITLE": "Завершіть свій профіль",
@@ -53,6 +55,7 @@
   "REGISTER": {
     "USERNAME": "Ім'я користувача",
     "USERNAME_PLACEHOLDER": "ваше_унікальне_ім'я_користувача",
+
     "VALIDATION": {
       "USERNAME_MINLENGTH": "Принаймні 3 символи",
       "USERNAME_NOSPACES": "Не може містити пробіли",
@@ -60,6 +63,43 @@
       "PASSWORD_ONELETTER": "Принаймні одна буква",
       "PASSWORD_ONENUMBER": "Принаймні одна цифра",
       "CONFIRM_MATCHES": "Паролі не збігаються"
+    }
+  },
+  "HOME": {
+    "TITLE": "Панель керування",
+    "SUBTITLE": "Відстежуйте свій прогрес у тренуваннях",
+    "LOADING": "Завантаження статистики...",
+    "STATS": {
+      "TOTAL_WORKOUTS": "Усього тренувань",
+      "TRAINING_DAYS": "Днів тренувань",
+      "CURRENT_STREAK": "Поточна серія",
+      "DAYS_SUFFIX": "днів",
+      "TOTAL_WEIGHT": "Загальна вага, піднята за тренування"
+    },
+    "AVG_VOLUME": {
+      "TITLE": "Середній об'єм",
+      "SUBTITLE": "За тренування",
+      "UNITS": "{{unit}}"
+    },
+    "RECENT_WORKOUTS": {
+      "TITLE": "Останні тренування",
+      "VIEW_ALL": "Переглянути всі",
+      "DURATION": "Тривалість",
+      "MIN_SUFFIX": "хв",
+      "TOTAL_VOLUME": "Загальний обʼєм",
+      "EMPTY": "Поки що немає жодного тренування",
+      "TAG_STRENGTH": "Силове"
+    },
+    "NAV": {
+      "HOME": "Головна",
+      "EXERCISES": "Вправи",
+      "PROGRESS": "Прогрес",
+      "PROFILE": "Профіль"
+    },
+    "EMPTY_STATE": {
+      "TITLE": "Розпочніть свій шлях",
+      "DESCRIPTION": "У вас ще немає тренувань. Створіть своє перше тренування та почніть відстежувати свій прогрес!",
+      "CTA": "Створити тренування"
     }
   }
 }

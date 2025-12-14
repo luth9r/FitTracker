@@ -40,7 +40,9 @@
       "PASSWORD_ONE_LETTER": "Password must contain at least one letter.",
       "PASSWORD_ONE_NUMBER": "Password must contain at least one number.",
       "VALIDATION_FAILED": "Please correct the errors in the form.",
-      "EMPTY_FIELDS": "Please fill in all required fields."
+      "EMPTY_FIELDS": "Please fill in all required fields.",
+      "UNKNOWN_GOOGLE": "Unknown Google error",
+      "GOOGLE_CONFIG_ERROR": "Google configuration error"
     },
     "GOOGLE_COMPLETE": {
       "TITLE": "Complete Your Profile",
@@ -62,5 +64,42 @@
       "PASSWORD_ONENUMBER": "At least one number",
       "CONFIRM_MATCHES": "Passwords do not match"
     }
+  },
+  "HOME": {
+    "TITLE": "Dashboard",
+    "SUBTITLE": "Track your training progress",
+    "LOADING": "Loading your stats...",
+    "STATS": {
+      "TOTAL_WORKOUTS": "Total workouts",
+      "TRAINING_DAYS": "Training days",
+      "CURRENT_STREAK": "Current streak",
+      "DAYS_SUFFIX": "days",
+      "TOTAL_WEIGHT": "Total weight lifted"
+    },
+    "AVG_VOLUME": {
+      "TITLE": "Average Volume",
+      "SUBTITLE": "Per workout",
+      "UNITS": "{{unit}}"
+    },
+    "RECENT_WORKOUTS": {
+      "TITLE": "Recent workouts",
+      "VIEW_ALL": "View all",
+      "DURATION": "Duration",
+      "MIN_SUFFIX": "min",
+      "TOTAL_VOLUME": "Total volume",
+      "EMPTY": "No workouts yet",
+      "TAG_STRENGTH": "Strength"
+    },
+    "NAV": {
+      "HOME": "Home",
+      "EXERCISES": "Exercises",
+      "PROGRESS": "Progress",
+      "PROFILE": "Profile"
+    },
+    "EMPTY_STATE": {
+      "TITLE": "Start Your Journey",
+      "DESCRIPTION": "You don't have any workouts yet. Create your first workout and start tracking your progress!",
+      "CTA": "Create Workout"
+    }
   }
-}
+} 

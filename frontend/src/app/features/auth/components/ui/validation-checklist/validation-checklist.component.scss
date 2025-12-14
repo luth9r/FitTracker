@@ -4,7 +4,7 @@
   list-style: none;
   padding: 0.25rem 0 0 0.25rem;
   margin: -0.75rem 0 0 0;
-  font-size: 0.8rem; 
+  font-size: 0.8rem;
   text-align: left;
 
   li {
@@ -19,9 +19,9 @@
       height: 6px;
       border-radius: 50%;
       margin-right: 0.6rem;
-      background-color: currentColor; 
+      background-color: currentColor;
       transition: all 0.2s ease-in-out;
-      flex-shrink: 0; 
+      flex-shrink: 0;
     }
 
     .validation-text {
@@ -35,12 +35,12 @@
     form:not(.ng-pristine) &.invalid,
     .ng-touched &.invalid,
     :host:not(.is-pristine) &.invalid {
-      color: var(--color-message-error); 
+      color: var(--color-message-error);
     }
 
     &.valid {
       color: var(--color-message-success);
-      
+
       .validation-text {
         opacity: 0.8;
       }
