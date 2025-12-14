@@ -14,8 +14,7 @@ namespace FitTracker.Infrastructure.Persistence.Repositories
 {
     internal sealed class WorkoutReadRepository(
         FitTrackerDbContext context,
-        IMapper mapper,
-        ILogger<UserReadRepository> logger) : IWorkoutReadRepository
+        IMapper mapper) : IWorkoutReadRepository
     {
         /// <inheritdoc/>
         public async Task<IReadOnlyList<Workout>> GetCompletedByUserIdAsync(Guid userId, CancellationToken cancelationToken)

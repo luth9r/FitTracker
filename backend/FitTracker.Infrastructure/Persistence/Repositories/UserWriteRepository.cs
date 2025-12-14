@@ -8,7 +8,9 @@ using Microsoft.Extensions.Logging;
 
 namespace FitTracker.Infrastructure.Persistence.Repositories
 {
-    internal sealed class UserWriteRepository(FitTrackerDbContext context, IMapper mapper, ILogger<UserWriteRepository> logger) : IUserWriteRepository
+    internal sealed class UserWriteRepository(
+        FitTrackerDbContext context,
+        IMapper mapper) : IUserWriteRepository
     {
         /// <inheritdoc/>
         public async Task AddAsync(User user, CancellationToken cancellationToken)

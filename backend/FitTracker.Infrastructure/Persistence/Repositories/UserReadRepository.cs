@@ -13,8 +13,7 @@ namespace FitTracker.Infrastructure.Persistence.Repositories
 {
     internal sealed class UserReadRepository(
         FitTrackerDbContext context,
-        IMapper mapper,
-        ILogger<UserReadRepository> logger) : IUserReadRepository
+        IMapper mapper) : IUserReadRepository
     {
         private static readonly Func<FitTrackerDbContext, Guid, IAsyncEnumerable<UserEf>> GetUserEfByIdCompiled =
         EF.CompileAsyncQuery(

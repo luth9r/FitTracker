@@ -18,15 +18,13 @@ namespace FitTrackerApi.Tests.Controllers;
 public class AuthControllerTests
 {
     private readonly Mock<IMediator> _mediatorMock;
-    private readonly Mock<ILogger<AuthController>> _loggerMock;
     private readonly AuthController _controller;
     private readonly DefaultHttpContext _httpContext;
 
     public AuthControllerTests()
     {
         _mediatorMock = new Mock<IMediator>();
-        _loggerMock = new Mock<ILogger<AuthController>>();
-        _controller = new AuthController(_mediatorMock.Object, _loggerMock.Object);
+        _controller = new AuthController(_mediatorMock.Object);
 
         _httpContext = new DefaultHttpContext();
         _controller.ControllerContext = new ControllerContext

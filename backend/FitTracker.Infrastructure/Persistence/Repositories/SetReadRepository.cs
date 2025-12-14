@@ -12,8 +12,7 @@ namespace FitTracker.Infrastructure.Persistence.Repositories
 {
     internal sealed class SetReadRepository(
         FitTrackerDbContext context,
-        IMapper mapper,
-        ILogger<SetReadRepository> logger) : ISetReadRepository
+        IMapper mapper) : ISetReadRepository
     {
         /// <inheritdoc/>
         public async Task<double> GetTotalWeightLiftedAsync(Guid userId, CancellationToken cancellationToken)

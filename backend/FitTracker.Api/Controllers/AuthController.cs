@@ -15,8 +15,7 @@ namespace FitTracker.Api.Controllers
     [ApiController]
     [Route("api/[controller]")]
     public class AuthController(
-        IMediator mediator,
-        ILogger<AuthController> logger) : ControllerBase
+        IMediator mediator) : ControllerBase
     {
         /// <summary>
         /// Logs in a user.
