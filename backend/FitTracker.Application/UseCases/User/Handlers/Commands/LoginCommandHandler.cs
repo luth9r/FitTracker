@@ -24,7 +24,7 @@ namespace FitTracker.Application.UseCases.User.Handlers.Commands
     /// <param name="jwtTokenGenerator">The <see cref="IJwtTokenGenerator"/>.</param>
     /// <param name="localization">The <see cref="ILocalizationService"/>.</param>
     /// <param name="logger">The <see cref="ILogger{LoginCommandHandler}"/>.</param>
-    public class LoginCommandHandler(
+    public sealed class LoginCommandHandler(
         IUserReadRepository userReadRepository,
         IMapper mapper,
         IPasswordHasher hasher,

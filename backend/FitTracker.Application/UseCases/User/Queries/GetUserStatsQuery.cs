@@ -14,5 +14,5 @@ namespace FitTracker.Application.UseCases.User.Queries
     /// </summary>
     /// <param name="UserId">The ID of the user.</param>
     [ExcludeFromCodeCoverage]
-    public record GetUserStatsQuery(Guid UserId) : IRequest<Result<UserStatsResponse>>;
+    public sealed record GetUserStatsQuery(Guid UserId) : IRequest<Result<UserStatsResponse>>;
 }

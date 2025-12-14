@@ -23,7 +23,7 @@ namespace FitTracker.Application.UseCases.User.Handlers.Commands
     /// <param name="localization">The <see cref="ILocalizationService"/>.</param>
     /// <param name="mapper">The <see cref="IMapper"/>.</param>
     /// <param name="logger">The <see cref="ILogger{VerifyEmailCommandHandler}"/>.</param>
-    public class VerifyEmailCommandHandler(
+    public sealed class VerifyEmailCommandHandler(
         IJwtTokenGenerator jwtTokenGenerator,
         IUserReadRepository userReadRepository,
         IUserWriteRepository userWriteRepository,

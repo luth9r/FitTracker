@@ -73,5 +73,34 @@
             "InvalidToken": "Invalid Google token",
             "NotFound": "User not found"
         }
+    },
+    "Exercise": {
+        "MuscleGroup": {
+            "Chest": "Chest",
+            "Back": "Back",
+            "Shoulders": "Shoulders",
+            "Biceps": "Biceps",
+            "Triceps": "Triceps",
+            "Forearms": "Forearms",
+            "Abs": "Abs",
+            "Quadriceps": "Quadriceps",
+            "Hamstrings": "Hamstrings",
+            "Glutes": "Glutes",
+            "Calves": "Calves",
+            "Legs": "Legs"
+        },
+        "Equipment": {
+            "Barbell": "Barbell",
+            "Dumbbell": "Dumbbell",
+            "Machine": "Machine",
+            "Cable": "Cable",
+            "Bodyweight": "Bodyweight",
+            "Kettlebell": "Kettlebell",
+            "Band": "Resistance band",
+            "TRX": "TRX",
+            "Medicine_Ball": "Medicine ball",
+            "None": "No equipment",
+            "Other": "Other equipment"
+        }
     }
 }

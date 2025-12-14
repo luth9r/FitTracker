@@ -73,5 +73,34 @@
             "InvalidToken": "Невалідний Google токен",
             "NotFound": "Користувача не знайдено"
         }
+    },
+    "Exercise": {
+        "MuscleGroup": {
+            "Chest": "Груди",
+            "Back": "Спина",
+            "Shoulders": "Плечі",
+            "Biceps": "Біцепс",
+            "Triceps": "Тріцепс",
+            "Forearms": "Передпліччя",
+            "Abs": "Прес",
+            "Quadriceps": "Квадрицепс",
+            "Hamstrings": "Задня поверхня стегна",
+            "Glutes": "Сідниці",
+            "Calves": "Ікри",
+            "Legs": "Ноги"
+        },
+        "Equipment": {
+            "Barbell": "Штанга",
+            "Dumbbell": "Гантелі",
+            "Machine": "Тренажер",
+            "Cable": "Кросовер (кабельний тренажер)",
+            "Bodyweight": "Вага власного тіла",
+            "Kettlebell": "Гиря",
+            "Band": "Еластична стрічка",
+            "TRX": "TRX петлі",
+            "Medicine_Ball": "Медбол",
+            "None": "Без обладнання",
+            "Other": "Інше обладнання"
+        }
     }
 }

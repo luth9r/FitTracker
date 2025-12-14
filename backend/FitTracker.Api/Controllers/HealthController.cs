@@ -8,7 +8,7 @@ namespace FitTracker.Api.Controllers
     [ExcludeFromCodeCoverage]
     [Route("api/[controller]")]
     [ApiController]
-    public class HealthController(
+    public sealed class HealthController(
         FitTrackerDbContext context,
         ILocalizationService localization,
         ILogger<HealthController> logger) : ControllerBase

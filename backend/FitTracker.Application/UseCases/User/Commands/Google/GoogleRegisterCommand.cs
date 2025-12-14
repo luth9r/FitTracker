@@ -15,5 +15,5 @@ namespace FitTracker.Application.UseCases.User.Commands.Google
     /// </summary>
     /// <param name="Request">The <see cref="GoogleRegisterRequest"/>.</param>
     [ExcludeFromCodeCoverage]
-    public record GoogleRegisterCommand(GoogleRegisterRequest Request) : IRequest<Result<LoginResponse, ValidationResult>>;
+    public sealed record GoogleRegisterCommand(GoogleRegisterRequest Request) : IRequest<Result<LoginResponse, ValidationResult>>;
 }

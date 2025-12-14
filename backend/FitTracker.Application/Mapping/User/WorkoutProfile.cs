@@ -12,12 +12,13 @@ namespace FitTracker.Application.Mapping.User
         public WorkoutProfile()
         {
             CreateMap<WorkoutSummary, RecentWorkoutResponse>()
-                .ForCtorParam("Id", opt => opt.MapFrom(src => src.Id))
-                .ForCtorParam("WorkoutDate", opt => opt.MapFrom(src => src.WorkoutDate))
-                .ForCtorParam("Name", opt => opt.MapFrom(src => src.Name))
-                .ForCtorParam("IsCompleted", opt => opt.MapFrom(src => src.IsCompleted))
-                .ForCtorParam("DurationMinutes", opt => opt.MapFrom(src => src.DurationMinutes))
-                .ForCtorParam("TotalVolumeKg", opt => opt.MapFrom(src => src.TotalVolumeKg));
+                .ConstructUsing(src => new RecentWorkoutResponse(
+                    Id: src.Id,
+                    WorkoutDate: src.WorkoutDate,
+                    Name: src.Name,
+                    IsCompleted: src.IsCompleted,
+                    DurationMinutes: src.DurationMinutes,
+                    TotalVolumeKg: src.TotalVolumeKg));
         }
     }
 }

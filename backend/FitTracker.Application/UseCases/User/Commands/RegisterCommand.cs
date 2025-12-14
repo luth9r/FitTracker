@@ -11,5 +11,5 @@ namespace FitTracker.Application.UseCases.User.Commands
     /// </summary>
     /// <param name="User">The <see cref="RegisterRequest"/>.</param>
     [ExcludeFromCodeCoverage]
-    public record RegisterCommand(RegisterRequest User) : IRequest<Result<LoginResponse, ValidationResult>>;
+    public sealed record RegisterCommand(RegisterRequest User) : IRequest<Result<LoginResponse, ValidationResult>>;
 }

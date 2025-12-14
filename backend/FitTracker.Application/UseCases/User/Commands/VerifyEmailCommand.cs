@@ -11,5 +11,5 @@ namespace FitTracker.Application.UseCases.User.Commands
     /// </summary>
     /// <param name="Token">The verification token.</param>
     [ExcludeFromCodeCoverage]
-    public record VerifyEmailCommand(string Token) : IRequest<Result<LoginResponse, ValidationResult>>;
+    public sealed record VerifyEmailCommand(string Token) : IRequest<Result<LoginResponse, ValidationResult>>;
 }

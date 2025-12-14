@@ -14,7 +14,7 @@ namespace FitTracker.Api.Controllers
     /// </summary>
     [ApiController]
     [Route("api/[controller]")]
-    public class AuthController(
+    public sealed class AuthController(
         IMediator mediator) : ControllerBase
     {
         /// <summary>

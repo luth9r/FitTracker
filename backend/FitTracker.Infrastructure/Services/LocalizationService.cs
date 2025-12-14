@@ -29,7 +29,6 @@ namespace FitTracker.Infrastructure.Services
         /// <summary>
         /// Get current culture from Accept-Language Header.
         /// </summary>
-        /// <returns></returns>
         private string GetCurrentCulture()
         {
             try
@@ -54,7 +53,7 @@ namespace FitTracker.Infrastructure.Services
 
                     if (culture.Length > 0)
                     {
-                        logger.LogInformation("Using culture from Accept-Language: {Culture}", culture);
+                        logger.LogDebug("Using culture from Accept-Language: {Culture}", culture);
                         return culture;
                     }
                 }

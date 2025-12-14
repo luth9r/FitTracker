@@ -14,5 +14,5 @@ namespace FitTracker.Application.UseCases.User.Queries
     /// <param name="UserId">The unique identifier of the user whose workouts are requested.</param>
     /// <param name="Take">The maximum number of recent workouts to return.</param>
     [ExcludeFromCodeCoverage]
-    public record GetRecentWorkoutsQuery(Guid UserId, int Take) : IRequest<Result<IReadOnlyList<RecentWorkoutResponse>>>;
+    public sealed record GetRecentWorkoutsQuery(Guid UserId, int Take) : IRequest<Result<IReadOnlyList<RecentWorkoutResponse>>>;
 }

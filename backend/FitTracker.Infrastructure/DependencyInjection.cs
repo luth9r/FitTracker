@@ -94,6 +94,7 @@ public static class DependencyInjection
         _ = services.AddScoped<IUserReadRepository, UserReadRepository>();
         _ = services.AddScoped<IWorkoutReadRepository, WorkoutReadRepository>();
         _ = services.AddScoped<ISetReadRepository, SetReadRepository>();
+        _ = services.AddScoped<IExerciseReadRepository, ExerciseReadRepository>();
 
         _ = services.AddScoped<IUnitOfWork, UnitOfWork>();
         _ = services.AddScoped<IEmailService, EmailService>();

@@ -17,7 +17,7 @@ namespace FitTracker.Application.UseCases.User.Handlers.Queries
     /// <param name="workoutReadRepository">The <see cref="IWorkoutReadRepository"/>.</param>
     /// <param name="logger">The <see cref="ILogger{GetRecentWorkoutsQueryHandler}"/>.</param>
     /// <param name="mapper">The <see cref="IMapper"/>.</param>
-    public class GetRecentWorkoutsQueryHandler(
+    public sealed class GetRecentWorkoutsQueryHandler(
         IWorkoutReadRepository workoutReadRepository,
         ILogger<GetRecentWorkoutsQuery> logger,
         IMapper mapper)

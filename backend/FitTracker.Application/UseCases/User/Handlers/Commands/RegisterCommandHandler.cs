@@ -27,7 +27,7 @@ namespace FitTracker.Application.UseCases.User.Handlers.Commands
     /// <param name="hasher">The <see cref="IPasswordHasher"/>.</param>
     /// <param name="configuration">The <see cref="IConfiguration"/>.</param>
     /// <param name="logger">The <see cref="ILogger{RegisterCommandHandler}"/>.</param>
-    public class RegisterCommandHandler(
+    public sealed class RegisterCommandHandler(
         IUserReadRepository userReadRepository,
         IUserWriteRepository userWriteRepository,
         IMapper mapper,

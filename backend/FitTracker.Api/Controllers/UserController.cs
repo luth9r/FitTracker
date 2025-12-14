@@ -9,7 +9,7 @@ namespace FitTracker.Api.Controllers
     [ApiController]
     [Route("api/[controller]")]
     [Authorize]
-    public class UserController(
+    public sealed class UserController(
         IMediator mediator) : BaseApiController
     {
         /// <summary>

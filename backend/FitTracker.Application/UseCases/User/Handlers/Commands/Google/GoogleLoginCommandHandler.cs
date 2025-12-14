@@ -25,7 +25,7 @@ namespace FitTracker.Application.UseCases.User.Handlers.Commands.Google
     /// <param name="jwtTokenGenerator">The <see cref="IJwtTokenGenerator"/>.</param>
     /// <param name="localization">The <see cref="ILocalizationService"/>.</param>
     /// <param name="mapper">The <see cref="IMapper"/>.</param>
-    public class GoogleLoginCommandHandler(
+    public sealed class GoogleLoginCommandHandler(
         ILogger<GoogleLoginCommandHandler> logger,
         IGoogleOAuthService googleOAuthService,
         IUserReadRepository userReadRepository,

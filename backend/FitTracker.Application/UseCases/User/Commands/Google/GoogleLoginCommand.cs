@@ -15,5 +15,5 @@ namespace FitTracker.Application.UseCases.User.Commands.Google
     /// </summary>
     /// <param name="Request">The <see cref="GoogleLoginRequest"/>.</param>
     [ExcludeFromCodeCoverage]
-    public record GoogleLoginCommand(GoogleLoginRequest Request) : IRequest<Result<LoginResponse, ValidationResult>>;
+    public sealed record GoogleLoginCommand(GoogleLoginRequest Request) : IRequest<Result<LoginResponse, ValidationResult>>;
 }
