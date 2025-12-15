@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Globalization;
 using System.Security.Claims;
 using System.Text;
@@ -9,7 +10,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
+using Scalar.AspNetCore;
 using Serilog;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 
@@ -18,7 +20,7 @@ namespace FitTracker.Api.Extensions
     /// <summary>
     /// WebApplicationBuilder configuration extensions.
     /// </summary>
-    public static class WebApplicationBuilderExtensions
+    internal static class WebApplicationBuilderExtensions
     {
         /// <summary>
         /// Configures all required services for the application.
@@ -64,10 +66,14 @@ namespace FitTracker.Api.Extensions
                         ValidateAudience = true,
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
-                        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-                        ValidAudience = builder.Configuration["Jwt:Audience"],
+                        ValidIssuer = builder.Configuration["Jwt:Issuer"]
+                            ?? throw new ArgumentNullException("Jwt:Issuer"),
+                        ValidAudience = builder.Configuration["Jwt:Audience"]
+                            ?? throw new ArgumentNullException("Jwt:Audience"),
                         IssuerSigningKey = new SymmetricSecurityKey(
-                            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? throw new ArgumentNullException())),
+                            Encoding.UTF8.GetBytes(
+                                builder.Configuration["Jwt:Key"]
+                                    ?? throw new ArgumentNullException("Jwt:Key"))),
                     };
 
                     options.Events = new JwtBearerEvents
@@ -82,13 +88,15 @@ namespace FitTracker.Api.Extensions
 
             _ = builder.Services.AddAuthorization(options =>
             {
-                var defaultAuthorizationPolicyBuilder = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme);
+                options.AddPolicy("AuthenticatedWithVerifiedEmail", policy =>
+                {
+                    policy.AuthenticationSchemes.Add(JwtBearerDefaults.AuthenticationScheme);
+                    policy.RequireAuthenticatedUser()
+                          .RequireClaim("is_email_verified", "true")
+                          .RequireClaim(ClaimTypes.NameIdentifier);
+                });
 
-                defaultAuthorizationPolicyBuilder.RequireAuthenticatedUser()
-                                                 .RequireClaim("is_email_verified", "true")
-                                                 .RequireClaim(ClaimTypes.NameIdentifier);
-
-                options.DefaultPolicy = defaultAuthorizationPolicyBuilder.Build();
+                options.FallbackPolicy = null;
             });
 
             _ = builder.Services.AddControllers();
@@ -98,18 +106,54 @@ namespace FitTracker.Api.Extensions
 
             _ = builder.Services.AddFluentValidationAutoValidation();
 
-            _ = builder.Services.AddSwaggerGen(c =>
+            _ = builder.Services.AddOpenApi(options =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo
+                options.AddScalarTransformers();
+
+                options.AddDocumentTransformer((document, context, cancellationToken) =>
                 {
-                    Title = "FitTracker API",
-                    Version = "v1",
-                    Description = "API for FitTracker",
-                    Contact = new OpenApiContact
+                    document.Components ??= new OpenApiComponents();
+                    document.Components.SecuritySchemes ??= new Dictionary<string, IOpenApiSecurityScheme>();
+
+                    document.Components.SecuritySchemes.Add("CookieAuth", new OpenApiSecurityScheme
                     {
-                        Name = "FitTracker Team",
-                        Email = "support@fittracker.com",
-                    },
+                        Type = SecuritySchemeType.ApiKey,
+                        In = ParameterLocation.Cookie,
+                        Name = "auth-token",
+                        Description = "JWT stored in http-only 'auth-token' cookie. Log in first to set the cookie.",
+                    });
+
+                    document.SetReferenceHostDocument();
+
+                    return Task.CompletedTask;
+                });
+
+                options.AddOperationTransformer((operation, context, cancellationToken) =>
+                {
+                    var authorizeAttributes = context.Description.ActionDescriptor.EndpointMetadata
+                        .OfType<AuthorizeAttribute>()
+                        .ToList();
+
+                    var allowAnonymous = context.Description.ActionDescriptor.EndpointMetadata
+                        .OfType<AllowAnonymousAttribute>()
+                        .Any();
+
+                    // If [Authorize] and without [AllowAnonymous]
+                    if (authorizeAttributes.Any() && !allowAnonymous)
+                    {
+                        operation.Security = new List<OpenApiSecurityRequirement>
+                        {
+                            new OpenApiSecurityRequirement
+                            {
+                                {
+                                    new OpenApiSecuritySchemeReference("CookieAuth"),
+                                    new List<string>()
+                                },
+                            },
+                        };
+                    }
+
+                    return Task.CompletedTask;
                 });
             });
 

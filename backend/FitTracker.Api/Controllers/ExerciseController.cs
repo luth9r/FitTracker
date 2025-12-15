@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FitTracker.Api.Controllers
 {
-    [ApiController]
     [Route("api/[controller]")]
     public sealed class ExerciseController(
         IMediator mediator) : BaseApiController

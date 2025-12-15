@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,6 +8,8 @@ namespace FitTracker.Api.Controllers
     /// <summary>
     /// Base API controller for authenticated requests.
     /// </summary>
+    [ApiController]
+    [Authorize(Policy = "AuthenticatedWithVerifiedEmail")]
     public abstract class BaseApiController : ControllerBase
     {
         /// <summary>

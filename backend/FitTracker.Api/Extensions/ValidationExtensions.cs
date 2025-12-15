@@ -8,8 +8,8 @@ namespace FitTracker.Api.Controllers.Extensions
         /// <summary>
         /// Transform <see cref="ValidationResult"/> to <see cref="ModelStateDictionary"/>.
         /// </summary>
-        /// <param name="validationResult"></param>
-        /// <returns></returns>
+        /// <param name="validationResult">The validation result containing validation errors.</param>
+        /// <returns>A <see cref="ModelStateDictionary"/> populated with the validation errors.</returns>
         public static ModelStateDictionary ToModelState(this ValidationResult validationResult)
         {
             var modelState = new ModelStateDictionary();

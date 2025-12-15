@@ -1,6 +1,7 @@
 using FitTracker.Infrastructure.Persistence.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Scalar.AspNetCore;
 using Serilog;
 
 namespace FitTracker.Api.Extensions
@@ -8,7 +9,7 @@ namespace FitTracker.Api.Extensions
     /// <summary>
     /// WebApplication configuration extensions.
     /// </summary>
-    public static class WebApplicationExtensions
+    internal static class WebApplicationExtensions
     {
         /// <summary>
         /// Configures the application pipeline and middleware.
@@ -39,11 +40,11 @@ namespace FitTracker.Api.Extensions
 
             if (app.Environment.IsDevelopment())
             {
-                _ = app.UseSwagger();
-                _ = app.UseSwaggerUI(c =>
+                _ = app.MapOpenApi();
+                _ = app.MapScalarApiReference(options =>
                 {
-                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "FitTracker API v1");
-                    c.RoutePrefix = string.Empty;
+                    options.Title = "FitTracker API";
+                    options.AddPreferredSecuritySchemes("CookieAuth");
                 });
             }
 
@@ -58,6 +59,7 @@ namespace FitTracker.Api.Extensions
 
             var locOptions = app.Services
                 .GetRequiredService<IOptions<RequestLocalizationOptions>>();
+
             _ = app.UseRequestLocalization(locOptions.Value);
 
             _ = app.UseAuthentication();
