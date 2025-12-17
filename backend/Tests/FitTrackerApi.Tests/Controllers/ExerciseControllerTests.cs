@@ -55,7 +55,9 @@ namespace FitTrackerApi.Tests.Controllers
 
             var expectedResponse = new List<ExerciseResponse>
             {
-                new("Barbell Bench Press",
+                new(
+                    Guid.NewGuid(),
+                    "Barbell Bench Press",
                     "Compound chest exercise performed on a flat bench",
                     null,
                     null,
@@ -105,6 +107,7 @@ namespace FitTrackerApi.Tests.Controllers
             var expectedResponse = new List<ExerciseResponse>
             {
                 new(
+                    Guid.NewGuid(),
                     "Barbell Bench Press",
                     "Compound chest exercise performed on a flat bench",
                     null,
@@ -113,6 +116,7 @@ namespace FitTrackerApi.Tests.Controllers
                     "Barbell",
                     false),
                 new(
+                    Guid.NewGuid(),
                     "John's Special Curl",
                     "Custom bicep curl variation",
                     null,

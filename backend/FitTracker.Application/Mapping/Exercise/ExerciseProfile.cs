@@ -14,6 +14,7 @@ namespace FitTracker.Application.Mapping.Exercise
         {
             _ = CreateMap<ExerciseEntity, ExerciseResponse>()
                 .ConstructUsing(src => new ExerciseResponse(
+                    src.Id,
                     src.Name,
                     src.Description,
                     src.ImageUrl,

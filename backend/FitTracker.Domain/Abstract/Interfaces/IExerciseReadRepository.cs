@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using FitTracker.Domain.Entities;
 using FitTracker.Domain.Enums;
+using FitTracker.Domain.ReadModels;
 
 namespace FitTracker.Domain.Abstract.Interfaces
 {
@@ -21,5 +22,15 @@ namespace FitTracker.Domain.Abstract.Interfaces
         /// A read-only list of exercises matching the specified filter.
         /// </returns>
         Task<IReadOnlyList<Exercise>> GetExercisesAsync(ExerciseFilterType filter, Guid? userId, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Retrieves comprehensive details for a specific exercise, including user-specific personal records, aggregate statistics, and volume history filtered by a date range.
+        /// </summary>
+        /// <param name="exerciseId">The unique identifier of the exercise.</param>
+        /// <param name="userId">The unique identifier of the user.</param>
+        /// <param name="fromDateMonths">The number of moths back from today to include in the volume history (0 for all time).</param>
+        /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
+        /// <returns>An <see cref="ExerciseDetails"/> object containing metadata, PRs, and progress history.</returns>
+        Task<ExerciseDetails> GetExerciseDetailsAsync(Guid exerciseId, Guid userId, int fromDateMonths = 12, CancellationToken cancellationToken = default);
     }
 }
