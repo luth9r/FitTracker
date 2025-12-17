@@ -12,14 +12,9 @@ export interface LoginFormData {
 @Component({
   selector: 'app-login-form',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    TranslateModule,
-    AuthInputFieldComponent
-  ],
+  imports: [CommonModule, FormsModule, TranslateModule, AuthInputFieldComponent],
   templateUrl: './login-form.component.html',
-  styleUrls: ['./login-form.component.scss']
+  styleUrls: ['./login-form.component.scss'],
 })
 export class LoginFormComponent {
   @Input() isLoading = false;
@@ -29,7 +24,7 @@ export class LoginFormComponent {
 
   formData: LoginFormData = {
     email: '',
-    password: ''
+    password: '',
   };
 
   showPassword = false;

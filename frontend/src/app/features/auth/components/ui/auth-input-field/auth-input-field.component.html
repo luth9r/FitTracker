@@ -1,8 +1,60 @@
-<div class="input-group">
-  <label class="input-label">{{ labelKey | translate }}</label>
-  <div class="input-wrapper">
+<app-input-field
+  [label]="labelKey | translate"
+  [placeholder]="placeholderKey | translate"
+  [type]="showPassword ? 'text' : type"
+  [name]="fieldName"
+  [value]="value"
+  (valueChange)="onValueChange($event)"
+  (focus)="onFocus()"
+  (blur)="onBlur()"
+>
+  <!-- Prefix icon, chosen by fieldName -->
+  <svg
+    input-prefix
+    class="input-icon"
+    xmlns="http://www.w3.org/2000/svg"
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <ng-container [ngSwitch]="fieldName">
+      <!-- Username icon -->
+      <ng-container *ngSwitchCase="'username'">
+        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+        <circle cx="12" cy="7" r="4" />
+      </ng-container>
+
+      <!-- Email icon -->
+      <ng-container *ngSwitchCase="'email'">
+        <rect width="20" height="16" x="2" y="4" rx="2" />
+        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+      </ng-container>
+
+      <!-- Password / confirm password icon (lock by default) -->
+      <ng-container *ngSwitchDefault>
+        <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+      </ng-container>
+    </ng-container>
+  </svg>
+
+  <!-- Suffix: eye for password fields -->
+  <button
+    *ngIf="type === 'password'"
+    input-suffix
+    type="button"
+    class="toggle-password"
+    (click)="togglePassword()"
+  >
+    <!-- eye open -->
     <svg
-      class="input-icon"
+      *ngIf="!showPassword"
+      class="eye-icon"
       xmlns="http://www.w3.org/2000/svg"
       width="20"
       height="20"
@@ -13,77 +65,28 @@
       stroke-linecap="round"
       stroke-linejoin="round"
     >
-      <ng-container [ngSwitch]="fieldName">
-        <ng-container *ngSwitchCase="'username'">
-          <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-          <circle cx="12" cy="7" r="4" />
-        </ng-container>
-
-        <ng-container *ngSwitchCase="'email'">
-          <rect width="20" height="16" x="2" y="4" rx="2" />
-          <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-        </ng-container>
-
-        <ng-container *ngSwitchDefault>
-          <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
-          <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-        </ng-container>
-      </ng-container>
+      <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+      <circle cx="12" cy="12" r="3" />
     </svg>
 
-    <input
-      [type]="showPassword ? 'text' : type"
-      class="input-field"
-      [placeholder]="placeholderKey | translate"
-      [name]="fieldName"
-      [(ngModel)]="value"
-      [attr.required]="fieldName !== 'confirmPassword'"
-      (focus)="onFocus()"
-      (blur)="onBlur()"
-      (ngModelChange)="onValueChange($event)"
-    />
-
-    <button
-      *ngIf="type === 'password'"
-      type="button"
-      class="toggle-password"
-      (click)="togglePassword()"
+    <!-- Eye closed -->
+    <svg
+      *ngIf="showPassword"
+      class="eye-icon"
+      xmlns="http://www.w3.org/2000/svg"
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
     >
-      <svg
-        *ngIf="!showPassword"
-        class="eye-icon"
-        xmlns="http://www.w3.org/2000/svg"
-        width="20"
-        height="20"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
-        <circle cx="12" cy="12" r="3" />
-      </svg>
-
-      <svg
-        *ngIf="showPassword"
-        class="eye-icon"
-        xmlns="http://www.w3.org/2000/svg"
-        width="20"
-        height="20"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24" />
-        <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68" />
-        <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61" />
-        <line x1="2" x2="22" y1="2" y2="22" />
-      </svg>
-    </button>
-  </div>
-</div>
+      <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24" />
+      <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68" />
+      <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61" />
+      <line x1="2" x2="22" y1="2" y2="22" />
+    </svg>
+  </button>
+</app-input-field>

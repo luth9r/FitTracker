@@ -1,84 +1,76 @@
 <div class="page">
   <!-- Header -->
-  <header class="header">
-    <div class="header__inner">
-      <div class="header__brand">
-        <div class="header__logo-box">
-          <mat-icon class="header__icon">fitness_center</mat-icon>
-        </div>
-        <div>
-          <h1 class="header__title">
-            {{ 'HOME.TITLE' | translate }}
-          </h1>
-          <p class="header__subtitle">
-            {{ 'HOME.SUBTITLE' | translate }}
-          </p>
-        </div>
-      </div>
-    </div>
-  </header>
+  <app-page-header
+    icon="fitness_center"
+    title="HOME.TITLE"
+    subtitle="HOME.SUBTITLE"
+  ></app-page-header>
 
   <!-- Main -->
-  <main class="main">
-    <!-- Stats -->
-    <section *ngIf="stats as s" class="stats-grid">
-      <article class="stat-card">
-        <div class="stat-card__top">
-          <div class="stat-card__icon-box stat-card__icon-box--primary">
-            <mat-icon class="stat-card__icon">fitness_center</mat-icon>
+  <main class="main layout-main">
+    <!-- Stats section -->
+    <section *ngIf="stats as s" class="section section--stats">
+      <div class="stats-grid">
+        <article class="stat-card">
+          <div class="stat-card__top">
+            <div class="stat-card__icon-box stat-card__icon-box--primary">
+              <mat-icon class="stat-card__icon">fitness_center</mat-icon>
+            </div>
           </div>
-        </div>
-        <p class="stat-card__label">
-          {{ 'HOME.STATS.TOTAL_WORKOUTS' | translate }}
-        </p>
-        <p class="stat-card__value">
-          {{ s.totalWorkouts }}
-        </p>
-      </article>
+          <p class="stat-card__label">
+            {{ 'HOME.STATS.TOTAL_WORKOUTS' | translate }}
+          </p>
+          <p class="stat-card__value">
+            {{ s.totalWorkouts }}
+          </p>
+        </article>
 
-      <article class="stat-card">
-        <div class="stat-card__top">
-          <div class="stat-card__icon-box stat-card__icon-box--success">
-            <mat-icon class="stat-card__icon">calendar_month</mat-icon>
+        <article class="stat-card">
+          <div class="stat-card__top">
+            <div class="stat-card__icon-box stat-card__icon-box--success">
+              <mat-icon class="stat-card__icon">calendar_month</mat-icon>
+            </div>
           </div>
-        </div>
-        <p class="stat-card__label">
-          {{ 'HOME.STATS.TRAINING_DAYS' | translate }}
-        </p>
-        <p class="stat-card__value">
-          {{ s.trainingDays }}
-        </p>
-      </article>
+          <p class="stat-card__label">
+            {{ 'HOME.STATS.TRAINING_DAYS' | translate }}
+          </p>
+          <p class="stat-card__value">
+            {{ s.trainingDays }}
+          </p>
+        </article>
 
-      <article class="stat-card">
-        <div class="stat-card__top">
-          <div class="stat-card__icon-box stat-card__icon-box--danger">
-            <mat-icon class="stat-card__icon">local_fire_department</mat-icon>
+        <article class="stat-card">
+          <div class="stat-card__top">
+            <div class="stat-card__icon-box stat-card__icon-box--danger">
+              <mat-icon class="stat-card__icon">local_fire_department</mat-icon>
+            </div>
           </div>
-        </div>
-        <p class="stat-card__label">
-          {{ 'HOME.STATS.CURRENT_STREAK' | translate }}
-        </p>
-        <p class="stat-card__value">
-          {{ s.longestStreak }} {{ 'HOME.STATS.DAYS_SUFFIX' | translate }}
-        </p>
-      </article>
+          <p class="stat-card__label">
+            {{ 'HOME.STATS.CURRENT_STREAK' | translate }}
+          </p>
+          <p class="stat-card__value">
+            {{ s.longestStreak }} {{ 'HOME.STATS.DAYS_SUFFIX' | translate }}
+          </p>
+        </article>
 
-      <article class="stat-card">
-        <div class="stat-card__top">
-          <div class="stat-card__icon-box stat-card__icon-box--warning">
-            <mat-icon class="stat-card__icon">scale</mat-icon>
+        <article class="stat-card">
+          <div class="stat-card__top">
+            <div class="stat-card__icon-box stat-card__icon-box--warning">
+              <mat-icon class="stat-card__icon">scale</mat-icon>
+            </div>
           </div>
-        </div>
-        <p class="stat-card__label">
-          {{ 'HOME.STATS.TOTAL_WEIGHT' | translate }}
-        </p>
-        <p class="stat-card__value">{{ totalWeightLifted | number : '1.0-1' }} {{ unitLabel }}</p>
-      </article>
+          <p class="stat-card__label">
+            {{ 'HOME.STATS.TOTAL_WEIGHT' | translate }}
+          </p>
+          <p class="stat-card__value">
+            {{ totalWeightLifted | number : '1.0-1' }} {{ unitLabel }}
+          </p>
+        </article>
+      </div>
     </section>
 
-    <!-- Goal + Recent -->
-    <section class="layout-dashboard">
+    <!-- Goal + Recent section -->
+    <section class="section layout-dashboard">
       <!-- Average volume -->
       <section *ngIf="stats" class="goal-card">
         <div class="goal-card__top">
@@ -135,7 +127,9 @@
                 <div class="recent-item__name-wrapper">
                   <div class="recent-item__title">
                     <h3 class="recent-item__name">{{ w.name }}</h3>
-                    <p class="recent-item__date">{{ formatDate(w.workoutDate) }}</p>
+                    <p class="recent-item__date">
+                      {{ formatDate(w.workoutDate) }}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -153,8 +147,11 @@
                   <p class="recent-item__stat-label">
                     {{ 'HOME.RECENT_WORKOUTS.TOTAL_VOLUME' | translate }}
                   </p>
-                  <p class="recent-item__stat-value recent-item__stat-value--accent">
-                    {{ convertWeight(w.totalVolumeKg) | number : '1.0-1' }} {{ unitLabel }}
+                  <p
+                    class="recent-item__stat-value recent-item__stat-value--accent"
+                  >
+                    {{ convertWeight(w.totalVolumeKg) | number : '1.0-1' }}
+                    {{ unitLabel }}
                   </p>
                 </div>
               </div>
@@ -163,7 +160,11 @@
         </div>
       </section>
 
-      <section *ngIf="!isLoading && !error && !recentWorkouts.length" class="empty-state">
+      <!-- Empty state -->
+      <section
+        *ngIf="!isLoading && !error && !recentWorkouts.length"
+        class="empty-state"
+      >
         <div class="empty-state__content">
           <div class="empty-state__icon-box">
             <mat-icon class="empty-state__icon">fitness_center</mat-icon>
@@ -184,35 +185,8 @@
   </main>
 
   <!-- FAB -->
-  <button class="fab" type="button">
-    <mat-icon>add</mat-icon>
-  </button>
+  <app-fab icon="add" (clicked)="onFabClick()"></app-fab>
 
   <!-- Bottom nav -->
-  <nav class="bottom-nav">
-    <button type="button" class="bottom-nav__item bottom-nav__item--active">
-      <mat-icon class="bottom-nav__icon">home</mat-icon>
-      <span class="bottom-nav__label">
-        {{ 'HOME.NAV.HOME' | translate }}
-      </span>
-    </button>
-    <button type="button" class="bottom-nav__item">
-      <mat-icon class="bottom-nav__icon">fitness_center</mat-icon>
-      <span class="bottom-nav__label">
-        {{ 'HOME.NAV.EXERCISES' | translate }}
-      </span>
-    </button>
-    <button type="button" class="bottom-nav__item">
-      <mat-icon class="bottom-nav__icon">bar_chart</mat-icon>
-      <span class="bottom-nav__label">
-        {{ 'HOME.NAV.PROGRESS' | translate }}
-      </span>
-    </button>
-    <button type="button" class="bottom-nav__item">
-      <mat-icon class="bottom-nav__icon">person</mat-icon>
-      <span class="bottom-nav__label">
-        {{ 'HOME.NAV.PROFILE' | translate }}
-      </span>
-    </button>
-  </nav>
+  <app-bottom-nav [active]="'home'"></app-bottom-nav>
 </div>

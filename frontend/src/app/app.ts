@@ -23,7 +23,7 @@ export class App implements OnInit {
     
     // Add supported languages
     this.translate.addLangs(supportedLangs);
-    this.translate.setDefaultLang('en');
+    this.translate.setFallbackLang('en');
 
     // Try to get stored language
     const storedLang = localStorage.getItem('user_lang');

@@ -1,28 +1,131 @@
+@use 'sass:color';
 @use './styles/mixins.scss';
-@use './styles/theme.scss';
+@use './styles/layout/page.scss';
 
-* {
+// ============================================================================
+// THEME VARIABLES
+// ============================================================================
+
+:root {
+  /* Toasts */
+  --toast-bg-base: rgba(15, 23, 42, 0.98);
+  --toast-border-base: rgba(148, 163, 184, 0.8);
+  --toast-color-base: #f9fafb;
+  --toast-shadow-base: 0 18px 45px rgba(15, 23, 42, 0.6);
+
+  --toast-bg-success: rgba(16, 185, 129, 0.95);
+  --toast-border-success: rgba(5, 150, 105, 1);
+  --toast-color-success: #022c22;
+
+  --toast-bg-error: rgba(220, 38, 38, 0.92);
+  --toast-border-error: rgba(185, 28, 28, 1);
+  --toast-color-error: #fee2e2;
+
+  /* Brand / primary */
+  --color-primary: #5b4b8a;
+  --color-primary-hover: #{color.scale(#5b4b8a, $lightness: 5%)};
+  --color-primary-active: #{color.scale(#5b4b8a, $lightness: 10%)};
+
+  /* Backgrounds */
+  --color-bg-dark: #0f172a;
+  --color-card-bg: #1e293b;
+  --color-input-bg: #0f172a;
+
+  /* Borders */
+  --color-border: rgba(51, 65, 85, 0.5);
+  --color-border-strong: rgba(51, 65, 85, 1);
+  --color-border-error: rgba(239, 68, 68, 0.3);
+  --color-border-success: rgba(34, 197, 94, 0.3);
+
+  /* Text */
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #94a3b8;
+  --color-text-muted: #64748b;
+
+  /* Messages */
+  --color-message-error: #f87171;
+  --color-message-border-error: rgba(239, 68, 68, 0.3);
+  --color-message-success: #4ade80;
+  --color-message-border-success: rgba(34, 197, 94, 0.3);
+
+  /* Accents */
+  --color-accent-primary: #5b4b8a;
+  --color-accent-primary-soft: rgba(91, 75, 138, 0.15);
+  --color-accent-success: #10b981;
+  --color-accent-danger: #ef4444;
+  --color-accent-warning: #f59e0b;
+  --color-accent-volume: #f59e0b;
+}
+
+// ============================================================================
+// GLOBAL RESET
+// ============================================================================
+
+*,
+*::before,
+*::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+// ============================================================================
+// BASE TYPOGRAPHY & BODY
+// ============================================================================
+
+html,
+body {
+  height: 100%;
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  @extend .dark-theme;
   background-color: var(--color-bg-dark);
   color: var(--color-text-secondary);
 }
 
-html, body {
-  height: 100%;
-}
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+// ============================================================================
+// LAYOUT: BREAKPOINTS & MAIN CONTAINER
+// ============================================================================
 
-* {
-  -webkit-tap-highlight-color: transparent;
+
+.layout-main {
+  margin: 0 auto;
+  width: 100%;
+  max-width: 1200px;
+  padding: 1rem;
+
+  @media (max-width: 480px) {
+    padding: 1rem;
+  }
+
+  @media (min-width: 481px) and (max-width: 767px) {
+    padding: 1.125rem;
+  }
+
+  @media (min-width: 768px) and (max-width: 1023px) {
+    max-width: 900px;
+    padding: 1.5rem 1.75rem 2rem;
+  }
+
+  @media (min-width: 1024px) {
+    max-width: 1200px;
+    padding: 2rem 2rem 2.5rem;
+  }
+}
+
+// ============================================================================
+// LAYOUT: SECTIONS
+// ============================================================================
+
+$section-gap: 1.5rem;
+
+.section {
+  margin-bottom: $section-gap;
 }

@@ -1,0 +1,28 @@
+@use 'sass:color';
+
+.fab {
+  position: fixed;
+  right: 1.5rem;
+  bottom: 110px;
+  width: 56px;
+  height: 56px;
+  background: var(--color-primary);
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: 0.2s ease;
+  z-index: 1000;
+  color: var(--color-text-primary);
+
+  mat-icon {
+    line-height: 1;
+    display: inline-flex;
+  }
+
+  &:hover {
+    background: var(--color-primary-hover);
+  }
+}

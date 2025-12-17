@@ -1,0 +1,8 @@
+<div class="toast-wrapper" *ngIf="toastService.toast$ | async as toast">
+  <div class="toast" [ngClass]="{
+      'toast--success': toast.type === 'success',
+      'toast--error': toast.type === 'error'
+    }">
+    {{ toast.textKey | translate }}
+  </div>
+</div>

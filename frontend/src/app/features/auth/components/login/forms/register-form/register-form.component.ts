@@ -31,7 +31,9 @@ export class RegisterFormComponent {
   @Input() passwordValidationState = { minLength: false, oneLetter: false, oneNumber: false };
   @Input() confirmPasswordValidationState = { matches: false };
   @Input() activeField: string | null = null;
+  @Input() value = '';
 
+  @Output() valueChange = new EventEmitter<string>();
   @Output() submitForm = new EventEmitter<RegisterFormData>();
   @Output() fieldFocus = new EventEmitter<string>();
   @Output() fieldBlur = new EventEmitter<void>();
@@ -69,6 +71,11 @@ export class RegisterFormComponent {
       this.formData.confirmPassword.length > 0 &&
       !this.confirmPasswordValidationState.matches
     );
+  }
+
+  onInput(event: Event) {
+    const target = event.target as HTMLInputElement;
+    this.valueChange.emit(target.value);
   }
 
   onFieldFocus(fieldName: string) {

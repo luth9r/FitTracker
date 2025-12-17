@@ -1,0 +1,194 @@
+<div class="page">
+  <!-- Header -->
+  <app-page-header
+    icon="fitness_center"
+    title="EXERCISES.TITLE"
+    subtitle="EXERCISES.SUBTITLE"
+  ></app-page-header>
+
+  <!-- Main -->
+  <main class="main layout-main">
+    <!-- Search section -->
+    <section class="section">
+      <div class="ex-search">
+        <div class="ex-search__input-wrapper">
+          <app-input-field
+            [placeholder]="'EXERCISES.SEARCH_PLACEHOLDER' | translate"
+            name="search"
+            type="text"
+            [(value)]="searchQuery"
+          >
+            <mat-icon input-prefix class="ex-search__icon">search</mat-icon>
+
+            <button
+              input-suffix
+              type="button"
+              class="ex-search__filter-btn"
+              (click)="openFilters()"
+              [attr.aria-pressed]="showFilters"
+              aria-label="Toggle filters"
+            >
+              <mat-icon>filter_list</mat-icon>
+              <span
+                *ngIf="activeFiltersCount > 0"
+                class="ex-search__filter-badge"
+              >
+                {{ activeFiltersCount }}
+              </span>
+            </button>
+          </app-input-field>
+        </div>
+      </div>
+    </section>
+
+    <!-- Empty state -->
+    <section *ngIf="!filteredExercises.length" class="section">
+      <div class="ex-empty">
+        <div class="ex-empty__icon-box">
+          <mat-icon class="ex-empty__icon">search</mat-icon>
+        </div>
+        <h3 class="ex-empty__title">
+          {{ 'EXERCISES.EMPTY.TITLE' | translate }}
+        </h3>
+        <p class="ex-empty__subtitle">
+          {{ 'EXERCISES.EMPTY.SUBTITLE' | translate }}
+        </p>
+      </div>
+    </section>
+
+    <!-- List -->
+    <section *ngIf="filteredExercises.length" class="section">
+      <div class="ex-list">
+        <article *ngFor="let ex of filteredExercises" class="exercise-card">
+          <div class="exercise-card__left">
+            <div class="exercise-card__image-wrapper">
+              <ng-container *ngIf="!ex.imageError; else fallback">
+                <img
+                  [src]="ex.imageUrl"
+                  [alt]="ex.name"
+                  (error)="onImageLoadError(ex)"
+                />
+              </ng-container>
+
+              <ng-template #fallback>
+                <div class="exercise-card__image-fallback">
+                  <mat-icon>person</mat-icon>
+                </div>
+              </ng-template>
+            </div>
+
+            <div class="exercise-card__info">
+              <h3 class="exercise-card__name">
+                {{ ex.name }}
+              </h3>
+              <div class="exercise-card__meta">
+                <span>{{ ex.muscleGroup }}</span>
+                <span class="exercise-card__dot"></span>
+                <span>{{ ex.equipment }}</span>
+              </div>
+            </div>
+          </div>
+
+          <mat-icon class="exercise-card__chevron">chevron_right</mat-icon>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <!-- FAB -->
+  <app-fab icon="add" (clicked)="onFabClick()"></app-fab>
+
+  <!-- Bottom nav -->
+  <app-bottom-nav [active]="'exercises'"></app-bottom-nav>
+
+  <!-- Backdrop for bottom sheet -->
+  <div
+    class="ex-filters-sheet-backdrop"
+    *ngIf="showFilters"
+    (click)="closeFilters()"
+  ></div>
+
+  <!-- Bottom-sheet filters -->
+  <section class="ex-filters-sheet" *ngIf="showFilters" #filtersSheet>
+    <header class="ex-filters-sheet__header">
+      <h2 class="ex-filters-sheet__title">
+        {{ 'EXERCISES.FILTERS.TITLE' | translate }}
+        ({{ filteredExercises.length }})
+      </h2>
+      <button
+        type="button"
+        class="ex-filters-sheet__close"
+        (click)="closeFilters()"
+        aria-label="Close filters"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
+    </header>
+
+    <div class="ex-filters-sheet__content">
+      <!-- Category -->
+      <div class="ex-filters__group">
+        <label class="ex-filters__label">
+          {{ 'EXERCISES.FILTERS.CATEGORY_LABEL' | translate }}
+        </label>
+        <div class="ex-filters__chips">
+          <button
+            *ngFor="let opt of categoryOptions"
+            type="button"
+            class="ex-filters__chip"
+            [class.ex-filters__chip--active]="selectedCategory === opt.value"
+            (click)="selectedCategory = opt.value"
+          >
+            <ng-container *ngIf="opt.labelKey; else catPlain">
+              {{ opt.labelKey | translate }}
+            </ng-container>
+            <ng-template #catPlain>
+              {{ opt.value }}
+            </ng-template>
+          </button>
+        </div>
+      </div>
+
+      <!-- Muscle -->
+      <div class="ex-filters__group">
+        <label class="ex-filters__label">
+          {{ 'EXERCISES.FILTERS.MUSCLE_LABEL' | translate }}
+        </label>
+        <div class="ex-filters__chips">
+          <button
+            *ngFor="let opt of muscleOptions"
+            type="button"
+            class="ex-filters__chip"
+            [class.ex-filters__chip--active]="selectedMuscle === opt.value"
+            (click)="selectedMuscle = opt.value"
+          >
+            <ng-container *ngIf="opt.labelKey; else musclePlain">
+              {{ opt.labelKey | translate }}
+            </ng-container>
+            <ng-template #musclePlain>
+              {{ opt.value }}
+            </ng-template>
+          </button>
+        </div>
+      </div>
+
+      <!-- Type (all / standard / custom) -->
+      <div class="ex-filters__group">
+        <label class="ex-filters__label">
+          {{ 'EXERCISES.FILTERS.TYPE_LABEL' | translate }}
+        </label>
+        <div class="ex-filters__chips">
+          <button
+            *ngFor="let opt of typeOptions"
+            type="button"
+            class="ex-filters__chip"
+            [class.ex-filters__chip--active]="selectedType === opt.value"
+            (click)="selectedType = opt.value"
+          >
+            {{ opt.labelKey | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

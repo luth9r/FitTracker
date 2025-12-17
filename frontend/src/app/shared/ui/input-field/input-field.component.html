@@ -1,0 +1,23 @@
+<div class="input-group">
+  <label class="input-label">{{ label }}</label>
+
+  <div class="input-wrapper">
+    <span class="input-icon">
+      <ng-content select="[input-prefix]"></ng-content>
+    </span>
+
+    <input
+      class="input-field"
+      [type]="type"
+      [placeholder]="placeholder"
+      [name]="name"
+      [value]="value"
+      (input)="onInput($event)"
+      (focus)="onFocus()"
+      (blur)="onBlur()"
+    />
+    <span class="input-suffix">
+      <ng-content select="[input-suffix]"></ng-content>
+    </span>
+  </div>
+</div>

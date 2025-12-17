@@ -7,24 +7,33 @@ import { OAuthService } from 'angular-oauth2-oidc';
 import { Router } from '@angular/router';
 import { ValidationService } from '../../services/validation.service';
 import { ErrorHandlingService } from '../../services/error-handling.service';
+import { ToastService } from '../../../../shared/ui/toast/service/toast.service';
 import { LoginFormComponent, LoginFormData } from './forms/login-form/login-form.component';
 import {
   RegisterFormComponent,
   RegisterFormData,
 } from './forms/register-form/register-form.component';
+import { ToastComponent } from '../../../../shared/ui/toast/component/toast.component';
 
 type AuthMode = 'login' | 'register';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, TranslateModule, LoginFormComponent, RegisterFormComponent],
+  imports: [
+    CommonModule,
+    TranslateModule,
+    LoginFormComponent,
+    RegisterFormComponent,
+    ToastComponent,
+  ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent {
   private authService = inject(AuthService);
   private translate = inject(TranslateService);
+  private toast = inject(ToastService);
   private oauthService = inject(OAuthService);
   private router = inject(Router);
   private validationService = inject(ValidationService);
@@ -33,8 +42,6 @@ export class LoginComponent {
   // UI state
   authMode: AuthMode = 'login';
   isLoading = false;
-  errorMessage: string | null = null;
-  successMessage: string | null = null;
   activeField: string | null = null;
 
   // Validation states (только для register)
@@ -140,7 +147,7 @@ export class LoginComponent {
     this.resetState(true);
 
     if (!formData.email.trim() || !formData.password.trim()) {
-      this.errorMessage = 'LOGIN.ERRORS.EMPTY_FIELDS';
+      this.toast.show('error', 'LOGIN.ERRORS.EMPTY_FIELDS');
       this.isLoading = false;
       return;
     }
@@ -164,7 +171,7 @@ export class LoginComponent {
       !formData.password.trim() ||
       !formData.confirmPassword.trim()
     ) {
-      this.errorMessage = 'LOGIN.ERRORS.EMPTY_FIELDS';
+      this.toast.show('error', 'LOGIN.ERRORS.EMPTY_FIELDS');
       this.isLoading = false;
       return;
     }
@@ -182,7 +189,7 @@ export class LoginComponent {
     const isConfirmPasswordValid = this.confirmPasswordValidationState.matches;
 
     if (!isUsernameValid || !isPasswordValid || !isConfirmPasswordValid) {
-      this.errorMessage = 'LOGIN.ERRORS.VALIDATION_FAILED';
+      this.toast.show('error', 'LOGIN.ERRORS.VALIDATION_FAILED');
       this.isLoading = false;
       return;
     }
@@ -208,7 +215,7 @@ export class LoginComponent {
 
     if (!this.oauthService.issuer) {
       console.error('[ERROR] OAuthService not configured! Check app.config.ts');
-      this.errorMessage = 'LOGIN.ERRORS.GOOGLE_CONFIG_ERROR';
+      this.toast.show('error', 'LOGIN.ERRORS.GOOGLE_CONFIG_ERROR');
       this.isLoading = false;
       return;
     }
@@ -234,7 +241,7 @@ export class LoginComponent {
   }
 
   private handleLoginSuccess(response: LoginResponse, isRegistration = false) {
-    this.successMessage = isRegistration ? 'LOGIN.SUCCESS.REGISTER' : 'LOGIN.SUCCESS.LOGIN';
+    this.toast.show('success', isRegistration ? 'LOGIN.SUCCESS.REGISTER' : 'LOGIN.SUCCESS.LOGIN');
     setTimeout(() => {
       this.router.navigate(['/']);
     }, 1000);
@@ -244,7 +251,7 @@ export class LoginComponent {
     const errorMessage = this.errorHandlingService.handleAuthError(err, context);
 
     if (errorMessage) {
-      this.errorMessage = errorMessage;
+      this.toast.show('error', errorMessage);
     } else {
       this.isLoading = false;
     }
@@ -252,8 +259,6 @@ export class LoginComponent {
 
   private resetState(isLoading = false) {
     this.isLoading = isLoading;
-    this.errorMessage = null;
-    this.successMessage = null;
   }
 
   private resetValidationState() {

@@ -4,11 +4,14 @@ import { MatIconModule } from '@angular/material/icon';
 import { TranslateModule } from '@ngx-translate/core';
 import { forkJoin } from 'rxjs';
 import { HomeService, UserStatsResponse, RecentWorkoutResponse } from '../services/home.service';
+import { FabComponent } from '../../../shared/ui/fab/fab.component';
+import { BottomNavComponent, NavItemKey } from '../../../shared/ui/bottom-nav/bottom-nav.component';
+import { PageHeaderComponent } from "../../../shared/ui/header/header.component";
 
 @Component({
   standalone: true,
   selector: 'app-home',
-  imports: [CommonModule, TranslateModule, MatIconModule],
+  imports: [CommonModule, TranslateModule, MatIconModule, FabComponent, BottomNavComponent, PageHeaderComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })
@@ -104,5 +107,13 @@ export class HomeComponent implements OnInit {
     }
     const percent = (this.avgVolumePerWorkout / target) * 100;
     return percent > 100 ? 100 : percent;
+  }
+
+  onFabClick(): void {
+    // TODO: open create-workout flow
+  }
+
+  onNavClick(section: NavItemKey): void {
+    // TODO: route navigation
   }
 }

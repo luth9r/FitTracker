@@ -2,93 +2,92 @@
   "LOGIN": {
     "TITLE": "FitTracker",
     "SUBTITLE": "Твій шлях до кращої форми",
-    "SIGN_IN": "Вхід",
-    "SIGN_UP": "Реєстрація",
-    "EMAIL": "Email",
-    "EMAIL_PLACEHOLDER": "ваш@email.com",
+    "SIGN_IN": "Увійти",
+    "SIGN_UP": "Зареєструватися",
+    "EMAIL": "Електронна пошта",
+    "EMAIL_PLACEHOLDER": "your@email.com",
     "PASSWORD": "Пароль",
     "PASSWORD_PLACEHOLDER": "••••••••",
-    "CONFIRM_PASSWORD": "Підтвердіть пароль",
+    "CONFIRM_PASSWORD": "Підтвердження пароля",
     "CONFIRM_PASSWORD_PLACEHOLDER": "••••••••",
     "FORGOT_PASSWORD": "Забули пароль?",
     "SUBMIT_BUTTON_LOGIN": "Увійти",
     "SUBMIT_BUTTON_SIGNUP": "Створити акаунт",
     "OR": "або",
-    "WITH_GOOGLE_LOGIN": "Увійти з Google",
-    "WITH_GOOGLE_SIGNUP": "Зарстуватись з Google",
+    "WITH_GOOGLE_LOGIN": "Увійти через Google",
+    "WITH_GOOGLE_SIGNUP": "Зареєструватися через Google",
     "WITH_GITHUB": "GitHub",
-    "FOOTER_QUESTION_LOGIN": "Немає акаунту?",
-    "FOOTER_LINK_LOGIN": "Зареєструйтесь",
-    "FOOTER_QUESTION_SIGNUP": "Вже є акаунт?",
+    "FOOTER_QUESTION_LOGIN": "Ще не маєте акаунта?",
+    "FOOTER_LINK_LOGIN": "Зареєструватися",
+    "FOOTER_QUESTION_SIGNUP": "Вже маєте акаунт?",
     "FOOTER_LINK_SIGNUP": "Увійти",
-    "TERMS_TOP_1": "Натискаючи кнопку входу, ви погоджуєтесь з нашими",
+    "TERMS_TOP_1": "Входячи, ви погоджуєтесь з нашими",
     "TERMS_TOP_2": "та",
-    "TERMS_LINK_1": "Умовами використання",
+    "TERMS_LINK_1": "Умовами користування",
     "TERMS_LINK_2": "Політикою конфіденційності",
     "LOADING": "Завантаження...",
     "SUCCESS": {
-      "REGISTER": "Реєстрація успішна! Перевірте свою пошту для верифікації облікового запису.",
-      "LOGIN": "Вхід успішний! Перенаправлення..."
+      "REGISTER": "Реєстрація успішна! Перевірте свою електронну пошту, щоб підтвердити акаунт.",
+      "LOGIN": "Вхід успішний!"
     },
     "ERRORS": {
-      "PASSWORDS_DO_NOT_MATCH": "Паролі не збігаються!",
-      "GOOGLE_NOT_IMPLEMENTED": "Вхід через Google ще не реалізований.",
-      "USERNAME_TOO_SHORT": "Ім'я користувача має бути не менше 3 символів.",
-      "API_UNREACHABLE": "Не вдалось підключитись до серверу.",
-      "UNKNOWN": "Сталась невідома помилка. Спробуйте ще раз.",
-      "PASSWORD_MIN_LENGTH": "Пароль має бути не менше 8 символів.",
-      "PASSWORD_ONE_LETTER": "Пароль повинен містити принаймні одну букву.",
-      "PASSWORD_ONE_NUMBER": "Пароль повинен містити принаймні одну цифру.",
-      "VALIDATION_FAILED": "Виправте помилки у формі.",
-      "EMPTY_FIELDS": "Заповніть усі обов'язкові поля.",
+      "PASSWORDS_DO_NOT_MATCH": "Паролі не співпадають!",
+      "GOOGLE_NOT_IMPLEMENTED": "Вхід через Google ще не реалізовано.",
+      "USERNAME_TOO_SHORT": "Імʼя користувача має містити щонайменше 3 символи.",
+      "API_UNREACHABLE": "Не вдалося підключитися до сервера.",
+      "UNKNOWN": "Сталася невідома помилка. Спробуйте ще раз.",
+      "PASSWORD_MIN_LENGTH": "Пароль має містити щонайменше 8 символів.",
+      "PASSWORD_ONE_LETTER": "Пароль має містити щонайменше одну літеру.",
+      "PASSWORD_ONE_NUMBER": "Пароль має містити щонайменше одну цифру.",
+      "VALIDATION_FAILED": "Будь ласка, виправте помилки у формі.",
+      "EMPTY_FIELDS": "Будь ласка, заповніть усі обовʼязкові поля.",
       "UNKNOWN_GOOGLE": "Невідома помилка Google",
-      "GOOGLE_CONFIG_ERROR": "Помилка налаштування Google"
+      "GOOGLE_CONFIG_ERROR": "Помилка конфігурації Google"
     },
     "GOOGLE_COMPLETE": {
-      "TITLE": "Завершіть свій профіль",
-      "SUBTITLE": "Будь ласка, надайте ім'я користувача для завершення реєстрації",
-      "EMAIL": "Email",
+      "TITLE": "Завершіть профіль",
+      "SUBTITLE": "Будь ласка, вкажіть імʼя користувача, щоб завершити реєстрацію",
+      "EMAIL": "Електронна пошта",
       "SUBMIT_BUTTON": "Завершити реєстрацію",
       "LOADING": "Завершення..."
     }
   },
   "REGISTER": {
-    "USERNAME": "Ім'я користувача",
-    "USERNAME_PLACEHOLDER": "ваше_унікальне_ім'я_користувача",
-
+    "USERNAME": "Імʼя користувача",
+    "USERNAME_PLACEHOLDER": "your_unique_username",
     "VALIDATION": {
-      "USERNAME_MINLENGTH": "Принаймні 3 символи",
+      "USERNAME_MINLENGTH": "Не менше 3 символів",
       "USERNAME_NOSPACES": "Не може містити пробіли",
-      "PASSWORD_MINLENGTH": "Принаймні 8 символів",
-      "PASSWORD_ONELETTER": "Принаймні одна буква",
-      "PASSWORD_ONENUMBER": "Принаймні одна цифра",
-      "CONFIRM_MATCHES": "Паролі не збігаються"
+      "PASSWORD_MINLENGTH": "Не менше 8 символів",
+      "PASSWORD_ONELETTER": "Щонайменше одна літера",
+      "PASSWORD_ONENUMBER": "Щонайменше одна цифра",
+      "CONFIRM_MATCHES": "Паролі не співпадають"
     }
   },
   "HOME": {
-    "TITLE": "Панель керування",
+    "TITLE": "Панель",
     "SUBTITLE": "Відстежуйте свій прогрес у тренуваннях",
-    "LOADING": "Завантаження статистики...",
+    "LOADING": "Завантаження ваших даних...",
     "STATS": {
       "TOTAL_WORKOUTS": "Усього тренувань",
       "TRAINING_DAYS": "Днів тренувань",
       "CURRENT_STREAK": "Поточна серія",
       "DAYS_SUFFIX": "днів",
-      "TOTAL_WEIGHT": "Загальна вага, піднята за тренування"
+      "TOTAL_WEIGHT": "Загальна вага"
     },
     "AVG_VOLUME": {
-      "TITLE": "Середній об'єм",
+      "TITLE": "Середній обʼєм",
       "SUBTITLE": "За тренування",
       "UNITS": "{{unit}}"
     },
     "RECENT_WORKOUTS": {
       "TITLE": "Останні тренування",
-      "VIEW_ALL": "Переглянути всі",
+      "VIEW_ALL": "Показати всі",
       "DURATION": "Тривалість",
       "MIN_SUFFIX": "хв",
       "TOTAL_VOLUME": "Загальний обʼєм",
-      "EMPTY": "Поки що немає жодного тренування",
-      "TAG_STRENGTH": "Силове"
+      "EMPTY": "Поки що немає тренувань",
+      "TAG_STRENGTH": "Сила"
     },
     "NAV": {
       "HOME": "Головна",
@@ -97,9 +96,38 @@
       "PROFILE": "Профіль"
     },
     "EMPTY_STATE": {
-      "TITLE": "Розпочніть свій шлях",
-      "DESCRIPTION": "У вас ще немає тренувань. Створіть своє перше тренування та почніть відстежувати свій прогрес!",
+      "TITLE": "Почніть свій шлях",
+      "DESCRIPTION": "У вас ще немає жодного тренування. Створіть перше тренування та почніть відстежувати прогрес!",
       "CTA": "Створити тренування"
+    }
+  },
+  "EXERCISES": {
+    "TITLE": "Вправи",
+    "SUBTITLE": "Переглядайте свою бібліотеку вправ",
+    "SEARCH_PLACEHOLDER": "Пошук вправ",
+    "EMPTY": {
+      "TITLE": "Вправ не знайдено",
+      "SUBTITLE": "Спробуйте змінити пошук або фільтри"
+    },
+    "FILTERS": {
+      "TYPE_LABEL": "Тип",
+      "TYPE_ALL": "Усі",
+      "TYPE_STANDARD": "Стандартні",
+      "TYPE_CUSTOM": "Кастомні",
+      "TITLE": "Фільтри",
+      "TOGGLE": "Перемкнути фільтри",
+      "CLOSE": "Закрити фільтри",
+      "CATEGORY_LABEL": "Категорія",
+      "MUSCLE_LABEL": "Група мʼязів",
+      "CATEGORY": {
+        "ALL": "Усі"
+      },
+      "MUSCLE": {
+        "ALL": "Усі"
+      }
+    },
+    "FAB": {
+      "ADD": "Додати вправу"
     }
   }
 }

@@ -1,28 +1,5 @@
 @use '../../../../../styles/mixins.scss' as m;
 
-.error-message,
-.success-message {
-  padding: 12px;
-  border-radius: 12px;
-  font-size: 0.875rem;
-  font-weight: 500;
-  margin-bottom: 1.5rem;
-  text-align: center;
-  border: 1px solid transparent;
-}
-
-.error-message {
-  background-color: var(--color-message-border-error);
-  color: var(--color-message-error);
-  border-color: var(--color-border-error);
-}
-
-.success-message {
-  background-color: var(--color-message-border-success);
-  color: var(--color-message-success);
-  border-color: var(--color-border-success);
-}
-
 .container {
   min-height: 100%;
   background: var(--color-bg-dark);

@@ -12,7 +12,7 @@
   >
   </app-auth-input-field>
 
-  <!-- Username Validation -->
+  <!-- Username validation checklist -->
   <app-validation-checklist
     [validationState]="usernameValidationState"
     translationPrefix="REGISTER.VALIDATION.USERNAME_"
@@ -46,7 +46,7 @@
   >
   </app-auth-input-field>
 
-  <!-- Password Validation -->
+  <!-- Password validation checklist -->
   <app-validation-checklist
     [validationState]="passwordValidationState"
     translationPrefix="REGISTER.VALIDATION.PASSWORD_"
@@ -68,7 +68,7 @@
   >
   </app-auth-input-field>
 
-  <!-- Confirm Password Validation -->
+  <!-- Confirm Password validation checklist -->
   <app-validation-checklist
     [validationState]="confirmPasswordValidationState"
     translationPrefix="REGISTER.VALIDATION.CONFIRM_"
@@ -81,6 +81,8 @@
     <span *ngIf="!isLoading">
       {{ 'LOGIN.SUBMIT_BUTTON_SIGNUP' | translate }}
     </span>
-    <span *ngIf="isLoading">{{ 'LOGIN.LOADING' | translate }}</span>
+    <span *ngIf="isLoading">
+      {{ 'LOGIN.LOADING' | translate }}
+    </span>
   </button>
 </div>

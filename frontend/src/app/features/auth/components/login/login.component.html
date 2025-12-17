@@ -27,10 +27,7 @@
       <p class="subtitle">{{ 'LOGIN.SUBTITLE' | translate }}</p>
     </div>
 
-    <!-- Messages -->
-    <div *ngIf="errorMessage" class="error-message">{{ errorMessage | translate }}</div>
-    <div *ngIf="successMessage" class="success-message">{{ successMessage | translate }}</div>
-
+    <app-toast-container></app-toast-container>
     <!-- Toggle buttons -->
     <div class="toggle-container">
       <button

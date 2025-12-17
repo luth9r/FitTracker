@@ -1,0 +1,66 @@
+@use '../../../../styles/mixins.scss' as m;
+
+// Wrapper for the whole input + label block
+.input-group {
+  margin-bottom: 1rem;
+}
+
+// Label above the input
+.input-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+// Container for input and prefix/suffix icons
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+// Left icon inside the input (prefix)
+.input-icon {
+  position: absolute;
+  left: 12px;
+  color: var(--color-text-secondary);
+  pointer-events: none; // icon should not block input interactions
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// Actual text input field
+.input-field {
+  width: 100%;
+  // space for left icon (44px left) and right suffix (44px right)
+  padding: 12px 44px 12px 44px;
+  background: var(--color-input-bg);
+  border: 1px solid var(--color-border-strong);
+  border-radius: 12px;
+  color: var(--color-text-primary);
+  font-size: 0.875rem;
+  @include m.transition-smooth;
+
+  &::placeholder {
+    color: var(--color-text-muted);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    // focus ring using primary color
+    box-shadow: 0 0 0 2px var(--color-primary);
+  }
+}
+
+// Right-side content inside the input (suffix, e.g. eye icon button)
+.input-suffix {
+  position: absolute;
+  right: 12px; // distance from the right border of the input
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

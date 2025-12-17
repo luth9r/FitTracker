@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { InputFieldComponent } from '../../../../../shared/ui/input-field/input-field.component';
 
 export interface InputValidationState {
   minLength: boolean;
@@ -13,7 +14,7 @@ export interface InputValidationState {
 @Component({
   selector: 'app-auth-input-field',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule],
+  imports: [CommonModule, FormsModule, TranslateModule, InputFieldComponent],
   templateUrl: './auth-input-field.component.html',
   styleUrls: ['./auth-input-field.component.scss'],
 })
