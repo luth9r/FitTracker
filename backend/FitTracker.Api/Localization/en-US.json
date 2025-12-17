@@ -75,6 +75,14 @@
         }
     },
     "Exercise": {
+        "Name": {
+            "Barbell Back Squat": "Barbell Back Squat",
+            "Conventional Deadlift": "Conventional Deadlift",
+            "Overhead Press": "Overhead Press",
+            "Pull-Ups": "Pull-Ups",
+            "Barbell Row": "Barbell Row",
+            "Barbell Bench Press": "Barbell Bench Press"
+        },
         "MuscleGroup": {
             "Chest": "Chest",
             "Back": "Back",

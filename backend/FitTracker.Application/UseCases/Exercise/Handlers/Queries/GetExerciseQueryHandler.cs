@@ -41,6 +41,10 @@ namespace FitTracker.Application.UseCases.Exercise.Handlers.Queries
             var response = mapper.Map<IReadOnlyList<ExerciseResponse>>(exercisesResult)
                 .Select(x => x with
                 {
+                    Name = x.IsCustom
+                        ? x.Name
+                        : localization.GetString($"Exercise.Name.{x.Name}"),
+
                     MuscleGroup = localization.GetString($"Exercise.MuscleGroup.{x.MuscleGroup}"),
                     Equipment = localization.GetString($"Exercise.Equipment.{x.Equipment}")
                 })

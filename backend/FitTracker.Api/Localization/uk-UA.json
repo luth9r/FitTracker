@@ -75,6 +75,14 @@
         }
     },
     "Exercise": {
+        "Name": {
+            "Barbell Back Squat": "Присідання зі штангою на спині",
+            "Conventional Deadlift": "Класична станова тяга",
+            "Overhead Press": "Жим штанги стоячи",
+            "Pull-Ups": "Підтягування",
+            "Barbell Row": "Тяга штанги в нахилі",
+            "Barbell Bench Press": "Жим штанги лежачи"
+        },
         "MuscleGroup": {
             "Chest": "Груди",
             "Back": "Спина",
