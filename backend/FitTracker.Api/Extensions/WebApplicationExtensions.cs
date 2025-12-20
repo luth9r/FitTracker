@@ -53,7 +53,7 @@ namespace FitTracker.Api.Extensions
                 _ = app.UseHttpsRedirection();
             }
 
-            _ = app.UseExceptionHandler("/error");
+            _ = app.UseExceptionHandler();
 
             _ = app.UseCors("AllowAll");
 

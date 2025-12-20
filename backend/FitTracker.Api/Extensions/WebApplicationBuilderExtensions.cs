@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Security.Claims;
 using System.Text;
+using FitTracker.Api.Middlewares;
 using FitTracker.Application;
 using FitTracker.Application.Validators;
 using FitTracker.Infrastructure;
@@ -29,6 +30,10 @@ namespace FitTracker.Api.Extensions
             this WebApplicationBuilder builder)
         {
             _ = builder.Host.UseSerilog();
+
+            _ = builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+
+            _ = builder.Services.AddProblemDetails();
 
             var supportedCultures = new[] { "en-US", "uk-UA" };
 

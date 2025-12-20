@@ -33,7 +33,7 @@ namespace FitTracker.Domain.Entities
         /// <summary>
         /// Gets the maximum total volume achieved in a single workout session.
         /// </summary>
-        public double MaxTotalVolume { get; private set; }
+        public double MaxTotalVolumeKg { get; private set; }
 
         /// <summary>
         /// Gets the date and time when the maximum weight record was set.
@@ -73,7 +73,7 @@ namespace FitTracker.Domain.Entities
         /// <summary>
         /// Gets the total weight lifted across all sets for this exercise.
         /// </summary>
-        public double TotalLifted { get; private set; }
+        public double TotalLiftedKg { get; private set; }
 
         /// <summary>
         /// Gets the date and time when this exercise was last performed.
@@ -127,7 +127,7 @@ namespace FitTracker.Domain.Entities
             MaxWeightKg = maxWeight;
             MaxReps = maxReps;
             MaxVolume = maxVolume;
-            MaxTotalVolume = maxTotalVolume;
+            MaxTotalVolumeKg = maxTotalVolume;
             MaxWeightDate = maxWeightDate;
             MaxRepsDate = maxRepsDate;
             MaxVolumeDate = maxVolumeDate;
@@ -135,7 +135,7 @@ namespace FitTracker.Domain.Entities
             TotalWorkouts = totalWorkouts;
             TotalSets = totalSets;
             TotalReps = totalReps;
-            TotalLifted = totalLifted;
+            TotalLiftedKg = totalLifted;
             LastPerformed = lastPerformed;
         }
 
@@ -171,11 +171,11 @@ namespace FitTracker.Domain.Entities
             MaxWeightKg = 0d;
             MaxReps = 0;
             MaxVolume = 0;
-            MaxTotalVolume = 0;
+            MaxTotalVolumeKg = 0;
             TotalWorkouts = 0;
             TotalSets = 0;
             TotalReps = 0;
-            TotalLifted = 0;
+            TotalLiftedKg = 0;
 
             var now = DateTime.UtcNow;
             MaxWeightDate = now;
@@ -280,9 +280,9 @@ namespace FitTracker.Domain.Entities
             }
 
             // Max Total Volume PR
-            if (workoutTotalVolume > MaxTotalVolume)
+            if (workoutTotalVolume > MaxTotalVolumeKg)
             {
-                MaxTotalVolume = workoutTotalVolume;
+                MaxTotalVolumeKg = workoutTotalVolume;
                 MaxTotalVolumeDate = now;
                 newRecord = true;
             }
@@ -291,7 +291,7 @@ namespace FitTracker.Domain.Entities
             TotalWorkouts++;
             TotalSets += workoutSets;
             TotalReps += workoutReps;
-            TotalLifted += workoutLifted;
+            TotalLiftedKg += workoutLifted;
             LastPerformed = now;
             UpdatedAt = now;
 
@@ -304,7 +304,7 @@ namespace FitTracker.Domain.Entities
         /// <returns>The average weight per set.</returns>
         public double GetAverageWeightPerSet()
         {
-            return TotalSets > 0 ? TotalLifted / TotalSets : 0;
+            return TotalSets > 0 ? TotalLiftedKg / TotalSets : 0;
         }
 
         /// <summary>

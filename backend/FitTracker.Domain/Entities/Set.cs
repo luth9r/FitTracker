@@ -35,7 +35,7 @@ namespace FitTracker.Domain.Entities
         /// <summary>
         /// Gets the weight used for this set.
         /// </summary>
-        public double Weight { get; private set; }
+        public double WeightKg { get; private set; }
 
         /// <summary>
         /// Gets the number of repetitions performed in this set.
@@ -92,7 +92,7 @@ namespace FitTracker.Domain.Entities
         {
             WorkoutExerciseId = workoutExerciseId;
             SetNumber = setNumber;
-            Weight = weight;
+            WeightKg = weight;
             Reps = reps;
             RestSeconds = restSeconds;
             SetType = setType;
@@ -167,7 +167,7 @@ namespace FitTracker.Domain.Entities
 
             WorkoutExerciseId = workoutExerciseId;
             SetNumber = setNumber;
-            Weight = weight;
+            WeightKg = weight;
             Reps = reps;
             RestSeconds = restSeconds;
             SetType = setType;
@@ -226,7 +226,7 @@ namespace FitTracker.Domain.Entities
                 throw new ArgumentException($"Weight cannot exceed {MaxWeightKg} kg", nameof(weight));
             }
 
-            Weight = weight;
+            WeightKg = weight;
             UpdatedAt = DateTime.UtcNow;
         }
 
@@ -241,13 +241,13 @@ namespace FitTracker.Domain.Entities
                 throw new ArgumentException("Amount must be positive", nameof(amountKg));
             }
 
-            var newWeightKg = Weight + amountKg;
+            var newWeightKg = WeightKg + amountKg;
             if (newWeightKg > MaxWeightKg)
             {
                 throw new InvalidOperationException($"New weight would exceed maximum of {MaxWeightKg} kg");
             }
 
-            Weight = newWeightKg;
+            WeightKg = newWeightKg;
             UpdatedAt = DateTime.UtcNow;
         }
 
@@ -262,13 +262,13 @@ namespace FitTracker.Domain.Entities
                 throw new ArgumentException("Amount must be positive", nameof(amountKg));
             }
 
-            var newWeightKg = Weight - amountKg;
+            var newWeightKg = WeightKg - amountKg;
             if (newWeightKg < 0)
             {
                 throw new InvalidOperationException("Weight cannot be negative");
             }
 
-            Weight = newWeightKg;
+            WeightKg = newWeightKg;
             UpdatedAt = DateTime.UtcNow;
         }
 
@@ -367,8 +367,8 @@ namespace FitTracker.Domain.Entities
                 return true;
             }
 
-            var maxPreviousWeight = previousSets.Max(s => s.Weight);
-            return Weight > maxPreviousWeight;
+            var maxPreviousWeight = previousSets.Max(s => s.WeightKg);
+            return WeightKg > maxPreviousWeight;
         }
 
         /// <summary>

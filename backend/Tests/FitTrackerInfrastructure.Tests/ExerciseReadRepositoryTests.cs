@@ -4,12 +4,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using FitTracker.Domain.Abstract.Interfaces;
+using FitTracker.Domain.Entities;
 using FitTracker.Domain.Enums;
 using FitTracker.Infrastructure.Persistence.Data;
 using FitTracker.Infrastructure.Persistence.Data.Entities;
 using FitTracker.Infrastructure.Persistence.Repositories;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using Xunit;
 
@@ -27,6 +29,137 @@ namespace FitTracker.Infrastructure.Tests.Repositories
                 .Options;
 
             return new FitTrackerDbContext(options);
+        }
+
+        private static IMapper BuildMapper()
+        {
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<ExerciseEf, Exercise>(), NullLoggerFactory.Instance);
+
+            return config.CreateMapper();
+        }
+
+        [Fact]
+        public async Task GetExercisesAsync_Standard_ShouldReturnOnlyStandard()
+        {
+            // Arrange
+            await using var context = BuildContext();
+            var mapper = BuildMapper();
+            var repo = new ExerciseReadRepository(context, mapper);
+
+            var userId = Guid.NewGuid();
+
+            context.Exercises.AddRange(
+                new ExerciseEf { Id = Guid.NewGuid(), Name = "Std 1", CreatedByUserId = null },
+                new ExerciseEf { Id = Guid.NewGuid(), Name = "Std 2", CreatedByUserId = null },
+                new ExerciseEf { Id = Guid.NewGuid(), Name = "Custom 1", CreatedByUserId = userId });
+
+            await context.SaveChangesAsync();
+
+            // Act
+            var result = await repo.GetExercisesAsync(ExerciseFilterType.Standard, null, CancellationToken.None);
+
+            // Assert
+            result.Should().HaveCount(2);
+            result.Select(x => x.Name).Should().BeEquivalentTo("Std 1", "Std 2");
+        }
+
+        [Fact]
+        public async Task GetExercisesAsync_Custom_ShouldReturnOnlyUserCustom()
+        {
+            // Arrange
+            await using var context = BuildContext();
+            var mapper = BuildMapper();
+            var repo = new ExerciseReadRepository(context, mapper);
+
+            var userId = Guid.NewGuid();
+            var otherUserId = Guid.NewGuid();
+
+            context.Exercises.AddRange(
+                new ExerciseEf { Id = Guid.NewGuid(), Name = "Std 1", CreatedByUserId = null },
+                new ExerciseEf { Id = Guid.NewGuid(), Name = "User Custom", CreatedByUserId = userId },
+                new ExerciseEf { Id = Guid.NewGuid(), Name = "Other Custom", CreatedByUserId = otherUserId }
+            );
+            await context.SaveChangesAsync();
+
+            // Act
+            var result = await repo.GetExercisesAsync(ExerciseFilterType.Custom, userId, CancellationToken.None);
+
+            // Assert
+            result.Should().HaveCount(1);
+            result.Single().Name.Should().Be("User Custom");
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("00000000-0000-0000-0000-000000000000")]
+        public async Task GetExercisesAsync_Custom_WithoutUserId_ShouldThrowArgumentException(string? userIdString)
+        {
+            // Arrange
+            await using var context = BuildContext();
+            var mapper = BuildMapper();
+            var repo = new ExerciseReadRepository(context, mapper);
+
+            Guid? userId = userIdString is null ? null : Guid.Parse(userIdString);
+
+            // Act
+            var act = async () =>
+                await repo.GetExercisesAsync(ExerciseFilterType.Custom, userId, CancellationToken.None);
+
+            // Assert
+            await act.Should()
+                .ThrowAsync<ArgumentException>()
+                .WithMessage("*UserId is required when filter is Custom.*")
+                .Where(e => e.ParamName == "userId");
+        }
+
+        [Fact]
+        public async Task GetExercisesAsync_All_ShouldReturnStandardAndUserCustom()
+        {
+            // Arrange
+            await using var context = BuildContext();
+            var mapper = BuildMapper();
+            var repo = new ExerciseReadRepository(context, mapper);
+
+            var userId = Guid.NewGuid();
+            var otherUserId = Guid.NewGuid();
+
+            context.Exercises.AddRange(
+                new ExerciseEf { Id = Guid.NewGuid(), Name = "Std 1", CreatedByUserId = null },
+                new ExerciseEf { Id = Guid.NewGuid(), Name = "Std 2", CreatedByUserId = null },
+                new ExerciseEf { Id = Guid.NewGuid(), Name = "User Custom", CreatedByUserId = userId },
+                new ExerciseEf { Id = Guid.NewGuid(), Name = "Other Custom", CreatedByUserId = otherUserId }
+            );
+            await context.SaveChangesAsync();
+
+            // Act
+            var result = await repo.GetExercisesAsync(ExerciseFilterType.All, userId, CancellationToken.None);
+
+            // Assert
+            result.Select(x => x.Name)
+                .Should().BeEquivalentTo("Std 1", "Std 2", "User Custom");
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("00000000-0000-0000-0000-000000000000")]
+        public async Task GetExercisesAsync_All_WithoutUserId_ShouldThrowArgumentException(string? userIdString)
+        {
+            // Arrange
+            await using var context = BuildContext();
+            var mapper = BuildMapper();
+            var repo = new ExerciseReadRepository(context, mapper);
+
+            Guid? userId = userIdString is null ? null : Guid.Parse(userIdString);
+
+            // Act
+            var act = async () =>
+                await repo.GetExercisesAsync(ExerciseFilterType.All, userId, CancellationToken.None);
+
+            // Assert
+            await act.Should()
+                .ThrowAsync<ArgumentException>()
+                .WithMessage("*UserId is required when filter is All.*")
+                .Where(e => e.ParamName == "userId");
         }
 
         [Fact]

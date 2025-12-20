@@ -18,11 +18,11 @@ namespace FitTracker.Application.UseCases.Exercise.Handlers.Queries
     /// <param name="readRepository">The <see cref="IExerciseReadRepository"/>.</param>
     /// <param name="mapper">The <see cref="IMapper"/>.</param>
     /// <param name="logger">The <see cref="ILogger{GetExerciseQueryHandler}"/>.</param>
-    public sealed class GetExerciseQueryHandler(
+    public sealed class GetExercisesQueryHandler(
         IExerciseReadRepository readRepository,
         IMapper mapper,
         ILocalizationService localization,
-        ILogger<GetExerciseQueryHandler> logger) : IRequestHandler<GetExerciseQuery, Result<IReadOnlyList<ExerciseResponse>>>
+        ILogger<GetExercisesQueryHandler> logger) : IRequestHandler<GetExerciseQuery, Result<IReadOnlyList<ExerciseResponse>>>
     {
         /// <summary>
         /// Handles the get exercises query.

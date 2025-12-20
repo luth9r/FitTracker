@@ -6,6 +6,7 @@ using AutoMapper.QueryableExtensions;
 using FitTracker.Domain.Abstract.Interfaces;
 using FitTracker.Domain.Entities;
 using FitTracker.Domain.Enums;
+using FitTracker.Domain.Exceptions;
 using FitTracker.Domain.ReadModels;
 using FitTracker.Infrastructure.Persistence.Data;
 using FitTracker.Infrastructure.Persistence.Data.Entities;
@@ -58,7 +59,7 @@ namespace FitTracker.Infrastructure.Persistence.Repositories
         }
 
         /// <inheritdoc/>
-        public async Task<ExerciseDetails> GetExerciseDetailsAsync(Guid exerciseId, Guid userId, int fromDateMonths = 12, CancellationToken cancellationToken = default)
+        public async Task<ExerciseDetails> GetExerciseDetailsAsync(Guid exerciseId, Guid userId, int fromDateMonths = 24, CancellationToken cancellationToken = default)
         {
             if (userId == Guid.Empty)
             {
@@ -68,7 +69,7 @@ namespace FitTracker.Infrastructure.Persistence.Repositories
             var exerciseEf = await context.Exercises
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Id == exerciseId && (x.CreatedByUserId == null || x.CreatedByUserId == userId), cancellationToken)
-                ?? throw new KeyNotFoundException($"Exercise {exerciseId} not found.");
+                ?? throw new NotFoundException($"Exercise {exerciseId} not found", "EXERCISE_NOT_FOUND");
 
             var recordEf = await context.ExerciseRecords
                 .AsNoTracking()

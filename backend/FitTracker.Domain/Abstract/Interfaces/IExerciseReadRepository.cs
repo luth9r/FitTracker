@@ -31,6 +31,6 @@ namespace FitTracker.Domain.Abstract.Interfaces
         /// <param name="fromDateMonths">The number of moths back from today to include in the volume history (0 for all time).</param>
         /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
         /// <returns>An <see cref="ExerciseDetails"/> object containing metadata, PRs, and progress history.</returns>
-        Task<ExerciseDetails> GetExerciseDetailsAsync(Guid exerciseId, Guid userId, int fromDateMonths = 12, CancellationToken cancellationToken = default);
+        Task<ExerciseDetails> GetExerciseDetailsAsync(Guid exerciseId, Guid userId, int fromDateMonths = 24, CancellationToken cancellationToken = default);
     }
 }
