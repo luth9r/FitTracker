@@ -423,8 +423,6 @@ $accent-warning-color: #f59e0b;
 // ============================================================================
 // MEDIA QUERIES
 // ============================================================================
-
-// Mobile (до 480px)
 @media (max-width: 480px) {
   .stats-grid {
     gap: 0.875rem;
@@ -565,7 +563,7 @@ $accent-warning-color: #f59e0b;
   .stats-grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 1.25rem;
-    margin-bottom: 2rem; // здесь можно оставить чуть больший отступ для десктопа
+    margin-bottom: 2rem;
   }
 
   .stat-card {

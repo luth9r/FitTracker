@@ -1,7 +1,7 @@
 <div class="page">
   <!-- Header -->
   <app-page-header
-    icon="fitness_center"
+    icon="space_dashboard"
     title="HOME.TITLE"
     subtitle="HOME.SUBTITLE"
   ></app-page-header>
@@ -63,7 +63,7 @@
             {{ 'HOME.STATS.TOTAL_WEIGHT' | translate }}
           </p>
           <p class="stat-card__value">
-            {{ totalWeightLifted | number : '1.0-1' }} {{ unitLabel }}
+            {{ totalWeightLifted | number : '1.0-1' }} {{ 'COMMON.UNITS.' + unitLabel.toUpperCase() | translate }}
           </p>
         </article>
       </div>
@@ -96,12 +96,12 @@
 
         <div class="goal-card__bottom">
           <p class="goal-card__value">
-            {{ avgVolumePerWorkout | number : '1.0-1' }} {{ unitLabel }}
+            {{ avgVolumePerWorkout | number : '1.0-1' }} {{ 'COMMON.UNITS.' + unitLabel.toUpperCase() | translate }}
           </p>
 
           <p class="goal-card__percent">
-            {{ avgVolumeProgressPercent | number : '1.0-0' }}% of
-            {{ convertWeight(10000) | number : '1.0-0' }} {{ unitLabel }}
+            {{ avgVolumeProgressPercent | number : '1.0-0' }}% {{ 'HOME.AVG_VOLUME.OF' | translate }}
+            {{ convertWeight(10000) | number : '1.0-0' }} {{ 'COMMON.UNITS.' + unitLabel.toUpperCase() | translate }}
           </p>
         </div>
       </section>
@@ -151,7 +151,7 @@
                     class="recent-item__stat-value recent-item__stat-value--accent"
                   >
                     {{ convertWeight(w.totalVolumeKg) | number : '1.0-1' }}
-                    {{ unitLabel }}
+                    {{ 'COMMON.UNITS.' + unitLabel.toUpperCase() | translate }}
                   </p>
                 </div>
               </div>

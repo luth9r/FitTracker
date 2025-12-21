@@ -19,7 +19,7 @@ namespace FitTracker.Api.Controllers
         }
 
         [HttpGet("{exerciseId:guid}")]
-        public async Task<IActionResult> GetExerciseByIdAsync([FromRoute] Guid exerciseId, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> GetExerciseDetailsByIdAsync([FromRoute] Guid exerciseId, CancellationToken cancellationToken = default)
         {
             var query = new GetExerciseByIdQuery(exerciseId, CurrentUserId);
             var result = await mediator.Send(query, cancellationToken);

@@ -1,0 +1,13 @@
+<div class="empty-state">
+  <div class="empty-state__icon-box">
+    <mat-icon>{{ icon }}</mat-icon>
+  </div>
+  <p>
+    <ng-container *ngIf="translateKey; else plainMessage">
+      {{ translateKey | translate }}
+    </ng-container>
+    <ng-template #plainMessage>
+      {{ message }}
+    </ng-template>
+  </p>
+</div>

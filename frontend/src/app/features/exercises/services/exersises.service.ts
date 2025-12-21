@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface ExerciseResponse {
+  id: string;
   name: string;
   description?: string | null;
   imageUrl?: string | null;
@@ -10,6 +11,31 @@ export interface ExerciseResponse {
   muscleGroup: string;
   equipment: string;
   isCustom: boolean;
+}
+
+export interface ExerciseDetailsResponse extends ExerciseResponse {
+  maxWeightKg: number;
+  maxReps: number;
+  maxVolume: number;
+  maxTotalVolume: number;
+  maxWeightDate?: string | null;
+  maxRepsDate?: string | null;
+  maxVolumeDate?: string | null;
+  maxTotalVolumeDate?: string | null;
+
+  totalWorkouts: number;
+  totalSets: number;
+  totalReps: number;
+  totalLifted: number;
+  avgWeightPerSet: number;
+  avgRepsPerSet: number;
+  lastPerformed?: string | null;
+  volumeHistory: ExerciseHistoryPointResponse[];
+}
+
+export interface ExerciseHistoryPointResponse {
+  date: string;
+  value: number;
 }
 
 export type ExerciseFilterType = 'All' | 'Standard' | 'Custom';
@@ -24,5 +50,12 @@ export class ExerciseService {
       params: { type },
       withCredentials: true,
     });
+  }
+
+  getExerciseDetails(id: string): Observable<ExerciseDetailsResponse> {
+    return this.http.get<ExerciseDetailsResponse>(
+      `${this.baseUrl}/${id}`,
+      { withCredentials: true }
+    );
   }
 }

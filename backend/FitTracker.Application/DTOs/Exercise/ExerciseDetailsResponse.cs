@@ -41,7 +41,7 @@ namespace FitTracker.Application.DTOs.Exercise
         double AvgWeightPerSet,
         double AvgRepsPerSet,
         DateTime? LastPerformed,
-        IReadOnlyList<ExerciseHistoryPointResponse> VolumeHistory);
+        IReadOnlyList<ExerciseHistoryPointResponse> VolumeHistory) : ExerciseResponse(Id, Name, Description, ImageUrl, VideoUrl, MuscleGroup, Equipment, IsCustom);
 
     /// <summary>
     /// Represents a single point in the exercise volume history, containing the workout date and total volume for that day.

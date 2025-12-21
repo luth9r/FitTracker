@@ -4,6 +4,7 @@ import { HomeComponent } from './features/home/components/home.component';
 import { LoginGuard } from './features/auth/guards/login.guard';
 import { AuthGuard } from './features/auth/guards/auth.guard';
 import { ExercisesComponent } from './features/exercises/components/exercises/exercises.component';
+import { ExerciseDetailsComponent } from './features/exercises/components/exercises/exercise-details/exercise-details.component';
 
 export const routes: Routes = [
   {
@@ -21,5 +22,9 @@ export const routes: Routes = [
     path: 'exercises',
     component: ExercisesComponent
     //canActivate: [AuthGuard]
+  },
+  {
+    path: 'exercises/details/:id',
+    component: ExerciseDetailsComponent
   }
 ];

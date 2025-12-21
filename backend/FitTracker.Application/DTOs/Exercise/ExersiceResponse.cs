@@ -17,5 +17,5 @@ namespace FitTracker.Application.DTOs.Exercise
     /// <param name="Equipment">The display value of the equipment required for the exercise.</param>
     /// <param name="IsCustom">Indicates whether the exercise is a custom user-defined exercise.</param>
     [ExcludeFromCodeCoverage]
-    public sealed record ExerciseResponse(Guid Id, string Name, string? Description, string? ImageUrl, string? VideoUrl, string MuscleGroup, string Equipment, bool IsCustom);
+    public record ExerciseResponse(Guid Id, string Name, string? Description, string? ImageUrl, string? VideoUrl, string MuscleGroup, string Equipment, bool IsCustom);
 }

@@ -192,6 +192,78 @@ namespace FitTrackerApi.Tests.Controllers
                     It.IsAny<CancellationToken>()),
                 Times.Once);
         }
+
+        [Fact]
+        public async Task GetExerciseDetailsByIdAsync_ShouldReturnExerciseDetails_WhenExerciseExists()
+        {
+            // Arrange
+            var userId = Guid.NewGuid();
+            SetUser(userId);
+
+            var exerciseId = Guid.NewGuid();
+
+            var expectedResponse = new ExerciseDetailsResponse(
+                Id: exerciseId,
+                Name: "Bench Press",
+                MuscleGroup: "Chest",
+                Equipment: "Barbell",
+                Description: "Flat barbell bench press.",
+                ImageUrl: "https://example.com/images/bench-press.png",
+                VideoUrl: "https://example.com/videos/bench-press.mp4",
+                IsCustom: false,
+
+                // PR / records
+                MaxWeightKg: 120.0,
+                MaxReps: 10,
+                MaxVolume: 900.0,
+                MaxTotalVolume: 2500.0,
+                MaxWeightDate: new DateTime(2024, 1, 10),
+                MaxRepsDate: new DateTime(2024, 1, 15),
+                MaxVolumeDate: new DateTime(2024, 1, 20),
+                MaxTotalVolumeDate: new DateTime(2024, 1, 25),
+
+                TotalWorkouts: 15,
+                TotalSets: 60,
+                TotalReps: 450,
+                TotalLifted: 20000.0,
+                AvgWeightPerSet: 80.0,
+                AvgRepsPerSet: 8.0,
+                LastPerformed: new DateTime(2024, 2, 1),
+
+                VolumeHistory: new List<ExerciseHistoryPointResponse>
+                {
+                    new ExerciseHistoryPointResponse("2024-01-10", 500.0),
+                    new ExerciseHistoryPointResponse("2024-01-20", 900.0),
+                    new ExerciseHistoryPointResponse("2024-01-25", 1100.0),
+                });
+
+            _mediatorMock
+                .Setup(m => m.Send(
+                    It.Is<GetExerciseByIdQuery>(q =>
+                        q.exerciseId == exerciseId &&
+                        q.UserId == userId),
+                    It.IsAny<CancellationToken>()))
+                .ReturnsAsync(Result.Success<ExerciseDetailsResponse>(expectedResponse));
+
+            // Act
+            var result = await _controller.GetExerciseDetailsByIdAsync(exerciseId, cancellationToken: CancellationToken.None);
+
+            // Assert
+            result.Should().BeOfType<OkObjectResult>();
+
+            var okResult = (OkObjectResult)result;
+            okResult.Value.Should().BeAssignableTo<ExerciseDetailsResponse>();
+            var value = (ExerciseDetailsResponse)okResult.Value!;
+
+            value.Id.Should().Be(exerciseId);
+
+            _mediatorMock.Verify(m => m.Send(
+                    It.Is<GetExerciseByIdQuery>(q =>
+                        q.exerciseId == exerciseId &&
+                        q.UserId == userId),
+                    It.IsAny<CancellationToken>()),
+                Times.Once);
+        }
     }
 }
 

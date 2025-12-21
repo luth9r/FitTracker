@@ -59,7 +59,7 @@
     <!-- List -->
     <section *ngIf="filteredExercises.length" class="section">
       <div class="ex-list">
-        <article *ngFor="let ex of filteredExercises" class="exercise-card">
+        <article *ngFor="let ex of filteredExercises" class="exercise-card" (click)="openExercise(ex)">
           <div class="exercise-card__left">
             <div class="exercise-card__image-wrapper">
               <ng-container *ngIf="!ex.imageError; else fallback">
@@ -78,14 +78,24 @@
             </div>
 
             <div class="exercise-card__info">
-              <h3 class="exercise-card__name">
-                {{ ex.name }}
-              </h3>
-              <div class="exercise-card__meta">
-                <span>{{ ex.muscleGroup }}</span>
-                <span class="exercise-card__dot"></span>
-                <span>{{ ex.equipment }}</span>
-              </div>
+              <div class="exercise-card__info">
+  <div class="exercise-card__header">
+    <h3 class="exercise-card__name">
+      {{ ex.name }}
+    </h3>
+    <span 
+      class="exercise-card__badge"
+      [class.exercise-card__badge--custom]="ex.isCustom"
+    >
+      {{ ex.isCustom ? ('EXERCISES.BADGE.CUSTOM' | translate) : ('EXERCISES.BADGE.STANDARD' | translate) }}
+    </span>
+  </div>
+  <div class="exercise-card__meta">
+    <span>{{ ex.muscleGroup }}</span>
+    <span class="exercise-card__dot"></span>
+    <span>{{ ex.equipment }}</span>
+  </div>
+</div>
             </div>
           </div>
 

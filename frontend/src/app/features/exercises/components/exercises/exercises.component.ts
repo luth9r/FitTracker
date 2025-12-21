@@ -8,6 +8,7 @@ import {
   ExerciseService,
   ExerciseFilterType,
 } from '../../services/exersises.service';
+import { Router } from '@angular/router';
 import { BottomNavComponent } from '../../../../shared/ui/bottom-nav/bottom-nav.component';
 import { FabComponent } from '../../../../shared/ui/fab/fab.component';
 import { PageHeaderComponent } from '../../../../shared/ui/header/header.component';
@@ -60,7 +61,7 @@ export class ExercisesComponent implements OnInit {
   isLoading = false;
   error: string | null = null;
 
-  constructor(private readonly exerciseService: ExerciseService) {}
+  constructor(private readonly exerciseService: ExerciseService, private readonly router: Router) {}
 
   ngOnInit(): void {
     this.loadExercises();
@@ -177,6 +178,10 @@ export class ExercisesComponent implements OnInit {
     };
 
     sheet.addEventListener('animationend', handleAnimationEnd);
+  }
+
+  openExercise(ex: ExerciseWithState): void {
+    this.router.navigate(['exercises/details/', ex.id]);
   }
 
   onImageLoadError(ex: ExerciseWithState): void {

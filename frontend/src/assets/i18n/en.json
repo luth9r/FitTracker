@@ -1,55 +1,55 @@
 {
   "LOGIN": {
     "TITLE": "FitTracker",
-    "SUBTITLE": "Your path to better shape",
-    "SIGN_IN": "Sign in",
-    "SIGN_UP": "Sign up",
+    "SUBTITLE": "Your path to better fitness",
+    "SIGN_IN": "Sign In",
+    "SIGN_UP": "Sign Up",
     "EMAIL": "Email",
-    "EMAIL_PLACEHOLDER": "you@email.com",
+    "EMAIL_PLACEHOLDER": "your@email.com",
     "PASSWORD": "Password",
     "PASSWORD_PLACEHOLDER": "••••••••",
-    "CONFIRM_PASSWORD": "Confirm password",
+    "CONFIRM_PASSWORD": "Confirm Password",
     "CONFIRM_PASSWORD_PLACEHOLDER": "••••••••",
     "FORGOT_PASSWORD": "Forgot password?",
-    "SUBMIT_BUTTON_LOGIN": "Sign in",
-    "SUBMIT_BUTTON_SIGNUP": "Create account",
+    "SUBMIT_BUTTON_LOGIN": "Sign In",
+    "SUBMIT_BUTTON_SIGNUP": "Create Account",
     "OR": "or",
     "WITH_GOOGLE_LOGIN": "Sign in with Google",
     "WITH_GOOGLE_SIGNUP": "Sign up with Google",
     "WITH_GITHUB": "GitHub",
-    "FOOTER_QUESTION_LOGIN": "Don't have an account yet?",
-    "FOOTER_LINK_LOGIN": "Sign up",
+    "FOOTER_QUESTION_LOGIN": "Don't have an account?",
+    "FOOTER_LINK_LOGIN": "Sign Up",
     "FOOTER_QUESTION_SIGNUP": "Already have an account?",
-    "FOOTER_LINK_SIGNUP": "Sign in",
+    "FOOTER_LINK_SIGNUP": "Sign In",
     "TERMS_TOP_1": "By signing in, you agree to our",
     "TERMS_TOP_2": "and",
-    "TERMS_LINK_1": "Terms of use",
-    "TERMS_LINK_2": "Privacy policy",
+    "TERMS_LINK_1": "Terms of Service",
+    "TERMS_LINK_2": "Privacy Policy",
     "LOADING": "Loading...",
     "SUCCESS": {
-      "REGISTER": "Registration successful! Check your email to confirm your account.",
-      "LOGIN": "Successfully signed in!"
+      "REGISTER": "Registration successful! Please check your email to confirm your account.",
+      "LOGIN": "Login successful!"
     },
     "ERRORS": {
       "PASSWORDS_DO_NOT_MATCH": "Passwords do not match!",
-      "GOOGLE_NOT_IMPLEMENTED": "Sign in with Google is not implemented yet.",
-      "USERNAME_TOO_SHORT": "Username must be at least 3 characters long.",
-      "API_UNREACHABLE": "Unable to connect to the server.",
+      "GOOGLE_NOT_IMPLEMENTED": "Google sign-in not yet implemented.",
+      "USERNAME_TOO_SHORT": "Username must be at least 3 characters.",
+      "API_UNREACHABLE": "Unable to connect to server.",
       "UNKNOWN": "An unknown error occurred. Please try again.",
-      "PASSWORD_MIN_LENGTH": "Password must be at least 8 characters long.",
+      "PASSWORD_MIN_LENGTH": "Password must be at least 8 characters.",
       "PASSWORD_ONE_LETTER": "Password must contain at least one letter.",
-      "PASSWORD_ONE_NUMBER": "Password must contain at least one digit.",
-      "VALIDATION_FAILED": "Please fix the errors in the form.",
+      "PASSWORD_ONE_NUMBER": "Password must contain at least one number.",
+      "VALIDATION_FAILED": "Please correct form errors.",
       "EMPTY_FIELDS": "Please fill in all required fields.",
       "UNKNOWN_GOOGLE": "Unknown Google error",
       "GOOGLE_CONFIG_ERROR": "Google configuration error"
     },
     "GOOGLE_COMPLETE": {
-      "TITLE": "Complete your profile",
-      "SUBTITLE": "Please provide a username to finish registration",
+      "TITLE": "Complete Your Profile",
+      "SUBTITLE": "Please provide a username to complete registration",
       "EMAIL": "Email",
-      "SUBMIT_BUTTON": "Finish registration",
-      "LOADING": "Finishing..."
+      "SUBMIT_BUTTON": "Complete Registration",
+      "LOADING": "Completing..."
     }
   },
   "REGISTER": {
@@ -60,7 +60,7 @@
       "USERNAME_NOSPACES": "Cannot contain spaces",
       "PASSWORD_MINLENGTH": "At least 8 characters",
       "PASSWORD_ONELETTER": "At least one letter",
-      "PASSWORD_ONENUMBER": "At least one digit",
+      "PASSWORD_ONENUMBER": "At least one number",
       "CONFIRM_MATCHES": "Passwords do not match"
     }
   },
@@ -69,23 +69,24 @@
     "SUBTITLE": "Track your workout progress",
     "LOADING": "Loading your data...",
     "STATS": {
-      "TOTAL_WORKOUTS": "Total workouts",
-      "TRAINING_DAYS": "Training days",
-      "CURRENT_STREAK": "Current streak",
+      "TOTAL_WORKOUTS": "Total Workouts",
+      "TRAINING_DAYS": "Training Days",
+      "CURRENT_STREAK": "Current Streak",
       "DAYS_SUFFIX": "days",
-      "TOTAL_WEIGHT": "Total weight"
+      "TOTAL_WEIGHT": "Total Weight"
     },
     "AVG_VOLUME": {
-      "TITLE": "Average volume",
+      "TITLE": "Average Volume",
       "SUBTITLE": "Per workout",
-      "UNITS": "{{unit}}"
+      "UNITS": "{{unit}}",
+      "OF": "of"
     },
     "RECENT_WORKOUTS": {
-      "TITLE": "Recent workouts",
-      "VIEW_ALL": "View all",
+      "TITLE": "Recent Workouts",
+      "VIEW_ALL": "View All",
       "DURATION": "Duration",
       "MIN_SUFFIX": "min",
-      "TOTAL_VOLUME": "Total volume",
+      "TOTAL_VOLUME": "Total Volume",
       "EMPTY": "No workouts yet",
       "TAG_STRENGTH": "Strength"
     },
@@ -96,18 +97,23 @@
       "PROFILE": "Profile"
     },
     "EMPTY_STATE": {
-      "TITLE": "Start your journey",
+      "TITLE": "Start Your Journey",
       "DESCRIPTION": "You don't have any workouts yet. Create your first workout and start tracking your progress!",
-      "CTA": "Create workout"
+      "CTA": "Create Workout"
     }
   },
   "EXERCISES": {
     "TITLE": "Exercises",
     "SUBTITLE": "Browse your exercise library",
     "SEARCH_PLACEHOLDER": "Search exercises",
+    "LOADING": "Loading...",
+    "BADGE": {
+      "STANDARD": "Standard",
+      "CUSTOM": "Custom"
+    },
     "EMPTY": {
       "TITLE": "No exercises found",
-      "SUBTITLE": "Try adjusting your search or filters"
+      "SUBTITLE": "Try changing your search or filters"
     },
     "FILTERS": {
       "TYPE_LABEL": "Type",
@@ -118,7 +124,7 @@
       "TOGGLE": "Toggle filters",
       "CLOSE": "Close filters",
       "CATEGORY_LABEL": "Category",
-      "MUSCLE_LABEL": "Muscle group",
+      "MUSCLE_LABEL": "Muscle Group",
       "CATEGORY": {
         "ALL": "All"
       },
@@ -126,8 +132,48 @@
         "ALL": "All"
       }
     },
+    "DETAILS": {
+      "NEVER": "Never performed",
+      "TABS": {
+        "INFO": "Info",
+        "STATS": "Statistics"
+      },
+      "NO_IMAGE": "No image",
+      "MUSCLE_GROUP": "Muscle Group",
+      "EQUIPMENT": "Equipment",
+      "DESCRIPTION": "Description",
+      "VOLUME_HISTORY": "Volume History",
+      "NO_DATA_PERIOD": "No data for this period",
+      "PERIOD": {
+        "1M": "1M",
+        "3M": "3M",
+        "6M": "6M",
+        "1Y": "1Y"
+      },
+      "STATS": {
+        "LAST_PERFORMED": "Last Performed",
+        "WORKOUTS": "workouts",
+        "TOTAL_SETS": "Total Sets",
+        "REPS": "reps",
+        "TOTAL_LIFTED": "Total Lifted"
+      },
+      "RECORDS": {
+        "TITLE": "Personal Records",
+        "MAX_WEIGHT": "Max Weight",
+        "MAX_REPS": "Max Reps",
+        "MAX_SET_VOLUME": "Max Set Volume",
+        "MAX_WORKOUT_VOLUME": "Max Workout Volume"
+      }
+    },
     "FAB": {
-      "ADD": "Add exercise"
+      "ADD": "Add Exercise"
     }
+  },
+  "COMMON": {
+    "UNITS": {
+      "KG": "kg",
+      "LBS": "lbs"
+    },
+    "NEVER": "Never"
   }
 }

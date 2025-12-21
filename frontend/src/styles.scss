@@ -2,9 +2,7 @@
 @use './styles/mixins.scss';
 @use './styles/layout/page.scss';
 
-// ============================================================================
 // THEME VARIABLES
-// ============================================================================
 
 :root {
   /* Toasts */
@@ -57,9 +55,7 @@
   --color-accent-volume: #f59e0b;
 }
 
-// ============================================================================
 // GLOBAL RESET
-// ============================================================================
 
 *,
 *::before,
@@ -70,9 +66,7 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-// ============================================================================
 // BASE TYPOGRAPHY & BODY
-// ============================================================================
 
 html,
 body {
@@ -90,16 +84,30 @@ body {
   color: var(--color-text-secondary);
 }
 
-// ============================================================================
-// LAYOUT: BREAKPOINTS & MAIN CONTAINER
-// ============================================================================
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px var(--color-input-bg) inset !important;
+  box-shadow: 0 0 0 1000px var(--color-input-bg) inset !important;
+  -webkit-text-fill-color: var(--color-text-primary) !important;
+  background-color: var(--color-input-bg) !important;
+  background-image: none !important;
+  transition: background-color 5000s ease-in-out 0s !important;
+  -webkit-transition: background-color 99999s ease-in-out 0s !important;
+  border-color: var(--color-border) !important;
+  caret-color: var(--color-text-primary) !important;
+}
 
+
+// LAYOUT: BREAKPOINTS & MAIN CONTAINER
 
 .layout-main {
   margin: 0 auto;
   width: 100%;
   max-width: 1200px;
   padding: 1rem;
+  padding-bottom: 0 !important;
 
   @media (max-width: 480px) {
     padding: 1rem;
