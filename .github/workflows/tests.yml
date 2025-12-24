@@ -43,28 +43,28 @@ jobs:
         working-directory: ./backend
         run: |
           echo "::notice::Running .NET tests with coverage..."
-          dotnet test --no-restore --no-build --configuration Release --collect:"XPlat Code Coverage" --results-directory ./Tests/TestResults
+          dotnet test --no-restore --no-build --configuration Release --collect:"XPlat Code Coverage" --results-directory ./tests/TestResults
 
       - name: Generate coverage report
         working-directory: ./backend
         run: |
           echo "::notice::Generating coverage report..."
-          mkdir -p Tests/CoverageReport
+          mkdir -p tests/CoverageReport
           export PATH="$PATH:$HOME/.dotnet/tools"
           reportgenerator \
-            -reports:"Tests/TestResults/**/coverage.cobertura.xml" \
-            -targetdir:./Tests/CoverageReport \
+            -reports:"tests/TestResults/**/coverage.cobertura.xml" \
+            -targetdir:./tests/CoverageReport \
             -reporttypes:"Cobertura;HtmlInline_AzurePipelines"
 
       - name: Debug - Verify coverage file
         working-directory: ./backend
         run: |
           echo "📂 Coverage report structure:"
-          ls -lah Tests/CoverageReport/
+          ls -lah tests/CoverageReport/
           echo ""
-          if [ -f "Tests/CoverageReport/Cobertura.xml" ]; then
+          if [ -f "tests/CoverageReport/Cobertura.xml" ]; then
             echo "✅ Found Cobertura.xml"
-            head -10 Tests/CoverageReport/Cobertura.xml
+            head -10 tests/CoverageReport/Cobertura.xml
           else
             echo "❌ Cobertura.xml NOT FOUND"
             exit 1
@@ -74,7 +74,7 @@ jobs:
         if: github.event_name == 'pull_request'
         uses: irongut/CodeCoverageSummary@v1.3.0
         with:
-          filename: backend/Tests/CoverageReport/Cobertura.xml
+          filename: backend/tests/CoverageReport/Cobertura.xml
           badge: true
           fail_below_min: false
           format: markdown
@@ -96,7 +96,7 @@ jobs:
         uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: ./backend/Tests/CoverageReport/Cobertura.xml
+          files: ./backend/tests/CoverageReport/Cobertura.xml
           flags: backend
           fail_ci_if_error: true
           verbose: true
@@ -106,6 +106,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: test-coverage
-          path: backend/Tests/CoverageReport/
+          path: backend/tests/CoverageReport/
           retention-days: 30
           if-no-files-found: warn

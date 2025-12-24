@@ -22,7 +22,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\FitTracker.Api\FitTracker.Api.csproj" />
+		<ProjectReference Include="..\..\src\FitTracker.Api\FitTracker.Api.csproj" />
 	</ItemGroup>
 
 </Project>
