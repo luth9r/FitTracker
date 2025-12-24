@@ -23,6 +23,13 @@ namespace FitTracker.Application.Interfaces
         string GenerateVerificationToken(User user);
 
         /// <summary>
+        /// Generates a verification token for the given user.
+        /// </summary>
+        /// <param name="userId">The id of <see cref="User"/>.</param>
+        /// <returns>The generated verification token string.</returns>
+        string GenerateVerificationToken(Guid userId);
+
+        /// <summary>
         /// Validates the given JWT token and returns the claims principal.
         /// </summary>
         /// <param name="token">The JWT token to validate.</param>

@@ -1,6 +1,7 @@
 using AutoMapper;
 using CSharpFunctionalExtensions;
 using FitTracker.Application.DTOs.Auth;
+using FitTracker.Application.Events;
 using FitTracker.Application.Extensions;
 using FitTracker.Application.Interfaces;
 using FitTracker.Application.UseCases.User.Commands;
@@ -22,21 +23,16 @@ namespace FitTracker.Application.UseCases.User.Handlers.Commands
     /// <param name="mapper">The <see cref="IMapper"/>.</param>
     /// <param name="unitOfWork">The <see cref="IUnitOfWork"/>.</param>
     /// <param name="localization">The <see cref="ILocalizationService"/>.</param>
-    /// <param name="jwtTokenGenerator">The <see cref="IJwtTokenGenerator"/>.</param>
-    /// <param name="emailService">The <see cref="IEmailService"/>.</param>
     /// <param name="hasher">The <see cref="IPasswordHasher"/>.</param>
-    /// <param name="configuration">The <see cref="IConfiguration"/>.</param>
     /// <param name="logger">The <see cref="ILogger{RegisterCommandHandler}"/>.</param>
     public sealed class RegisterCommandHandler(
         IUserReadRepository userReadRepository,
         IUserWriteRepository userWriteRepository,
         IMapper mapper,
         IUnitOfWork unitOfWork,
+        IMediator mediator,
         ILocalizationService localization,
-        IJwtTokenGenerator jwtTokenGenerator,
-        IEmailService emailService,
         IPasswordHasher hasher,
-        IConfiguration configuration,
         ILogger<RegisterCommandHandler> logger) : IRequestHandler<RegisterCommand, Result<LoginResponse, ValidationResult>>
     {
         /// <summary>
@@ -80,20 +76,9 @@ namespace FitTracker.Application.UseCases.User.Handlers.Commands
 
             logger.LogDebug("AFTER SaveChanges: {Id}", user.Id);
 
+            await mediator.Publish(new UserRegisteredEvent(user.Id, user.Email, user.Username), cancellationToken);
+
             var response = mapper.Map<LoginResponse>(user);
-
-            var verificationToken = jwtTokenGenerator.GenerateVerificationToken(user);
-
-            var verificationLinkBase = configuration["App:VerificationLinkBase"];
-            var verificationUrl = $"{verificationLinkBase}?token={verificationToken}";
-
-            var emailBody = $"Hello, {user.Username}!<br>" +
-                $"Please confirm your email by clicking the link: <a href='{verificationUrl}'>Confirm</a><br>" +
-                $"The link is valid for 15 minutes.";
-
-            await emailService.SendEmailAsync(user.Email, "Registration confirmation FitTracker", emailBody);
-
-            logger.LogInformation("User registration process completed successfully for username: {Username}", request.User.Username);
 
             return Result.Success<LoginResponse, ValidationResult>(response);
         }

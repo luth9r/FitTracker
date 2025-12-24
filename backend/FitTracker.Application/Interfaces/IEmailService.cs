@@ -1,4 +1,4 @@
-﻿namespace FitTracker.Application.Interfaces
+namespace FitTracker.Application.Interfaces
 {
     /// <summary>
     /// Service for sending emails.
@@ -10,7 +10,7 @@
         /// </summary>
         /// <param name="to">The recipient email address.</param>
         /// <param name="subject">The email subject.</param>
-        /// <param name="body">The email body.</param>
-        Task SendEmailAsync(string to, string subject, string body);
+        /// <param name="htmlBody">The email body.</param>
+        Task SendEmailAsync(string to, string subject, string htmlBody);
     }
 }

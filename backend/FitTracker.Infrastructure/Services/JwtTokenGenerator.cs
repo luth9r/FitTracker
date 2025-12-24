@@ -8,7 +8,7 @@ using System.Text;
 
 namespace FitTracker.Infrastructure.Services
 {
-    public class JwtTokenGenerator(IConfiguration configuration) : IJwtTokenGenerator
+    public sealed class JwtTokenGenerator(IConfiguration configuration) : IJwtTokenGenerator
     {
         private const string EmailVerificationPurpose = "email_verification";
 
@@ -44,6 +44,26 @@ namespace FitTracker.Infrastructure.Services
             var claims = new List<Claim>
             {
                 new (JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+                new (JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+
+                new ("purpose", EmailVerificationPurpose),
+            };
+
+            return CreateToken(claims, expires, creds);
+        }
+
+        /// <inheritdoc/>
+        public string GenerateVerificationToken(Guid userId)
+        {
+            var key = GetSymmetricSecurityKey();
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var expiryInMinutes = configuration.GetValue<int>("Jwt:EmailVerificationTokenValidityInMinutes", 60);
+            var expires = DateTime.UtcNow.AddMinutes(expiryInMinutes);
+
+            var claims = new List<Claim>
+            {
+                new (JwtRegisteredClaimNames.Sub, userId.ToString()),
                 new (JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
 
                 new ("purpose", EmailVerificationPurpose),
