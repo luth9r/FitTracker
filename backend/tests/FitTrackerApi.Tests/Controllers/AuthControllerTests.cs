@@ -237,9 +237,14 @@ public class AuthControllerTests
         var result = await _controller.VerifyEmailAsync(token, CancellationToken.None);
 
         // Assert
-        result.Should().BeOfType<BadRequestObjectResult>();
-        var badRequestResult = result as BadRequestObjectResult;
-        badRequestResult!.StatusCode.Should().Be(400);
+        result.Should().BeOfType<ObjectResult>();
+        var objectResult = result as ObjectResult;
+
+        objectResult.Value.Should().BeOfType<ValidationProblemDetails>();
+        var problemDetails = objectResult.Value as ValidationProblemDetails;
+        problemDetails.Should().NotBeNull();
+        problemDetails!.Errors.Should().ContainKey("Token");
+        problemDetails.Errors["Token"].Should().Contain("Invalid or expired token");
     }
 
     [Fact]
