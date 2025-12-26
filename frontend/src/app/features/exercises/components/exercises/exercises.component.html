@@ -8,102 +8,142 @@
 
   <!-- Main -->
   <main class="main layout-main">
-    <!-- Search section -->
-    <section class="section">
-      <div class="ex-search">
-        <div class="ex-search__input-wrapper">
-          <app-input-field
-            [placeholder]="'EXERCISES.SEARCH_PLACEHOLDER' | translate"
-            name="search"
-            type="text"
-            [(value)]="searchQuery"
-          >
-            <mat-icon input-prefix class="ex-search__icon">search</mat-icon>
-
-            <button
-              input-suffix
-              type="button"
-              class="ex-search__filter-btn"
-              (click)="openFilters()"
-              [attr.aria-pressed]="showFilters"
-              aria-label="Toggle filters"
-            >
-              <mat-icon>filter_list</mat-icon>
-              <span *ngIf="activeFiltersCount > 0" class="ex-search__filter-badge">
-                {{ activeFiltersCount }}
-              </span>
-            </button>
-          </app-input-field>
+    <!-- Skeleton Loading State -->
+    <ng-container *ngIf="isLoading">
+      <!-- Skeleton Search -->
+      <section class="section">
+        <div class="ex-search">
+          <div class="skeleton skeleton-search"></div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- Empty state -->
-    <section *ngIf="!filteredExercises.length" class="section">
-      <div class="ex-empty">
-        <div class="ex-empty__icon-box">
-          <mat-icon class="ex-empty__icon">search</mat-icon>
-        </div>
-        <h3 class="ex-empty__title">
-          {{ 'EXERCISES.EMPTY.TITLE' | translate }}
-        </h3>
-        <p class="ex-empty__subtitle">
-          {{ 'EXERCISES.EMPTY.SUBTITLE' | translate }}
-        </p>
-      </div>
-    </section>
-
-    <!-- List -->
-    <section *ngIf="filteredExercises.length" class="section">
-      <div class="ex-list">
-        <article
-          *ngFor="let ex of filteredExercises"
-          class="exercise-card"
-          (click)="openExercise(ex)"
-        >
-          <div class="exercise-card__left">
-            <div class="exercise-card__image-wrapper">
-              <ng-container *ngIf="!ex.imageError; else fallback">
-                <img [src]="ex.imageUrl" [alt]="ex.name" (error)="onImageLoadError(ex)" />
-              </ng-container>
-
-              <ng-template #fallback>
-                <div class="exercise-card__image-fallback">
-                  <mat-icon>person</mat-icon>
-                </div>
-              </ng-template>
-            </div>
-
-            <div class="exercise-card__info">
+      <!-- Skeleton Exercise Cards -->
+      <section class="section">
+        <div class="ex-list">
+          <div class="exercise-card skeleton-card" *ngFor="let item of [1,2,3,4,5,6]">
+            <div class="exercise-card__left">
+              <div class="skeleton skeleton-image"></div>
               <div class="exercise-card__info">
-                <div class="exercise-card__header">
-                  <h3 class="exercise-card__name">
-                    {{ ex.name }}
-                  </h3>
-                  <span
-                    class="exercise-card__badge"
-                    [class.exercise-card__badge--custom]="ex.isCustom"
-                  >
-                    {{
-                      ex.isCustom
-                        ? ('EXERCISES.BADGE.CUSTOM' | translate)
-                        : ('EXERCISES.BADGE.STANDARD' | translate)
-                    }}
-                  </span>
-                </div>
-                <div class="exercise-card__meta">
-                  <span>{{ ex.muscleGroup }}</span>
-                  <span class="exercise-card__dot"></span>
-                  <span>{{ ex.equipment }}</span>
+                <div class="skeleton skeleton-title"></div>
+                <div class="skeleton skeleton-badge"></div>
+                <div class="skeleton skeleton-meta"></div>
+              </div>
+            </div>
+            <div class="skeleton skeleton-icon"></div>
+          </div>
+        </div>
+      </section>
+    </ng-container>
+
+    <!-- Error State -->
+    <section *ngIf="!isLoading && error" class="section">
+      <app-error-state
+        icon="fitness_center"
+        titleKey="EXERCISES.ERROR_STATE.TITLE"
+        descriptionKey="EXERCISES.ERROR_STATE.DESCRIPTION"
+        (retryClicked)="retry()"
+      />
+    </section>
+
+    <!-- Main Content (when loaded successfully) -->
+    <ng-container *ngIf="!isLoading && !error">
+      <!-- Search section -->
+      <section class="section">
+        <div class="ex-search">
+          <div class="ex-search__input-wrapper">
+            <app-input-field
+              [placeholder]="'EXERCISES.SEARCH_PLACEHOLDER' | translate"
+              name="search"
+              type="text"
+              [(value)]="searchQuery"
+            >
+              <mat-icon input-prefix class="ex-search__icon">search</mat-icon>
+
+              <button
+                input-suffix
+                type="button"
+                class="ex-search__filter-btn"
+                (click)="openFilters()"
+                [attr.aria-pressed]="showFilters"
+                aria-label="Toggle filters"
+              >
+                <mat-icon>filter_list</mat-icon>
+                <span *ngIf="activeFiltersCount > 0" class="ex-search__filter-badge">
+                  {{ activeFiltersCount }}
+                </span>
+              </button>
+            </app-input-field>
+          </div>
+        </div>
+      </section>
+
+      <!-- Empty state -->
+      <section *ngIf="!filteredExercises.length" class="section">
+        <div class="ex-empty">
+          <div class="ex-empty__icon-box">
+            <mat-icon class="ex-empty__icon">search</mat-icon>
+          </div>
+          <h3 class="ex-empty__title">
+            {{ 'EXERCISES.EMPTY.TITLE' | translate }}
+          </h3>
+          <p class="ex-empty__subtitle">
+            {{ 'EXERCISES.EMPTY.SUBTITLE' | translate }}
+          </p>
+        </div>
+      </section>
+
+      <!-- List -->
+      <section *ngIf="filteredExercises.length" class="section">
+        <div class="ex-list">
+          <article
+            *ngFor="let ex of filteredExercises"
+            class="exercise-card"
+            (click)="openExercise(ex)"
+          >
+            <div class="exercise-card__left">
+              <div class="exercise-card__image-wrapper">
+                <ng-container *ngIf="!ex.imageError; else fallback">
+                  <img [src]="ex.imageUrl" [alt]="ex.name" (error)="onImageLoadError(ex)" />
+                </ng-container>
+
+                <ng-template #fallback>
+                  <div class="exercise-card__image-fallback">
+                    <mat-icon>person</mat-icon>
+                  </div>
+                </ng-template>
+              </div>
+
+              <div class="exercise-card__info">
+                <div class="exercise-card__info">
+                  <div class="exercise-card__header">
+                    <h3 class="exercise-card__name">
+                      {{ ex.name }}
+                    </h3>
+                    <span
+                      class="exercise-card__badge"
+                      [class.exercise-card__badge--custom]="ex.isCustom"
+                    >
+                      {{
+                        ex.isCustom
+                          ? ('EXERCISES.BADGE.CUSTOM' | translate)
+                          : ('EXERCISES.BADGE.STANDARD' | translate)
+                      }}
+                    </span>
+                  </div>
+                  <div class="exercise-card__meta">
+                    <span>{{ ex.muscleGroup }}</span>
+                    <span class="exercise-card__dot"></span>
+                    <span>{{ ex.equipment }}</span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <mat-icon class="exercise-card__chevron">chevron_right</mat-icon>
-        </article>
-      </div>
-    </section>
+            <mat-icon class="exercise-card__chevron">chevron_right</mat-icon>
+          </article>
+        </div>
+      </section>
+    </ng-container>
   </main>
 
   <!-- FAB -->

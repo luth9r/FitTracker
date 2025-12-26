@@ -1,10 +1,51 @@
 <div class="page">
-  <!-- Loading/Error -->
-  <div *ngIf="isLoading" class="section">{{ 'EXERCISES.LOADING' | translate }}</div>
-  <div *ngIf="error" class="section error-message">{{ error }}</div>
+  <!-- Skeleton Loading State -->
+  <div *ngIf="isLoading" class="exercise-details skeleton-loading">
+    <!-- Skeleton Header -->
+    <header class="exercise-header skeleton-header">
+      <div class="header__inner">
+        <div class="skeleton skeleton-close-btn"></div>
+        <div class="header-content">
+          <div class="skeleton skeleton-title"></div>
+          <div class="skeleton skeleton-badge"></div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Skeleton Tabs -->
+    <nav class="tabs skeleton-tabs">
+      <div class="skeleton skeleton-tab"></div>
+      <div class="skeleton skeleton-tab"></div>
+    </nav>
+
+    <!-- Skeleton Content -->
+    <section class="tab-content skeleton-content">
+      <!-- Skeleton Image -->
+      <div class="skeleton skeleton-image"></div>
+
+      <!-- Skeleton Info Grid -->
+      <div class="info-grid">
+        <div class="skeleton skeleton-info-card"></div>
+        <div class="skeleton skeleton-info-card"></div>
+      </div>
+
+      <!-- Skeleton Description -->
+      <div class="skeleton skeleton-description"></div>
+    </section>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="!isLoading && error" class="error-page">
+    <app-error-state
+      icon="error_outline"
+      titleKey="EXERCISES.DETAILS.ERROR_STATE.TITLE"
+      descriptionKey="EXERCISES.DETAILS.ERROR_STATE.DESCRIPTION"
+      (retryClicked)="retry()"
+    />
+  </div>
 
   <!-- Main Content -->
-  <div *ngIf="exercise as ex" class="exercise-details">
+  <div *ngIf="!isLoading && !error && exercise" class="exercise-details">
     <!-- Header -->
     <header class="exercise-header">
       <div class="header__inner">
@@ -12,8 +53,8 @@
           <mat-icon>close</mat-icon>
         </button>
         <div class="header-content">
-          <h1>{{ ex.name }}</h1>
-          <span *ngIf="ex.isCustom" class="custom-badge">
+          <h1>{{ exercise.name }}</h1>
+          <span *ngIf="exercise.isCustom" class="custom-badge">
             {{ 'EXERCISES.BADGE.CUSTOM' | translate }}
           </span>
         </div>
@@ -41,9 +82,9 @@
       <!-- Image or Fallback -->
       <div class="image-section">
         <img
-          *ngIf="ex.imageUrl && !imageError; else imageFallback"
-          [src]="ex.imageUrl"
-          [alt]="ex.name"
+          *ngIf="exercise.imageUrl && !imageError; else imageFallback"
+          [src]="exercise.imageUrl"
+          [alt]="exercise.name"
           (error)="onImageError()"
         />
         <ng-template #imageFallback>
@@ -60,29 +101,29 @@
           <label>{{ 'EXERCISES.DETAILS.MUSCLE_GROUP' | translate }}</label>
           <div class="info-tag">
             <span>💪</span>
-            <span>{{ ex.muscleGroup }}</span>
+            <span>{{ exercise.muscleGroup }}</span>
           </div>
         </div>
         <div class="info-card">
           <label>{{ 'EXERCISES.DETAILS.EQUIPMENT' | translate }}</label>
           <div class="info-tag">
             <span>🏋️</span>
-            <span>{{ ex.equipment }}</span>
+            <span>{{ exercise.equipment }}</span>
           </div>
         </div>
       </div>
 
       <!-- Description -->
-      <div *ngIf="ex.description" class="description-card">
+      <div *ngIf="exercise.description" class="description-card">
         <label>{{ 'EXERCISES.DETAILS.DESCRIPTION' | translate }}</label>
-        <p>{{ ex.description }}</p>
+        <p>{{ exercise.description }}</p>
       </div>
     </section>
 
     <!-- Tab: Stats + History -->
     <section *ngIf="activeTab === 'stats'" class="tab-content">
       <!-- History Chart -->
-      <div *ngIf="ex.volumeHistory && ex.volumeHistory.length" class="history-chart">
+      <div *ngIf="exercise.volumeHistory && exercise.volumeHistory.length" class="history-chart">
         <div class="chart-header">
           <h2>{{ 'EXERCISES.DETAILS.VOLUME_HISTORY' | translate }}</h2>
           <div class="chart-period-tabs">
@@ -141,7 +182,7 @@
 
       <!-- Empty state when no history at all -->
       <app-empty-state
-        *ngIf="!ex.volumeHistory || !ex.volumeHistory.length"
+        *ngIf="!exercise.volumeHistory || !exercise.volumeHistory.length"
         icon="timeline"
         [translateKey]="'EXERCISES.DETAILS.NO_HISTORY'"
       />
@@ -152,9 +193,9 @@
           <mat-icon>calendar_today</mat-icon>
           <div>
             <div class="stat-label">{{ 'EXERCISES.DETAILS.STATS.LAST_PERFORMED' | translate }}</div>
-            <div class="stat-value">{{ formatDate(ex.lastPerformed) }}</div>
+            <div class="stat-value">{{ formatDate(exercise.lastPerformed) }}</div>
             <div class="stat-subtitle">
-              {{ ex.totalWorkouts }} {{ 'EXERCISES.DETAILS.STATS.WORKOUTS' | translate }}
+              {{ exercise.totalWorkouts }} {{ 'EXERCISES.DETAILS.STATS.WORKOUTS' | translate }}
             </div>
           </div>
         </div>
@@ -162,9 +203,9 @@
           <mat-icon>fitness_center</mat-icon>
           <div>
             <div class="stat-label">{{ 'EXERCISES.DETAILS.STATS.TOTAL_SETS' | translate }}</div>
-            <div class="stat-value">{{ ex.totalSets }}</div>
+            <div class="stat-value">{{ exercise.totalSets }}</div>
             <div class="stat-subtitle">
-              {{ ex.totalReps }} {{ 'EXERCISES.DETAILS.STATS.REPS' | translate }}
+              {{ exercise.totalReps }} {{ 'EXERCISES.DETAILS.STATS.REPS' | translate }}
             </div>
           </div>
         </div>
@@ -172,7 +213,9 @@
           <mat-icon>timeline</mat-icon>
           <div>
             <div class="stat-label">{{ 'EXERCISES.DETAILS.STATS.TOTAL_LIFTED' | translate }}</div>
-            <div class="stat-value">{{ convertWeight(ex.totalLifted) | number : '1.0-0' }} {{ unitLabel }}</div>
+            <div class="stat-value">
+              {{ convertWeight(exercise.totalLifted) | number : '1.0-0' }} {{ unitLabel }}
+            </div>
           </div>
         </div>
       </div>
@@ -187,33 +230,45 @@
           <div class="record-card">
             <mat-icon>fitness_center</mat-icon>
             <div>
-              <div class="record-label">{{ 'EXERCISES.DETAILS.RECORDS.MAX_WEIGHT' | translate }}</div>
-              <div class="record-value">{{ convertWeight(ex.maxWeightKg) | number : '1.1-1' }} {{ unitLabel }}</div>
-              <div class="record-date">{{ formatDate(ex.maxWeightDate) }}</div>
+              <div class="record-label">
+                {{ 'EXERCISES.DETAILS.RECORDS.MAX_WEIGHT' | translate }}
+              </div>
+              <div class="record-value">
+                {{ convertWeight(exercise.maxWeightKg) | number : '1.1-1' }} {{ unitLabel }}
+              </div>
+              <div class="record-date">{{ formatDate(exercise.maxWeightDate) }}</div>
             </div>
           </div>
           <div class="record-card">
             <mat-icon>replay</mat-icon>
             <div>
               <div class="record-label">{{ 'EXERCISES.DETAILS.RECORDS.MAX_REPS' | translate }}</div>
-              <div class="record-value">{{ ex.maxReps }}</div>
-              <div class="record-date">{{ formatDate(ex.maxRepsDate) }}</div>
+              <div class="record-value">{{ exercise.maxReps }}</div>
+              <div class="record-date">{{ formatDate(exercise.maxRepsDate) }}</div>
             </div>
           </div>
           <div class="record-card">
             <mat-icon>trending_up</mat-icon>
             <div>
-              <div class="record-label">{{ 'EXERCISES.DETAILS.RECORDS.MAX_SET_VOLUME' | translate }}</div>
-              <div class="record-value">{{ convertWeight(ex.maxVolume) | number : '1.0-0' }} {{ unitLabel }}</div>
-              <div class="record-date">{{ formatDate(ex.maxVolumeDate) }}</div>
+              <div class="record-label">
+                {{ 'EXERCISES.DETAILS.RECORDS.MAX_SET_VOLUME' | translate }}
+              </div>
+              <div class="record-value">
+                {{ convertWeight(exercise.maxVolume) | number : '1.0-0' }} {{ unitLabel }}
+              </div>
+              <div class="record-date">{{ formatDate(exercise.maxVolumeDate) }}</div>
             </div>
           </div>
           <div class="record-card">
             <mat-icon>bar_chart</mat-icon>
             <div>
-              <div class="record-label">{{ 'EXERCISES.DETAILS.RECORDS.MAX_WORKOUT_VOLUME' | translate }}</div>
-              <div class="record-value">{{ convertWeight(ex.maxTotalVolume) | number : '1.0-0' }} {{ unitLabel }}</div>
-              <div class="record-date">{{ formatDate(ex.maxTotalVolumeDate) }}</div>
+              <div class="record-label">
+                {{ 'EXERCISES.DETAILS.RECORDS.MAX_WORKOUT_VOLUME' | translate }}
+              </div>
+              <div class="record-value">
+                {{ convertWeight(exercise.maxTotalVolume) | number : '1.0-0' }} {{ unitLabel }}
+              </div>
+              <div class="record-date">{{ formatDate(exercise.maxTotalVolumeDate) }}</div>
             </div>
           </div>
         </div>

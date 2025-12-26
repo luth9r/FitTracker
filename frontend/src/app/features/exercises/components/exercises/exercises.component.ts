@@ -13,6 +13,7 @@ import { BottomNavComponent } from '../../../../shared/ui/bottom-nav/bottom-nav.
 import { FabComponent } from '../../../../shared/ui/fab/fab.component';
 import { PageHeaderComponent } from '../../../../shared/ui/header/header.component';
 import { InputFieldComponent } from '../../../../shared/ui/input-field/input-field.component';
+import { ErrorStateComponent } from '../../../../shared/ui/error-state/error-state.component';
 
 type ExerciseWithState = ExerciseResponse & { imageError?: boolean };
 type ExerciseTypeFilter = 'all' | 'standard' | 'custom';
@@ -34,6 +35,7 @@ interface FilterOption<T = string> {
     PageHeaderComponent,
     InputFieldComponent,
     TranslateModule,
+    ErrorStateComponent,
   ],
   templateUrl: './exercises.component.html',
   styleUrls: ['./exercises.component.scss'],
@@ -189,5 +191,9 @@ export class ExercisesComponent implements OnInit {
 
   onFabClick(): void {
     // TODO: open create-exercise flow
+  }
+
+  retry(): void {
+    this.loadExercises();
   }
 }

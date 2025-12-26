@@ -6,12 +6,21 @@ import { forkJoin } from 'rxjs';
 import { HomeService, UserStatsResponse, RecentWorkoutResponse } from '../services/home.service';
 import { FabComponent } from '../../../shared/ui/fab/fab.component';
 import { BottomNavComponent, NavItemKey } from '../../../shared/ui/bottom-nav/bottom-nav.component';
-import { PageHeaderComponent } from "../../../shared/ui/header/header.component";
+import { PageHeaderComponent } from '../../../shared/ui/header/header.component';
+import { ErrorStateComponent } from '../../../shared/ui/error-state/error-state.component';
 
 @Component({
   standalone: true,
   selector: 'app-home',
-  imports: [CommonModule, TranslateModule, MatIconModule, FabComponent, BottomNavComponent, PageHeaderComponent],
+  imports: [
+    CommonModule,
+    TranslateModule,
+    MatIconModule,
+    FabComponent,
+    BottomNavComponent,
+    PageHeaderComponent,
+    ErrorStateComponent,
+  ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })
@@ -115,5 +124,9 @@ export class HomeComponent implements OnInit {
 
   onNavClick(section: NavItemKey): void {
     // TODO: route navigation
+  }
+
+  retry(): void {
+    this.loadData();
   }
 }

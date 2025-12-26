@@ -132,6 +132,10 @@
       "TITLE": "Start Your Journey",
       "DESCRIPTION": "You don't have any workouts yet. Create your first workout and start tracking your progress!",
       "CTA": "Create Workout"
+    },
+    "ERROR_STATE": {
+      "TITLE": "Unable to Load Dashboard",
+      "DESCRIPTION": "We couldn't connect to the server. Please check your internet connection and try again."
     }
   },
   "EXERCISES": {
@@ -146,6 +150,10 @@
     "EMPTY": {
       "TITLE": "No exercises found",
       "SUBTITLE": "Try changing your search or filters"
+    },
+    "ERROR_STATE": {
+      "TITLE": "Unable to Load Exercises",
+      "DESCRIPTION": "We couldn't load the exercises list. Please check your connection and try again."
     },
     "FILTERS": {
       "TYPE_LABEL": "Type",
@@ -195,6 +203,10 @@
         "MAX_REPS": "Max Reps",
         "MAX_SET_VOLUME": "Max Set Volume",
         "MAX_WORKOUT_VOLUME": "Max Workout Volume"
+      },
+      "ERROR_STATE": {
+        "TITLE": "Exercise Not Found",
+        "DESCRIPTION": "We couldn't load this exercise. It may have been deleted or you don't have access."
       }
     },
     "FAB": {
@@ -206,6 +218,12 @@
       "KG": "kg",
       "LBS": "lbs"
     },
-    "NEVER": "Never"
+    "NEVER": "Never",
+    "RETRY": "Try Again",
+    "ERROR_STATE": {
+      "TITLE": "Something Went Wrong",
+      "DESCRIPTION": "We couldn't load the data. Please check your connection and try again.",
+      "RETRY": "Try Again"
+    }
   }
 }

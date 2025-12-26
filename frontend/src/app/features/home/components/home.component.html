@@ -8,180 +8,260 @@
 
   <!-- Main -->
   <main class="main layout-main">
-    <!-- Stats section -->
-    <section *ngIf="stats as s" class="section section--stats">
-      <div class="stats-grid">
-        <article class="stat-card">
-          <div class="stat-card__top">
-            <div class="stat-card__icon-box stat-card__icon-box--primary">
-              <mat-icon class="stat-card__icon">fitness_center</mat-icon>
+    <!-- Skeleton Loading State -->
+    <ng-container *ngIf="isLoading">
+      <!-- Skeleton Stats Grid -->
+      <section class="section section--stats">
+        <div class="stats-grid">
+          <article class="stat-card skeleton-stat-card" *ngFor="let item of [1,2,3,4]">
+            <div class="stat-card__top">
+              <div class="skeleton skeleton-icon"></div>
             </div>
-          </div>
-          <p class="stat-card__label">
-            {{ 'HOME.STATS.TOTAL_WORKOUTS' | translate }}
-          </p>
-          <p class="stat-card__value">
-            {{ s.totalWorkouts }}
-          </p>
-        </article>
-
-        <article class="stat-card">
-          <div class="stat-card__top">
-            <div class="stat-card__icon-box stat-card__icon-box--success">
-              <mat-icon class="stat-card__icon">calendar_month</mat-icon>
-            </div>
-          </div>
-          <p class="stat-card__label">
-            {{ 'HOME.STATS.TRAINING_DAYS' | translate }}
-          </p>
-          <p class="stat-card__value">
-            {{ s.trainingDays }}
-          </p>
-        </article>
-
-        <article class="stat-card">
-          <div class="stat-card__top">
-            <div class="stat-card__icon-box stat-card__icon-box--danger">
-              <mat-icon class="stat-card__icon">local_fire_department</mat-icon>
-            </div>
-          </div>
-          <p class="stat-card__label">
-            {{ 'HOME.STATS.CURRENT_STREAK' | translate }}
-          </p>
-          <p class="stat-card__value">
-            {{ s.longestStreak }} {{ 'HOME.STATS.DAYS_SUFFIX' | translate }}
-          </p>
-        </article>
-
-        <article class="stat-card">
-          <div class="stat-card__top">
-            <div class="stat-card__icon-box stat-card__icon-box--warning">
-              <mat-icon class="stat-card__icon">scale</mat-icon>
-            </div>
-          </div>
-          <p class="stat-card__label">
-            {{ 'HOME.STATS.TOTAL_WEIGHT' | translate }}
-          </p>
-          <p class="stat-card__value">
-            {{ totalWeightLifted | number : '1.0-1' }} {{ 'COMMON.UNITS.' + unitLabel.toUpperCase() | translate }}
-          </p>
-        </article>
-      </div>
-    </section>
-
-    <!-- Goal + Recent section -->
-    <section class="section layout-dashboard">
-      <!-- Average volume -->
-      <section *ngIf="stats" class="goal-card">
-        <div class="goal-card__top">
-          <div class="goal-card__icon-box">
-            <mat-icon class="goal-card__icon">speed</mat-icon>
-          </div>
-          <div class="goal-card__text">
-            <h2 class="goal-card__title">
-              {{ 'HOME.AVG_VOLUME.TITLE' | translate }}
-            </h2>
-            <p class="goal-card__subtitle">
-              {{ 'HOME.AVG_VOLUME.SUBTITLE' | translate }}
-            </p>
-          </div>
-        </div>
-
-        <div class="goal-card__progress-bar">
-          <div
-            class="goal-card__progress-bar-fill"
-            [style.width.%]="avgVolumeProgressPercent"
-          ></div>
-        </div>
-
-        <div class="goal-card__bottom">
-          <p class="goal-card__value">
-            {{ avgVolumePerWorkout | number : '1.0-1' }} {{ 'COMMON.UNITS.' + unitLabel.toUpperCase() | translate }}
-          </p>
-
-          <p class="goal-card__percent">
-            {{ avgVolumeProgressPercent | number : '1.0-0' }}% {{ 'HOME.AVG_VOLUME.OF' | translate }}
-            {{ convertWeight(10000) | number : '1.0-0' }} {{ 'COMMON.UNITS.' + unitLabel.toUpperCase() | translate }}
-          </p>
-        </div>
-      </section>
-
-      <!-- Recent workouts -->
-      <section class="recent" *ngIf="recentWorkouts.length">
-        <div class="recent__header">
-          <h2 class="recent__title">
-            {{ 'HOME.RECENT_WORKOUTS.TITLE' | translate }}
-          </h2>
-          <button type="button" class="recent__link">
-            {{ 'HOME.RECENT_WORKOUTS.VIEW_ALL' | translate }}
-          </button>
-        </div>
-
-        <div class="recent__list">
-          <article class="recent-item" *ngFor="let w of recentWorkouts">
-            <div class="recent-item__row-top">
-              <div class="recent-item__left">
-                <div class="recent-item__icon-box">
-                  <mat-icon class="recent-item__icon">fitness_center</mat-icon>
-                </div>
-                <div class="recent-item__name-wrapper">
-                  <div class="recent-item__title">
-                    <h3 class="recent-item__name">{{ w.name }}</h3>
-                    <p class="recent-item__date">
-                      {{ formatDate(w.workoutDate) }}
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div class="recent-item__stats">
-                <div class="recent-item__stat">
-                  <p class="recent-item__stat-label">
-                    {{ 'HOME.RECENT_WORKOUTS.DURATION' | translate }}
-                  </p>
-                  <p class="recent-item__stat-value">
-                    {{ w.durationMinutes }}
-                    {{ 'HOME.RECENT_WORKOUTS.MIN_SUFFIX' | translate }}
-                  </p>
-                </div>
-                <div class="recent-item__stat">
-                  <p class="recent-item__stat-label">
-                    {{ 'HOME.RECENT_WORKOUTS.TOTAL_VOLUME' | translate }}
-                  </p>
-                  <p
-                    class="recent-item__stat-value recent-item__stat-value--accent"
-                  >
-                    {{ convertWeight(w.totalVolumeKg) | number : '1.0-1' }}
-                    {{ 'COMMON.UNITS.' + unitLabel.toUpperCase() | translate }}
-                  </p>
-                </div>
-              </div>
-            </div>
+            <div class="skeleton skeleton-label"></div>
+            <div class="skeleton skeleton-value"></div>
           </article>
         </div>
       </section>
 
-      <!-- Empty state -->
-      <section
-        *ngIf="!isLoading && !error && !recentWorkouts.length"
-        class="empty-state"
-      >
-        <div class="empty-state__content">
-          <div class="empty-state__icon-box">
-            <mat-icon class="empty-state__icon">fitness_center</mat-icon>
+      <!-- Skeleton Goal + Recent section -->
+      <section class="section layout-dashboard">
+        <!-- Skeleton Goal Card -->
+        <div class="goal-card skeleton-goal-card">
+          <div class="goal-card__top">
+            <div class="skeleton skeleton-goal-icon"></div>
+            <div class="goal-card__text">
+              <div class="skeleton skeleton-goal-title"></div>
+              <div class="skeleton skeleton-goal-subtitle"></div>
+            </div>
           </div>
-          <h3 class="empty-state__title">
-            {{ 'HOME.EMPTY_STATE.TITLE' | translate }}
-          </h3>
-          <p class="empty-state__description">
-            {{ 'HOME.EMPTY_STATE.DESCRIPTION' | translate }}
-          </p>
-          <button type="button" class="empty-state__button">
-            <mat-icon class="empty-state__button-icon">add</mat-icon>
-            {{ 'HOME.EMPTY_STATE.CTA' | translate }}
-          </button>
+          <div class="skeleton skeleton-progress-bar"></div>
+          <div class="goal-card__bottom">
+            <div class="skeleton skeleton-goal-value"></div>
+            <div class="skeleton skeleton-goal-percent"></div>
+          </div>
+        </div>
+
+        <!-- Skeleton Recent Workouts -->
+        <div class="recent skeleton-recent">
+          <div class="recent__header">
+            <div class="skeleton skeleton-recent-title"></div>
+            <div class="skeleton skeleton-recent-link"></div>
+          </div>
+          <div class="recent__list">
+            <article class="recent-item skeleton-recent-item" *ngFor="let item of [1,2,3]">
+              <div class="recent-item__row-top">
+                <div class="recent-item__left">
+                  <div class="skeleton skeleton-recent-icon"></div>
+                  <div class="recent-item__name-wrapper">
+                    <div class="skeleton skeleton-recent-name"></div>
+                    <div class="skeleton skeleton-recent-date"></div>
+                  </div>
+                </div>
+                <div class="recent-item__stats">
+                  <div class="recent-item__stat">
+                    <div class="skeleton skeleton-stat-label"></div>
+                    <div class="skeleton skeleton-stat-value"></div>
+                  </div>
+                  <div class="recent-item__stat">
+                    <div class="skeleton skeleton-stat-label"></div>
+                    <div class="skeleton skeleton-stat-value"></div>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
         </div>
       </section>
+    </ng-container>
+
+    <!-- Error State -->
+    <section *ngIf="!isLoading && error" class="section">
+      <app-error-state
+        icon="cloud_off"
+        titleKey="HOME.ERROR_STATE.TITLE"
+        descriptionKey="HOME.ERROR_STATE.DESCRIPTION"
+        retryButtonKey="COMMON.RETRY"
+        (retryClicked)="retry()"
+      />
     </section>
+
+    <!-- Main Content (when loaded) -->
+    <ng-container *ngIf="!isLoading">
+      <!-- Stats section -->
+      <section *ngIf="stats as s" class="section section--stats">
+        <div class="stats-grid">
+          <article class="stat-card">
+            <div class="stat-card__top">
+              <div class="stat-card__icon-box stat-card__icon-box--primary">
+                <mat-icon class="stat-card__icon">fitness_center</mat-icon>
+              </div>
+            </div>
+            <p class="stat-card__label">
+              {{ 'HOME.STATS.TOTAL_WORKOUTS' | translate }}
+            </p>
+            <p class="stat-card__value">
+              {{ s.totalWorkouts }}
+            </p>
+          </article>
+
+          <article class="stat-card">
+            <div class="stat-card__top">
+              <div class="stat-card__icon-box stat-card__icon-box--success">
+                <mat-icon class="stat-card__icon">calendar_month</mat-icon>
+              </div>
+            </div>
+            <p class="stat-card__label">
+              {{ 'HOME.STATS.TRAINING_DAYS' | translate }}
+            </p>
+            <p class="stat-card__value">
+              {{ s.trainingDays }}
+            </p>
+          </article>
+
+          <article class="stat-card">
+            <div class="stat-card__top">
+              <div class="stat-card__icon-box stat-card__icon-box--danger">
+                <mat-icon class="stat-card__icon">local_fire_department</mat-icon>
+              </div>
+            </div>
+            <p class="stat-card__label">
+              {{ 'HOME.STATS.CURRENT_STREAK' | translate }}
+            </p>
+            <p class="stat-card__value">
+              {{ s.longestStreak }} {{ 'HOME.STATS.DAYS_SUFFIX' | translate }}
+            </p>
+          </article>
+
+          <article class="stat-card">
+            <div class="stat-card__top">
+              <div class="stat-card__icon-box stat-card__icon-box--warning">
+                <mat-icon class="stat-card__icon">scale</mat-icon>
+              </div>
+            </div>
+            <p class="stat-card__label">
+              {{ 'HOME.STATS.TOTAL_WEIGHT' | translate }}
+            </p>
+            <p class="stat-card__value">
+              {{ totalWeightLifted | number : '1.0-1' }} {{ 'COMMON.UNITS.' + unitLabel.toUpperCase() | translate }}
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <!-- Goal + Recent section -->
+      <section class="section layout-dashboard">
+        <!-- Average volume -->
+        <section *ngIf="stats" class="goal-card">
+          <div class="goal-card__top">
+            <div class="goal-card__icon-box">
+              <mat-icon class="goal-card__icon">speed</mat-icon>
+            </div>
+            <div class="goal-card__text">
+              <h2 class="goal-card__title">
+                {{ 'HOME.AVG_VOLUME.TITLE' | translate }}
+              </h2>
+              <p class="goal-card__subtitle">
+                {{ 'HOME.AVG_VOLUME.SUBTITLE' | translate }}
+              </p>
+            </div>
+          </div>
+
+          <div class="goal-card__progress-bar">
+            <div
+              class="goal-card__progress-bar-fill"
+              [style.width.%]="avgVolumeProgressPercent"
+            ></div>
+          </div>
+
+          <div class="goal-card__bottom">
+            <p class="goal-card__value">
+              {{ avgVolumePerWorkout | number : '1.0-1' }} {{ 'COMMON.UNITS.' + unitLabel.toUpperCase() | translate }}
+            </p>
+
+            <p class="goal-card__percent">
+              {{ avgVolumeProgressPercent | number : '1.0-0' }}% {{ 'HOME.AVG_VOLUME.OF' | translate }}
+              {{ convertWeight(10000) | number : '1.0-0' }} {{ 'COMMON.UNITS.' + unitLabel.toUpperCase() | translate }}
+            </p>
+          </div>
+        </section>
+
+        <!-- Recent workouts -->
+        <section class="recent" *ngIf="recentWorkouts.length">
+          <div class="recent__header">
+            <h2 class="recent__title">
+              {{ 'HOME.RECENT_WORKOUTS.TITLE' | translate }}
+            </h2>
+            <button type="button" class="recent__link">
+              {{ 'HOME.RECENT_WORKOUTS.VIEW_ALL' | translate }}
+            </button>
+          </div>
+
+          <div class="recent__list">
+            <article class="recent-item" *ngFor="let w of recentWorkouts">
+              <div class="recent-item__row-top">
+                <div class="recent-item__left">
+                  <div class="recent-item__icon-box">
+                    <mat-icon class="recent-item__icon">fitness_center</mat-icon>
+                  </div>
+                  <div class="recent-item__name-wrapper">
+                    <div class="recent-item__title">
+                      <h3 class="recent-item__name">{{ w.name }}</h3>
+                      <p class="recent-item__date">
+                        {{ formatDate(w.workoutDate) }}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="recent-item__stats">
+                  <div class="recent-item__stat">
+                    <p class="recent-item__stat-label">
+                      {{ 'HOME.RECENT_WORKOUTS.DURATION' | translate }}
+                    </p>
+                    <p class="recent-item__stat-value">
+                      {{ w.durationMinutes }}
+                      {{ 'HOME.RECENT_WORKOUTS.MIN_SUFFIX' | translate }}
+                    </p>
+                  </div>
+                  <div class="recent-item__stat">
+                    <p class="recent-item__stat-label">
+                      {{ 'HOME.RECENT_WORKOUTS.TOTAL_VOLUME' | translate }}
+                    </p>
+                    <p
+                      class="recent-item__stat-value recent-item__stat-value--accent"
+                    >
+                      {{ convertWeight(w.totalVolumeKg) | number : '1.0-1' }}
+                      {{ 'COMMON.UNITS.' + unitLabel.toUpperCase() | translate }}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <!-- Empty state -->
+        <section
+          *ngIf="!isLoading && !error && !recentWorkouts.length"
+          class="empty-state"
+        >
+          <div class="empty-state__content">
+            <div class="empty-state__icon-box">
+              <mat-icon class="empty-state__icon">fitness_center</mat-icon>
+            </div>
+            <h3 class="empty-state__title">
+              {{ 'HOME.EMPTY_STATE.TITLE' | translate }}
+            </h3>
+            <p class="empty-state__description">
+              {{ 'HOME.EMPTY_STATE.DESCRIPTION' | translate }}
+            </p>
+            <button type="button" class="empty-state__button">
+              <mat-icon class="empty-state__button-icon">add</mat-icon>
+              {{ 'HOME.EMPTY_STATE.CTA' | translate }}
+            </button>
+          </div>
+        </section>
+      </section>
+    </ng-container>
   </main>
 
   <!-- FAB -->

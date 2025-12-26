@@ -6,6 +6,7 @@ import { ExerciseDetailsResponse, ExerciseService } from '../../../services/exer
 import { TranslateModule } from '@ngx-translate/core';
 import { UtilsService } from '../../../../../shared/utils/utils.service';
 import { EmptyStateComponent } from '../../../../../shared/ui/empty-state/empty-state.component';
+import { ErrorStateComponent } from '../../../../../shared/ui/error-state/error-state.component';
 
 interface VolumeHistoryPoint {
   date: string;
@@ -17,7 +18,7 @@ type ChartPeriod = '1m' | '3m' | '6m' | '1y';
 @Component({
   standalone: true,
   selector: 'app-exercise-details',
-  imports: [CommonModule, MatIconModule, TranslateModule, EmptyStateComponent],
+  imports: [CommonModule, MatIconModule, TranslateModule, EmptyStateComponent, ErrorStateComponent],
   templateUrl: './exercise-details.component.html',
   styleUrl: './exercise-details.component.scss',
 })
@@ -105,9 +106,9 @@ export class ExerciseDetailsComponent implements OnInit {
         const itemDate = new Date(item.date);
         return itemDate >= cutoffDate;
       })
-      .map(item => ({
+      .map((item) => ({
         ...item,
-        value: this.convertWeight(item.value)
+        value: this.convertWeight(item.value),
       }));
   }
 
@@ -120,5 +121,29 @@ export class ExerciseDetailsComponent implements OnInit {
 
   trackByIndex(index: number): number {
     return index;
+  }
+
+  retry(): void {
+    this.error = null;
+    this.isLoading = true;
+    this.imageError = false;
+
+    const id = this.route.snapshot.paramMap.get('id');
+    if (!id) {
+      this.error = 'No id in route';
+      this.isLoading = false;
+      return;
+    }
+
+    this.exerciseService.getExerciseDetails(id).subscribe({
+      next: (data) => {
+        this.exercise = data;
+        this.isLoading = false;
+      },
+      error: () => {
+        this.error = 'Failed to load exercise';
+        this.isLoading = false;
+      },
+    });
   }
 }

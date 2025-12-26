@@ -1,0 +1,22 @@
+<div class="error-state">
+  <div class="error-state__content">
+    <div class="error-state__icon-box">
+      <mat-icon class="error-state__icon">{{ icon }}</mat-icon>
+    </div>
+    <h3 class="error-state__title">
+      {{ titleKey | translate }}
+    </h3>
+    <p class="error-state__description">
+      {{ descriptionKey | translate }}
+    </p>
+    <button
+      *ngIf="showRetryButton"
+      type="button"
+      class="error-state__button"
+      (click)="onRetry()"
+    >
+      <mat-icon class="error-state__button-icon">refresh</mat-icon>
+      {{ retryButtonKey | translate }}
+    </button>
+  </div>
+</div>
