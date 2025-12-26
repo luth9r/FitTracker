@@ -8,6 +8,11 @@ export interface LoginResponse {
   jwt: string;
 }
 
+export interface RegisterResponse {
+  username: string;
+  email: string;
+}
+
 export interface RegisterPayload {
   username: string;
   email: string;
@@ -35,17 +40,21 @@ export class AuthService {
   /**
    * Regular Registration
    */
-  register(payload: RegisterPayload): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.apiUrl}/register`, payload, {
+  register(payload: RegisterPayload): Observable<RegisterResponse> {
+    return this.http.post<RegisterResponse>(`${this.apiUrl}/register`, payload, {
       withCredentials: true,
     });
   }
 
   verifyEmail(token: string): Observable<LoginResponse> {
-    return this.http.get<LoginResponse>(`${this.apiUrl}/verify-email`, {
-      params: { token },
-      withCredentials: true,
-    });
+    return this.http.post<LoginResponse>(
+      `${this.apiUrl}/verify-email`,
+      null,
+      {
+        params: { token },
+        withCredentials: true,
+      }
+    );
   }
 
   /**
@@ -79,7 +88,10 @@ export class AuthService {
       );
   }
 
-  resendVerificationEmail(email: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/resend-verification`, { email });
+  resendVerificationEmail(email: string): Observable<void> {
+    return this.http.post<void>(
+      `${this.apiUrl}/resend-verification`,
+      { email }
+    );
   }
 }

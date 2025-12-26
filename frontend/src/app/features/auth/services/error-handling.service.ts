@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 
 export interface ErrorContext {
-  type: 'login' | 'register' | 'google-login' | 'google-register' | 'general';
+  type: 'login' | 'register' | 'google-login' | 'google-register' | 'verify-email' | 'general';
   error: unknown;
 }
 

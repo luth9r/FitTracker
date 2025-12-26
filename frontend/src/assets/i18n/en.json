@@ -69,6 +69,7 @@
     "MESSAGE": "We've sent a verification email to:",
     "INSTRUCTION": "Please check your inbox and click the verification link to activate your account. If you don't see the email, check your spam folder.",
     "RESEND_BUTTON": "Resend Verification Email",
+    "WAIT_MESSAGE": "You can request a new email in {{seconds}} seconds",
     "RESENDING": "Sending...",
     "CLOSE_BUTTON": "Close",
     "RESEND_SUCCESS": "Verification email sent successfully!"
@@ -80,7 +81,7 @@
     
     "SUCCESS_TITLE": "Email Verified!",
     "SUCCESS_SUBTITLE": "Your account is now active",
-    "WELCOME": "Welcome",
+    "SUCCESS_WELCOME": "Welcome",
     "SUCCESS_MESSAGE": "Your email has been successfully verified! You are now logged in and will be redirected to your dashboard shortly.",
     "GO_TO_DASHBOARD": "Go to Dashboard",
     

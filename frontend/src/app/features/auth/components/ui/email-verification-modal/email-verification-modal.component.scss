@@ -108,6 +108,22 @@ $accent-primary-color: #5b4b8a;
     line-height: 1.5;
     margin: 0;
   }
+
+  // Timer info box
+  .timer-info {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: color.scale($accent-primary-color, $alpha: -90%);
+    border-left: 3px solid $accent-primary-color;
+    border-radius: 0.5rem;
+    
+    p {
+      margin: 0;
+      font-size: 0.875rem;
+      color: var(--color-text-primary);
+      font-weight: 500;
+    }
+  }
 }
 
 .modal-footer {
@@ -129,6 +145,7 @@ $accent-primary-color: #5b4b8a;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
+    transition: all 0.2s ease;
 
     &:disabled {
       opacity: 0.6;
@@ -158,6 +175,13 @@ $accent-primary-color: #5b4b8a;
     &:active:not(:disabled) {
       transform: scale(0.98);
     }
+
+    // Disabled state with countdown
+    &.disabled {
+      background: var(--color-bg-dark);
+      color: var(--color-text-secondary);
+      border: 1px solid var(--color-border);
+    }
   }
 
   .close-footer-btn {
@@ -186,6 +210,20 @@ $accent-primary-color: #5b4b8a;
     transform: translateY(0);
     opacity: 1;
   }
+}
+
+// Pulse animation for countdown
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.countdown-pulse {
+  animation: pulse 1s ease-in-out infinite;
 }
 
 @media (max-width: 480px) {
@@ -233,6 +271,15 @@ $accent-primary-color: #5b4b8a;
     .instruction {
       font-size: 0.813rem;
     }
+
+    .timer-info {
+      margin-top: 1.25rem;
+      padding: 0.875rem;
+
+      p {
+        font-size: 0.813rem;
+      }
+    }
   }
 
   .modal-footer {
@@ -266,6 +313,10 @@ $accent-primary-color: #5b4b8a;
       width: 3.25rem;
       height: 3.25rem;
     }
+
+    .timer-info {
+      padding: 0.938rem;
+    }
   }
 
   .modal-footer {
@@ -289,6 +340,10 @@ $accent-primary-color: #5b4b8a;
 
   .modal-body {
     padding: 2.25rem 1.75rem;
+
+    .timer-info {
+      padding: 1.125rem;
+    }
   }
 
   .modal-footer {

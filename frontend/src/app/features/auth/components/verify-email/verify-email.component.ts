@@ -1,6 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService, LoginResponse } from '../../services/auth.service';
+import { ErrorHandlingService } from '../../services/error-handling.service';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
 
@@ -14,6 +15,7 @@ export class VerifyEmailComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private authService = inject(AuthService);
+  private errorHandlingService = inject(ErrorHandlingService);
   private translate = inject(TranslateService);
 
   isLoading = true;
@@ -60,7 +62,7 @@ export class VerifyEmailComponent implements OnInit {
           this.statusSubtitle = subtitle;
         });
         
-        // Store user info if needed
+        // Store user info
         localStorage.setItem('user', JSON.stringify({
           username: response.username,
           email: response.email
@@ -71,8 +73,21 @@ export class VerifyEmailComponent implements OnInit {
           this.router.navigate(['/dashboard']);
         }, 2000);
       },
-      error: (error: { message: string; status: number }) => {
-        this.handleError(error.message);
+      error: (error: unknown) => {
+        console.error('Verification error:', error);
+        
+        // Use ErrorHandlingService to extract localized error message from backend
+        const errorMessage = this.errorHandlingService.handleAuthError(error, 'verify-email');
+        
+        if (errorMessage) {
+          // Message is already localized by backend
+          this.handleError(errorMessage);
+        } else {
+          // Fallback to frontend translation
+          this.translate.get('VERIFY_EMAIL.ERROR_GENERIC').subscribe(msg => {
+            this.handleError(msg);
+          });
+        }
       }
     });
   }
@@ -95,6 +110,6 @@ export class VerifyEmailComponent implements OnInit {
   }
 
   navigateToDashboard(): void {
-    this.router.navigate(['/dashboard']);
+    this.router.navigate(['/']);
   }
 }

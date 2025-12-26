@@ -38,6 +38,11 @@
     <p class="instruction">
       {{ 'VERIFICATION.INSTRUCTION' | translate }}
     </p>
+
+    <!-- Timer info -->
+      <div class="timer-info" *ngIf="!canResend">
+        <p>{{ 'VERIFICATION.WAIT_MESSAGE' | translate: { seconds: countdown } }}</p>
+      </div>
   </div>
 
   <div class="modal-footer">
