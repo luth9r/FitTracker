@@ -33,15 +33,15 @@ namespace FitTracker.Application.UseCases.User.Handlers.Commands
         IMediator mediator,
         ILocalizationService localization,
         IPasswordHasher hasher,
-        ILogger<RegisterCommandHandler> logger) : IRequestHandler<RegisterCommand, Result<LoginResponse, ValidationResult>>
+        ILogger<RegisterCommandHandler> logger) : IRequestHandler<RegisterCommand, Result<RegisterResponse, ValidationResult>>
     {
         /// <summary>
         /// Handles the register command.
         /// </summary>
         /// <param name="request">The <see cref="RegisterCommand"/>.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/>.</param>
-        /// <returns>The <see cref="LoginResponse"/> result.</returns>
-        public async Task<Result<LoginResponse, ValidationResult>> Handle(RegisterCommand request, CancellationToken cancellationToken)
+        /// <returns>The <see cref="RegisterResponse"/> result.</returns>
+        public async Task<Result<RegisterResponse, ValidationResult>> Handle(RegisterCommand request, CancellationToken cancellationToken)
         {
             logger.LogDebug("Starting user registration process for username: {Username}", request.User.Username);
 
@@ -51,14 +51,14 @@ namespace FitTracker.Application.UseCases.User.Handlers.Commands
             if (existingUser != null)
             {
                 logger.LogWarning("Registration failed: Username {Username} already exists.", userRequest.Username);
-                return ResultExtensions.ValidationFailure<LoginResponse>(nameof(userRequest.Username), localization.GetString("Auth.Register.UsernameAlreadyExists"));
+                return ResultExtensions.ValidationFailure<RegisterResponse>(nameof(userRequest.Username), localization.GetString("Auth.Register.UsernameAlreadyExists"));
             }
 
             var existingUserByEmail = await userReadRepository.GetByEmailReadonlyAsync(userRequest.Email, cancellationToken);
             if (existingUserByEmail != null)
             {
                 logger.LogWarning("Registration failed: Email {Email} already exists.", userRequest.Email);
-                return ResultExtensions.ValidationFailure<LoginResponse>(nameof(userRequest.Email), localization.GetString("Auth.Register.EmailAlreadyExists"));
+                return ResultExtensions.ValidationFailure<RegisterResponse>(nameof(userRequest.Email), localization.GetString("Auth.Register.EmailAlreadyExists"));
             }
 
             var user = UserEntity.Create(
@@ -78,9 +78,9 @@ namespace FitTracker.Application.UseCases.User.Handlers.Commands
 
             await mediator.Publish(new UserRegisteredEvent(user.Id, user.Email, user.Username), cancellationToken);
 
-            var response = mapper.Map<LoginResponse>(user);
+            var response = mapper.Map<RegisterResponse>(user);
 
-            return Result.Success<LoginResponse, ValidationResult>(response);
+            return Result.Success<RegisterResponse, ValidationResult>(response);
         }
     }
 }

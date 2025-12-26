@@ -4,6 +4,7 @@ using FitTracker.Application.DTOs.Auth;
 using FitTracker.Application.DTOs.Auth.Google;
 using FitTracker.Application.UseCases.User.Commands;
 using FitTracker.Application.UseCases.User.Commands.Google;
+using FitTracker.Application.UseCases.User.Queries;
 using FluentAssertions;
 using FluentValidation.Results;
 using MediatR;
@@ -90,11 +91,11 @@ public class AuthControllerTests
     {
         // Arrange
         var request = new RegisterRequest("testuser", "test@example.com", "Password123!");
-        var expectedResponse = new LoginResponse("test", "test@example.com", "jwt-token");
+        var expectedResponse = new RegisterResponse("test", "test@example.com");
 
         _mediatorMock
             .Setup(m => m.Send(It.IsAny<RegisterCommand>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(Result.Success<LoginResponse, ValidationResult>(expectedResponse));
+            .ReturnsAsync(Result.Success<RegisterResponse, ValidationResult>(expectedResponse));
 
         // Act
         var result = await _controller.RegisterAsync(request, CancellationToken.None);
@@ -119,7 +120,7 @@ public class AuthControllerTests
 
         _mediatorMock
             .Setup(m => m.Send(It.IsAny<RegisterCommand>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(Result.Failure<LoginResponse, ValidationResult>(validationResult));
+            .ReturnsAsync(Result.Failure<RegisterResponse, ValidationResult>(validationResult));
 
         // Act
         var result = await _controller.RegisterAsync(request, CancellationToken.None);
@@ -182,7 +183,7 @@ public class AuthControllerTests
     }
 
     [Fact]
-    public async Task VerifyEmail_ShouldReturnOk_WhenTokenIsValid()
+    public async Task VerifyEmailAsync_ShouldReturnOk_WhenTokenIsValid()
     {
         // Arrange
         var token = "valid-verification-token";
@@ -193,7 +194,7 @@ public class AuthControllerTests
             .ReturnsAsync(Result.Success<LoginResponse, ValidationResult>(expectedResponse));
 
         // Act
-        var result = await _controller.VerifyEmail(token, CancellationToken.None);
+        var result = await _controller.VerifyEmailAsync(token, CancellationToken.None);
 
         // Assert
         result.Should().BeOfType<OkObjectResult>();
@@ -206,10 +207,10 @@ public class AuthControllerTests
     }
 
     [Fact]
-    public async Task VerifyEmail_ShouldReturnBadRequest_WhenTokenIsEmpty()
+    public async Task VerifyEmailAsync_ShouldReturnBadRequest_WhenTokenIsEmpty()
     {
         // Act
-        var result = await _controller.VerifyEmail("", CancellationToken.None);
+        var result = await _controller.VerifyEmailAsync("", CancellationToken.None);
 
         // Assert
         result.Should().BeOfType<BadRequestResult>();
@@ -221,7 +222,7 @@ public class AuthControllerTests
     }
 
     [Fact]
-    public async Task VerifyEmail_ShouldReturnBadRequest_WhenTokenIsInvalid()
+    public async Task VerifyEmailAsync_ShouldReturnBadRequest_WhenTokenIsInvalid()
     {
         // Arrange
         var token = "invalid-token";
@@ -233,11 +234,62 @@ public class AuthControllerTests
             .ReturnsAsync(Result.Failure<LoginResponse, ValidationResult>(validationResult));
 
         // Act
-        var result = await _controller.VerifyEmail(token, CancellationToken.None);
+        var result = await _controller.VerifyEmailAsync(token, CancellationToken.None);
 
         // Assert
         result.Should().BeOfType<BadRequestObjectResult>();
         var badRequestResult = result as BadRequestObjectResult;
         badRequestResult!.StatusCode.Should().Be(400);
+    }
+
+    [Fact]
+    public async Task ResendVerificationEmailAsync_ShouldReturnOk_WhenUserExists_And_EmailNotVerified()
+    {
+        // Arrange
+        var email = "test@gmail.com";
+        var request = new ResendVerificationRequest(email);
+
+        _mediatorMock
+            .Setup(m => m.Send(It.IsAny<ResendVerificationEmailQuery>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Success<Unit, ValidationResult>(Unit.Value));
+
+        // Act
+        var result = await _controller.ResendVerificationEmailAsync(request, CancellationToken.None);
+
+        // Assert
+        result.Should().BeOfType<OkResult>();
+
+        _mediatorMock.Verify(
+            m => m.Send(
+                It.Is<ResendVerificationEmailQuery>(q => q.Email == email),
+                It.IsAny<CancellationToken>()),
+            Times.Once);
+    }
+
+    [Fact]
+    public async Task ResendVerificationEmailAsync_ShouldReturnValidationProblem_WhenEmailAlreadyVerified()
+    {
+        // Arrange
+        var email = "verified@gmail.com";
+        var request = new ResendVerificationRequest(email);
+
+        var validationFailure = new ValidationFailure(nameof(email), "Email is already verified")
+        {
+            ErrorCode = "User.AlreadyVerified"
+        };
+        var validationResult = new ValidationResult(new[] { validationFailure });
+
+        _mediatorMock
+            .Setup(m => m.Send(It.IsAny<ResendVerificationEmailQuery>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Failure<Unit, ValidationResult>(validationResult));
+
+        // Act
+        var result = await _controller.ResendVerificationEmailAsync(request, CancellationToken.None);
+
+        // Assert
+        result.Should().NotBeNull();
+
+        var objectResult = Assert.IsAssignableFrom<ObjectResult>(result);
+        Assert.IsType<ValidationProblemDetails>(objectResult.Value);
     }
 }

@@ -4,6 +4,7 @@ using FitTracker.Application.DTOs.Auth;
 using FitTracker.Application.DTOs.Auth.Google;
 using FitTracker.Application.UseCases.User.Commands;
 using FitTracker.Application.UseCases.User.Commands.Google;
+using FitTracker.Application.UseCases.User.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -106,13 +107,35 @@ namespace FitTracker.Api.Controllers
         }
 
         /// <summary>
+        /// Resends the email verification link.
+        /// </summary>
+        /// <param name="resendRequest">The <see cref="ResendVerificationRequest"/>.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Success or <see cref="ValidationProblemDetails"/> if the resend fails.</returns>
+        [HttpPost("resend-verification")]
+        public async Task<IActionResult> ResendVerificationEmailAsync(
+            [FromBody] ResendVerificationRequest resendRequest,
+            CancellationToken cancellationToken)
+        {
+            var query = new ResendVerificationEmailQuery(resendRequest.Email);
+            var result = await mediator.Send(query, cancellationToken);
+
+            if (result.IsFailure)
+            {
+                return ValidationProblem(result.Error.ToModelState());
+            }
+
+            return Ok();
+        }
+
+        /// <summary>
         /// Verifies a user's email address.
         /// </summary>
         /// <param name="token">The verification token.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The <see cref="LoginResponse"/> or <see cref="ValidationProblemDetails"/> if the verification fails.</returns>
-        [HttpGet("verify-email")]
-        public async Task<IActionResult> VerifyEmail(
+        [HttpPost("verify-email")]
+        public async Task<IActionResult> VerifyEmailAsync(
             [FromQuery] string token,
             CancellationToken cancellationToken)
         {
@@ -126,7 +149,7 @@ namespace FitTracker.Api.Controllers
 
             if (result.IsFailure)
             {
-                return BadRequest(result.Error.ToModelState());
+                return ValidationProblem(result.Error.ToModelState());
             }
 
             SetAuthCookie(result.Value.JWT);
