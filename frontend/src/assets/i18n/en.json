@@ -27,7 +27,7 @@
     "TERMS_LINK_2": "Privacy Policy",
     "LOADING": "Loading...",
     "SUCCESS": {
-      "REGISTER": "Registration successful! Please check your email to confirm your account.",
+      "REGISTER": "Registration successful!",
       "LOGIN": "Login successful!"
     },
     "ERRORS": {
@@ -63,6 +63,37 @@
       "PASSWORD_ONENUMBER": "At least one number",
       "CONFIRM_MATCHES": "Passwords do not match"
     }
+  },
+  "VERIFICATION": {
+    "TITLE": "Verify Your Email",
+    "MESSAGE": "We've sent a verification email to:",
+    "INSTRUCTION": "Please check your inbox and click the verification link to activate your account. If you don't see the email, check your spam folder.",
+    "RESEND_BUTTON": "Resend Verification Email",
+    "RESENDING": "Sending...",
+    "CLOSE_BUTTON": "Close",
+    "RESEND_SUCCESS": "Verification email sent successfully!"
+  },
+  "VERIFY_EMAIL": {
+    "VERIFYING_TITLE": "Verifying Email",
+    "PLEASE_WAIT": "Please wait...",
+    "VERIFYING_MESSAGE": "Verifying your email address...",
+    
+    "SUCCESS_TITLE": "Email Verified!",
+    "SUCCESS_SUBTITLE": "Your account is now active",
+    "WELCOME": "Welcome",
+    "SUCCESS_MESSAGE": "Your email has been successfully verified! You are now logged in and will be redirected to your dashboard shortly.",
+    "GO_TO_DASHBOARD": "Go to Dashboard",
+    
+    "ERROR_TITLE": "Verification Failed",
+    "ERROR_SUBTITLE": "Something went wrong",
+    "ERROR_NO_TOKEN": "Invalid verification link. No token provided.",
+    "NEED_NEW_LINK_TITLE": "Need a new verification link?",
+    "NEED_NEW_LINK_MESSAGE": "The link may have expired or been used already. You can request a new one from the login page.",
+    "BACK_TO_LOGIN": "Back to Login",
+    
+    "NEED_HELP": "Need help?",
+    "CONTACT_SUPPORT": "Contact our support team at",
+    "COPYRIGHT": "© 2025 FitTracker. All rights reserved."
   },
   "HOME": {
     "TITLE": "Dashboard",

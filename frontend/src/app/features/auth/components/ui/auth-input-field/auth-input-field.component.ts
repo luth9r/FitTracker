@@ -29,6 +29,7 @@ export class AuthInputFieldComponent {
   @Input() activeField?: string | null;
   @Input() isFormPristine = true;
   @Input() validationType?: 'username' | 'password';
+  @Input() hasError = false;
 
   @Output() valueChange = new EventEmitter<string>();
   @Output() showPasswordChange = new EventEmitter<boolean>();

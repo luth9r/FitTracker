@@ -1,3 +1,9 @@
+<!-- Hidden fields to prevent browser autofill -->
+<div style="position: absolute; top: -9999px; left: -9999px;">
+  <input type="text" name="fake_email" />
+  <input type="password" name="fake_password" />
+</div>
+
 <div class="form-container">
   <!-- Username -->
   <app-auth-input-field
@@ -6,6 +12,7 @@
     fieldName="username"
     type="text"
     [(value)]="formData.username"
+    [hasError]="hasUsernameError"
     (focus)="onFieldFocus('username')"
     (blur)="onFieldBlur()"
     (validateOnChange)="onValidateChange('username', $event)"
@@ -38,6 +45,7 @@
     [placeholderKey]="'LOGIN.PASSWORD_PLACEHOLDER'"
     fieldName="password"
     type="password"
+    [hasError]="hasPasswordError"
     [(value)]="formData.password"
     [(showPassword)]="showPassword"
     (focus)="onFieldFocus('password')"
@@ -60,6 +68,7 @@
     [placeholderKey]="'LOGIN.CONFIRM_PASSWORD_PLACEHOLDER'"
     fieldName="confirmPassword"
     type="password"
+    [hasError]="hasConfirmPasswordError"
     [(value)]="formData.confirmPassword"
     [(showPassword)]="showConfirmPassword"
     (focus)="onFieldFocus('confirmPassword')"

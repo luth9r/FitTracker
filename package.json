@@ -41,7 +41,10 @@
   },
   "lint-staged": {
     "backend/**/*.cs": [
-      "dotnet format backend/FitTracker.sln --include"
+      "dotnet format backend/FitTracker.slnx --include"
     ]
+  },
+  "dependencies": {
+    "@angular/animations": "^21.0.6"
   }
 }

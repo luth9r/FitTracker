@@ -13,6 +13,7 @@
       [name]="name"
       [value]="value"
       (input)="onInput($event)"
+      [class.input-error]="hasError"
       (focus)="onFocus()"
       (blur)="onBlur()"
     />

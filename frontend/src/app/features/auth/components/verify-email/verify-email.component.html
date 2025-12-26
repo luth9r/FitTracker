@@ -1,0 +1,116 @@
+<div class="verify-email-page">
+  <div class="verify-container">
+    <!-- Header -->
+    <div class="verify-header">
+      <div class="logo">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="48"
+          height="48"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="m6.5 6.5 11 11" />
+          <path d="m21 21-1-1" />
+          <path d="m3 3 1 1" />
+          <path d="m18 22 4-4" />
+          <path d="m2 6 4-4" />
+          <path d="m3 10 7-7" />
+          <path d="m14 21 7-7" />
+        </svg>
+      </div>
+      <h1>{{ statusTitle }}</h1>
+      <p>{{ statusSubtitle }}</p>
+    </div>
+
+    <!-- Body -->
+    <div class="verify-body">
+      <!-- Loading State -->
+      <div *ngIf="isLoading" class="status-content">
+        <div class="spinner"></div>
+        <p>{{ 'VERIFY_EMAIL.VERIFYING_MESSAGE' | translate }}</p>
+      </div>
+
+      <!-- Success State -->
+      <div *ngIf="!isLoading && isSuccess" class="status-content">
+        <div class="success-icon">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="64"
+            height="64"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+            <polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+        </div>
+        <p *ngIf="userName">
+          {{ 'VERIFY_EMAIL.SUCCESS_WELCOME' | translate: { username: userName } }}
+        </p>
+        <p>{{ 'VERIFY_EMAIL.SUCCESS_MESSAGE' | translate }}</p>
+        
+        <div class="button-container">
+          <button class="cta-button" (click)="navigateToDashboard()">
+            {{ 'VERIFY_EMAIL.GO_TO_DASHBOARD' | translate }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Error State -->
+      <div *ngIf="!isLoading && !isSuccess" class="status-content">
+        <div class="error-icon">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="64"
+            height="64"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+        </div>
+        <p class="error-message">{{ errorMessage }}</p>
+
+        <div class="divider"></div>
+
+        <div class="info-box">
+          <p>
+            <strong>{{ 'VERIFY_EMAIL.NEED_NEW_LINK_TITLE' | translate }}</strong>
+            {{ 'VERIFY_EMAIL.NEED_NEW_LINK_MESSAGE' | translate }}
+          </p>
+        </div>
+
+        <div class="button-container">
+          <button class="cta-button secondary" (click)="navigateToLogin()">
+            {{ 'VERIFY_EMAIL.BACK_TO_LOGIN' | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="verify-footer">
+      <p>
+        <strong>{{ 'VERIFY_EMAIL.NEED_HELP' | translate }}</strong>
+        {{ 'VERIFY_EMAIL.CONTACT_SUPPORT' | translate }}
+        <a href="mailto:support@fittracker.com">support@fittracker.com</a>
+      </p>
+      <p>{{ 'VERIFY_EMAIL.COPYRIGHT' | translate }}</p>
+    </div>
+  </div>
+</div>

@@ -3,13 +3,15 @@ import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { HttpClient } from '@angular/common/http';
-import { provideTranslateService, TranslateLoader } from "@ngx-translate/core";
-import { languageInterceptor } from './interceptors/languageInterceptor'; 
+import { provideTranslateService, TranslateLoader } from '@ngx-translate/core';
+import { languageInterceptor } from './interceptors/languageInterceptor';
 import { Observable } from 'rxjs';
+import { provideAnimations } from '@angular/platform-browser/animations';
 
 import { provideOAuthClient, OAuthService, AuthConfig } from 'angular-oauth2-oidc';
 
-const YOUR_GOOGLE_CLIENT_ID = '719113265141-v8ckgmea9bob1nd65f4396n93o16dcqd.apps.googleusercontent.com';
+const YOUR_GOOGLE_CLIENT_ID =
+  '719113265141-v8ckgmea9bob1nd65f4396n93o16dcqd.apps.googleusercontent.com';
 
 // OAUTH CONFIGURATION
 const googleOidcConfig: AuthConfig = {
@@ -23,18 +25,19 @@ const googleOidcConfig: AuthConfig = {
 
   customQueryParams: {
     prompt: 'select_account consent',
-    access_type: 'offline'
+    access_type: 'offline',
   },
 };
 
 export function initializeOAuth(oauthService: OAuthService): () => Promise<void> {
   return () => {
     oauthService.configure(googleOidcConfig);
-    return oauthService.loadDiscoveryDocument()
+    return oauthService
+      .loadDiscoveryDocument()
       .then(() => {
         console.log('✅ Discovery loaded successfully');
       })
-      .catch(err => {
+      .catch((err) => {
         console.error('❌ Error loading discovery: ', err);
       });
   };
@@ -55,19 +58,18 @@ export function createTranslateLoader(http: HttpClient): TranslateLoader {
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
-    provideHttpClient(withInterceptors([
-      languageInterceptor
-    ])),
+    provideHttpClient(withInterceptors([languageInterceptor])),
 
     provideTranslateService({
       defaultLanguage: 'en',
       loader: {
         provide: TranslateLoader,
         useFactory: createTranslateLoader,
-        deps: [HttpClient]
-      }
+        deps: [HttpClient],
+      },
     }),
 
+    provideAnimations(),
     provideOAuthClient(),
 
     // APP INITIALIZER FOR OAUTH
@@ -75,7 +77,7 @@ export const appConfig: ApplicationConfig = {
       provide: APP_INITIALIZER,
       useFactory: initializeOAuth,
       deps: [OAuthService],
-      multi: true
-    }
-  ]
+      multi: true,
+    },
+  ],
 };

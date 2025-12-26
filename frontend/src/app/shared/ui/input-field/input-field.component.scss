@@ -1,8 +1,12 @@
-@use '../../../../styles/mixins.scss' as m;
-
 // Wrapper for the whole input + label block
 .input-group {
   margin-bottom: 1rem;
+
+  &.has-error {
+    .input-label {
+      color: var(--color-accent-danger);
+    }
+  }
 }
 
 // Label above the input
@@ -14,11 +18,17 @@
   margin-bottom: 0.5rem;
 }
 
-// Container for input and prefix/suffix icons
 .input-wrapper {
   position: relative;
   display: flex;
   align-items: center;
+
+  &.error-wrapper {
+    .input-field {
+      border: 2px solid var(--color-accent-danger);
+      background-color: rgba(239, 68, 68, 0.05);
+    }
+  }
 }
 
 // Left icon inside the input (prefix)
@@ -26,23 +36,22 @@
   position: absolute;
   left: 12px;
   color: var(--color-text-secondary);
-  pointer-events: none; // icon should not block input interactions
+  pointer-events: none;
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 1;
 }
 
 // Actual text input field
 .input-field {
   width: 100%;
-  // space for left icon (44px left) and right suffix (44px right)
   padding: 12px 44px 12px 44px;
   background: var(--color-input-bg);
   border: 1px solid var(--color-border-strong);
   border-radius: 12px;
   color: var(--color-text-primary);
   font-size: 0.875rem;
-  @include m.transition-smooth;
 
   &::placeholder {
     color: var(--color-text-muted);
@@ -51,16 +60,26 @@
   &:focus {
     outline: none;
     border-color: var(--color-primary);
-    // focus ring using primary color
     box-shadow: 0 0 0 2px var(--color-primary);
+  }
+
+  &.input-error {
+    border: 2px solid var(--color-accent-danger);
+    background-color: rgba(239, 68, 68, 0.05);
+
+    &:focus {
+      border-color: var(--color-accent-danger);
+      box-shadow: 0 0 0 2px var(--color-border-error);
+    }
   }
 }
 
 // Right-side content inside the input (suffix, e.g. eye icon button)
 .input-suffix {
   position: absolute;
-  right: 12px; // distance from the right border of the input
+  right: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 1;
 }

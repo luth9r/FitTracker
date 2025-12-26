@@ -5,12 +5,17 @@ import { LoginGuard } from './features/auth/guards/login.guard';
 import { AuthGuard } from './features/auth/guards/auth.guard';
 import { ExercisesComponent } from './features/exercises/components/exercises/exercises.component';
 import { ExerciseDetailsComponent } from './features/exercises/components/exercises/exercise-details/exercise-details.component';
+import { VerifyEmailComponent } from './features/auth/components/verify-email/verify-email.component';
 
 export const routes: Routes = [
   {
     path: 'login',
     component: LoginComponent,
     //canActivate: [LoginGuard]
+  },
+  {
+    path: 'verify-email',
+    component: VerifyEmailComponent
   },
   {
     path: '',

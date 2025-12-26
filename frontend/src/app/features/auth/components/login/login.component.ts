@@ -14,6 +14,11 @@ import {
   RegisterFormData,
 } from './forms/register-form/register-form.component';
 import { ToastComponent } from '../../../../shared/ui/toast/component/toast.component';
+import { ModalService } from '../../../../shared/utils/modal.service';
+import { 
+  EmailVerificationModalComponent, 
+  EmailVerificationData 
+} from '../ui/email-verification-modal/email-verification-modal.component';
 
 type AuthMode = 'login' | 'register';
 
@@ -32,12 +37,12 @@ type AuthMode = 'login' | 'register';
 })
 export class LoginComponent {
   private authService = inject(AuthService);
-  private translate = inject(TranslateService);
   private toast = inject(ToastService);
   private oauthService = inject(OAuthService);
   private router = inject(Router);
   private validationService = inject(ValidationService);
   private errorHandlingService = inject(ErrorHandlingService);
+  private modalService = inject(ModalService);
 
   // UI state
   authMode: AuthMode = 'login';
@@ -52,6 +57,7 @@ export class LoginComponent {
   // Temporary state for validation
   private registerPassword = '';
   private registerConfirmPassword = '';
+  private registeredEmail = ''; // Сохраняем email для resend
 
   private googleIntent: AuthMode = 'login';
 
@@ -200,12 +206,64 @@ export class LoginComponent {
       password: formData.password,
     };
 
+    // Сохраняем email для модалки
+    this.registeredEmail = formData.email;
+
     this.authService
       .register(payload)
       .pipe(finalize(() => (this.isLoading = false)))
       .subscribe({
-        next: (response) => this.handleLoginSuccess(response, true),
+        next: (response) => {
+          // Открываем модалку верификации после успешной регистрации
+          this.openEmailVerificationModal(formData.email);
+          // Можно также показать успешное сообщение
+          this.toast.show('success', 'LOGIN.SUCCESS.REGISTER');
+        },
         error: (err) => this.handleError(err, 'register'),
+      });
+  }
+
+  // Открытие модального окна верификации
+  private openEmailVerificationModal(email: string) {
+    const modalRef = this.modalService.open<EmailVerificationData>(
+      EmailVerificationModalComponent,
+      {
+        data: { email },
+        disableClose: false,
+        panelClass: 'email-verification-modal',
+        backdropClass: 'modal-backdrop-blur',
+      }
+    );
+
+    // Подписываемся на результат закрытия модалки
+    modalRef.afterClosed$.subscribe((result) => {
+      console.log('[INFO] Email verification modal closed', result);
+      
+      if (result?.action === 'resend') {
+        this.handleResendVerification(email);
+      }
+    });
+  }
+
+  // Обработка повторной отправки письма верификации
+  handleResendVerification(email: string) {
+    console.log('[INFO] Resending verification email to:', email);
+    
+    // Показываем loading индикатор
+    this.isLoading = true;
+
+    this.authService
+      .resendVerificationEmail(email)
+      .pipe(finalize(() => (this.isLoading = false)))
+      .subscribe({
+        next: () => {
+          this.toast.show('success', 'VERIFICATION.RESEND_SUCCESS');
+          console.log('[SUCCESS] Verification email resent successfully');
+        },
+        error: (err) => {
+          console.error('[ERROR] Failed to resend verification email:', err);
+          this.handleError(err, 'resend-verification');
+        },
       });
   }
 
@@ -241,10 +299,14 @@ export class LoginComponent {
   }
 
   private handleLoginSuccess(response: LoginResponse, isRegistration = false) {
-    this.toast.show('success', isRegistration ? 'LOGIN.SUCCESS.REGISTER' : 'LOGIN.SUCCESS.LOGIN');
-    setTimeout(() => {
-      this.router.navigate(['/']);
-    }, 1000);
+    // Для регистрации не показываем toast и не редиректим сразу
+    // так как откроется модалка верификации
+    if (!isRegistration) {
+      this.toast.show('success', 'LOGIN.SUCCESS.LOGIN');
+      setTimeout(() => {
+        this.router.navigate(['/']);
+      }, 1000);
+    }
   }
 
   private handleError(err: unknown, context: string) {
@@ -264,6 +326,7 @@ export class LoginComponent {
   private resetValidationState() {
     this.registerPassword = '';
     this.registerConfirmPassword = '';
+    this.registeredEmail = '';
     this.usernameValidationState = { minLength: false, noSpaces: false };
     this.passwordValidationState = { minLength: false, oneLetter: false, oneNumber: false };
     this.confirmPasswordValidationState = { matches: false };

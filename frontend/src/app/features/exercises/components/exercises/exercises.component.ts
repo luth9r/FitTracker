@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild, OnInit } from '@angular/core';
+import { Component, ElementRef, ViewChild, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
@@ -39,6 +39,9 @@ interface FilterOption<T = string> {
   styleUrls: ['./exercises.component.scss'],
 })
 export class ExercisesComponent implements OnInit {
+  private readonly exerciseService = inject(ExerciseService);
+  private readonly router = inject(Router);
+
   searchQuery = '';
 
   selectedCategory = 'all';
@@ -52,16 +55,14 @@ export class ExercisesComponent implements OnInit {
   categoryOptions: FilterOption<string>[] = [];
   muscleOptions: FilterOption<string>[] = [];
   typeOptions: FilterOption<ExerciseTypeFilter>[] = [
-    { value: 'all',      labelKey: 'EXERCISES.FILTERS.TYPE_ALL' },
+    { value: 'all', labelKey: 'EXERCISES.FILTERS.TYPE_ALL' },
     { value: 'standard', labelKey: 'EXERCISES.FILTERS.TYPE_STANDARD' },
-    { value: 'custom',   labelKey: 'EXERCISES.FILTERS.TYPE_CUSTOM' },
+    { value: 'custom', labelKey: 'EXERCISES.FILTERS.TYPE_CUSTOM' },
   ];
 
   exercises: ExerciseWithState[] = [];
   isLoading = false;
   error: string | null = null;
-
-  constructor(private readonly exerciseService: ExerciseService, private readonly router: Router) {}
 
   ngOnInit(): void {
     this.loadExercises();
@@ -129,11 +130,9 @@ export class ExercisesComponent implements OnInit {
         ex.equipment.toLowerCase().includes(q);
 
       const category = ex.equipment;
-      const matchesCategory =
-        this.selectedCategory === 'all' || category === this.selectedCategory;
+      const matchesCategory = this.selectedCategory === 'all' || category === this.selectedCategory;
 
-      const matchesMuscle =
-        this.selectedMuscle === 'all' || ex.muscleGroup === this.selectedMuscle;
+      const matchesMuscle = this.selectedMuscle === 'all' || ex.muscleGroup === this.selectedMuscle;
 
       const matchesType =
         this.selectedType === 'all' ||

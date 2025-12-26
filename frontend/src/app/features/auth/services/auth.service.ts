@@ -23,7 +23,7 @@ export class AuthService {
   private userApiUrl = 'http://localhost:5000/api/user'; // Base URL for user API
 
   /**
-   * 1. Regular Login
+   * Regular Login
    */
   login(email: string, password: string): Observable<LoginResponse> {
     const payload = { email, password };
@@ -33,7 +33,7 @@ export class AuthService {
   }
 
   /**
-   * 2. Regular Registration
+   * Regular Registration
    */
   register(payload: RegisterPayload): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${this.apiUrl}/register`, payload, {
@@ -41,8 +41,15 @@ export class AuthService {
     });
   }
 
+  verifyEmail(token: string): Observable<LoginResponse> {
+    return this.http.get<LoginResponse>(`${this.apiUrl}/verify-email`, {
+      params: { token },
+      withCredentials: true,
+    });
+  }
+
   /**
-   * 3. Google Sign-In (Login ONLY)
+   * Google Sign-In (Login ONLY)
    */
   googleLogin(code: string, codeVerifier: string): Observable<LoginResponse> {
     const payload = { code, codeVerifier };
@@ -52,7 +59,7 @@ export class AuthService {
   }
 
   /**
-   * 4. Google Sign-Up (Register ONLY)
+   * Google Sign-Up (Register ONLY)
    */
   googleRegister(code: string, codeVerifier: string): Observable<LoginResponse> {
     const payload = { code, codeVerifier };
@@ -70,5 +77,9 @@ export class AuthService {
         map((res) => !!res.userId),
         catchError(() => of(false))
       );
+  }
+
+  resendVerificationEmail(email: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/resend-verification`, { email });
   }
 }

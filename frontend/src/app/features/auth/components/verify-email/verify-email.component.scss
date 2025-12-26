@@ -1,0 +1,261 @@
+// Verify Email Page Styles
+.verify-email-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  background-color: var(--color-bg-dark);
+}
+
+.verify-container {
+  max-width: 600px;
+  width: 100%;
+  background-color: var(--color-card-bg);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+// Header
+.verify-header {
+  background: linear-gradient(135deg, var(--color-primary) 0%, #4a3a75 100%);
+  padding: 2.5rem 1.875rem;
+  text-align: center;
+
+  .logo {
+    color: var(--color-text-primary);
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: center;
+    
+    svg {
+      width: 48px;
+      height: 48px;
+    }
+  }
+
+  h1 {
+    color: var(--color-text-primary);
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    line-height: 1.2;
+  }
+
+  p {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.9375rem;
+    margin: 0;
+  }
+
+  @media (max-width: 600px) {
+    padding: 1.875rem 1.25rem;
+
+    h1 {
+      font-size: 1.5rem;
+    }
+  }
+}
+
+// Body
+.verify-body {
+  padding: 2.5rem 1.875rem;
+
+  @media (max-width: 600px) {
+    padding: 1.875rem 1.25rem;
+  }
+}
+
+.status-content {
+  text-align: center;
+
+  p {
+    margin-bottom: 1rem;
+    font-size: 0.9375rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  strong {
+    color: var(--color-text-primary);
+    font-weight: 600;
+  }
+}
+
+// Loading Spinner
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid var(--color-border);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 1.25rem;
+}
+
+@keyframes spin {
+  to { 
+    transform: rotate(360deg); 
+  }
+}
+
+// Icons
+.success-icon,
+.error-icon {
+  margin-bottom: 1.25rem;
+  display: flex;
+  justify-content: center;
+
+  svg {
+    width: 64px;
+    height: 64px;
+  }
+}
+
+.success-icon svg {
+  color: var(--color-accent-success);
+}
+
+.error-icon svg {
+  color: var(--color-accent-danger);
+}
+
+// Button
+.button-container {
+  text-align: center;
+  margin-top: 1.875rem;
+}
+
+.cta-button {
+  display: inline-block;
+  background-color: var(--color-primary);
+  color: var(--color-text-primary);
+  text-decoration: none;
+  padding: 0.875rem 2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 200px;
+
+  &:hover {
+    background-color: var(--color-primary-hover);
+  }
+
+  &:active {
+    background-color: var(--color-primary-active);
+  }
+
+  &.secondary {
+    background-color: transparent;
+    border: 2px solid var(--color-primary);
+    color: var(--color-primary);
+
+    &:hover {
+      background-color: var(--color-accent-primary-soft);
+    }
+  }
+}
+
+// Divider
+.divider {
+  height: 1px;
+  background-color: var(--color-border);
+  margin: 1.875rem 0;
+}
+
+// Info Box
+.info-box {
+  background-color: var(--color-accent-primary-soft);
+  border-left: 4px solid var(--color-accent-warning);
+  padding: 1rem 1.25rem;
+  border-radius: 6px;
+  margin: 1.5rem 0;
+  text-align: left;
+
+  p {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+
+    strong {
+      display: block;
+      margin-bottom: 0.25rem;
+      color: var(--color-text-primary);
+    }
+  }
+}
+
+.error-message {
+  color: var(--color-message-error);
+  font-weight: 500;
+  margin-top: 1rem;
+}
+
+// Footer
+.verify-footer {
+  background-color: var(--color-bg-dark);
+  padding: 1.875rem;
+  text-align: center;
+  border-top: 1px solid var(--color-border);
+
+  p {
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    margin-bottom: 0.5rem;
+    line-height: 1.5;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    strong {
+      color: var(--color-text-secondary);
+      font-weight: 600;
+    }
+  }
+
+  a {
+    color: var(--color-primary);
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+
+    &:hover {
+      opacity: 0.8;
+      text-decoration: underline;
+    }
+  }
+
+  @media (max-width: 600px) {
+    padding: 1.25rem;
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 600px) {
+  .verify-email-page {
+    padding: 0;
+  }
+
+  .verify-container {
+    border-radius: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .verify-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+}

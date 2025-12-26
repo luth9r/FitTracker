@@ -4,6 +4,7 @@
   [type]="showPassword ? 'text' : type"
   [name]="fieldName"
   [value]="value"
+  [hasError]="hasError"
   (valueChange)="onValueChange($event)"
   (focus)="onFocus()"
   (blur)="onBlur()"

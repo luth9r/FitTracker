@@ -13,10 +13,10 @@ export class InputFieldComponent {
   @Input() placeholder?: string;
   @Input() type = 'text';
   @Input() name!: string;
-
+  @Input() hasError = false;
   @Input() value = '';
-  @Output() valueChange = new EventEmitter<string>();
 
+  @Output() valueChange = new EventEmitter<string>();
   @Output() focus = new EventEmitter<string>();
   @Output() blur = new EventEmitter<void>();
 

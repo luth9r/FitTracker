@@ -1,9 +1,14 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { AuthInputFieldComponent } from '../../../ui/auth-input-field/auth-input-field.component';
 import { ValidationChecklistComponent } from '../../../ui/validation-checklist/validation-checklist.component';
+import { ModalService } from '../../../../../../shared/utils/modal.service';
+import { 
+  EmailVerificationModalComponent, 
+  EmailVerificationData 
+} from '../../../ui/email-verification-modal/email-verification-modal.component';
 
 export interface RegisterFormData {
   username: string;
@@ -26,6 +31,8 @@ export interface RegisterFormData {
   styleUrls: ['./register-form.component.scss'],
 })
 export class RegisterFormComponent {
+  private modalService = inject(ModalService);
+
   @Input() isLoading = false;
   @Input() usernameValidationState = { minLength: false, noSpaces: false };
   @Input() passwordValidationState = { minLength: false, oneLetter: false, oneNumber: false };
@@ -38,6 +45,7 @@ export class RegisterFormComponent {
   @Output() fieldFocus = new EventEmitter<string>();
   @Output() fieldBlur = new EventEmitter<void>();
   @Output() validateChange = new EventEmitter<{ field: string; value: string }>();
+  @Output() resendVerification = new EventEmitter<string>();
 
   formData: RegisterFormData = {
     username: '',
@@ -68,6 +76,27 @@ export class RegisterFormComponent {
   get showConfirmPasswordValidation(): boolean {
     return (
       this.activeField === 'confirmPassword' &&
+      this.formData.confirmPassword.length > 0 &&
+      !this.confirmPasswordValidationState.matches
+    );
+  }
+
+  get hasUsernameError(): boolean {
+    return (
+      this.formData.username.length > 0 &&
+      !Object.values(this.usernameValidationState).every((v) => v)
+    );
+  }
+
+  get hasPasswordError(): boolean {
+    return (
+      this.formData.password.length > 0 &&
+      !Object.values(this.passwordValidationState).every((v) => v)
+    );
+  }
+
+  get hasConfirmPasswordError(): boolean {
+    return (
       this.formData.confirmPassword.length > 0 &&
       !this.confirmPasswordValidationState.matches
     );
