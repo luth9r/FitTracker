@@ -15,7 +15,6 @@
 		<Folder Include="Services\" />
 		<Folder Include="UseCases\Exercise\Commands\" />
 		<Folder Include="UseCases\Exercise\Handlers\Commands\" />
-		<Folder Include="Validators\" />
 	</ItemGroup>
 
 	<ItemGroup>

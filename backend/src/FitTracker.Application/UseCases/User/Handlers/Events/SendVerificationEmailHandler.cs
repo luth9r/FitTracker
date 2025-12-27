@@ -45,7 +45,7 @@ namespace FitTracker.Application.UseCases.User.Handlers.Events
                 .Replace("{0}", notification.Username)
                 .Replace("{1}", verificationLink);
 
-            await emailService.SendEmailAsync(notification.Email, subject, emailBody);
+            await emailService.SendEmailAsync(notification.Email, subject, emailBody, cancellationToken);
 
             logger.LogInformation("Verification email sent to {Email}", notification.Email);
         }

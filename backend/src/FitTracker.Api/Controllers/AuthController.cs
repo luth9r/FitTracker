@@ -25,7 +25,7 @@ namespace FitTracker.Api.Controllers
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The <see cref="LoginResponse"/>. or <see cref="ValidationProblemDetails"/> if the login fails.</returns>
         [HttpPost("login")]
-        public async Task<ActionResult<LoginResponse>> LoginAsync(
+        public async Task<ActionResult<LoginResponse>> Login(
             [FromBody] LoginRequest loginRequest,
             CancellationToken cancellationToken)
         {
@@ -48,7 +48,7 @@ namespace FitTracker.Api.Controllers
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The <see cref="LoginResponse"/> or <see cref="ValidationProblemDetails"/> if the login fails.</returns>
         [HttpPost("google-login")]
-        public async Task<IActionResult> GoogleLoginAsync(
+        public async Task<IActionResult> GoogleLogin(
             [FromBody] GoogleLoginRequest googleRequest,
             CancellationToken cancellationToken)
         {
@@ -71,7 +71,7 @@ namespace FitTracker.Api.Controllers
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The <see cref="LoginResponse"/> or <see cref="ValidationProblemDetails"/> if the registration fails.</returns>
         [HttpPost("google-register")]
-        public async Task<IActionResult> GoogleRegisterAsync(
+        public async Task<IActionResult> GoogleRegister(
             [FromBody] GoogleRegisterRequest googleRegisterRequest,
             CancellationToken cancellationToken)
         {
@@ -93,7 +93,7 @@ namespace FitTracker.Api.Controllers
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The <see cref="LoginResponse"/> or <see cref="ValidationProblemDetails"/> if the registration fails.</returns>
         [HttpPost("register")]
-        public async Task<IActionResult> RegisterAsync(
+        public async Task<IActionResult> Register(
             [FromBody] RegisterRequest registerRequest,
             CancellationToken cancellationToken)
         {
@@ -113,19 +113,19 @@ namespace FitTracker.Api.Controllers
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Success or <see cref="ValidationProblemDetails"/> if the resend fails.</returns>
         [HttpPost("resend-verification")]
-        public async Task<IActionResult> ResendVerificationEmailAsync(
+        public async Task<IActionResult> ResendVerificationEmail(
             [FromBody] ResendVerificationRequest resendRequest,
             CancellationToken cancellationToken)
         {
-            var query = new ResendVerificationEmailQuery(resendRequest.Email);
-            var result = await mediator.Send(query, cancellationToken);
+            var command = new ResendVerificationEmailCommand(resendRequest.Email);
+            var result = await mediator.Send(command, cancellationToken);
 
             if (result.IsFailure)
             {
                 return ValidationProblem(result.Error.ToModelState());
             }
 
-            return Ok();
+            return NoContent();
         }
 
         /// <summary>
@@ -135,7 +135,7 @@ namespace FitTracker.Api.Controllers
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The <see cref="LoginResponse"/> or <see cref="ValidationProblemDetails"/> if the verification fails.</returns>
         [HttpPost("verify-email")]
-        public async Task<IActionResult> VerifyEmailAsync(
+        public async Task<IActionResult> VerifyEmail(
             [FromQuery] string token,
             CancellationToken cancellationToken)
         {
@@ -154,6 +154,25 @@ namespace FitTracker.Api.Controllers
 
             SetAuthCookie(result.Value.JWT);
             return Ok(result.Value);
+        }
+
+        /// <summary>
+        /// Initiates the password reset process by sending a reset link to the user's email.
+        /// </summary>
+        /// <param name="request">The forgot password request containing the user's email address.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>A <see cref="NoContentResult"/> indicating the request was processed successfully.</returns>
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword(
+            [FromBody] ForgotPasswordRequest request,
+            CancellationToken cancellationToken)
+        {
+            var command = new ForgotPasswordCommand(request.Email);
+
+            // Always returns success to prevent user enumeration attacks
+            await mediator.Send(command, cancellationToken);
+
+            return NoContent();
         }
 
         /// <summary>

@@ -75,7 +75,7 @@ namespace FitTrackerApi.Tests.Controllers
                 .ReturnsAsync(Result.Success<IReadOnlyList<ExerciseResponse>>(expectedResponse));
 
             // Act
-            var result = await _controller.GetExercisesAsync(filterType, CancellationToken.None);
+            var result = await _controller.GetExercises(filterType, CancellationToken.None);
 
             // Assert
             result.Should().BeOfType<OkObjectResult>();
@@ -135,7 +135,7 @@ namespace FitTrackerApi.Tests.Controllers
                 .ReturnsAsync(Result.Success<IReadOnlyList<ExerciseResponse>>(expectedResponse));
 
             // Act
-            var result = await _controller.GetExercisesAsync(filterType, CancellationToken.None);
+            var result = await _controller.GetExercises(filterType, CancellationToken.None);
 
             // Assert
             result.Should().BeOfType<OkObjectResult>();
@@ -174,7 +174,7 @@ namespace FitTrackerApi.Tests.Controllers
                 .ReturnsAsync(Result.Success<IReadOnlyList<ExerciseResponse>>(expectedResponse));
 
             // Act
-            var result = await _controller.GetExercisesAsync(cancellationToken: CancellationToken.None);
+            var result = await _controller.GetExercises(cancellationToken: CancellationToken.None);
 
             // Assert
             result.Should().BeOfType<OkObjectResult>();
@@ -246,7 +246,7 @@ namespace FitTrackerApi.Tests.Controllers
                 .ReturnsAsync(Result.Success<ExerciseDetailsResponse>(expectedResponse));
 
             // Act
-            var result = await _controller.GetExerciseDetailsByIdAsync(exerciseId, cancellationToken: CancellationToken.None);
+            var result = await _controller.GetExerciseDetailsById(exerciseId, cancellationToken: CancellationToken.None);
 
             // Assert
             result.Should().BeOfType<OkObjectResult>();

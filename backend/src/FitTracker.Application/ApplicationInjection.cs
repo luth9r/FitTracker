@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using FitTracker.Application.Behaviors;
 using FluentValidation;
 using MediatR;
@@ -6,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace FitTracker.Application
 {
+    [ExcludeFromCodeCoverage]
     public static class ApplicationInjection
     {
         public static IServiceCollection AddApplication(this IServiceCollection services, IConfiguration configuration)

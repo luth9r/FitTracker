@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Security.Claims;
 using System.Text;
@@ -21,6 +22,7 @@ namespace FitTracker.Api.Extensions
     /// <summary>
     /// WebApplicationBuilder configuration extensions.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     internal static class WebApplicationBuilderExtensions
     {
         /// <summary>

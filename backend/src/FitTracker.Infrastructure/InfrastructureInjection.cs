@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using FitTracker.Application.Interfaces;
 using FitTracker.Application.UseCases.User.Commands;
 using FitTracker.Domain.Abstract.Interfaces;
@@ -11,7 +12,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace FitTracker.Infrastructure;
 
-public static class DependencyInjection
+[ExcludeFromCodeCoverage]
+public static class InfrastructureInjection
 {
     public static IServiceCollection AddInfrastructure(
         this IServiceCollection services,
@@ -112,7 +114,7 @@ public static class DependencyInjection
     {
         _ = services.AddAutoMapper(cfg =>
         {
-            cfg.AddMaps(typeof(DependencyInjection).Assembly);
+            cfg.AddMaps(typeof(InfrastructureInjection).Assembly);
         });
     }
 }

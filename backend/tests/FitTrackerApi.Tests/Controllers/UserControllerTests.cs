@@ -50,7 +50,7 @@ public class UserControllerTests
         SetupUser(userId);
 
         // Act
-        var result = await _controller.GetCurrentUserAsync(CancellationToken.None);
+        var result = await _controller.GetCurrentUser(CancellationToken.None);
 
         // Assert
         result.Should().BeOfType<OkObjectResult>();
@@ -71,7 +71,7 @@ public class UserControllerTests
             .ReturnsAsync(Result.Success(expectedStats));
 
         // Act
-        var result = await _controller.GetUserStatsAsync(CancellationToken.None);
+        var result = await _controller.GetUserStats(CancellationToken.None);
 
         // Assert
         result.Should().BeOfType<OkObjectResult>();
@@ -95,7 +95,7 @@ public class UserControllerTests
             .ReturnsAsync(Result.Success<IReadOnlyList<RecentWorkoutResponse>>(expectedWorkouts));
 
         // Act
-        var result = await _controller.GetRecentWorkoutsForUserAsync(CancellationToken.None);
+        var result = await _controller.GetRecentWorkoutsForUser(CancellationToken.None);
 
         // Assert
         result.Should().BeOfType<OkObjectResult>();

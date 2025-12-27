@@ -15,7 +15,7 @@ namespace FitTracker.Api.Controllers
         /// </summary>
         /// <returns>The current user.</returns>
         [HttpGet("me")]
-        public async Task<IActionResult> GetCurrentUserAsync(CancellationToken cancellationToken)
+        public async Task<IActionResult> GetCurrentUser(CancellationToken cancellationToken)
         {
             var userId = CurrentUserId;
 
@@ -27,7 +27,7 @@ namespace FitTracker.Api.Controllers
         /// </summary>
         /// <returns>The <see cref="UserStatsResponse"></see>.</returns>
         [HttpGet("stats")]
-        public async Task<IActionResult> GetUserStatsAsync(CancellationToken cancellationToken)
+        public async Task<IActionResult> GetUserStats(CancellationToken cancellationToken)
         {
             var query = new GetUserStatsQuery(CurrentUserId);
             var result = await mediator.Send(query, cancellationToken);
@@ -36,7 +36,7 @@ namespace FitTracker.Api.Controllers
         }
 
         [HttpGet("workouts/recent")]
-        public async Task<IActionResult> GetRecentWorkoutsForUserAsync(CancellationToken cancellationToken, [FromQuery] int take = 5)
+        public async Task<IActionResult> GetRecentWorkoutsForUser(CancellationToken cancellationToken, [FromQuery] int take = 5)
         {
             var query = new GetRecentWorkoutsQuery(CurrentUserId, take);
             var result = await mediator.Send(query, cancellationToken);

@@ -10,7 +10,7 @@ namespace FitTracker.Api.Controllers
         IMediator mediator) : BaseApiController
     {
         [HttpGet]
-        public async Task<IActionResult> GetExercisesAsync([FromQuery] ExerciseFilterType type = ExerciseFilterType.All, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> GetExercises([FromQuery] ExerciseFilterType type = ExerciseFilterType.All, CancellationToken cancellationToken = default)
         {
             var query = new GetExerciseQuery(type, CurrentUserId);
             var result = await mediator.Send(query, cancellationToken);
@@ -19,7 +19,7 @@ namespace FitTracker.Api.Controllers
         }
 
         [HttpGet("{exerciseId:guid}")]
-        public async Task<IActionResult> GetExerciseDetailsByIdAsync([FromRoute] Guid exerciseId, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> GetExerciseDetailsById([FromRoute] Guid exerciseId, CancellationToken cancellationToken = default)
         {
             var query = new GetExerciseByIdQuery(exerciseId, CurrentUserId);
             var result = await mediator.Send(query, cancellationToken);

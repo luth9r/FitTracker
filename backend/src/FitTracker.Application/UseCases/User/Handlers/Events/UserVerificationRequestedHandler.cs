@@ -17,12 +17,12 @@ namespace FitTracker.Application.UseCases.User.Handlers.Events
     /// <param name="emailService">Service for sending emails.</param>
     /// <param name="localization">Service for retrieving localized email content.</param>
     /// <param name="logger">Logger for diagnostic information.</param>
-    public class UserRequestedVerificationEventHandler(
+    public class UserVerificationRequestedHandler(
         IJwtTokenGenerator jwtTokenGenerator,
         IConfiguration configuration,
         IEmailService emailService,
         ILocalizationService localization,
-        ILogger<UserRequestedVerificationEventHandler> logger) : INotificationHandler<UserRequestedVerificationEvent>
+        ILogger<UserVerificationRequestedHandler> logger) : INotificationHandler<UserRequestedVerificationEvent>
     {
         /// <summary>
         /// Handles the user requested verification event by sending a verification email.
@@ -42,7 +42,7 @@ namespace FitTracker.Application.UseCases.User.Handlers.Events
                 .Replace("{0}", notification.Username)
                 .Replace("{1}", verificationLink);
 
-            await emailService.SendEmailAsync(notification.Email, subject, emailBody);
+            await emailService.SendEmailAsync(notification.Email, subject, emailBody, cancellationToken);
 
             logger.LogInformation("Verification email sent to {Email}", notification.Email);
         }

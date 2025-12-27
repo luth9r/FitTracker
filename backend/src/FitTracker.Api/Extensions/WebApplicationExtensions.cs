@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using FitTracker.Infrastructure.Persistence.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -9,6 +10,7 @@ namespace FitTracker.Api.Extensions
     /// <summary>
     /// WebApplication configuration extensions.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     internal static class WebApplicationExtensions
     {
         /// <summary>

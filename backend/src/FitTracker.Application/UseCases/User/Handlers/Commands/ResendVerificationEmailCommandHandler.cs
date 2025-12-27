@@ -5,14 +5,14 @@ using CSharpFunctionalExtensions;
 using FitTracker.Application.Events;
 using FitTracker.Application.Extensions;
 using FitTracker.Application.Interfaces;
-using FitTracker.Application.UseCases.User.Queries;
+using FitTracker.Application.UseCases.User.Commands;
 using FitTracker.Domain.Abstract.Interfaces;
 using FluentValidation.Results;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using ResultExtensions = FitTracker.Application.Extensions.ResultExtensions;
 
-namespace FitTracker.Application.UseCases.User.Handlers.Queries
+namespace FitTracker.Application.UseCases.User.Handlers.Commands
 {
     /// <summary>
     /// Handler for processing resend verification email queries.
@@ -21,21 +21,21 @@ namespace FitTracker.Application.UseCases.User.Handlers.Queries
     /// <param name="mediator">The <see cref="IMediator"/>.</param>
     /// <param name="logger">The <see cref="ILogger{ResendVerificationEmailQueryHandler}"/>.</param>
     /// <param name="localization">The <see cref="ILocalizationService"/>.</param>
-    public sealed class ResendVerificationEmailQueryHandler(
+    public sealed class ResendVerificationEmailCommandHandler(
         IUserReadRepository userReadRepository,
         IMediator mediator,
-        ILogger<ResendVerificationEmailQueryHandler> logger,
+        ILogger<ResendVerificationEmailCommandHandler> logger,
         ILocalizationService localization)
-        : IRequestHandler<ResendVerificationEmailQuery, Result<Unit, ValidationResult>>
+        : IRequestHandler<ResendVerificationEmailCommand, Result<Unit, ValidationResult>>
     {
         /// <summary>
         /// Handles the resend verification email query.
         /// </summary>
-        /// <param name="request">The <see cref="ResendVerificationEmailQuery"/>.</param>
+        /// <param name="request">The <see cref="ResendVerificationEmailCommand"/>.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/>.</param>
         /// <returns>A <see cref="Result{Unit, ValidationResult}"/> indicating success or validation failure.</returns>
         public async Task<Result<Unit, ValidationResult>> Handle(
-            ResendVerificationEmailQuery request,
+            ResendVerificationEmailCommand request,
             CancellationToken cancellationToken)
         {
             // Retrieve user by email

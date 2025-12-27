@@ -12,6 +12,7 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/FitTrackerApi.Tests/FitTrackerApi.Tests.csproj" />
+    <Project Path="tests/FitTrackerApplication.Tests/FitTrackerApplication.Tests.csproj" Id="4a4efaae-f836-4a6c-a83c-d40a9fc7b12c" />
     <Project Path="tests/FitTrackerDomain.Tests/FitTrackerDomain.Tests.csproj" />
     <Project Path="tests/FitTrackerInfrastructure.Tests/FitTrackerInfrastructure.Tests.csproj" />
   </Folder>
