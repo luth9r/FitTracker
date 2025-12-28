@@ -1,5 +1,6 @@
 using AutoMapper;
 using CSharpFunctionalExtensions;
+using FitTracker.Application.Constants;
 using FitTracker.Application.DTOs.Auth;
 using FitTracker.Application.Extensions;
 using FitTracker.Application.Interfaces;
@@ -16,7 +17,7 @@ namespace FitTracker.Application.UseCases.User.Handlers.Commands
     /// <summary>
     /// Handler for processing email verification commands.
     /// </summary>
-    /// <param name="jwtTokenGenerator">The <see cref="IJwtTokenGenerator"/>.</param>
+    /// <param name="jwtTokenValidator">The <see cref="IJwtTokenValidator"/>.</param>
     /// <param name="userReadRepository">The <see cref="IUserReadRepository"/>.</param>
     /// <param name="userWriteRepository">The <see cref="IUserWriteRepository"/>.</param>
     /// <param name="unitOfWork">The <see cref="IUnitOfWork"/>.</param>
@@ -25,6 +26,7 @@ namespace FitTracker.Application.UseCases.User.Handlers.Commands
     /// <param name="logger">The <see cref="ILogger{VerifyEmailCommandHandler}"/>.</param>
     public sealed class VerifyEmailCommandHandler(
         IJwtTokenGenerator jwtTokenGenerator,
+        IJwtTokenValidator jwtTokenValidator,
         IUserReadRepository userReadRepository,
         IUserWriteRepository userWriteRepository,
         IUnitOfWork unitOfWork,
@@ -41,35 +43,20 @@ namespace FitTracker.Application.UseCases.User.Handlers.Commands
         /// <returns>The <see cref="LoginResponse"/> result.</returns>
         public async Task<Result<LoginResponse, ValidationResult>> Handle(VerifyEmailCommand request, CancellationToken cancellationToken)
         {
-            logger.LogDebug("Starting email verification process.");
+            var validationResult = jwtTokenValidator.ValidatePurposeToken(request.Token, TokenPurposes.EmailVerification);
 
-            var claimsPrincipal = jwtTokenGenerator.ValidateToken(request.Token);
-
-            if (claimsPrincipal == null)
+            if (validationResult.IsFailure)
             {
-                logger.LogWarning("Email verification token validation failed.");
-                return ResultExtensions.ValidationFailure<LoginResponse>(string.Empty, localization.GetString("Auth.VerifyEmail.InvalidToken"));
+                logger.LogWarning("Email verification failed: {Error}", validationResult.Error);
+                return ResultExtensions.ValidationFailure<LoginResponse>(string.Empty, localization.GetString("Auth.InvalidToken"));
             }
 
-            var purposeClaim = claimsPrincipal.FindFirst("purpose");
-            if (purposeClaim != null && purposeClaim.Value != "email_verification")
-            {
-                logger.LogWarning("Email verification token has wrong purpose: {Purpose}", purposeClaim.Value);
-                return ResultExtensions.ValidationFailure<LoginResponse>(string.Empty, localization.GetString("Auth.VerifyEmail.WrongPurposeToken"));
-            }
-
-            var userIdString = claimsPrincipal.FindFirst(ClaimTypes.NameIdentifier);
-            if (userIdString == null || !Guid.TryParse(userIdString.Value, out var userId))
-            {
-                logger.LogWarning("Email verification token is missing or has invalid user ID.");
-                return ResultExtensions.ValidationFailure<LoginResponse>(string.Empty, localization.GetString("Auth.VerifyEmail.InvalidToken"));
-            }
-
+            var userId = validationResult.Value;
             var user = await userReadRepository.GetByIdReadonlyAsync(userId, cancellationToken);
             if (user == null)
             {
                 logger.LogWarning("User not found for email verification. UserId: {UserId}", userId);
-                return ResultExtensions.ValidationFailure<LoginResponse>(string.Empty, localization.GetString("Auth.VerifyEmail.UserNotFound"));
+                return ResultExtensions.ValidationFailure<LoginResponse>(string.Empty, localization.GetString("User.UserNotFound"));
             }
 
             if (user.IsEmailVerified)

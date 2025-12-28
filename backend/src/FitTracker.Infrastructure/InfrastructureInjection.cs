@@ -6,6 +6,7 @@ using FitTracker.Infrastructure.Localization;
 using FitTracker.Infrastructure.Persistence.Data;
 using FitTracker.Infrastructure.Persistence.Repositories;
 using FitTracker.Infrastructure.Services;
+using FitTracker.Infrastructure.Settings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,24 +20,14 @@ public static class InfrastructureInjection
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        // ============================================
-        // Database Configuration
-        // ============================================
         AddDatabase(services, configuration);
 
-        // ============================================
-        // Localization Services
-        // ============================================
         AddLocalization(services);
 
-        // ============================================
-        // Repository Registration
-        // ============================================
         AddRepositories(services);
 
-        // ============================================
-        // Automappers
-        // ============================================
+        AddAuthAndTokens(services, configuration);
+
         AddAutoMappers(services);
 
         return services;
@@ -90,24 +81,27 @@ public static class InfrastructureInjection
 
     private static void AddRepositories(IServiceCollection services)
     {
-        _ = services.AddScoped<IPasswordHasher, PasswordHasher>();
-
+        _ = services.AddScoped<IUnitOfWork, UnitOfWork>();
         _ = services.AddScoped<IUserWriteRepository, UserWriteRepository>();
         _ = services.AddScoped<IUserReadRepository, UserReadRepository>();
         _ = services.AddScoped<IWorkoutReadRepository, WorkoutReadRepository>();
         _ = services.AddScoped<ISetReadRepository, SetReadRepository>();
         _ = services.AddScoped<IExerciseReadRepository, ExerciseReadRepository>();
+    }
 
-        _ = services.AddScoped<IUnitOfWork, UnitOfWork>();
+    private static void AddAuthAndTokens(IServiceCollection services, IConfiguration configuration)
+    {
+        _ = services.AddScoped<IPasswordHasher, PasswordHasher>();
         _ = services.AddScoped<IEmailService, EmailService>();
         _ = services.AddScoped<IGoogleOAuthService, GoogleOAuthService>();
-        _ = services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
 
-        // TODO:
-        // services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
-        // services.AddScoped<IUnitOfWork, UnitOfWork>();
-        // services.AddScoped<IWorkoutRepository, WorkoutRepository>();
-        // services.AddScoped<IExerciseRepository, ExerciseRepository>();
+        services.AddOptions<JwtSettings>()
+            .Bind(configuration.GetSection(JwtSettings.SectionName))
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
+
+        _ = services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
+        _ = services.AddSingleton<IJwtTokenValidator, JwtTokenValidator>();
     }
 
     private static void AddAutoMappers(IServiceCollection services)

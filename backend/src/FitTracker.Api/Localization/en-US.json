@@ -21,11 +21,11 @@
             "AccountAlreadyExists": "An account with this email already exists. Please log in instead."
         },
         "VerifyEmail": {
-            "InvalidToken": "Invalid or expired verification token",
             "WrongPurposeToken": "Invalid token purpose",
             "UserNotFound": "User not found",
             "AlreadyVerified": "Email is already verified"
-        }
+        },
+        "InvalidToken": "Invalid or expired verification token"
     },
     "Email": {
         "ResetPassword": {

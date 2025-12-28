@@ -6,6 +6,7 @@ using FitTracker.Application.UseCases.User.Commands;
 using FitTracker.Application.UseCases.User.Commands.Google;
 using FitTracker.Application.UseCases.User.Queries;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FitTracker.Api.Controllers
@@ -15,6 +16,7 @@ namespace FitTracker.Api.Controllers
     /// </summary>
     [ApiController]
     [Route("api/[controller]")]
+    [AllowAnonymous]
     public sealed class AuthController(
         IMediator mediator) : ControllerBase
     {
@@ -171,6 +173,30 @@ namespace FitTracker.Api.Controllers
 
             // Always returns success to prevent user enumeration attacks
             await mediator.Send(command, cancellationToken);
+
+            return NoContent();
+        }
+
+        /// <summary>
+        /// Resets a user's password using a password reset token.
+        /// </summary>
+        /// <param name="token">The password reset token from the reset link.</param>
+        /// <param name="request">The reset password request containing the new password.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>A <see cref="NoContentResult"/> if successful, or <see cref="ValidationProblemDetails"/> if the reset fails.</returns>
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword(
+            [FromQuery] string token,
+            [FromBody] ResetPasswordRequest request,
+            CancellationToken cancellationToken)
+        {
+            var command = new ResetPasswordCommand(request.NewPassword, token);
+
+            var result = await mediator.Send(command, cancellationToken);
+            if (result.IsFailure)
+            {
+                return ValidationProblem(result.Error.ToModelState());
+            }
 
             return NoContent();
         }

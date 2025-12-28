@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using FitTracker.Application.DTOs.Auth;
 using FitTracker.Application.Interfaces;
+using FitTracker.Application.Validators.CommonValidators;
 using FluentValidation;
 
 namespace FitTracker.Application.Validators
@@ -12,10 +13,7 @@ namespace FitTracker.Application.Validators
         public ResendVerificationRequestValidator(ILocalizationService localization)
         {
             RuleFor(x => x.Email)
-                .NotEmpty()
-                .WithMessage(_ => localization.GetString("Validation.User.Email.Required"))
-                .EmailAddress()
-                .WithMessage(_ => localization.GetString("Validation.User.Email.InvalidFormat"));
+                .WithEmailRules(localization);
         }
     }
 }

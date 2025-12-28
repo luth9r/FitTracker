@@ -12,13 +12,13 @@ namespace FitTracker.Application.UseCases.User.Handlers.Events
     /// <summary>
     /// Handler for processing user-requested verification email events.
     /// </summary>
-    /// <param name="jwtTokenGenerator">Service for generating verification JWT tokens.</param>
+    /// <param name="jwtTokenService">Service for generating verification JWT tokens.</param>
     /// <param name="configuration">Application configuration containing verification link base URL.</param>
     /// <param name="emailService">Service for sending emails.</param>
     /// <param name="localization">Service for retrieving localized email content.</param>
     /// <param name="logger">Logger for diagnostic information.</param>
     public class UserVerificationRequestedHandler(
-        IJwtTokenGenerator jwtTokenGenerator,
+        IJwtTokenGenerator jwtTokenService,
         IConfiguration configuration,
         IEmailService emailService,
         ILocalizationService localization,
@@ -31,7 +31,7 @@ namespace FitTracker.Application.UseCases.User.Handlers.Events
         /// <param name="cancellationToken">Token to cancel the operation.</param>
         public async Task Handle(UserRequestedVerificationEvent notification, CancellationToken cancellationToken)
         {
-            var verificationToken = jwtTokenGenerator.GenerateVerificationToken(notification.UserId);
+            var verificationToken = jwtTokenService.GenerateVerificationToken(notification.UserId);
             var verificationLinkBase = configuration["App:VerificationLinkBase"];
             var verificationLink = $"{verificationLinkBase}?token={verificationToken}";
 

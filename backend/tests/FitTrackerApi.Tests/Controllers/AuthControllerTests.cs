@@ -247,7 +247,7 @@ public class AuthControllerTests
     }
 
     [Fact]
-    public async Task ResendVerificationEmail_ShouldReturnOk_WhenUserExists_And_EmailNotVerified()
+    public async Task ResendVerificationEmail_ShouldReturnNoContent_WhenUserExists_And_EmailNotVerified()
     {
         // Arrange
         var email = "test@gmail.com";
@@ -261,7 +261,7 @@ public class AuthControllerTests
         var result = await _controller.ResendVerificationEmail(request, CancellationToken.None);
 
         // Assert
-        result.Should().BeOfType<OkResult>();
+        result.Should().BeOfType<NoContentResult>();
 
         _mediatorMock.Verify(
             m => m.Send(
@@ -317,6 +317,31 @@ public class AuthControllerTests
         _mediatorMock
             .Verify(m => m.Send(
                 It.Is<ForgotPasswordCommand>(cmd => cmd.Email == email),
+                It.IsAny<CancellationToken>()),
+            Times.Once);
+    }
+
+    [Fact]
+    public async Task ResetPassword_ShouldReturnNoContent_WhenSuccessful()
+    {
+        // Arrange
+        var newPassword = "newpassword123";
+        var token = "jwt-token";
+        var request = new ResetPasswordRequest(newPassword);
+
+        _mediatorMock
+            .Setup(m => m.Send(It.IsAny<ResetPasswordRequest>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Success<Unit, ValidationResult>(Unit.Value));
+
+        // Act
+        var result = await _controller.ResetPassword(token, request, CancellationToken.None);
+
+        result.Should().NotBeNull();
+        result.Should().BeOfType<NoContentResult>();
+
+        _mediatorMock
+            .Verify(m => m.Send(
+                It.Is<ResetPasswordCommand>(cmd => cmd.NewPassword == newPassword && cmd.Token == token),
                 It.IsAny<CancellationToken>()),
             Times.Once);
     }

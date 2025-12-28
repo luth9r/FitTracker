@@ -21,14 +21,14 @@ namespace FitTracker.Application.UseCases.User.Handlers.Commands
     /// <param name="userReadRepository">The <see cref="IUserReadRepository"/>.</param>
     /// <param name="mapper">The <see cref="IMapper"/>.</param>
     /// <param name="hasher">The <see cref="IPasswordHasher"/>.</param>
-    /// <param name="jwtTokenGenerator">The <see cref="IJwtTokenGenerator"/>.</param>
+    /// <param name="jwtTokenService">The <see cref="IJwtTokenGenerator"/>.</param>
     /// <param name="localization">The <see cref="ILocalizationService"/>.</param>
     /// <param name="logger">The <see cref="ILogger{LoginCommandHandler}"/>.</param>
     public sealed class LoginCommandHandler(
         IUserReadRepository userReadRepository,
         IMapper mapper,
         IPasswordHasher hasher,
-        IJwtTokenGenerator jwtTokenGenerator,
+        IJwtTokenGenerator jwtTokenService,
         ILocalizationService localization,
         ILogger<LoginCommandHandler> logger) : IRequestHandler<LoginCommand, Result<LoginResponse, ValidationResult>>
     {
@@ -61,7 +61,7 @@ namespace FitTracker.Application.UseCases.User.Handlers.Commands
                 return ResultExtensions.ValidationFailure<LoginResponse>(nameof(request.Request.Password), localization.GetString("Auth.Login.InvalidCredentials"));
             }
 
-            var loginToken = jwtTokenGenerator.GenerateToken(user);
+            var loginToken = jwtTokenService.GenerateToken(user);
 
             var response = mapper.Map<LoginResponse>(user) with
             {

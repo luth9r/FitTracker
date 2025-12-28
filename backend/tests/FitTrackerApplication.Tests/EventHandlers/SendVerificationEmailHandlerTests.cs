@@ -13,7 +13,7 @@ namespace FitTrackerApplication.Tests.EventHandlers
 {
     public class SendVerificationEmailHandlerTests
     {
-        private readonly Mock<IJwtTokenGenerator> _jwtTokenGeneratorMock;
+        private readonly Mock<IJwtTokenGenerator> _jwtTokenServiceMock;
         private readonly Mock<IConfiguration> _configurationMock;
         private readonly Mock<IEmailService> _emailServiceMock;
         private readonly Mock<ILocalizationService> _localizationMock;
@@ -22,14 +22,14 @@ namespace FitTrackerApplication.Tests.EventHandlers
 
         public SendVerificationEmailHandlerTests()
         {
-            _jwtTokenGeneratorMock = new Mock<IJwtTokenGenerator>();
+            _jwtTokenServiceMock = new Mock<IJwtTokenGenerator>();
             _configurationMock = new Mock<IConfiguration>();
             _emailServiceMock = new Mock<IEmailService>();
             _localizationMock = new Mock<ILocalizationService>();
             _loggerMock = new Mock<ILogger<SendVerificationEmailHandler>>();
 
             _handler = new SendVerificationEmailHandler(
-                _jwtTokenGeneratorMock.Object,
+                _jwtTokenServiceMock.Object,
                 _configurationMock.Object,
                 _emailServiceMock.Object,
                 _localizationMock.Object,
@@ -50,7 +50,7 @@ namespace FitTrackerApplication.Tests.EventHandlers
 
             var notification = new UserRegisteredEvent(userId, email, username);
 
-            _jwtTokenGeneratorMock
+            _jwtTokenServiceMock
                 .Setup(x => x.GenerateVerificationToken(userId))
                 .Returns(generatedToken);
 
@@ -70,7 +70,7 @@ namespace FitTrackerApplication.Tests.EventHandlers
             await _handler.Handle(notification, CancellationToken.None);
 
             // Assert
-            _jwtTokenGeneratorMock.Verify(
+            _jwtTokenServiceMock.Verify(
                 x => x.GenerateVerificationToken(userId),
                 Times.Once);
 

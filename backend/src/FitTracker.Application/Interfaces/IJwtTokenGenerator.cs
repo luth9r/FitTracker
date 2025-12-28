@@ -9,31 +9,24 @@ namespace FitTracker.Application.Interfaces
     public interface IJwtTokenGenerator
     {
         /// <summary>
-        /// Generates a JWT token for the given user.
+        /// Generates an access token for the authenticated user.
         /// </summary>
-        /// <param name="user">The <see cref="User"/>.</param>
-        /// <returns>The generated JWT token string.</returns>
+        /// <param name="user">The user to generate the token for.</param>
+        /// <returns>A JWT access token.</returns>
         string GenerateToken(User user);
 
         /// <summary>
-        /// Generates a verification token for the given user.
+        /// Generates an email verification token for the specified user.
         /// </summary>
-        /// <param name="user">The <see cref="User"/>.</param>
-        /// <returns>The generated verification token string.</returns>
-        string GenerateVerificationToken(User user);
-
-        /// <summary>
-        /// Generates a verification token for the given user.
-        /// </summary>
-        /// <param name="userId">The id of <see cref="User"/>.</param>
-        /// <returns>The generated verification token string.</returns>
+        /// <param name="userId">The user identifier.</param>
+        /// <returns>A JWT email verification token.</returns>
         string GenerateVerificationToken(Guid userId);
 
         /// <summary>
-        /// Validates the given JWT token and returns the claims principal.
+        /// Generates a password reset token for the specified user.
         /// </summary>
-        /// <param name="token">The JWT token to validate.</param>
-        /// <returns>The <see cref="ClaimsPrincipal"/> if valid; otherwise, null.</returns>
-        ClaimsPrincipal? ValidateToken(string token);
+        /// <param name="userId">The user identifier.</param>
+        /// <returns>A JWT password reset token.</returns>
+        string GeneratePasswordResetToken(Guid userId);
     }
 }

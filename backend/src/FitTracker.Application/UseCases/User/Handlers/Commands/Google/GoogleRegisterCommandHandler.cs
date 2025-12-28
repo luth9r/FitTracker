@@ -22,7 +22,7 @@ namespace FitTracker.Application.UseCases.User.Handlers.Commands.Google
     /// <param name="googleOAuthService">The <see cref="IGoogleOAuthService"/>.</param>
     /// <param name="userReadRepository">The <see cref="IUserReadRepository"/>.</param>
     /// <param name="unitOfWork">The <see cref="IUnitOfWork"/>.</param>
-    /// <param name="jwtTokenGenerator">The <see cref="IJwtTokenGenerator"/>.</param>
+    /// <param name="jwtTokenService">The <see cref="IJwtTokenGenerator"/>.</param>
     /// <param name="localization">The <see cref="ILocalizationService"/>.</param>
     /// <param name="mapper">The <see cref="IMapper"/>.</param>
     public sealed class GoogleRegisterCommandHandler(
@@ -31,7 +31,7 @@ namespace FitTracker.Application.UseCases.User.Handlers.Commands.Google
         IUserReadRepository userReadRepository,
         IUserWriteRepository userWriteRepository,
         IUnitOfWork unitOfWork,
-        IJwtTokenGenerator jwtTokenGenerator,
+        IJwtTokenGenerator jwtTokenService,
         ILocalizationService localization,
         IMapper mapper) : IRequestHandler<GoogleRegisterCommand, Result<LoginResponse, ValidationResult>>
     {
@@ -81,7 +81,7 @@ namespace FitTracker.Application.UseCases.User.Handlers.Commands.Google
 
             logger.LogInformation("Successfully created and registered user {Username} with ID {UserId}", user.Username, user.Id);
 
-            var loginToken = jwtTokenGenerator.GenerateToken(user);
+            var loginToken = jwtTokenService.GenerateToken(user);
 
             var response = mapper.Map<LoginResponse>(user) with
             {

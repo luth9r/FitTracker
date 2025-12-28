@@ -15,7 +15,7 @@ namespace FitTrackerApplication.Tests.EventHandlers
         private readonly Mock<ILocalizationService> _localizationMock;
         private readonly Mock<IEmailService> _emailServiceMock;
         private readonly Mock<IConfiguration> _configurationMock;
-        private readonly Mock<IJwtTokenGenerator> _jwtTokenGeneratorMock;
+        private readonly Mock<IJwtTokenGenerator> _jwtTokenServiceMock;
         private readonly Mock<ILogger<UserPasswordResetRequestedHandler>> _loggerMock;
         private readonly UserPasswordResetRequestedHandler _handler;
 
@@ -24,14 +24,14 @@ namespace FitTrackerApplication.Tests.EventHandlers
             _localizationMock = new Mock<ILocalizationService>();
             _emailServiceMock = new Mock<IEmailService>();
             _configurationMock = new Mock<IConfiguration>();
-            _jwtTokenGeneratorMock = new Mock<IJwtTokenGenerator>();
+            _jwtTokenServiceMock = new Mock<IJwtTokenGenerator>();
             _loggerMock = new Mock<ILogger<UserPasswordResetRequestedHandler>>();
 
             _handler = new UserPasswordResetRequestedHandler(
                 _localizationMock.Object,
                 _emailServiceMock.Object,
                 _configurationMock.Object,
-                _jwtTokenGeneratorMock.Object,
+                _jwtTokenServiceMock.Object,
                 _loggerMock.Object);
         }
 
@@ -49,8 +49,8 @@ namespace FitTrackerApplication.Tests.EventHandlers
 
             var notification = new UserPasswordResetRequestedEvent(userId, email, username);
 
-            _jwtTokenGeneratorMock
-                .Setup(x => x.GenerateVerificationToken(userId))
+            _jwtTokenServiceMock
+                .Setup(x => x.GeneratePasswordResetToken(userId))
                 .Returns(generatedToken);
 
             _configurationMock
@@ -62,15 +62,15 @@ namespace FitTrackerApplication.Tests.EventHandlers
                 .Returns(subject);
 
             _localizationMock
-                .Setup(x => x.GetString("Email.Verification.Body"))
+                .Setup(x => x.GetString("Email.ResetPassword.Body"))
                 .Returns(bodyTemplate);
 
             // Act
             await _handler.Handle(notification, CancellationToken.None);
 
             // Assert
-            _jwtTokenGeneratorMock.Verify(
-                x => x.GenerateVerificationToken(userId),
+            _jwtTokenServiceMock.Verify(
+                x => x.GeneratePasswordResetToken(userId),
                 Times.Once);
 
             _emailServiceMock.Verify(

@@ -22,14 +22,14 @@ namespace FitTracker.Application.UseCases.User.Handlers.Commands.Google
     /// <param name="logger">The <see cref="ILogger{GoogleLoginCommandHandler}"/>.</param>
     /// <param name="googleOAuthService">The <see cref="IGoogleOAuthService"/>.</param>
     /// <param name="userReadRepository">The <see cref="IUserReadRepository"/>.</param>
-    /// <param name="jwtTokenGenerator">The <see cref="IJwtTokenGenerator"/>.</param>
+    /// <param name="jwtTokenService">The <see cref="IJwtTokenGenerator"/>.</param>
     /// <param name="localization">The <see cref="ILocalizationService"/>.</param>
     /// <param name="mapper">The <see cref="IMapper"/>.</param>
     public sealed class GoogleLoginCommandHandler(
         ILogger<GoogleLoginCommandHandler> logger,
         IGoogleOAuthService googleOAuthService,
         IUserReadRepository userReadRepository,
-        IJwtTokenGenerator jwtTokenGenerator,
+        IJwtTokenGenerator jwtTokenService,
         ILocalizationService localization,
         IMapper mapper) : IRequestHandler<GoogleLoginCommand, Result<LoginResponse, ValidationResult>>
     {
@@ -82,7 +82,7 @@ namespace FitTracker.Application.UseCases.User.Handlers.Commands.Google
                 logger.LogDebug("User found by GoogleId. Skipping lookup.");
             }
 
-            var loginToken = jwtTokenGenerator.GenerateToken(user);
+            var loginToken = jwtTokenService.GenerateToken(user);
 
             var response = mapper.Map<LoginResponse>(user) with
             {

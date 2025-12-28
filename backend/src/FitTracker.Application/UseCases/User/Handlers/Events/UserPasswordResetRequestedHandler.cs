@@ -15,13 +15,13 @@ namespace FitTracker.Application.UseCases.User.Handlers.Events
     /// <param name="localization">Provides localized email subjects and HTML templates from JSON resources.</param>
     /// <param name="emailService">SMTP email service for sending password reset emails.</param>
     /// <param name="configuration">Provides application configuration including reset password link base URL.</param>
-    /// <param name="jwtTokenGenerator">Generates JWT verification tokens for password reset confirmation links.</param>
+    /// <param name="jwtTokenService">Generates JWT verification tokens for password reset confirmation links.</param>
     /// <param name="logger">Application logger for tracking email delivery success/failure.</param>
     public sealed class UserPasswordResetRequestedHandler(
         ILocalizationService localization,
         IEmailService emailService,
         IConfiguration configuration,
-        IJwtTokenGenerator jwtTokenGenerator,
+        IJwtTokenGenerator jwtTokenService,
         ILogger<UserPasswordResetRequestedHandler> logger) : INotificationHandler<UserPasswordResetRequestedEvent>
     {
         /// <summary>
@@ -31,7 +31,7 @@ namespace FitTracker.Application.UseCases.User.Handlers.Events
         /// <param name="cancellationToken">Token to cancel the operation if needed.</param>
         public async Task Handle(UserPasswordResetRequestedEvent notification, CancellationToken cancellationToken)
         {
-            var verificationToken = jwtTokenGenerator.GenerateVerificationToken(notification.UserId);
+            var verificationToken = jwtTokenService.GeneratePasswordResetToken(notification.UserId);
             var verificationLinkBase = configuration["App:ResetPasswordLinkBase"];
             var verificationLink = $"{verificationLinkBase}?token={verificationToken}";
 

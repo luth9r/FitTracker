@@ -217,6 +217,7 @@ namespace FitTracker.Domain.Entities
 
             user.SetGoogleProviderId(googleProviderId);
             user.UpdateProfile(firstName, lastName, null, null);
+            user.IsEmailVerified = true;
 
             return user;
         }
@@ -293,6 +294,21 @@ namespace FitTracker.Domain.Entities
         public void SetEmailVerified()
         {
             IsEmailVerified = true;
+            UpdatedAt = DateTime.UtcNow;
+        }
+
+        /// <summary>
+        /// Updates the user's password using provided hash.
+        /// </summary>
+        /// <param name="newPasswordHash">The new password hash.</param>
+        public void ChangePassword(string newPasswordHash)
+        {
+            if (string.IsNullOrWhiteSpace(newPasswordHash))
+            {
+                throw new ArgumentException("Password hash is required", nameof(newPasswordHash));
+            }
+
+            PasswordHash = newPasswordHash;
             UpdatedAt = DateTime.UtcNow;
         }
 
