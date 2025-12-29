@@ -39,7 +39,7 @@ namespace FitTracker.Infrastructure.Automapper
                 .ForMember(dest => dest.WorkoutTemplates, opt => opt.Ignore())
                 .ForMember(dest => dest.UserAchievements, opt => opt.Ignore())
                 .ForMember(dest => dest.ExerciseRecords, opt => opt.Ignore())
-                .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt))
                 .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore());
         }
     }

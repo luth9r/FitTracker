@@ -20,7 +20,6 @@ namespace FitTrackerInfrastructure.Tests.Repositories
     public sealed class ExerciseReadRepositoryTests
     {
         private readonly Mock<IMapper> _mapperMock = new();
-        private IExerciseReadRepository _repository = null!;
 
         private static FitTrackerDbContext BuildContext()
         {
@@ -171,7 +170,7 @@ namespace FitTrackerInfrastructure.Tests.Repositories
 
             await using var context = BuildContext();
 
-            _repository = new ExerciseReadRepository(context, _mapperMock.Object);
+            var repository = new ExerciseReadRepository(context, _mapperMock.Object);
 
             var exerciseEf = new ExerciseEf
             {
@@ -260,7 +259,7 @@ namespace FitTrackerInfrastructure.Tests.Repositories
             await context.SaveChangesAsync();
 
             // Act
-            var result = await _repository.GetExerciseDetailsAsync(exerciseId, userId);
+            var result = await repository.GetExerciseDetailsAsync(exerciseId, userId);
 
             // Assert
             result.Should().NotBeNull();
