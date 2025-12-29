@@ -74,7 +74,7 @@ public static class InfrastructureInjection
     {
         _ = services.AddHttpContextAccessor();
 
-        _ = services.AddSingleton<JsonLocalizationProvider>();
+        _ = services.AddSingleton<ILocalizationProvider, JsonLocalizationProvider>();
 
         _ = services.AddScoped<ILocalizationService, LocalizationService>();
     }

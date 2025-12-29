@@ -1,8 +1,9 @@
 using System.Text.Json;
+using FitTracker.Application.Interfaces;
 
 namespace FitTracker.Infrastructure.Localization
 {
-    public class JsonLocalizationProvider
+    public class JsonLocalizationProvider : ILocalizationProvider
     {
         private readonly Dictionary<string, Dictionary<string, string>> _translations = new();
 
@@ -11,17 +12,7 @@ namespace FitTracker.Infrastructure.Localization
             LoadTranslations();
         }
 
-        /// <summary>
-        /// Retrieves a translated string for the specified key and culture.
-        /// Implements a fallback mechanism: if the key is not found in the requested culture,
-        /// it falls back to English (en-US), and finally returns the key itself if no translation exists.
-        /// </summary>
-        /// <param name="key">The translation key in dot-notation format (e.g., "errors.validation.required").</param>
-        /// <param name="culture">The culture code (e.g., "en-US", "pl-PL", "de-DE"). Defaults to "en-US".</param>
-        /// <returns>
-        /// The translated string if found; otherwise, the English translation;
-        /// if that's also missing, returns the key itself.
-        /// </returns>
+        /// <inheritdoc/>
         public string GetString(string key, string culture = "en-US")
         {
             if (_translations.TryGetValue(culture, out var cultureDictionary))
@@ -44,13 +35,7 @@ namespace FitTracker.Infrastructure.Localization
             return key; // Return key
         }
 
-        /// <summary>
-        /// Gets a list of all available culture codes that have been loaded into the translation service.
-        /// </summary>
-        /// <returns>
-        /// An enumerable collection of culture codes (e.g., "en-US", "pl-PL", "de-DE")
-        /// that are currently available in the service.
-        /// </returns>
+        /// <inheritdoc/>
         public IEnumerable<string> GetAvailableCultures()
         {
             return _translations.Keys;

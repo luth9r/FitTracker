@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 
 namespace FitTracker.Infrastructure.Services
 {
-    public class LocalizationService(JsonLocalizationProvider provider, IHttpContextAccessor httpContextAccessor, ILogger<LocalizationService> logger) : ILocalizationService
+    public class LocalizationService(ILocalizationProvider provider, IHttpContextAccessor httpContextAccessor, ILogger<LocalizationService> logger) : ILocalizationService
     {
         /// <inheritdoc/>
         public IEnumerable<string> GetAvailableCultures()
