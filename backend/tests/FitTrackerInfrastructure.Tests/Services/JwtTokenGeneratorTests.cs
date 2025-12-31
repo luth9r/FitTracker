@@ -1,10 +1,5 @@
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 using FitTracker.Application.Constants;
-using FitTracker.Domain.Entities;
 using FitTracker.Infrastructure.Services;
 using FitTracker.Infrastructure.Settings;
 using FitTrackerInfrastructure.Tests.Helpers;

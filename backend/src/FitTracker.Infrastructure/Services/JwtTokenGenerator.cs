@@ -5,7 +5,6 @@ using FitTracker.Application.Constants;
 using FitTracker.Application.Interfaces;
 using FitTracker.Domain.Entities;
 using FitTracker.Infrastructure.Settings;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 

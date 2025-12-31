@@ -1,0 +1,38 @@
+%%{init: {'look':'neo', 'theme':'redux-color'}}%%
+sequenceDiagram
+    participant C as Client
+    participant G as Google OAuth
+    participant AC as AuthController
+    participant GOS as GoogleOAuthService
+    participant GT as Google Token API
+    participant GV as Google Validator
+    participant UR as UserRepository
+    participant DB as PostgreSQL
+    participant JTG as JwtTokenGenerator
+
+    C->>C: Generate PKCE parameters
+    C->>G: Redirect to Google OAuth<br/>https://accounts.google.com/o/oauth2/v2/auth<br/>?client_id=xxx&code_challenge=yyy
+    G->>G: User authenticates<br/>User grants permissions
+    G-->>C: Redirect with code<br/>http://localhost:3000/callback?code=4/xxx
+    
+    C->>AC: POST /api/auth/google-register<br/>{code, codeVerifier}
+    AC->>GOS: ExchangeCodeForTokens(code, codeVerifier)
+    GOS->>GT: POST https://oauth2.googleapis.com/token<br/>{code, client_id, client_secret,<br/>redirect_uri, code_verifier}
+    GT-->>GOS: {access_token, id_token,<br/>refresh_token, expires_in}
+    GOS->>GV: ValidateAsync(id_token)
+    GV->>GV: Verify signature<br/>Verify issuer<br/>Verify audience<br/>Check expiration
+    GV-->>GOS: {sub, email, given_name, family_name}
+    GOS-->>AC: GoogleTokenPayload
+    
+    AC->>UR: FindByGoogleProviderId(sub)
+    UR->>DB: SELECT * FROM Users<br/>WHERE GoogleProviderId = ?
+    DB-->>UR: Not found
+    UR-->>AC: null
+    
+    AC->>UR: CreateUser(email, googleProviderId: sub)
+    UR->>DB: INSERT INTO Users<br/>(GoogleProviderId, IsEmailVerified=true)
+    DB-->>UR: User created
+    
+    AC->>JTG: GenerateAuthToken(userId)
+    JTG-->>AC: authToken
+    AC-->>C: 200 OK + Set-Cookie: auth-token

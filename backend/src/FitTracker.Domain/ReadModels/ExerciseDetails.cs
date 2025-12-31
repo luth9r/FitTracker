@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using FitTracker.Domain.Enums;
 
 namespace FitTracker.Domain.ReadModels

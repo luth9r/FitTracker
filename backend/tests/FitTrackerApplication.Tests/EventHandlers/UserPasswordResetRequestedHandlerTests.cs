@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using FitTracker.Application.Events;
 using FitTracker.Application.Interfaces;
 using FitTracker.Application.UseCases.User.Handlers.Events;

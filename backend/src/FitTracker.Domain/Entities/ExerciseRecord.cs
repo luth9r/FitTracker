@@ -217,7 +217,7 @@ namespace FitTracker.Domain.Entities
             double workoutLifted)
         {
             // Guard clauses
-            if (maxSetWeightKg == 0)
+            if (maxSetWeightKg == 0d)
             {
                 throw new ArgumentNullException(nameof(maxSetWeightKg));
             }

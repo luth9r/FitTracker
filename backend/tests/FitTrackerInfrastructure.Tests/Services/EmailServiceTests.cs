@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using FitTracker.Infrastructure.Services;
 using FitTrackerInfrastructure.Tests.TestDoubles;
 using FluentAssertions;
@@ -163,7 +160,7 @@ namespace FitTrackerInfrastructure.Tests.Services
             public async Task SendEmailAsync_WithCancellationToken_ShouldComplete()
             {
                 // Arrange
-                var cts = new CancellationTokenSource();
+                using var cts = new CancellationTokenSource();
 
                 // Act
                 await _fakeEmailService.SendEmailAsync(

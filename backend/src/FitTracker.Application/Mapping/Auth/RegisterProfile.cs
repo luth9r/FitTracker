@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using AutoMapper;
 using FitTracker.Application.DTOs.Auth;
 using UserEntity = FitTracker.Domain.Entities.User;

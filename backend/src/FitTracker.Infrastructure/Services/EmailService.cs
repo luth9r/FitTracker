@@ -2,7 +2,6 @@ using System.Net;
 using System.Net.Mail;
 using FitTracker.Application.Interfaces;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 
 namespace FitTracker.Infrastructure.Services
 {

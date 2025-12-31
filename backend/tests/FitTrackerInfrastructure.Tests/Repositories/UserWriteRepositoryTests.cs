@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using AutoMapper;
-using Castle.Core.Logging;
 using FitTracker.Domain.Entities;
 using FitTracker.Infrastructure.Automapper;
 using FitTracker.Infrastructure.Persistence.Data;
@@ -58,7 +54,7 @@ namespace FitTrackerInfrastructure.Tests.Repositories
             // Assert
             var savedUser = await context.Users.FirstOrDefaultAsync(u => u.Username == "newuser");
             savedUser.Should().NotBeNull();
-            savedUser!.Email.Should().Be("newuser@example.com");
+            savedUser.Email.Should().Be("newuser@example.com");
             savedUser.FirstName.Should().Be("John");
             savedUser.LastName.Should().Be("Doe");
         }
@@ -106,7 +102,7 @@ namespace FitTrackerInfrastructure.Tests.Repositories
             // Assert
             var savedUser = await context.Users.FirstOrDefaultAsync(u => u.Email == "google@example.com");
             savedUser.Should().NotBeNull();
-            savedUser!.GoogleProviderId.Should().Be("google_123456");
+            savedUser.GoogleProviderId.Should().Be("google_123456");
             savedUser.IsEmailVerified.Should().BeTrue();
             savedUser.FirstName.Should().Be("Jane");
             savedUser.LastName.Should().Be("Smith");
@@ -138,7 +134,7 @@ namespace FitTrackerInfrastructure.Tests.Repositories
             // Assert
             var updatedUser = await context.Users.FindAsync(userToUpdate.Id);
             updatedUser.Should().NotBeNull();
-            updatedUser!.FirstName.Should().Be("UpdatedFirst");
+            updatedUser.FirstName.Should().Be("UpdatedFirst");
             updatedUser.LastName.Should().Be("UpdatedLast");
             updatedUser.Bio.Should().Be("Updated bio");
         }
@@ -175,7 +171,7 @@ namespace FitTrackerInfrastructure.Tests.Repositories
             // Assert
             var updatedUser = await context.Users.FindAsync(originalId);
             updatedUser.Should().NotBeNull();
-            updatedUser!.CreatedAt.Should().BeCloseTo(originalCreatedAt, TimeSpan.FromSeconds(1));
+            updatedUser.CreatedAt.Should().BeCloseTo(originalCreatedAt, TimeSpan.FromSeconds(1));
             updatedUser.FirstName.Should().Be("NewName");
         }
     }

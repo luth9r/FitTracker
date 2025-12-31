@@ -1,9 +1,6 @@
 ﻿using FitTracker.Infrastructure.Persistence.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace FitTracker.Infrastructure.Persistence.Data.Configurations
 {

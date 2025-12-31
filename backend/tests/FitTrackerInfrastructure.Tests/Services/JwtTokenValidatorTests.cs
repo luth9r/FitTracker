@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -278,6 +276,7 @@ namespace FitTrackerInfrastructure.Tests.Services
             var claims = new List<Claim>
             {
                 new("purpose", "email-verification"),
+
                 // No NameIdentifier claim
             };
 

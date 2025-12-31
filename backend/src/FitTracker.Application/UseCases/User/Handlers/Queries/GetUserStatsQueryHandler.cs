@@ -1,11 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using CSharpFunctionalExtensions;
 using FitTracker.Application.DTOs.Users;
 using FitTracker.Application.UseCases.User.Queries;
 using FitTracker.Domain.Abstract.Interfaces;
-using FitTracker.Domain.Entities;
 using MediatR;
 using Microsoft.Extensions.Logging;
 

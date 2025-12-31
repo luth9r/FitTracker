@@ -1,10 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Security.Claims;
-using System.Text;
 using CSharpFunctionalExtensions;
 using FitTracker.Application.Constants;
-using FitTracker.Application.DTOs.Auth;
 using FitTracker.Application.Interfaces;
 using FitTracker.Application.UseCases.User.Commands;
 using FitTracker.Domain.Abstract.Interfaces;

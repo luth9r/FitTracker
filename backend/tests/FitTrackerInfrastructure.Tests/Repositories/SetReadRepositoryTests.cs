@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using AutoMapper;
-using FitTracker.Domain.Abstract.Interfaces;
 using FitTracker.Domain.Entities;
 using FitTracker.Infrastructure.Persistence.Data;
 using FitTracker.Infrastructure.Persistence.Data.Entities;

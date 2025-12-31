@@ -1,5 +1,4 @@
 using FitTracker.Application.Interfaces;
-using FitTracker.Infrastructure.Localization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 

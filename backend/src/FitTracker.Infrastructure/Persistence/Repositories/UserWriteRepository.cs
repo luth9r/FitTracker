@@ -4,7 +4,6 @@ using FitTracker.Domain.Entities;
 using FitTracker.Infrastructure.Persistence.Data;
 using FitTracker.Infrastructure.Persistence.Data.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace FitTracker.Infrastructure.Persistence.Repositories
 {

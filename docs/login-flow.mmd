@@ -1,0 +1,26 @@
+%%{init: {'look':'neo', 'theme':'redux-color'}}%%
+sequenceDiagram
+    participant C as Client
+    participant AC as AuthController
+    participant UR as UserRepository
+    participant DB as PostgreSQL
+    participant PH as PasswordHasher
+    participant JTG as JwtTokenGenerator
+
+    C->>AC: POST /api/auth/login<br/>{email, password}
+    AC->>UR: FindByEmail(email)
+    UR->>DB: SELECT * FROM Users WHERE Email = ?
+    DB-->>UR: User found
+    UR-->>AC: user
+    AC->>AC: Check IsEmailVerified = true
+    AC->>PH: VerifyPassword(password, user.PasswordHash)
+    PH-->>AC: true
+    AC->>JTG: GenerateAuthToken(userId, email, username)
+    JTG-->>AC: authToken (expires 7 days)
+    AC-->>C: 200 OK + Set-Cookie: auth-token (HttpOnly)<br/>{username, email, jwt}
+    
+    Note over C: Subsequent requests include cookie
+    
+    C->>AC: GET /api/user/me<br/>Cookie: auth-token=xxx
+    AC->>AC: Validate JWT from cookie
+    AC-->>C: 200 OK {user data}

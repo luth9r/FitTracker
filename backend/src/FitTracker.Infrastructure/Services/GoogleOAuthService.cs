@@ -1,14 +1,9 @@
 using FitTracker.Application.DTOs.Auth.Google;
 using FitTracker.Application.Interfaces;
 using Google.Apis.Auth;
-using Google.Apis.Auth.OAuth2.Responses;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
 using System.Net.Http.Json;
-using System.Text;
 
 namespace FitTracker.Infrastructure.Services
 {
@@ -39,7 +34,7 @@ namespace FitTracker.Infrastructure.Services
             if (!response.IsSuccessStatusCode)
             {
                 var errorContent = await response.Content.ReadAsStringAsync();
-                throw new Exception($"Google token exchange failed: {errorContent}");
+                throw new HttpRequestException($"Google token exchange failed: {errorContent}");
             }
 
             var body = await response.Content.ReadFromJsonAsync<Application.DTOs.Auth.Google.TokenResponse>();

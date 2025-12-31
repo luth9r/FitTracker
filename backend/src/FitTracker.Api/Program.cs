@@ -12,6 +12,7 @@ Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(config)
     .CreateLogger();
 
+// this line was used to test migration, you could delete it safely
 try
 {
     var builder = WebApplication.CreateBuilder(args);

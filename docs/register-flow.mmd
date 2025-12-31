@@ -1,0 +1,46 @@
+%%{init: {'look':'neo', 'theme':'redux-color'}}%%
+sequenceDiagram
+    participant C as Client
+    participant AC as AuthController
+    participant PH as PasswordHasher
+    participant UR as UserRepository
+    participant DB as PostgreSQL
+    participant JTG as JwtTokenGenerator
+    participant ES as EmailService
+    participant SMTP as SMTP Server
+    participant Inbox as User Email
+
+    C->>AC: POST /api/auth/register<br/>{username, email, password}
+    AC->>AC: Validate request
+    AC->>UR: Check if user exists
+    UR->>DB: SELECT * FROM Users WHERE Email = ?
+    DB-->>UR: User not found
+    AC->>PH: HashPassword(password)
+    PH-->>AC: hashedPassword
+    AC->>UR: CreateUser(username, email, hashedPassword)
+    UR->>DB: INSERT INTO Users<br/>(IsEmailVerified = false)
+    DB-->>UR: User created
+    AC->>JTG: GenerateToken(userId, purpose: "email-verification")
+    JTG-->>AC: verificationToken (expires 60min)
+
+    %% EMAIL EVENT
+    par EmailVerificationEvent
+        AC->>ES: SendVerificationEmail(email, token)
+        ES->>SMTP: SMTP POST<br/>From: no-reply@fittracker.com<br/>To: user@example.com<br/>Subject: Verify Email
+        SMTP->>Inbox: Verification Email
+        ES-->>AC: Email sent
+    and MainResponse
+        AC-->>C: 200 OK {message: "Check your email"}
+    end
+
+    Note over Inbox: User clicks verification link
+
+    C->>AC: GET /api/auth/verify-email?token=xxx
+    AC->>JTG: ValidateToken(token, "email-verification")
+    JTG-->>AC: userId
+    AC->>UR: MarkEmailVerified(userId)
+    UR->>DB: UPDATE Users SET IsEmailVerified = true
+    DB-->>UR: Updated
+    AC->>JTG: GenerateAuthToken(userId)
+    JTG-->>AC: authToken (expires 7 days)
+    AC-->>C: 200 OK + Set-Cookie: auth-token (HttpOnly)

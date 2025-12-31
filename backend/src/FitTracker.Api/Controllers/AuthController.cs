@@ -1,10 +1,8 @@
-using CSharpFunctionalExtensions;
 using FitTracker.Api.Controllers.Extensions;
 using FitTracker.Application.DTOs.Auth;
 using FitTracker.Application.DTOs.Auth.Google;
 using FitTracker.Application.UseCases.User.Commands;
 using FitTracker.Application.UseCases.User.Commands.Google;
-using FitTracker.Application.UseCases.User.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

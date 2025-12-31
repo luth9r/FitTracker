@@ -1,6 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
 using FitTracker.Application.Interfaces;
-using FitTracker.Application.UseCases.User.Commands;
 using FitTracker.Domain.Abstract.Interfaces;
 using FitTracker.Infrastructure.Localization;
 using FitTracker.Infrastructure.Persistence.Data;

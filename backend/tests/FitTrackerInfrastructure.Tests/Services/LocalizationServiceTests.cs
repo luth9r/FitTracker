@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using FitTracker.Application.Interfaces;
 using FitTracker.Infrastructure.Services;
 using FluentAssertions;
@@ -82,7 +79,7 @@ namespace FitTrackerInfrastructure.Tests.Services
         public void GetString_WithNullHttpContext_ShouldUseDefaultCulture()
         {
             // Arrange
-            _httpContextAccessorMock.Setup(x => x.HttpContext).Returns((HttpContext?)null);
+            _httpContextAccessorMock.Setup(x => x.HttpContext).Returns(default(HttpContext));
             _providerMock.Setup(x => x.GetString("hello", "en-US")).Returns("Hello");
 
             var service = new LocalizationService(

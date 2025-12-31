@@ -20,6 +20,8 @@ dotnet_diagnostic.SA1208.severity = none    # Protected/internal order
 dotnet_diagnostic.SA1000.severity = none    # new
 dotnet_diagnostic.SA1313.severity = none    # Fields
 dotnet_diagnostic.SA1009.severity = none    # Spaces
+dotnet_diagnostic.SA1309.severity = none 
+dotnet_diagnostic.SA1202.severity = none 
 
 trim_trailing_whitespace = true
 

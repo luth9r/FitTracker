@@ -1,15 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using AutoMapper;
 using CSharpFunctionalExtensions;
 using FitTracker.Application.DTOs.Auth;
-using FitTracker.Application.Extensions;
 using FitTracker.Application.Interfaces;
 using FitTracker.Application.UseCases.User.Commands.Google;
 using FitTracker.Domain.Abstract.Interfaces;
 using FluentValidation.Results;
-using Google.Apis.Auth;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using ResultExtensions = FitTracker.Application.Extensions.ResultExtensions;

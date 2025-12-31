@@ -1,0 +1,32 @@
+%%{init: {'look':'neo', 'theme':'redux-color'}}%%
+sequenceDiagram
+    participant C as Client
+    participant G as Google OAuth
+    participant AC as AuthController
+    participant GOS as GoogleOAuthService
+    participant GT as Google Token API
+    participant GV as Google Validator
+    participant UR as UserRepository
+    participant DB as PostgreSQL
+    participant JTG as JwtTokenGenerator
+
+    C->>C: Generate PKCE parameters
+    C->>G: Redirect to Google OAuth
+    G-->>C: Redirect with code
+    
+    C->>AC: POST /api/auth/google-login<br/>{code, codeVerifier}
+    AC->>GOS: ExchangeCodeForTokens(code, codeVerifier)
+    GOS->>GT: POST https://oauth2.googleapis.com/token
+    GT-->>GOS: {access_token, id_token, ...}
+    GOS->>GV: ValidateAsync(id_token)
+    GV-->>GOS: {sub, email, ...}
+    GOS-->>AC: GoogleTokenPayload
+    
+    AC->>UR: FindByGoogleProviderId(sub)
+    UR->>DB: SELECT * FROM Users<br/>WHERE GoogleProviderId = ?
+    DB-->>UR: User found
+    UR-->>AC: user
+    
+    AC->>JTG: GenerateAuthToken(userId)
+    JTG-->>AC: authToken
+    AC-->>C: 200 OK + Set-Cookie: auth-token

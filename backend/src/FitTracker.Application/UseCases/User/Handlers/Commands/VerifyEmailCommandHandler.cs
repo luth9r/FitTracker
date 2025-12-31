@@ -2,14 +2,12 @@ using AutoMapper;
 using CSharpFunctionalExtensions;
 using FitTracker.Application.Constants;
 using FitTracker.Application.DTOs.Auth;
-using FitTracker.Application.Extensions;
 using FitTracker.Application.Interfaces;
 using FitTracker.Application.UseCases.User.Commands;
 using FitTracker.Domain.Abstract.Interfaces;
 using FluentValidation.Results;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using System.Security.Claims;
 using ResultExtensions = FitTracker.Application.Extensions.ResultExtensions;
 
 namespace FitTracker.Application.UseCases.User.Handlers.Commands

@@ -1,5 +1,4 @@
 using FitTracker.Domain.Entities;
-using System.Security.Claims;
 
 namespace FitTracker.Application.Interfaces
 {

@@ -1,4 +1,3 @@
-using FitTracker.Domain.Entities;
 using FitTracker.Infrastructure.Persistence.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

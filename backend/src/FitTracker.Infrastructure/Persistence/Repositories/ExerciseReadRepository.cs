@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using FitTracker.Domain.Abstract.Interfaces;
@@ -9,7 +6,6 @@ using FitTracker.Domain.Enums;
 using FitTracker.Domain.Exceptions;
 using FitTracker.Domain.ReadModels;
 using FitTracker.Infrastructure.Persistence.Data;
-using FitTracker.Infrastructure.Persistence.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace FitTracker.Infrastructure.Persistence.Repositories

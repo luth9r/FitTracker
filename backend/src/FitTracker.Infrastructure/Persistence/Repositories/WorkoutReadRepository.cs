@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using FitTracker.Domain.Abstract.Interfaces;
@@ -8,7 +5,6 @@ using FitTracker.Domain.Entities;
 using FitTracker.Domain.ReadModels;
 using FitTracker.Infrastructure.Persistence.Data;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace FitTracker.Infrastructure.Persistence.Repositories
 {

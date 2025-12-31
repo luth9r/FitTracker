@@ -1,10 +1,6 @@
-using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Text;
 using CSharpFunctionalExtensions;
 using FitTracker.Application.DTOs.Users;
-using FluentValidation.Results;
 using MediatR;
 
 namespace FitTracker.Application.UseCases.User.Queries

@@ -1,7 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using FitTracker.Application.Behaviors;
 using FluentValidation;
-using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 

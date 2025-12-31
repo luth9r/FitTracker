@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.Net;
-using System.Text;
 using System.Text.Json;
 using FitTracker.Infrastructure.Services;
 using FitTrackerInfrastructure.Tests.TestDoubles;
@@ -227,7 +224,7 @@ namespace FitTrackerInfrastructure.Tests.Services
                 JsonSerializer.Serialize(new { error = "invalid_request" }));
 
             // Act
-            var act = async () => await service.ExchangeCodeForTokensAsync("", "verifier");
+            var act = async () => await service.ExchangeCodeForTokensAsync(string.Empty, "verifier");
 
             // Assert
             await act.Should().ThrowAsync<Exception>();

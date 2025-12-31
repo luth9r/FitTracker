@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using AutoMapper;
 using CSharpFunctionalExtensions;
 using FitTracker.Application.DTOs.Exercise;
@@ -8,7 +5,6 @@ using FitTracker.Application.Interfaces;
 using FitTracker.Application.UseCases.Exercise.Queries;
 using FitTracker.Domain.Abstract.Interfaces;
 using MediatR;
-using Microsoft.Extensions.Logging;
 
 namespace FitTracker.Application.UseCases.Exercise.Handlers.Queries
 {

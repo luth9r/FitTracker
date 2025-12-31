@@ -1,7 +1,5 @@
-using System.Security.Claims;
 using FitTracker.Application.UseCases.User.Queries;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FitTracker.Api.Controllers

@@ -1,8 +1,3 @@
-using FitTracker.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace FitTracker.Infrastructure.Persistence.Data.Entities
 {
     public class UserAchievementEf : BaseEntityEf

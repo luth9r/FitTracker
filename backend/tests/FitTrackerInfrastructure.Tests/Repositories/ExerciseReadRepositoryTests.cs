@@ -1,9 +1,4 @@
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using AutoMapper;
-using FitTracker.Domain.Abstract.Interfaces;
 using FitTracker.Domain.Entities;
 using FitTracker.Domain.Enums;
 using FitTracker.Infrastructure.Persistence.Data;
@@ -13,7 +8,6 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
-using Xunit;
 
 namespace FitTrackerInfrastructure.Tests.Repositories
 {
@@ -76,8 +70,7 @@ namespace FitTrackerInfrastructure.Tests.Repositories
             context.Exercises.AddRange(
                 new ExerciseEf { Id = Guid.NewGuid(), Name = "Std 1", CreatedByUserId = null },
                 new ExerciseEf { Id = Guid.NewGuid(), Name = "User Custom", CreatedByUserId = userId },
-                new ExerciseEf { Id = Guid.NewGuid(), Name = "Other Custom", CreatedByUserId = otherUserId }
-            );
+                new ExerciseEf { Id = Guid.NewGuid(), Name = "Other Custom", CreatedByUserId = otherUserId });
             await context.SaveChangesAsync();
 
             // Act
@@ -126,8 +119,7 @@ namespace FitTrackerInfrastructure.Tests.Repositories
                 new ExerciseEf { Id = Guid.NewGuid(), Name = "Std 1", CreatedByUserId = null },
                 new ExerciseEf { Id = Guid.NewGuid(), Name = "Std 2", CreatedByUserId = null },
                 new ExerciseEf { Id = Guid.NewGuid(), Name = "User Custom", CreatedByUserId = userId },
-                new ExerciseEf { Id = Guid.NewGuid(), Name = "Other Custom", CreatedByUserId = otherUserId }
-            );
+                new ExerciseEf { Id = Guid.NewGuid(), Name = "Other Custom", CreatedByUserId = otherUserId });
             await context.SaveChangesAsync();
 
             // Act

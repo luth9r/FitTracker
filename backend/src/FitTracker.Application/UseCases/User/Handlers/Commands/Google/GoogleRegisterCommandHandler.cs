@@ -7,9 +7,6 @@ using FitTracker.Domain.Abstract.Interfaces;
 using FluentValidation.Results;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ResultExtensions = FitTracker.Application.Extensions.ResultExtensions;
 using UserEntity = FitTracker.Domain.Entities.User;
 
@@ -21,6 +18,7 @@ namespace FitTracker.Application.UseCases.User.Handlers.Commands.Google
     /// <param name="logger">The <see cref="ILogger{GoogleRegistrationCommandHandler}"/>.</param>
     /// <param name="googleOAuthService">The <see cref="IGoogleOAuthService"/>.</param>
     /// <param name="userReadRepository">The <see cref="IUserReadRepository"/>.</param>
+    /// <param name="userWriteRepository">The <see cref="IUserWriteRepository"/>.</param>
     /// <param name="unitOfWork">The <see cref="IUnitOfWork"/>.</param>
     /// <param name="jwtTokenService">The <see cref="IJwtTokenGenerator"/>.</param>
     /// <param name="localization">The <see cref="ILocalizationService"/>.</param>
@@ -45,11 +43,6 @@ namespace FitTracker.Application.UseCases.User.Handlers.Commands.Google
         {
             logger.LogDebug("Starting Google registration process.");
             var tokenResponse = await googleOAuthService.ExchangeCodeForTokensAsync(request.Request.Code, request.Request.CodeVerifier);
-            if (tokenResponse == null)
-            {
-                logger.LogWarning("Google Token validation failed.");
-                return ResultExtensions.ValidationFailure<LoginResponse>(nameof(request.Request.Code), localization.GetString("Google.Auth.InvalidToken"));
-            }
 
             logger.LogDebug("Attempting to validate Google IdToken.");
 

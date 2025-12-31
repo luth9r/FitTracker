@@ -25,7 +25,7 @@ namespace FitTracker.Api.Middlewares
                 Detail = statusCode == StatusCodes.Status500InternalServerError
                      ? "An unexpected error occurred."
                      : exception.Message,
-                Instance = httpContext.Request.Path
+                Instance = httpContext.Request.Path,
             };
 
             if (exception is NotFoundException nfe)

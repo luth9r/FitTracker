@@ -9,9 +9,7 @@ using FluentValidation.Results;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Moq;
-using Xunit;
 
 namespace FitTrackerApi.Tests.Controllers;
 
@@ -79,7 +77,7 @@ public class AuthControllerTests
         // Assert
         result.Result.Should().BeOfType<ObjectResult>();
         var objectResult = result.Result as ObjectResult;
-        objectResult.Value.Should().BeOfType<ValidationProblemDetails>();
+        objectResult!.Value.Should().BeOfType<ValidationProblemDetails>();
 
         // Verify no cookies were set
         _httpContext.Response.Headers.SetCookie.Should().BeEmpty();
@@ -239,7 +237,7 @@ public class AuthControllerTests
         result.Should().BeOfType<ObjectResult>();
         var objectResult = result as ObjectResult;
 
-        objectResult.Value.Should().BeOfType<ValidationProblemDetails>();
+        objectResult!.Value.Should().BeOfType<ValidationProblemDetails>();
         var problemDetails = objectResult.Value as ValidationProblemDetails;
         problemDetails.Should().NotBeNull();
         problemDetails!.Errors.Should().ContainKey("Token");
