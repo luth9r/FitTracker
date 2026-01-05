@@ -111,42 +111,27 @@ namespace FitTracker.Domain.Entities
         {
             if (workoutTemplateExerciseId == Guid.Empty)
             {
-                throw new ArgumentException("WorkoutTemplateExerciseId cannot be empty", nameof(workoutTemplateExerciseId));
+                throw new ArgumentException("WorkoutTemplateExerciseId cannot be empty.", nameof(workoutTemplateExerciseId));
             }
 
             if (setNumber <= 0)
             {
-                throw new ArgumentException("Set number must be greater than 0", nameof(setNumber));
+                throw new ArgumentOutOfRangeException(nameof(setNumber), setNumber, "Set number must be greater than 0.");
             }
 
-            if (plannedWeight == 0)
+            if (plannedWeight <= 0 || plannedWeight > MaxWeightKg)
             {
-                throw new ArgumentNullException(nameof(plannedWeight));
+                throw new ArgumentOutOfRangeException(nameof(plannedWeight), plannedWeight, $"Planned weight must be between 0 and {MaxWeightKg} kg.");
             }
 
-            if (plannedWeight > MaxWeightKg)
+            if (plannedReps <= 0 || plannedReps > MaxReps)
             {
-                throw new ArgumentException($"Planned weight cannot exceed {MaxWeightKg} kg", nameof(plannedWeight));
+                throw new ArgumentOutOfRangeException(nameof(plannedReps), plannedReps, $"Planned reps must be between 1 and {MaxReps}.");
             }
 
-            if (plannedReps <= 0)
+            if (restSeconds.HasValue && (restSeconds.Value < 0 || restSeconds.Value > MaxRestSeconds))
             {
-                throw new ArgumentException("Planned reps must be greater than 0", nameof(plannedReps));
-            }
-
-            if (plannedReps > MaxReps)
-            {
-                throw new ArgumentException($"Planned reps cannot exceed {MaxReps}", nameof(plannedReps));
-            }
-
-            if (restSeconds.HasValue && restSeconds.Value < 0)
-            {
-                throw new ArgumentException("Rest seconds cannot be negative", nameof(restSeconds));
-            }
-
-            if (restSeconds.HasValue && restSeconds.Value > MaxRestSeconds)
-            {
-                throw new ArgumentException($"Rest cannot exceed {MaxRestSeconds} seconds", nameof(restSeconds));
+                throw new ArgumentOutOfRangeException(nameof(restSeconds), restSeconds, $"Rest seconds must be between 0 and {MaxRestSeconds}.");
             }
 
             WorkoutTemplateExerciseId = workoutTemplateExerciseId;
@@ -189,34 +174,19 @@ namespace FitTracker.Domain.Entities
             int plannedReps,
             int? restSeconds = null)
         {
-            if (plannedWeight == 0d)
+            if (plannedWeight <= 0 || plannedWeight > MaxWeightKg)
             {
-                throw new ArgumentNullException(nameof(plannedWeight));
+                throw new ArgumentOutOfRangeException(nameof(plannedWeight), plannedWeight, $"Planned weight must be between 0 and {MaxWeightKg} kg.");
             }
 
-            if (plannedWeight > MaxWeightKg)
+            if (plannedReps <= 0 || plannedReps > MaxReps)
             {
-                throw new ArgumentException($"Planned weight cannot exceed {MaxWeightKg} kg", nameof(plannedWeight));
+                throw new ArgumentOutOfRangeException(nameof(plannedReps), plannedReps, $"Planned reps must be between 1 and {MaxReps}.");
             }
 
-            if (plannedReps <= 0)
+            if (restSeconds.HasValue && (restSeconds.Value < 0 || restSeconds.Value > MaxRestSeconds))
             {
-                throw new ArgumentException("Planned reps must be greater than 0", nameof(plannedReps));
-            }
-
-            if (plannedReps > MaxReps)
-            {
-                throw new ArgumentException($"Planned reps cannot exceed {MaxReps}", nameof(plannedReps));
-            }
-
-            if (restSeconds.HasValue && restSeconds.Value < 0)
-            {
-                throw new ArgumentException("Rest seconds cannot be negative", nameof(restSeconds));
-            }
-
-            if (restSeconds.HasValue && restSeconds.Value > MaxRestSeconds)
-            {
-                throw new ArgumentException($"Rest cannot exceed {MaxRestSeconds} seconds", nameof(restSeconds));
+                throw new ArgumentOutOfRangeException(nameof(restSeconds), restSeconds, $"Rest seconds must be between 0 and {MaxRestSeconds}.");
             }
 
             PlannedWeightKg = plannedWeight;
@@ -233,7 +203,7 @@ namespace FitTracker.Domain.Entities
         {
             if (newSetNumber <= 0)
             {
-                throw new ArgumentException("Set number must be greater than 0", nameof(newSetNumber));
+                throw new ArgumentOutOfRangeException(nameof(newSetNumber), newSetNumber, "Set number must be greater than 0.");
             }
 
             SetNumber = newSetNumber;
@@ -265,7 +235,7 @@ namespace FitTracker.Domain.Entities
         /// <summary>
         /// Determines whether this set has a specified rest period.
         /// </summary>
-        /// <returns><c>true</c> if rest period is specified; otherwise, <c>false</c>.</returns>
+        /// <returns><c>true</c> if a rest period is specified; otherwise, <c>false</c>.</returns>
         public bool HasRestPeriod() => RestSeconds.HasValue;
     }
 }

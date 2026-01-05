@@ -149,24 +149,34 @@ namespace FitTracker.Domain.Entities
             string? lastName = null)
             : base()
         {
-            if (string.IsNullOrWhiteSpace(username) || username.Length < UsernameMinLength || username.Length > UsernameMaxLength)
+            if (string.IsNullOrWhiteSpace(username))
             {
-                throw new ArgumentException($"Username must be {UsernameMinLength}-{UsernameMaxLength} characters", nameof(username));
+                throw new ArgumentException("Username cannot be null or whitespace.", nameof(username));
             }
 
-            if (string.IsNullOrWhiteSpace(email) || email.Length > EmailMaxLength)
+            if (username.Length < UsernameMinLength || username.Length > UsernameMaxLength)
             {
-                throw new ArgumentException($"Email cannot exceed {EmailMaxLength} characters", nameof(email));
+                throw new ArgumentOutOfRangeException(nameof(username), username.Length, $"Username length must be between {UsernameMinLength} and {UsernameMaxLength} characters.");
+            }
+
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                throw new ArgumentException("Email cannot be null or whitespace.", nameof(email));
+            }
+
+            if (email.Length > EmailMaxLength)
+            {
+                throw new ArgumentOutOfRangeException(nameof(email), email.Length, $"Email length must not exceed {EmailMaxLength} characters.");
             }
 
             if (firstName?.Length > FirstNameMaxLength)
             {
-                throw new ArgumentException($"First name cannot exceed {FirstNameMaxLength} characters", nameof(firstName));
+                throw new ArgumentOutOfRangeException(nameof(firstName), firstName.Length, $"First name length must not exceed {FirstNameMaxLength} characters.");
             }
 
             if (lastName?.Length > LastNameMaxLength)
             {
-                throw new ArgumentException($"Last name cannot exceed {LastNameMaxLength} characters", nameof(lastName));
+                throw new ArgumentOutOfRangeException(nameof(lastName), lastName.Length, $"Last name length must not exceed {LastNameMaxLength} characters.");
             }
 
             Username = username;
@@ -233,22 +243,22 @@ namespace FitTracker.Domain.Entities
         {
             if (firstName?.Length > FirstNameMaxLength)
             {
-                throw new ArgumentException($"First name cannot exceed {FirstNameMaxLength} characters", nameof(firstName));
+                throw new ArgumentOutOfRangeException(nameof(firstName), firstName.Length, $"First name length must not exceed {FirstNameMaxLength} characters.");
             }
 
             if (lastName?.Length > LastNameMaxLength)
             {
-                throw new ArgumentException($"Last name cannot exceed {LastNameMaxLength} characters", nameof(lastName));
+                throw new ArgumentOutOfRangeException(nameof(lastName), lastName.Length, $"Last name length must not exceed {LastNameMaxLength} characters.");
             }
 
             if (bio?.Length > BioMaxLength)
             {
-                throw new ArgumentException($"Bio cannot exceed {BioMaxLength} characters", nameof(bio));
+                throw new ArgumentOutOfRangeException(nameof(bio), bio.Length, $"Bio length must not exceed {BioMaxLength} characters.");
             }
 
             if (avatar?.Length > AvatarMaxLength)
             {
-                throw new ArgumentException($"Avatar URL cannot exceed {AvatarMaxLength} characters", nameof(avatar));
+                throw new ArgumentOutOfRangeException(nameof(avatar), avatar.Length, $"Avatar URL length must not exceed {AvatarMaxLength} characters.");
             }
 
             FirstName = firstName;
@@ -266,7 +276,7 @@ namespace FitTracker.Domain.Entities
         {
             if (string.IsNullOrWhiteSpace(email) || email.Length > EmailMaxLength)
             {
-                throw new ArgumentException($"Email cannot exceed {EmailMaxLength} characters", nameof(email));
+                throw new ArgumentOutOfRangeException(nameof(email), email?.Length ?? 0, $"Email length must not exceed {EmailMaxLength} characters.");
             }
 
             Email = email.ToLowerInvariant();

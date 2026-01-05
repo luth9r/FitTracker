@@ -141,19 +141,21 @@ namespace FitTracker.Domain.Entities
             : base()
         {
             // Guard clauses
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                throw new ArgumentException("Name is required", nameof(name));
-            }
-
-            if (name.Length > NameMaxLength)
-            {
-                throw new ArgumentException($"Name cannot exceed {NameMaxLength} characters", nameof(name));
-            }
+            ValidateName(name);
 
             if (description?.Length > DescriptionMaxLength)
             {
-                throw new ArgumentException($"Description cannot exceed {DescriptionMaxLength} characters", nameof(description));
+                throw new ArgumentOutOfRangeException(nameof(description), description.Length, $"Description length must not exceed {DescriptionMaxLength} characters.");
+            }
+
+            if (imageUrl?.Length > ImageUrlMaxLength)
+            {
+                throw new ArgumentOutOfRangeException(nameof(imageUrl), imageUrl.Length, $"Image URL length must not exceed {ImageUrlMaxLength} characters.");
+            }
+
+            if (videoUrl?.Length > VideoUrlMaxLength)
+            {
+                throw new ArgumentOutOfRangeException(nameof(videoUrl), videoUrl.Length, $"Video URL length must not exceed {VideoUrlMaxLength} characters.");
             }
 
             Name = name;
@@ -163,6 +165,23 @@ namespace FitTracker.Domain.Entities
             ImageUrl = imageUrl;
             VideoUrl = videoUrl;
             CreatedByUserId = createdByUserId;
+        }
+
+        /// <summary>
+        /// Validates the exercise name.
+        /// </summary>
+        /// <param name="name">Exercise name to validate.</param>
+        private static void ValidateName(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentException("Name cannot be null or whitespace.", nameof(name));
+            }
+
+            if (name.Length > NameMaxLength)
+            {
+                throw new ArgumentOutOfRangeException(nameof(name), name.Length, $"Name length must not exceed {NameMaxLength} characters.");
+            }
         }
 
         /// <summary>
@@ -225,17 +244,14 @@ namespace FitTracker.Domain.Entities
         {
             if (!IsCustomExercise())
             {
-                throw new InvalidOperationException("Cannot update standard exercises");
+                throw new InvalidOperationException("Cannot update standard exercises. Only custom exercises can be modified.");
             }
 
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                throw new ArgumentException("Name is required", nameof(name));
-            }
+            ValidateName(name);
 
-            if (name.Length > NameMaxLength)
+            if (description?.Length > DescriptionMaxLength)
             {
-                throw new ArgumentException($"Name cannot exceed {NameMaxLength} characters", nameof(name));
+                throw new ArgumentOutOfRangeException(nameof(description), description.Length, $"Description length must not exceed {DescriptionMaxLength} characters.");
             }
 
             Name = name;
@@ -252,6 +268,16 @@ namespace FitTracker.Domain.Entities
         /// <param name="videoUrl">The new video URL.</param>
         public void UpdateMedia(string? imageUrl, string? videoUrl)
         {
+            if (imageUrl?.Length > ImageUrlMaxLength)
+            {
+                throw new ArgumentOutOfRangeException(nameof(imageUrl), imageUrl.Length, $"Image URL length must not exceed {ImageUrlMaxLength} characters.");
+            }
+
+            if (videoUrl?.Length > VideoUrlMaxLength)
+            {
+                throw new ArgumentOutOfRangeException(nameof(videoUrl), videoUrl.Length, $"Video URL length must not exceed {VideoUrlMaxLength} characters.");
+            }
+
             ImageUrl = imageUrl;
             VideoUrl = videoUrl;
             UpdatedAt = DateTime.UtcNow;

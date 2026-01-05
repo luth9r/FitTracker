@@ -97,17 +97,17 @@ namespace FitTracker.Domain.Entities
         {
             if (userId == Guid.Empty)
             {
-                throw new ArgumentException("UserId cannot be empty", nameof(userId));
+                throw new ArgumentException("UserId cannot be empty.", nameof(userId));
             }
 
             if (string.IsNullOrWhiteSpace(name) || name.Length < NameMinLength || name.Length > NameMaxLength)
             {
-                throw new ArgumentException($"Name must be {NameMinLength}-{NameMaxLength} characters", nameof(name));
+                throw new ArgumentOutOfRangeException(nameof(name), name?.Length ?? 0, $"Name length must be between {NameMinLength} and {NameMaxLength} characters.");
             }
 
             if (description?.Length > DescriptionMaxLength)
             {
-                throw new ArgumentException($"Description cannot exceed {DescriptionMaxLength} characters", nameof(description));
+                throw new ArgumentOutOfRangeException(nameof(description), description.Length, $"Description length must not exceed {DescriptionMaxLength} characters.");
             }
 
             UserId = userId;
@@ -137,12 +137,12 @@ namespace FitTracker.Domain.Entities
         {
             if (string.IsNullOrWhiteSpace(name) || name.Length < NameMinLength || name.Length > NameMaxLength)
             {
-                throw new ArgumentException($"Name must be {NameMinLength}-{NameMaxLength} characters", nameof(name));
+                throw new ArgumentOutOfRangeException(nameof(name), name?.Length ?? 0, $"Name length must be between {NameMinLength} and {NameMaxLength} characters.");
             }
 
             if (description?.Length > DescriptionMaxLength)
             {
-                throw new ArgumentException($"Description cannot exceed {DescriptionMaxLength} characters", nameof(description));
+                throw new ArgumentOutOfRangeException(nameof(description), description.Length, $"Description length must not exceed {DescriptionMaxLength} characters.");
             }
 
             Name = name;

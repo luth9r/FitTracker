@@ -86,22 +86,22 @@ namespace FitTracker.Domain.Entities
         {
             if (workoutId == Guid.Empty)
             {
-                throw new ArgumentException("WorkoutId cannot be empty", nameof(workoutId));
+                throw new ArgumentException("WorkoutId cannot be empty.", nameof(workoutId));
             }
 
             if (exerciseId == Guid.Empty)
             {
-                throw new ArgumentException("ExerciseId cannot be empty", nameof(exerciseId));
+                throw new ArgumentException("ExerciseId cannot be empty.", nameof(exerciseId));
             }
 
-            if (orderIndex <= 0 || orderIndex > MaxOrderIndex)
+            if (orderIndex < 1 || orderIndex > MaxOrderIndex)
             {
-                throw new ArgumentException($"Order index must be 1-{MaxOrderIndex}", nameof(orderIndex));
+                throw new ArgumentOutOfRangeException(nameof(orderIndex), orderIndex, $"Order index must be between 1 and {MaxOrderIndex}.");
             }
 
             if (notes?.Length > NotesMaxLength)
             {
-                throw new ArgumentException($"Notes cannot exceed {NotesMaxLength} characters", nameof(notes));
+                throw new ArgumentOutOfRangeException(nameof(notes), notes.Length, $"Notes length must not exceed {NotesMaxLength} characters.");
             }
 
             WorkoutId = workoutId;
@@ -133,9 +133,9 @@ namespace FitTracker.Domain.Entities
         /// <param name="newOrder">The new order index.</param>
         public void UpdateOrder(int newOrder)
         {
-            if (newOrder <= 0 || newOrder > MaxOrderIndex)
+            if (newOrder < 1 || newOrder > MaxOrderIndex)
             {
-                throw new ArgumentException($"Order index must be 1-{MaxOrderIndex}", nameof(newOrder));
+                throw new ArgumentOutOfRangeException(nameof(newOrder), newOrder, $"Order index must be between 1 and {MaxOrderIndex}.");
             }
 
             OrderIndex = newOrder;
@@ -150,7 +150,7 @@ namespace FitTracker.Domain.Entities
         {
             if (notes?.Length > NotesMaxLength)
             {
-                throw new ArgumentException($"Notes cannot exceed {NotesMaxLength} characters", nameof(notes));
+                throw new ArgumentOutOfRangeException(nameof(notes), notes.Length, $"Notes length must not exceed {NotesMaxLength} characters.");
             }
 
             Notes = notes;
@@ -172,11 +172,27 @@ namespace FitTracker.Domain.Entities
         /// <summary>
         /// Moves the exercise up in the order (decrements index).
         /// </summary>
-        public void MoveUp() => UpdateOrder(OrderIndex - 1);
+        public void MoveUp()
+        {
+            if (OrderIndex == 1)
+            {
+                throw new InvalidOperationException("Cannot move up from the first position.");
+            }
+
+            UpdateOrder(OrderIndex - 1);
+        }
 
         /// <summary>
         /// Moves the exercise down in the order (increments index).
         /// </summary>
-        public void MoveDown() => UpdateOrder(OrderIndex + 1);
+        public void MoveDown()
+        {
+            if (OrderIndex == MaxOrderIndex)
+            {
+                throw new InvalidOperationException($"Cannot move down from the last position ({MaxOrderIndex}).");
+            }
+
+            UpdateOrder(OrderIndex + 1);
+        }
     }
 }

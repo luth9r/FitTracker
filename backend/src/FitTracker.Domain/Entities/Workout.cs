@@ -159,12 +159,12 @@ namespace FitTracker.Domain.Entities
 
             if (string.IsNullOrWhiteSpace(name) || name.Length < NameMinLength || name.Length > NameMaxLength)
             {
-                throw new ArgumentException($"Name must be {NameMinLength}-{NameMaxLength} characters", nameof(name));
+                throw new ArgumentOutOfRangeException(nameof(name), name?.Length ?? 0, $"Name length must be between {NameMinLength} and {NameMaxLength} characters.");
             }
 
             if (notes?.Length > NotesMaxLength)
             {
-                throw new ArgumentException($"Notes cannot exceed {NotesMaxLength} characters", nameof(notes));
+                throw new ArgumentOutOfRangeException(nameof(notes), notes.Length, $"Notes length must not exceed {NotesMaxLength} characters.");
             }
 
             UserId = userId;
@@ -306,7 +306,12 @@ namespace FitTracker.Domain.Entities
         {
             if (duration.TotalHours > MaxDurationHours)
             {
-                throw new ArgumentException($"Duration cannot exceed {MaxDurationHours} hours", nameof(duration));
+                throw new ArgumentOutOfRangeException(nameof(duration), duration.TotalHours, $"Duration cannot exceed {MaxDurationHours} hours.");
+            }
+
+            if (duration < TimeSpan.Zero)
+            {
+                throw new ArgumentOutOfRangeException(nameof(duration), duration.TotalHours, "Duration cannot be negative.");
             }
 
             Duration = duration;
@@ -323,12 +328,12 @@ namespace FitTracker.Domain.Entities
         {
             if (string.IsNullOrWhiteSpace(name) || name.Length < NameMinLength || name.Length > NameMaxLength)
             {
-                throw new ArgumentException($"Name must be {NameMinLength}-{NameMaxLength} characters", nameof(name));
+                throw new ArgumentOutOfRangeException(nameof(name), name?.Length ?? 0, $"Name length must be between {NameMinLength} and {NameMaxLength} characters.");
             }
 
             if (notes?.Length > NotesMaxLength)
             {
-                throw new ArgumentException($"Notes cannot exceed {NotesMaxLength} characters", nameof(notes));
+                throw new ArgumentOutOfRangeException(nameof(notes), notes.Length, $"Notes length must not exceed {NotesMaxLength} characters.");
             }
 
             if (IsCompleted)

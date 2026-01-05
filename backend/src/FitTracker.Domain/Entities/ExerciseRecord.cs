@@ -168,6 +168,7 @@ namespace FitTracker.Domain.Entities
 
             UserId = userId;
             ExerciseId = exerciseId;
+
             MaxWeightKg = 0d;
             MaxReps = 0;
             MaxVolume = 0;
@@ -217,39 +218,39 @@ namespace FitTracker.Domain.Entities
             double workoutLifted)
         {
             // Guard clauses
-            if (maxSetWeightKg == 0d)
+            if (maxSetWeightKg <= 0)
             {
-                throw new ArgumentNullException(nameof(maxSetWeightKg));
+                throw new ArgumentOutOfRangeException(nameof(maxSetWeightKg), maxSetWeightKg, "Weight must be greater than zero.");
             }
 
             if (maxSetReps < 0)
             {
-                throw new ArgumentException("Max reps cannot be negative", nameof(maxSetReps));
+                throw new ArgumentOutOfRangeException(nameof(maxSetReps), maxSetReps, "Reps cannot be negative.");
             }
 
             if (maxSetVolume < 0)
             {
-                throw new ArgumentException("Max volume cannot be negative", nameof(maxSetVolume));
+                throw new ArgumentOutOfRangeException(nameof(maxSetVolume), maxSetVolume, "Volume cannot be negative.");
             }
 
             if (workoutTotalVolume < 0)
             {
-                throw new ArgumentException("Total volume cannot be negative", nameof(workoutTotalVolume));
+                throw new ArgumentOutOfRangeException(nameof(workoutTotalVolume), workoutTotalVolume, "Total volume cannot be negative.");
             }
 
             if (workoutSets < 0)
             {
-                throw new ArgumentException("Sets cannot be negative", nameof(workoutSets));
+                throw new ArgumentOutOfRangeException(nameof(workoutTotalVolume), workoutTotalVolume, "Total volume cannot be negative.");
             }
 
             if (workoutReps < 0)
             {
-                throw new ArgumentException("Reps cannot be negative", nameof(workoutReps));
+                throw new ArgumentOutOfRangeException(nameof(workoutReps), workoutReps, "Number of reps cannot be negative.");
             }
 
             if (workoutLifted < 0)
             {
-                throw new ArgumentException("Lifted weight cannot be negative", nameof(workoutLifted));
+                throw new ArgumentOutOfRangeException(nameof(workoutLifted), workoutLifted, "Lifted weight cannot be negative.");
             }
 
             bool newRecord = false;

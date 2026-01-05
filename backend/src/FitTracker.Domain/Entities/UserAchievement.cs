@@ -113,7 +113,12 @@ namespace FitTracker.Domain.Entities
         {
             if (newProgress < 0)
             {
-                throw new ArgumentException("Progress cannot be negative", nameof(newProgress));
+                throw new ArgumentOutOfRangeException(nameof(newProgress), newProgress, "Progress cannot be negative.");
+            }
+
+            if (target <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(target), target, "Target must be greater than zero.");
             }
 
             Progress = newProgress;
