@@ -1,78 +1,82 @@
+using System.Net.Http.Json;
 using FitTracker.Application.DTOs.Auth.Google;
 using FitTracker.Application.Interfaces;
 using Google.Apis.Auth;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using System.Net.Http.Json;
 
-namespace FitTracker.Infrastructure.Services
+namespace FitTracker.Infrastructure.Services;
+
+public class GoogleOAuthService(
+    HttpClient httpClient,
+    ILogger<GoogleOAuthService> logger,
+    IConfiguration configuration) : IGoogleOAuthService
 {
-    public class GoogleOAuthService(HttpClient httpClient,
-        ILogger<GoogleOAuthService> logger,
-        IConfiguration configuration) : IGoogleOAuthService
+    /// <inheritdoc />
+    public async Task<TokenResponse> ExchangeCodeForTokensAsync(string code, string codeVerifier)
     {
-        /// <inheritdoc/>
-        public async Task<Application.DTOs.Auth.Google.TokenResponse> ExchangeCodeForTokensAsync(string code, string codeVerifier)
-        {
-            var tokenEndpoint = "https://oauth2.googleapis.com/token";
+        var tokenEndpoint = "https://oauth2.googleapis.com/token";
 
-            var content = new FormUrlEncodedContent(new Dictionary<string, string>
+        var content = new FormUrlEncodedContent(
+            new Dictionary<string, string>
             {
                 ["code"] = code,
-                ["client_id"] = configuration["Google:ClientId"],
-                ["client_secret"] = configuration["Google:ClientSecret"],
-                ["redirect_uri"] = configuration["Google:RedirectUri"],
+                ["client_id"] = configuration["Google:ClientId"] ??
+                                throw new InvalidOperationException("Google:ClientId not configured"),
+                ["client_secret"] = configuration["Google:ClientSecret"] ??
+                                    throw new InvalidOperationException("Google:ClientSecret not configured"),
+                ["redirect_uri"] = configuration["Google:RedirectUri"] ??
+                                   throw new InvalidOperationException("Google:RedirectUri not configured"),
                 ["grant_type"] = "authorization_code",
                 ["code_verifier"] = codeVerifier,
             });
 
-            var response = await httpClient.PostAsync(tokenEndpoint, content);
-            var responseBody = await response.Content.ReadAsStringAsync();
+        var response = await httpClient.PostAsync(tokenEndpoint, content);
+        var responseBody = await response.Content.ReadAsStringAsync();
 
-            Console.WriteLine("Google token exchange response body:");
-            Console.WriteLine(responseBody);
-            if (!response.IsSuccessStatusCode)
-            {
-                var errorContent = await response.Content.ReadAsStringAsync();
-                throw new HttpRequestException($"Google token exchange failed: {errorContent}");
-            }
-
-            var body = await response.Content.ReadFromJsonAsync<Application.DTOs.Auth.Google.TokenResponse>();
-            return body;
+        Console.WriteLine("Google token exchange response body:");
+        Console.WriteLine(responseBody);
+        if (!response.IsSuccessStatusCode)
+        {
+            var errorContent = await response.Content.ReadAsStringAsync();
+            throw new HttpRequestException($"Google token exchange failed: {errorContent}");
         }
 
-        /// <inheritdoc/>
-        public async Task<GoogleTokenPayload?> ValidateAsync(string idToken)
+        var body = await response.Content.ReadFromJsonAsync<TokenResponse>();
+        return body ?? throw new InvalidOperationException("Google API returned an empty response body.");
+    }
+
+    /// <inheritdoc />
+    public async Task<GoogleTokenPayload?> ValidateAsync(string idToken)
+    {
+        try
         {
-            try
+            var googleClientId = configuration["Google:ClientId"];
+
+            if (string.IsNullOrEmpty(googleClientId))
             {
-                var googleClientId = configuration["Google:ClientId"];
-
-                if (string.IsNullOrEmpty(googleClientId))
-                {
-                    logger.LogCritical("Google:ClientId not cofigured in appsettings.json");
-                    return null;
-                }
-
-                var settings = new GoogleJsonWebSignature.ValidationSettings
-                {
-                    Audience = new[] { googleClientId },
-                };
-
-                var payload = await GoogleJsonWebSignature.ValidateAsync(idToken, settings);
-
-                return new GoogleTokenPayload(payload.Subject, payload.Email, payload.GivenName, payload.FamilyName);
-            }
-            catch (InvalidJwtException ex)
-            {
-                logger.LogWarning("Not valid google token: {Message}", ex.Message);
+                logger.LogCritical("Google:ClientId not cofigured in appsettings.json");
                 return null;
             }
-            catch (Exception ex)
+
+            var settings = new GoogleJsonWebSignature.ValidationSettings
             {
-                logger.LogError(ex, "Unexpected error in Google-token validation");
-                return null;
-            }
+                Audience = new[] { googleClientId },
+            };
+
+            var payload = await GoogleJsonWebSignature.ValidateAsync(idToken, settings);
+
+            return new GoogleTokenPayload(payload.Subject, payload.Email, payload.GivenName, payload.FamilyName);
+        }
+        catch (InvalidJwtException ex)
+        {
+            logger.LogWarning(ex, "Not valid google token");
+            return null;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Unexpected error in Google-token validation");
+            return null;
         }
     }
 }

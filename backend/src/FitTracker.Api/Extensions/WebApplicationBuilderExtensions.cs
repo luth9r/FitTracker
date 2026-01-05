@@ -16,112 +16,111 @@ using Scalar.AspNetCore;
 using Serilog;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 
-namespace FitTracker.Api.Extensions
+namespace FitTracker.Api.Extensions;
+
+/// <summary>
+///     WebApplicationBuilder configuration extensions.
+/// </summary>
+[ExcludeFromCodeCoverage]
+internal static class WebApplicationBuilderExtensions
 {
     /// <summary>
-    /// WebApplicationBuilder configuration extensions.
+    ///     Configures all required services for the application.
     /// </summary>
-    [ExcludeFromCodeCoverage]
-    internal static class WebApplicationBuilderExtensions
+    public static WebApplicationBuilder ConfigureApplicationBuilder(this WebApplicationBuilder builder)
     {
-        /// <summary>
-        /// Configures all required services for the application.
-        /// </summary>
-        public static WebApplicationBuilder ConfigureApplicationBuilder(
-            this WebApplicationBuilder builder)
+        _ = builder.Host.UseSerilog();
+
+        _ = builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+
+        _ = builder.Services.AddProblemDetails();
+
+        var supportedCultures = new[] { "en-US", "uk-UA" };
+
+        _ = builder.Services.AddLocalization(options => { options.ResourcesPath = "Localization"; });
+
+        _ = builder.Services.Configure<RequestLocalizationOptions>(options =>
         {
-            _ = builder.Host.UseSerilog();
+            options.DefaultRequestCulture = new RequestCulture("en-US");
+            options.SupportedCultures = supportedCultures
+                .Select(c => new CultureInfo(c))
+                .ToList();
+            options.SupportedUICultures = supportedCultures
+                .Select(c => new CultureInfo(c))
+                .ToList();
 
-            _ = builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
-
-            _ = builder.Services.AddProblemDetails();
-
-            var supportedCultures = new[] { "en-US", "uk-UA" };
-
-            _ = builder.Services.AddLocalization(options =>
+            options.RequestCultureProviders = new List<IRequestCultureProvider>
             {
-                options.ResourcesPath = "Localization";
-            });
+                new QueryStringRequestCultureProvider(),
+                new CookieRequestCultureProvider(),
+                new AcceptLanguageHeaderRequestCultureProvider(),
+            };
+        });
 
-            _ = builder.Services.Configure<RequestLocalizationOptions>(options =>
+        _ = builder.Services.AddRouting(options => options.LowercaseUrls = true);
+
+        _ = builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
             {
-                options.DefaultRequestCulture = new RequestCulture("en-US");
-                options.SupportedCultures = supportedCultures
-                    .Select(c => new CultureInfo(c))
-                    .ToList();
-                options.SupportedUICultures = supportedCultures
-                    .Select(c => new CultureInfo(c))
-                    .ToList();
-
-                options.RequestCultureProviders = new List<IRequestCultureProvider>
+                options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    new QueryStringRequestCultureProvider(),
-                    new CookieRequestCultureProvider(),
-                    new AcceptLanguageHeaderRequestCultureProvider(),
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = builder.Configuration["Jwt:Issuer"]
+                                  ?? throw new ArgumentNullException("Jwt:Issuer"),
+                    ValidAudience = builder.Configuration["Jwt:Audience"]
+                                    ?? throw new ArgumentNullException("Jwt:Audience"),
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(
+                            builder.Configuration["Jwt:Key"]
+                            ?? throw new ArgumentNullException("Jwt:Key"))),
+                };
+
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        context.Token = context.Request.Cookies["auth-token"];
+                        return Task.CompletedTask;
+                    },
                 };
             });
 
-            _ = builder.Services.AddRouting(options => options.LowercaseUrls = true);
-
-            _ = builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
-                {
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
-                        ValidIssuer = builder.Configuration["Jwt:Issuer"]
-                            ?? throw new ArgumentNullException("Jwt:Issuer"),
-                        ValidAudience = builder.Configuration["Jwt:Audience"]
-                            ?? throw new ArgumentNullException("Jwt:Audience"),
-                        IssuerSigningKey = new SymmetricSecurityKey(
-                            Encoding.UTF8.GetBytes(
-                                builder.Configuration["Jwt:Key"]
-                                    ?? throw new ArgumentNullException("Jwt:Key"))),
-                    };
-
-                    options.Events = new JwtBearerEvents
-                    {
-                        OnMessageReceived = context =>
-                        {
-                            context.Token = context.Request.Cookies["auth-token"];
-                            return Task.CompletedTask;
-                        },
-                    };
-                });
-
-            _ = builder.Services.AddAuthorization(options =>
-            {
-                options.AddPolicy("AuthenticatedWithVerifiedEmail", policy =>
+        _ = builder.Services.AddAuthorization(options =>
+        {
+            options.AddPolicy(
+                "AuthenticatedWithVerifiedEmail",
+                policy =>
                 {
                     policy.AuthenticationSchemes.Add(JwtBearerDefaults.AuthenticationScheme);
                     policy.RequireAuthenticatedUser()
-                          .RequireClaim("is_email_verified", "true")
-                          .RequireClaim(ClaimTypes.NameIdentifier);
+                        .RequireClaim("is_email_verified", "true")
+                        .RequireClaim(ClaimTypes.NameIdentifier);
                 });
 
-                options.FallbackPolicy = null;
-            });
+            options.FallbackPolicy = null;
+        });
 
-            _ = builder.Services.AddControllers();
+        _ = builder.Services.AddControllers();
 
-            _ = builder.Services.AddValidatorsFromAssembly(
-                    typeof(LoginRequestValidator).Assembly);
+        _ = builder.Services.AddValidatorsFromAssembly(typeof(LoginRequestValidator).Assembly);
 
-            _ = builder.Services.AddFluentValidationAutoValidation();
+        _ = builder.Services.AddFluentValidationAutoValidation();
 
-            _ = builder.Services.AddOpenApi(options =>
+        _ = builder.Services.AddOpenApi(options =>
+        {
+            options.AddScalarTransformers();
+
+            options.AddDocumentTransformer((document, context, cancellationToken) =>
             {
-                options.AddScalarTransformers();
+                document.Components ??= new OpenApiComponents();
+                document.Components.SecuritySchemes ??= new Dictionary<string, IOpenApiSecurityScheme>();
 
-                options.AddDocumentTransformer((document, context, cancellationToken) =>
-                {
-                    document.Components ??= new OpenApiComponents();
-                    document.Components.SecuritySchemes ??= new Dictionary<string, IOpenApiSecurityScheme>();
-
-                    document.Components.SecuritySchemes.Add("CookieAuth", new OpenApiSecurityScheme
+                document.Components.SecuritySchemes.Add(
+                    "CookieAuth",
+                    new OpenApiSecurityScheme
                     {
                         Type = SecuritySchemeType.ApiKey,
                         In = ParameterLocation.Cookie,
@@ -129,47 +128,49 @@ namespace FitTracker.Api.Extensions
                         Description = "JWT stored in http-only 'auth-token' cookie. Log in first to set the cookie.",
                     });
 
-                    document.SetReferenceHostDocument();
+                document.SetReferenceHostDocument();
 
-                    return Task.CompletedTask;
-                });
-
-                options.AddOperationTransformer((operation, context, cancellationToken) =>
-                {
-                    var authorizeAttributes = context.Description.ActionDescriptor.EndpointMetadata
-                        .OfType<AuthorizeAttribute>()
-                        .ToList();
-
-                    var allowAnonymous = context.Description.ActionDescriptor.EndpointMetadata
-                        .OfType<AllowAnonymousAttribute>()
-                        .Any();
-
-                    // If [Authorize] and without [AllowAnonymous]
-                    if (authorizeAttributes.Any() && !allowAnonymous)
-                    {
-                        operation.Security = new List<OpenApiSecurityRequirement>
-                        {
-                            new OpenApiSecurityRequirement
-                            {
-                                {
-                                    new OpenApiSecuritySchemeReference("CookieAuth"),
-                                    new List<string>()
-                                },
-                            },
-                        };
-                    }
-
-                    return Task.CompletedTask;
-                });
+                return Task.CompletedTask;
             });
 
-            _ = builder.Services.AddInfrastructure(builder.Configuration);
-
-            _ = builder.Services.AddApplication(builder.Configuration);
-
-            _ = builder.Services.AddCors(options =>
+            options.AddOperationTransformer((operation, context, cancellationToken) =>
             {
-                options.AddPolicy("AllowAll", policy =>
+                var authorizeAttributes = context.Description.ActionDescriptor.EndpointMetadata
+                    .OfType<AuthorizeAttribute>()
+                    .ToList();
+
+                var allowAnonymous = context.Description.ActionDescriptor.EndpointMetadata
+                    .OfType<AllowAnonymousAttribute>()
+                    .Any();
+
+                // If [Authorize] and without [AllowAnonymous]
+                if (authorizeAttributes.Any() && !allowAnonymous)
+                {
+                    operation.Security = new List<OpenApiSecurityRequirement>
+                    {
+                        new()
+                        {
+                            {
+                                new OpenApiSecuritySchemeReference("CookieAuth"),
+                                new List<string>()
+                            },
+                        },
+                    };
+                }
+
+                return Task.CompletedTask;
+            });
+        });
+
+        _ = builder.Services.AddInfrastructure(builder.Configuration);
+
+        _ = builder.Services.AddApplication(builder.Configuration);
+
+        _ = builder.Services.AddCors(options =>
+        {
+            options.AddPolicy(
+                "AllowAll",
+                policy =>
                 {
                     var allowedOrigins = builder.Configuration
                         .GetSection("Cors:AllowedOrigins")
@@ -180,9 +181,8 @@ namespace FitTracker.Api.Extensions
                         .AllowAnyHeader()
                         .AllowCredentials();
                 });
-            });
+        });
 
-            return builder;
-        }
+        return builder;
     }
 }

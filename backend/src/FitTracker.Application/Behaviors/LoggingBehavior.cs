@@ -1,60 +1,71 @@
+using System.Diagnostics;
 using CSharpFunctionalExtensions;
 using FitTracker.Application.Extensions.MedaitR;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using System.Diagnostics;
 
-namespace FitTracker.Application.Behaviors
+namespace FitTracker.Application.Behaviors;
+
+/// <summary>
+///     Logs the execution time and outcome of MediatR requests.
+/// </summary>
+/// <typeparam name="TRequest">The type of the request.</typeparam>
+/// <typeparam name="TResponse">The type of the response.</typeparam>
+/// <param name="logger">The logger.</param>
+public class LoggingBehavior<TRequest, TResponse>(ILogger<LoggingBehavior<TRequest, TResponse>> logger)
+    : IPipelineBehavior<TRequest, TResponse>
+    where TRequest : IRequest<TResponse>
 {
     /// <summary>
-    /// Logs the execution time and outcome of MediatR requests.
+    ///     Handles the logging of request execution.
     /// </summary>
-    /// <typeparam name="TRequest">The type of the request.</typeparam>
-    /// <typeparam name="TResponse">The type of the response.</typeparam>
-    /// <param name="logger">The logger.</param>
-    public class LoggingBehavior<TRequest, TResponse>(ILogger<LoggingBehavior<TRequest, TResponse>> logger) : IPipelineBehavior<TRequest, TResponse>
-       where TRequest : IRequest<TResponse>
+    /// <param name="request">The <see cref="IRequest{TResponse}" />.</param>
+    /// <param name="next">The <see cref="RequestHandlerDelegate{TResponse}" />.</param>
+    /// <param name="cancellationToken">The <see cref="CancellationToken" />.</param>
+    /// <returns>The <typeparamref name="TResponse" />.</returns>
+    public async Task<TResponse> Handle(
+        TRequest request,
+        RequestHandlerDelegate<TResponse> next,
+        CancellationToken cancellationToken)
     {
-        /// <summary>
-        /// Handles the logging of request execution.
-        /// </summary>
-        /// <param name="request">The <see cref="IRequest{TResponse}"/>.</param>
-        /// <param name="next">The <see cref="RequestHandlerDelegate{TResponse}"/>.</param>
-        /// <param name="cancellationToken">The <see cref="CancellationToken"/>.</param>
-        /// <returns>The <typeparamref name="TResponse"/>.</returns>
-        public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
+        var requestName = request.GetFormattedName();
+
+        logger.LogInformation("[START] Handling {RequestName}", requestName);
+
+        var stopwatch = Stopwatch.StartNew();
+        TResponse response;
+
+        try
         {
-            var requestName = request.GetFormattedName();
-
-            logger.LogInformation("[START] Handling {RequestName}", requestName);
-
-            var stopwatch = Stopwatch.StartNew();
-            TResponse response;
-
-            try
-            {
-                response = await next();
-            }
-            catch (Exception ex)
-            {
-                stopwatch.Stop();
-                logger.LogError(ex, "[FAILURE] Handling {RequestName} threw an exception after {TimeMs}ms", requestName, stopwatch.ElapsedMilliseconds);
-                throw;
-            }
-
-            stopwatch.Stop();
-            var timeTaken = stopwatch.ElapsedMilliseconds;
-
-            if (response is Result result && result.IsFailure)
-            {
-                logger.LogWarning("[FAILURE] Handling {RequestName} failed after {TimeMs}ms. Error: {Error}", requestName, timeTaken, result.Error);
-            }
-            else
-            {
-                logger.LogInformation("[END] Handled {RequestName} successfully in {TimeMs}ms", requestName, timeTaken);
-            }
-
-            return response;
+            response = await next();
         }
+        catch (Exception ex)
+        {
+            stopwatch.Stop();
+            logger.LogError(
+                ex,
+                "[FAILURE] Handling {RequestName} threw an exception after {TimeMs}ms",
+                requestName,
+                stopwatch.ElapsedMilliseconds);
+            throw;
+        }
+
+        stopwatch.Stop();
+        var timeTaken = stopwatch.ElapsedMilliseconds;
+
+        if (response is Result result && result.IsFailure)
+        {
+            logger.LogWarning(
+                "[FAILURE] Handling {RequestName} failed after {TimeMs}ms. Error: {Error}",
+                requestName,
+                timeTaken,
+                result.Error);
+        }
+        else
+        {
+            logger.LogInformation("[END] Handled {RequestName} successfully in {TimeMs}ms", requestName, timeTaken);
+        }
+
+        return response;
     }
 }

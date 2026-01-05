@@ -15,9 +15,9 @@ namespace FitTrackerApi.Tests.Controllers;
 
 public class AuthControllerTests
 {
-    private readonly Mock<IMediator> _mediatorMock;
     private readonly AuthController _controller;
     private readonly DefaultHttpContext _httpContext;
+    private readonly Mock<IMediator> _mediatorMock;
 
     public AuthControllerTests()
     {
@@ -27,7 +27,7 @@ public class AuthControllerTests
         _httpContext = new DefaultHttpContext();
         _controller.ControllerContext = new ControllerContext
         {
-            HttpContext = _httpContext
+            HttpContext = _httpContext,
         };
     }
 
@@ -277,7 +277,7 @@ public class AuthControllerTests
 
         var validationFailure = new ValidationFailure(nameof(email), "Email is already verified")
         {
-            ErrorCode = "User.AlreadyVerified"
+            ErrorCode = "User.AlreadyVerified",
         };
         var validationResult = new ValidationResult(new[] { validationFailure });
 
@@ -314,9 +314,9 @@ public class AuthControllerTests
 
         _mediatorMock
             .Verify(m => m.Send(
-                It.Is<ForgotPasswordCommand>(cmd => cmd.Email == email),
-                It.IsAny<CancellationToken>()),
-            Times.Once);
+                    It.Is<ForgotPasswordCommand>(cmd => cmd.Email == email),
+                    It.IsAny<CancellationToken>()),
+                Times.Once);
     }
 
     [Fact]
@@ -339,8 +339,8 @@ public class AuthControllerTests
 
         _mediatorMock
             .Verify(m => m.Send(
-                It.Is<ResetPasswordCommand>(cmd => cmd.NewPassword == newPassword && cmd.Token == token),
-                It.IsAny<CancellationToken>()),
-            Times.Once);
+                    It.Is<ResetPasswordCommand>(cmd => cmd.NewPassword == newPassword && cmd.Token == token),
+                    It.IsAny<CancellationToken>()),
+                Times.Once);
     }
 }

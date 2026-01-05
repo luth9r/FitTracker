@@ -3,20 +3,19 @@ using FitTracker.Application.Interfaces;
 using FitTracker.Application.Validators.CommonValidators;
 using FluentValidation;
 
-namespace FitTracker.Application.Validators
+namespace FitTracker.Application.Validators;
+
+public class RegisterRequestValidator : AbstractValidator<RegisterRequest>
 {
-    public class RegisterRequestValidator : AbstractValidator<RegisterRequest>
+    public RegisterRequestValidator(ILocalizationService localization)
     {
-        public RegisterRequestValidator(ILocalizationService localization)
-        {
-            RuleFor(x => x.Username)
-                .WithUsernameRules(localization);
+        RuleFor(x => x.Username)
+            .WithUsernameRules(localization);
 
-            RuleFor(x => x.Email)
-                .WithEmailRules(localization);
+        RuleFor(x => x.Email)
+            .WithEmailRules(localization);
 
-            RuleFor(x => x.Password)
-                .WithPasswordRules(localization);
-        }
+        RuleFor(x => x.Password)
+            .WithPasswordRules(localization);
     }
 }

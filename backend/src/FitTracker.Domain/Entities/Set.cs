@@ -3,67 +3,27 @@ using FitTracker.Domain.Enums;
 namespace FitTracker.Domain.Entities;
 
 /// <summary>
-/// Represents a single set within a workout exercise.
+///     Represents a single set within a workout exercise.
 /// </summary>
 public class Set : BaseEntity
 {
     /// <summary>
-    /// The maximum number of reps allowed in a set.
+    ///     The maximum number of reps allowed in a set.
     /// </summary>
     public const int MaxReps = 1000;
 
     /// <summary>
-    /// The maximum rest time allowed in seconds.
+    ///     The maximum rest time allowed in seconds.
     /// </summary>
     public const int MaxRestSeconds = 3600; // 1 hour
 
     /// <summary>
-    /// The maximum weight allowed in kilograms.
+    ///     The maximum weight allowed in kilograms.
     /// </summary>
     public const double MaxWeightKg = 10000d;
 
     /// <summary>
-    /// Gets the unique identifier of the workout exercise this set belongs to.
-    /// </summary>
-    public Guid WorkoutExerciseId { get; private set; }
-
-    /// <summary>
-    /// Gets the sequential number of this set within the workout exercise.
-    /// </summary>
-    public int SetNumber { get; private set; }
-
-    /// <summary>
-    /// Gets the weight used for this set.
-    /// </summary>
-    public double WeightKg { get; private set; }
-
-    /// <summary>
-    /// Gets the number of repetitions performed in this set.
-    /// </summary>
-    public int Reps { get; private set; }
-
-    /// <summary>
-    /// Gets the rest period in seconds before the next set, or null if not specified.
-    /// </summary>
-    public int? RestSeconds { get; private set; }
-
-    /// <summary>
-    /// Gets the type of this set (Normal, Dropset, Superset, etc.).
-    /// </summary>
-    public SetType SetType { get; private set; }
-
-    /// <summary>
-    /// Gets a value indicating whether this set has been completed.
-    /// </summary>
-    public bool IsCompleted { get; private set; }
-
-    /// <summary>
-    /// Gets the date and time when this set was completed, or null if not yet completed.
-    /// </summary>
-    public DateTime? CompletedAt { get; private set; }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Set"/> class.
+    ///     Initializes a new instance of the <see cref="Set" /> class.
     /// </summary>
     /// <param name="id">The unique identifier.</param>
     /// <param name="workoutExerciseId">The unique identifier of the workout exercise.</param>
@@ -101,14 +61,14 @@ public class Set : BaseEntity
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Set"/> class.
+    ///     Initializes a new instance of the <see cref="Set" /> class.
     /// </summary>
     private Set()
     {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Set"/> class.
+    ///     Initializes a new instance of the <see cref="Set" /> class.
     /// </summary>
     /// <param name="workoutExerciseId">The unique identifier of the workout exercise.</param>
     /// <param name="setNumber">The sequential number of the set.</param>
@@ -123,7 +83,6 @@ public class Set : BaseEntity
         int reps,
         int? restSeconds,
         SetType setType = SetType.Normal)
-        : base()
     {
         if (workoutExerciseId == Guid.Empty)
         {
@@ -175,7 +134,47 @@ public class Set : BaseEntity
     }
 
     /// <summary>
-    /// Creates a new <see cref="Set"/>.
+    ///     Gets the unique identifier of the workout exercise this set belongs to.
+    /// </summary>
+    public Guid WorkoutExerciseId { get; private set; }
+
+    /// <summary>
+    ///     Gets the sequential number of this set within the workout exercise.
+    /// </summary>
+    public int SetNumber { get; private set; }
+
+    /// <summary>
+    ///     Gets the weight used for this set.
+    /// </summary>
+    public double WeightKg { get; private set; }
+
+    /// <summary>
+    ///     Gets the number of repetitions performed in this set.
+    /// </summary>
+    public int Reps { get; private set; }
+
+    /// <summary>
+    ///     Gets the rest period in seconds before the next set, or null if not specified.
+    /// </summary>
+    public int? RestSeconds { get; private set; }
+
+    /// <summary>
+    ///     Gets the type of this set (Normal, Dropset, Superset, etc.).
+    /// </summary>
+    public SetType SetType { get; private set; }
+
+    /// <summary>
+    ///     Gets a value indicating whether this set has been completed.
+    /// </summary>
+    public bool IsCompleted { get; private set; }
+
+    /// <summary>
+    ///     Gets the date and time when this set was completed, or null if not yet completed.
+    /// </summary>
+    public DateTime? CompletedAt { get; private set; }
+
+    /// <summary>
+    ///     Creates a new <see cref="Set" />.
     /// </summary>
     /// <param name="workoutExerciseId">The unique identifier of the workout exercise.</param>
     /// <param name="setNumber">The sequential number of the set.</param>
@@ -183,7 +182,7 @@ public class Set : BaseEntity
     /// <param name="reps">The number of repetitions.</param>
     /// <param name="restSeconds">The rest period in seconds.</param>
     /// <param name="setType">The type of the set.</param>
-    /// <returns>A new instance of <see cref="Set"/>.</returns>
+    /// <returns>A new instance of <see cref="Set" />.</returns>
     public static Set Create(
         Guid workoutExerciseId,
         int setNumber,
@@ -196,14 +195,17 @@ public class Set : BaseEntity
     }
 
     /// <summary>
-    /// Updates the sequential number of the set.
+    ///     Updates the sequential number of the set.
     /// </summary>
     /// <param name="newSetNumber">The new set number.</param>
     public void UpdateSetNumber(int newSetNumber)
     {
         if (newSetNumber <= 0)
         {
-            throw new ArgumentOutOfRangeException(nameof(newSetNumber), newSetNumber, "Set number must be greater than 0.");
+            throw new ArgumentOutOfRangeException(
+                nameof(newSetNumber),
+                newSetNumber,
+                "Set number must be greater than 0.");
         }
 
         SetNumber = newSetNumber;
@@ -211,14 +213,17 @@ public class Set : BaseEntity
     }
 
     /// <summary>
-    /// Updates the weight used in the set.
+    ///     Updates the weight used in the set.
     /// </summary>
     /// <param name="weight">The new weight.</param>
     public void UpdateWeight(double weight)
     {
         if (weight < 0 || weight > MaxWeightKg)
         {
-            throw new ArgumentOutOfRangeException(nameof(weight), weight, $"Weight must be between 0 and {MaxWeightKg} kg.");
+            throw new ArgumentOutOfRangeException(
+                nameof(weight),
+                weight,
+                $"Weight must be between 0 and {MaxWeightKg} kg.");
         }
 
         WeightKg = weight;
@@ -226,7 +231,7 @@ public class Set : BaseEntity
     }
 
     /// <summary>
-    /// Increases the weight used in the set by a specified amount in kilograms.
+    ///     Increases the weight used in the set by a specified amount in kilograms.
     /// </summary>
     /// <param name="amountKg">The amount to increase in kilograms.</param>
     public void IncreaseWeight(double amountKg)
@@ -239,7 +244,8 @@ public class Set : BaseEntity
         var newWeightKg = WeightKg + amountKg;
         if (newWeightKg > MaxWeightKg)
         {
-            throw new InvalidOperationException($"Resulting weight {newWeightKg} kg would exceed the maximum allowed of {MaxWeightKg} kg.");
+            throw new InvalidOperationException(
+                $"Resulting weight {newWeightKg} kg would exceed the maximum allowed of {MaxWeightKg} kg.");
         }
 
         WeightKg = newWeightKg;
@@ -247,7 +253,7 @@ public class Set : BaseEntity
     }
 
     /// <summary>
-    /// Decreases the weight used in the set by a specified amount in kilograms.
+    ///     Decreases the weight used in the set by a specified amount in kilograms.
     /// </summary>
     /// <param name="amountKg">The amount to decrease in kilograms.</param>
     public void DecreaseWeight(double amountKg)
@@ -260,7 +266,8 @@ public class Set : BaseEntity
         var newWeightKg = WeightKg - amountKg;
         if (newWeightKg < 0)
         {
-            throw new InvalidOperationException($"Resulting weight cannot be negative. Current: {WeightKg}, Decrease by: {amountKg}");
+            throw new InvalidOperationException(
+                $"Resulting weight cannot be negative. Current: {WeightKg}, Decrease by: {amountKg}");
         }
 
         WeightKg = newWeightKg;
@@ -268,7 +275,7 @@ public class Set : BaseEntity
     }
 
     /// <summary>
-    /// Updates the number of repetitions performed in the set.
+    ///     Updates the number of repetitions performed in the set.
     /// </summary>
     /// <param name="reps">The new number of repetitions.</param>
     public void UpdateReps(int reps)
@@ -283,14 +290,17 @@ public class Set : BaseEntity
     }
 
     /// <summary>
-    /// Updates the rest period for the set.
+    ///     Updates the rest period for the set.
     /// </summary>
     /// <param name="seconds">The new rest period in seconds.</param>
     public void UpdateRest(int? seconds)
     {
         if (seconds is < 0 && seconds.Value >= MaxRestSeconds)
         {
-            throw new ArgumentOutOfRangeException(nameof(seconds), seconds, $"Rest seconds must be between 0 and {MaxRestSeconds}.");
+            throw new ArgumentOutOfRangeException(
+                nameof(seconds),
+                seconds,
+                $"Rest seconds must be between 0 and {MaxRestSeconds}.");
         }
 
         RestSeconds = seconds;
@@ -298,7 +308,7 @@ public class Set : BaseEntity
     }
 
     /// <summary>
-    /// Changes the type of the set.
+    ///     Changes the type of the set.
     /// </summary>
     /// <param name="setType">The new set type.</param>
     public void ChangeSetType(SetType setType)
@@ -308,7 +318,7 @@ public class Set : BaseEntity
     }
 
     /// <summary>
-    /// Marks the set as completed.
+    ///     Marks the set as completed.
     /// </summary>
     public void Complete()
     {
@@ -323,7 +333,7 @@ public class Set : BaseEntity
     }
 
     /// <summary>
-    /// Marks the set as not completed.
+    ///     Marks the set as not completed.
     /// </summary>
     public void Uncomplete()
     {
@@ -338,7 +348,7 @@ public class Set : BaseEntity
     }
 
     /// <summary>
-    /// Determines whether this set is a personal record compared to previous sets.
+    ///     Determines whether this set is a personal record compared to previous sets.
     /// </summary>
     /// <param name="previousSets">A collection of previous sets to compare against.</param>
     /// <returns><c>true</c> if this set is a personal record; otherwise, <c>false</c>.</returns>
@@ -354,14 +364,20 @@ public class Set : BaseEntity
     }
 
     /// <summary>
-    /// Determines whether this set is a warmup set.
+    ///     Determines whether this set is a warmup set.
     /// </summary>
     /// <returns><c>true</c> if this set is a warmup set; otherwise, <c>false</c>.</returns>
-    public bool IsWarmupSet() => SetType == SetType.Warmup;
+    public bool IsWarmupSet()
+    {
+        return SetType == SetType.Warmup;
+    }
 
     /// <summary>
-    /// Determines whether this set is a working set.
+    ///     Determines whether this set is a working set.
     /// </summary>
     /// <returns><c>true</c> if this set is a working set; otherwise, <c>false</c>.</returns>
-    public bool IsWorkingSet() => SetType == SetType.Normal;
+    public bool IsWorkingSet()
+    {
+        return SetType == SetType.Normal;
+    }
 }

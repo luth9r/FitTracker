@@ -1,53 +1,53 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-	<PropertyGroup>
-		<TargetFramework>net10.0</TargetFramework>
-		<Nullable>enable</Nullable>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<UserSecretsId>c42ac4a3-15c9-49d1-8b54-fec4a59f66c5</UserSecretsId>
-	</PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <UserSecretsId>c42ac4a3-15c9-49d1-8b54-fec4a59f66c5</UserSecretsId>
+    </PropertyGroup>
 
-	<ItemGroup>
-	  <Compile Remove="Swagger\**" />
-	  <Content Remove="Swagger\**" />
-	  <EmbeddedResource Remove="Swagger\**" />
-	  <None Remove="Swagger\**" />
-	</ItemGroup>
+    <ItemGroup>
+        <Compile Remove="Swagger\**"/>
+        <Content Remove="Swagger\**"/>
+        <EmbeddedResource Remove="Swagger\**"/>
+        <None Remove="Swagger\**"/>
+    </ItemGroup>
 
-	<ItemGroup>
-		<PackageReference Include="MediatR" Version="13.1.0" />
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.0" />
-		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.0" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.0">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="Microsoft.OpenApi" Version="2.3.11" />
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-		<PackageReference Include="Serilog" Version="4.3.0" />
-		<PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
-		<PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
-		<PackageReference Include="Serilog.Sinks.Console" Version="6.1.1" />
-		<PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
-		<PackageReference Include="Serilog.Sinks.Seq" Version="9.0.0" />
-		<PackageReference Include="SharpGrip.FluentValidation.AutoValidation.Mvc" Version="1.5.0" />
-		<PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="Scalar.AspNetCore" Version="2.11.6" />
-		<PackageReference Include="Scalar.AspNetCore.Microsoft" Version="2.11.6" />
-	</ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="MediatR" Version="13.1.0"/>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.0"/>
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.0"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.OpenApi" Version="2.3.11"/>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.4"/>
+        <PackageReference Include="Serilog" Version="4.3.0"/>
+        <PackageReference Include="Serilog.AspNetCore" Version="9.0.0"/>
+        <PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1"/>
+        <PackageReference Include="Serilog.Sinks.Console" Version="6.1.1"/>
+        <PackageReference Include="Serilog.Sinks.File" Version="7.0.0"/>
+        <PackageReference Include="Serilog.Sinks.Seq" Version="9.0.0"/>
+        <PackageReference Include="SharpGrip.FluentValidation.AutoValidation.Mvc" Version="1.5.0"/>
+        <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Scalar.AspNetCore" Version="2.11.6"/>
+        <PackageReference Include="Scalar.AspNetCore.Microsoft" Version="2.11.6"/>
+    </ItemGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\FitTracker.Infrastructure\FitTracker.Infrastructure.csproj" />
-		<ProjectReference Include="..\FitTracker.Application\FitTracker.Application.csproj" />
-		<ProjectReference Include="..\FitTracker.Domain\FitTracker.Domain.csproj" />
-	</ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\FitTracker.Infrastructure\FitTracker.Infrastructure.csproj"/>
+        <ProjectReference Include="..\FitTracker.Application\FitTracker.Application.csproj"/>
+        <ProjectReference Include="..\FitTracker.Domain\FitTracker.Domain.csproj"/>
+    </ItemGroup>
 
-	<ItemGroup>
-		<Folder Include="Authorization\" />
-		<Folder Include="Helpers\" />
-	</ItemGroup>
+    <ItemGroup>
+        <Folder Include="Authorization\"/>
+        <Folder Include="Helpers\"/>
+    </ItemGroup>
 
 </Project>

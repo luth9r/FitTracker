@@ -2,14 +2,13 @@ using FitTracker.Application.Interfaces;
 using FitTracker.Application.Validators.CommonValidators;
 using FluentValidation;
 
-namespace FitTracker.Application.Validators
+namespace FitTracker.Application.Validators;
+
+public class ResetPasswordRequest : AbstractValidator<DTOs.Auth.ResetPasswordRequest>
 {
-    public class ResetPasswordRequest : AbstractValidator<DTOs.Auth.ResetPasswordRequest>
+    public ResetPasswordRequest(ILocalizationService localization)
     {
-        public ResetPasswordRequest(ILocalizationService localization)
-        {
-            RuleFor(x => x.NewPassword)
-                .WithPasswordRules(localization);
-        }
+        RuleFor(x => x.NewPassword)
+            .WithPasswordRules(localization);
     }
 }

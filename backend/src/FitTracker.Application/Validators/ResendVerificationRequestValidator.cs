@@ -3,14 +3,13 @@ using FitTracker.Application.Interfaces;
 using FitTracker.Application.Validators.CommonValidators;
 using FluentValidation;
 
-namespace FitTracker.Application.Validators
+namespace FitTracker.Application.Validators;
+
+public class ResendVerificationRequestValidator : AbstractValidator<ResendVerificationRequest>
 {
-    public class ResendVerificationRequestValidator : AbstractValidator<ResendVerificationRequest>
+    public ResendVerificationRequestValidator(ILocalizationService localization)
     {
-        public ResendVerificationRequestValidator(ILocalizationService localization)
-        {
-            RuleFor(x => x.Email)
-                .WithEmailRules(localization);
-        }
+        RuleFor(x => x.Email)
+            .WithEmailRules(localization);
     }
 }

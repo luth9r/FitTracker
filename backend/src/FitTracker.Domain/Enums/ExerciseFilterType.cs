@@ -1,23 +1,22 @@
-namespace FitTracker.Domain.Enums
+namespace FitTracker.Domain.Enums;
+
+/// <summary>
+///     Defines which exercises should be returned by the query.
+/// </summary>
+public enum ExerciseFilterType
 {
     /// <summary>
-    /// Defines which exercises should be returned by the query.
+    ///     Returns both standard exercises and custom exercises that belong to the current user.
     /// </summary>
-    public enum ExerciseFilterType
-    {
-        /// <summary>
-        /// Returns both standard exercises and custom exercises that belong to the current user.
-        /// </summary>
-        All,
+    All,
 
-        /// <summary>
-        /// Returns only standard (system-defined) exercises.
-        /// </summary>
-        Standard,
+    /// <summary>
+    ///     Returns only standard (system-defined) exercises.
+    /// </summary>
+    Standard,
 
-        /// <summary>
-        /// Returns only custom exercises created by the current user.
-        /// </summary>
-        Custom,
-    }
+    /// <summary>
+    ///     Returns only custom exercises created by the current user.
+    /// </summary>
+    Custom,
 }

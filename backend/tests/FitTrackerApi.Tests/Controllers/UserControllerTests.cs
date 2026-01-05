@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using CSharpFunctionalExtensions;
 using FitTracker.Api.Controllers;
 using FitTracker.Application.DTOs.Users;
@@ -7,15 +8,14 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using System.Security.Claims;
 
 namespace FitTrackerApi.Tests.Controllers;
 
 public class UserControllerTests
 {
-    private readonly Mock<IMediator> _mediatorMock;
     private readonly UserController _controller;
     private readonly DefaultHttpContext _httpContext;
+    private readonly Mock<IMediator> _mediatorMock;
 
     public UserControllerTests()
     {
@@ -25,7 +25,7 @@ public class UserControllerTests
         _httpContext = new DefaultHttpContext();
         _controller.ControllerContext = new ControllerContext
         {
-            HttpContext = _httpContext
+            HttpContext = _httpContext,
         };
     }
 
@@ -33,8 +33,8 @@ public class UserControllerTests
     {
         var claims = new List<Claim>
         {
-            new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
-            new Claim("preferred-units", preferredUnits)
+            new(ClaimTypes.NameIdentifier, userId.ToString()),
+            new("preferred-units", preferredUnits),
         };
         var identity = new ClaimsIdentity(claims, "TestAuth");
         var principal = new ClaimsPrincipal(identity);
@@ -86,11 +86,12 @@ public class UserControllerTests
         SetupUser(userId);
         var expectedWorkouts = new List<RecentWorkoutResponse>
         {
-            new RecentWorkoutResponse(Guid.NewGuid(), DateTime.UtcNow, "Workout 1", true, 60, 1000)
+            new(Guid.NewGuid(), DateTime.UtcNow, "Workout 1", true, 60, 1000),
         };
 
         _mediatorMock
-            .Setup(m => m.Send(It.Is<GetRecentWorkoutsQuery>(q => q.UserId == userId && q.Take == 5), It.IsAny<CancellationToken>()))
+            .Setup(m => m.Send(It.Is<GetRecentWorkoutsQuery>(q => q.UserId == userId && q.Take == 5),
+                It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Success<IReadOnlyList<RecentWorkoutResponse>>(expectedWorkouts));
 
         // Act

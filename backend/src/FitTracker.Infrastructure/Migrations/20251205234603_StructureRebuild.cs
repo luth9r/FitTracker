@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace FitTracker.Infrastructure.Migrations
 {
     [ExcludeFromCodeCoverage]
+
     /// <inheritdoc />
     public partial class StructureRebuild : Migration
     {

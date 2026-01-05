@@ -1,19 +1,20 @@
 <Solution>
-  <Configurations>
-    <Platform Name="Any CPU" />
-    <Platform Name="x64" />
-    <Platform Name="x86" />
-  </Configurations>
-  <Folder Name="/src/">
-    <Project Path="src/FitTracker.Api/FitTracker.Api.csproj" />
-    <Project Path="src/FitTracker.Application/FitTracker.Application.csproj" />
-    <Project Path="src/FitTracker.Domain/FitTracker.Domain.csproj" />
-    <Project Path="src/FitTracker.Infrastructure/FitTracker.Infrastructure.csproj" />
-  </Folder>
-  <Folder Name="/tests/">
-    <Project Path="tests/FitTrackerApi.Tests/FitTrackerApi.Tests.csproj" />
-    <Project Path="tests/FitTrackerApplication.Tests/FitTrackerApplication.Tests.csproj" Id="4a4efaae-f836-4a6c-a83c-d40a9fc7b12c" />
-    <Project Path="tests/FitTrackerDomain.Tests/FitTrackerDomain.Tests.csproj" />
-    <Project Path="tests/FitTrackerInfrastructure.Tests/FitTrackerInfrastructure.Tests.csproj" />
-  </Folder>
+    <Configurations>
+        <Platform Name="Any CPU"/>
+        <Platform Name="x64"/>
+        <Platform Name="x86"/>
+    </Configurations>
+    <Folder Name="/src/">
+        <Project Path="src/FitTracker.Api/FitTracker.Api.csproj"/>
+        <Project Path="src/FitTracker.Application/FitTracker.Application.csproj"/>
+        <Project Path="src/FitTracker.Domain/FitTracker.Domain.csproj"/>
+        <Project Path="src/FitTracker.Infrastructure/FitTracker.Infrastructure.csproj"/>
+    </Folder>
+    <Folder Name="/tests/">
+        <Project Path="tests/FitTrackerApi.Tests/FitTrackerApi.Tests.csproj"/>
+        <Project Path="tests/FitTrackerApplication.Tests/FitTrackerApplication.Tests.csproj"
+                 Id="4a4efaae-f836-4a6c-a83c-d40a9fc7b12c"/>
+        <Project Path="tests/FitTrackerDomain.Tests/FitTrackerDomain.Tests.csproj"/>
+        <Project Path="tests/FitTrackerInfrastructure.Tests/FitTrackerInfrastructure.Tests.csproj"/>
+    </Folder>
 </Solution>

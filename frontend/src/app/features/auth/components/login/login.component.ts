@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { finalize } from 'rxjs/operators';
 import { AuthService, LoginResponse, RegisterPayload } from '../../services/auth.service';
 import { OAuthService } from 'angular-oauth2-oidc';
@@ -15,9 +15,9 @@ import {
 } from './forms/register-form/register-form.component';
 import { ToastComponent } from '../../../../shared/ui/toast/component/toast.component';
 import { ModalService } from '../../../../shared/utils/modal.service';
-import { 
-  EmailVerificationModalComponent, 
-  EmailVerificationData 
+import {
+  EmailVerificationModalComponent,
+  EmailVerificationData
 } from '../ui/email-verification-modal/email-verification-modal.component';
 
 type AuthMode = 'login' | 'register';
@@ -57,7 +57,7 @@ export class LoginComponent {
   // Temporary state for validation
   private registerPassword = '';
   private registerConfirmPassword = '';
-  private registeredEmail = ''; // Сохраняем email для resend
+  private registeredEmail = '';
 
   private googleIntent: AuthMode = 'login';
 
@@ -206,7 +206,6 @@ export class LoginComponent {
       password: formData.password,
     };
 
-    // Сохраняем email для модалки
     this.registeredEmail = formData.email;
 
     this.authService
@@ -214,16 +213,13 @@ export class LoginComponent {
       .pipe(finalize(() => (this.isLoading = false)))
       .subscribe({
         next: (response) => {
-          // Открываем модалку верификации после успешной регистрации
           this.openEmailVerificationModal(formData.email);
-          // Можно также показать успешное сообщение
           this.toast.show('success', 'LOGIN.SUCCESS.REGISTER');
         },
         error: (err) => this.handleError(err, 'register'),
       });
   }
 
-  // Открытие модального окна верификации
   private openEmailVerificationModal(email: string) {
     const modalRef = this.modalService.open<EmailVerificationData>(
       EmailVerificationModalComponent,
@@ -235,21 +231,18 @@ export class LoginComponent {
       }
     );
 
-    // Подписываемся на результат закрытия модалки
     modalRef.afterClosed$.subscribe((result) => {
       console.log('[INFO] Email verification modal closed', result);
-      
+
       if (result?.action === 'resend') {
         this.handleResendVerification(email);
       }
     });
   }
 
-  // Обработка повторной отправки письма верификации
   handleResendVerification(email: string) {
     console.log('[INFO] Resending verification email to:', email);
-    
-    // Показываем loading индикатор
+
     this.isLoading = true;
 
     this.authService
@@ -299,8 +292,6 @@ export class LoginComponent {
   }
 
   private handleLoginSuccess(response: LoginResponse, isRegistration = false) {
-    // Для регистрации не показываем toast и не редиректим сразу
-    // так как откроется модалка верификации
     if (!isRegistration) {
       this.toast.show('success', 'LOGIN.SUCCESS.LOGIN');
       setTimeout(() => {

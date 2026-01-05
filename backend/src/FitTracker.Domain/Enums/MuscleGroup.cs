@@ -1,18 +1,17 @@
-namespace FitTracker.Domain.Enums
+namespace FitTracker.Domain.Enums;
+
+public enum MuscleGroup
 {
-    public enum MuscleGroup
-    {
-        Chest,
-        Back,
-        Shoulders,
-        Biceps,
-        Triceps,
-        Forearms,
-        Abs,
-        Quadriceps,
-        Hamstrings,
-        Glutes,
-        Calves,
-        Legs,
-    }
+    Chest,
+    Back,
+    Shoulders,
+    Biceps,
+    Triceps,
+    Forearms,
+    Abs,
+    Quadriceps,
+    Hamstrings,
+    Glutes,
+    Calves,
+    Legs,
 }

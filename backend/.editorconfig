@@ -1,98 +1,89 @@
 root = true
 
+# GLOBAL
 [*]
 charset = utf-8
 end_of_line = crlf
 insert_final_newline = true
-
-[*.cs]
-dotnet_diagnostic.S107.severity = none      # Too many constructor parameters
-dotnet_diagnostic.SA0001.severity = none    # XML documentation
-dotnet_diagnostic.SA1101.severity = none    # Space after keyword in control flow
-dotnet_diagnostic.SA1200.severity = none    # Using outside namespace
-dotnet_diagnostic.SA1201.severity = none    # Constructor and prop
-dotnet_diagnostic.CS8618.severity = none    # Not nullable
-dotnet_diagnostic.SA1214.severity = none    # Properties should be last
-dotnet_diagnostic.SA1600.severity = none    # Copyright header
-dotnet_diagnostic.SA1633.severity = none    # File header
-dotnet_diagnostic.SA1649.severity = none    # File header spacing
-dotnet_diagnostic.SA1208.severity = none    # Protected/internal order
-dotnet_diagnostic.SA1000.severity = none    # new
-dotnet_diagnostic.SA1313.severity = none    # Fields
-dotnet_diagnostic.SA1009.severity = none    # Spaces
-dotnet_diagnostic.SA1309.severity = none 
-dotnet_diagnostic.SA1202.severity = none 
-
 trim_trailing_whitespace = true
 
-# INDENTATION
+# C# FILES
+[*.cs]
 indent_style = space
 indent_size = 4
 tab_width = 4
-
-# SPACING
 max_line_length = 120
-trim_trailing_whitespace = true
 
-# Domain Layer — STRICT (DDD)
+# IGNORE COMMON DIAGNOSTICS
+dotnet_diagnostic.S107.severity = none # Too many constructor parameters
+dotnet_diagnostic.SA0001.severity = none # XML documentation
+dotnet_diagnostic.SA1101.severity = none # Space after keyword
+dotnet_diagnostic.SA1200.severity = none # Using outside namespace
+dotnet_diagnostic.SA1201.severity = none # Constructor/prop order
+dotnet_diagnostic.CS8618.severity = none # Not nullable
+dotnet_diagnostic.SA1214.severity = none # Properties last
+dotnet_diagnostic.SA1600.severity = none # Copyright
+dotnet_diagnostic.SA1633.severity = none # File header
+dotnet_diagnostic.SA1649.severity = none # Header spacing
+dotnet_diagnostic.SA1208.severity = none # Protected/internal order
+dotnet_diagnostic.SA1000.severity = none # new keyword
+dotnet_diagnostic.SA1313.severity = none # Field casing
+dotnet_diagnostic.SA1009.severity = none # Spaces
+dotnet_diagnostic.SA1309.severity = none # Field prefix
+dotnet_diagnostic.SA1202.severity = none # Elements order (tests)
+dotnet_diagnostic.SA1118.severity = none
+
+# LAYERED ENFORCEMENT (DDD)
 [**/Domain/**]
-dotnet_diagnostic.SA1201.severity = warning  # Elements order
-dotnet_diagnostic.SA1124.severity = warning  # Closing brace spacing
-dotnet_diagnostic.SA1204.severity = warning  # Const field order
+dotnet_diagnostic.SA1201.severity = warning # Strict order
+dotnet_diagnostic.SA1124.severity = warning # Brace spacing
 
-# Application Layer (CQRS/MediatR) — flexible
 [**/Application/**]
 dotnet_diagnostic.SA1201.severity = suggestion
 dotnet_diagnostic.SA1124.severity = suggestion
 
-# Infrastructure — configs (AutoMapper, EF)
 [**/Infrastructure/**]
 dotnet_diagnostic.SA1201.severity = none
 dotnet_diagnostic.SA1124.severity = none
 
-# WebAPI Controllers — minimal
 [**Controllers/**]
 dotnet_diagnostic.SA1201.severity = suggestion
-dotnet_diagnostic.SA1124.severity = suggestion
 
-# TESTS — FREEDOM
+# TESTS & INFRA — FREEDOM
 [**/*.Tests/**]
-dotnet_diagnostic.*.severity = none
+generated_code = true
+dotnet_analyzer_diagnostic.severity = none
+dotnet_diagnostic.severity = none
 
-# Migrations — ignore
 [**/Migrations/**]
+generated_code = true
 dotnet_diagnostic.*.severity = none
-dotnet_analyzer_diagnostic.*.severity = none
-ide.0010.severity = none          # IDE0001, IDE0002 etc.
-ide.*.severity = none
-csharpsquid.*.severity = none 
+ide.0010.severity = none
+csharpsquid.*.severity = none
 
 [**/*Seeder*.cs]
-dotnet_diagnostic.*.severity = none
-ide.*.severity = none
+generated_code = true
+dotnet_analyzer_diagnostic.severity = none
+dotnet_diagnostic.severity = none
+StyleCop.Analyzers.dotnet_diagnostic.severity = none
 
-# SERVICE FOLDERS — disable
+# BUILD FOLDERS — IGNORE
 [**/bin/**]
-dotnet_diagnostic.*.severity = none
 
 [**/obj/**]
-dotnet_diagnostic.*.severity = none
 
 [**/wwwroot/**]
-dotnet_diagnostic.*.severity = none
 
 [**/Properties/**]
 dotnet_diagnostic.*.severity = none
 
-# new line preferences
+# NEW LINE PREFERENCES
 dotnet_style_parentheses_in_arithmetic_binary_operators_precedence = always_for_clarity:suggestion
 dotnet_style_parentheses_in_relational_binary_operators_precedence = always_for_clarity:suggestion
 dotnet_style_parentheses_in_other_binary_operators_precedence = always_for_clarity:suggestion
 dotnet_style_parentheses_in_other_operators_precedence = never_if_unnecessary:suggestion
 
-# dotnet_style_conditional_delegate_call_qualification = false:suggestion
-
-# control flow preferences
+# CONTROL FLOW
 dotnet_style_prefer_braces = when_multiline:suggestion
 dotnet_style_empty_block_on_single_line = false:suggestion
 dotnet_style_empty_statement_on_single_line = true:suggestion
@@ -103,7 +94,7 @@ dotnet_style_prefer_not_pattern = true:suggestion
 dotnet_style_prefer_is_null_check_over_reference_equality_method = true:suggestion
 dotnet_style_prefer_checked_over_unchecked = true:suggestion
 
-# expression preferences
+# EXPRESSIONS (Moq-friendly)
 dotnet_style_coalesce_expression = true:suggestion
 dotnet_style_null_propagation = true:suggestion
 dotnet_style_explicit_tuple_names = always:suggestion
@@ -118,11 +109,11 @@ dotnet_style_prefer_object_initializer = true:suggestion
 dotnet_style_prefer_explicit_tuple_type = false:suggestion
 dotnet_style_prefer_inferred_tuple_type = true:suggestion
 
-# field preferences
+# FIELDS
 dotnet_style_readonly_field = true:warning
 dotnet_style_private_field_preference = private|readonly:warning
 
-# parameter preferences
+# PARAMETERS
 dotnet_style_prefer_thrown_over_invoke_throw_expression = true:suggestion
 dotnet_style_prefer_predefined_type_for_locals = true:warning
 dotnet_style_prefer_predefined_type_for_member_invocation = true:suggestion
@@ -130,7 +121,7 @@ dotnet_style_prefer_auto_properties = true:warning
 dotnet_style_prefer_conditional_expression_over_assignment = true:suggestion
 dotnet_style_prefer_conditional_expression_over_return = true:suggestion
 
-# other
+# MISC
 dotnet_style_enable_null_check_for_fields_and_nullable_reference_types = false:suggestion
 dotnet_style_enable_null_check_for_parameters_and_nullable_reference_types = false:suggestion
 dotnet_style_prefer_simplified_boolean_expressions = true:suggestion
@@ -141,3 +132,8 @@ dotnet_style_unused_value_assignment_preference = discard_variable:suggestion
 dotnet_style_nullable_overridable_property = true:warning
 dotnet_style_return_value_preference = when_not_null:suggestion
 dotnet_style_prefer_for_over_foreach = false:suggestion
+
+# MOQ MULTILINE PERFECT
+csharp_new_line_before_members_in_object_initializers = true:suggestion
+csharp_new_line_before_members_in_anonymous_types = true:suggestion
+dotnet_style_operator_placement_when_wrapping = beginning_of_line:suggestion

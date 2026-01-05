@@ -2,31 +2,29 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FitTracker.Api.Controllers
+namespace FitTracker.Api.Controllers;
+
+/// <summary>
+///     Base API controller for authenticated requests.
+/// </summary>
+[ApiController]
+[Authorize(Policy = "AuthenticatedWithVerifiedEmail")]
+public abstract class BaseApiController : ControllerBase
 {
     /// <summary>
-    /// Base API controller for authenticated requests.
+    ///     Gets the current user ID.
     /// </summary>
-    [ApiController]
-    [Authorize(Policy = "AuthenticatedWithVerifiedEmail")]
-    public abstract class BaseApiController : ControllerBase
+    protected Guid CurrentUserId
     {
-        /// <summary>
-        /// Gets the current user ID.
-        /// </summary>
-        protected Guid CurrentUserId
+        get
         {
-            get
+            var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrWhiteSpace(id))
             {
-                var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                if (string.IsNullOrWhiteSpace(id))
-                {
-                    throw new InvalidOperationException(
-                        "User ID is missing from claims, but authorization passed.");
-                }
-
-                return Guid.Parse(id);
+                throw new InvalidOperationException("User ID is missing from claims, but authorization passed.");
             }
+
+            return Guid.Parse(id);
         }
     }
 }

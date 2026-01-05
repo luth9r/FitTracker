@@ -1,17 +1,16 @@
-namespace FitTracker.Domain.Enums
+namespace FitTracker.Domain.Enums;
+
+public enum Equipment
 {
-    public enum Equipment
-    {
-        Barbell,
-        Dumbbell,
-        Machine,
-        Cable,
-        Bodyweight,
-        Kettlebell,
-        Band,
-        TRX,
-        Medicine_Ball,
-        None,
-        Other,
-    }
+    Barbell,
+    Dumbbell,
+    Machine,
+    Cable,
+    Bodyweight,
+    Kettlebell,
+    Band,
+    TRX,
+    Medicine_Ball,
+    None,
+    Other,
 }

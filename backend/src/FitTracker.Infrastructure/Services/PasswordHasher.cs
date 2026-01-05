@@ -1,39 +1,38 @@
 using FitTracker.Application.Interfaces;
 using Crypt = BCrypt.Net.BCrypt;
 
-namespace FitTracker.Infrastructure.Services
+namespace FitTracker.Infrastructure.Services;
+
+public class PasswordHasher : IPasswordHasher
 {
-    public class PasswordHasher : IPasswordHasher
+    private const int WorkFactor = 11;
+
+    /// <inheritdoc />
+    public string HashPassword(string password)
     {
-        private const int WorkFactor = 11;
-
-        /// <inheritdoc/>
-        public string HashPassword(string password)
+        if (string.IsNullOrWhiteSpace(password))
         {
-            if (string.IsNullOrWhiteSpace(password))
-            {
-                throw new ArgumentException("Password cannot be empty");
-            }
-
-            return Crypt.HashPassword(password, WorkFactor);
+            throw new ArgumentException("Password cannot be empty");
         }
 
-        /// <inheritdoc/>
-        public bool VerifyPassword(string password, string hash)
-        {
-            if (string.IsNullOrWhiteSpace(password) || string.IsNullOrWhiteSpace(hash))
-            {
-                return false;
-            }
+        return Crypt.HashPassword(password, WorkFactor);
+    }
 
-            try
-            {
-                return Crypt.Verify(password, hash);
-            }
-            catch
-            {
-                return false;
-            }
+    /// <inheritdoc />
+    public bool VerifyPassword(string password, string hash)
+    {
+        if (string.IsNullOrWhiteSpace(password) || string.IsNullOrWhiteSpace(hash))
+        {
+            return false;
+        }
+
+        try
+        {
+            return Crypt.Verify(password, hash);
+        }
+        catch
+        {
+            return false;
         }
     }
 }

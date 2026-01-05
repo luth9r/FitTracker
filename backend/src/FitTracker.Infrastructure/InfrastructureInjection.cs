@@ -9,6 +9,7 @@ using FitTracker.Infrastructure.Settings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace FitTracker.Infrastructure;
 
@@ -40,8 +41,7 @@ public static class InfrastructureInjection
 
         if (string.IsNullOrEmpty(connectionString))
         {
-            throw new InvalidOperationException(
-                "Database connection string 'DefaultConnection' is not configured.");
+            throw new InvalidOperationException("Database connection string 'DefaultConnection' is not configured.");
         }
 
         _ = services.AddDbContext<FitTrackerDbContext>(options =>
@@ -53,16 +53,16 @@ public static class InfrastructureInjection
                     _ = npgsqlOptions.MigrationsAssembly("FitTracker.Infrastructure");
                     _ = npgsqlOptions.CommandTimeout(30);
                     _ = npgsqlOptions.EnableRetryOnFailure(
-                        maxRetryCount: 3,
-                        maxRetryDelay: TimeSpan.FromSeconds(30),
-                        errorCodesToAdd: null);
+                        3,
+                        TimeSpan.FromSeconds(30),
+                        null);
                 });
 
             var isDevelopment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
 
             if (isDevelopment)
             {
-                _ = options.LogTo(Console.WriteLine, Microsoft.Extensions.Logging.LogLevel.Information)
+                _ = options.LogTo(Console.WriteLine, LogLevel.Information)
                     .EnableSensitiveDataLogging()
                     .EnableDetailedErrors();
             }
@@ -105,9 +105,6 @@ public static class InfrastructureInjection
 
     private static void AddAutoMappers(IServiceCollection services)
     {
-        _ = services.AddAutoMapper(cfg =>
-        {
-            cfg.AddMaps(typeof(InfrastructureInjection).Assembly);
-        });
+        _ = services.AddAutoMapper(cfg => { cfg.AddMaps(typeof(InfrastructureInjection).Assembly); });
     }
 }

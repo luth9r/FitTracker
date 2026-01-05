@@ -1,17 +1,16 @@
-namespace FitTracker.Domain.Enums
+namespace FitTracker.Domain.Enums;
+
+public enum SetType
 {
-    public enum SetType
-    {
-        WarmUp,
-        Normal,
-        Dropset,
-        Superset,
-        TriSet,
-        AMRAP,
-        EMOM,
-        RPT, // Rest Pause Training
-        Warmup,
-        Pyramid,
-        RestPause,
-    }
+    WarmUp,
+    Normal,
+    Dropset,
+    Superset,
+    TriSet,
+    AMRAP,
+    EMOM,
+    RPT, // Rest Pause Training
+    Warmup,
+    Pyramid,
+    RestPause,
 }

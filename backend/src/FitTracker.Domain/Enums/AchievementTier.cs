@@ -1,13 +1,12 @@
-namespace FitTracker.Domain.Enums
+namespace FitTracker.Domain.Enums;
+
+public enum AchievementTier
 {
-    public enum AchievementTier
-    {
-        Bronze,
-        Silver,
-        Gold,
-        Platinum,
-        Diamond,
-        Emerald,
-        Titan,
-    }
+    Bronze,
+    Silver,
+    Gold,
+    Platinum,
+    Diamond,
+    Emerald,
+    Titan,
 }

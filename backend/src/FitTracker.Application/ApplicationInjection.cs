@@ -4,44 +4,40 @@ using FluentValidation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace FitTracker.Application
+namespace FitTracker.Application;
+
+[ExcludeFromCodeCoverage]
+public static class ApplicationInjection
 {
-    [ExcludeFromCodeCoverage]
-    public static class ApplicationInjection
+    public static IServiceCollection AddApplication(this IServiceCollection services, IConfiguration configuration)
     {
-        public static IServiceCollection AddApplication(this IServiceCollection services, IConfiguration configuration)
+        AddMediatR(services);
+
+        AddValidators(services);
+
+        AddAutoMappers(services);
+
+        _ = services.AddHttpClient();
+
+        return services;
+    }
+
+    private static void AddMediatR(IServiceCollection services)
+    {
+        _ = services.AddMediatR(cfg =>
         {
-            AddMediatR(services);
+            _ = cfg.RegisterServicesFromAssembly(typeof(ApplicationInjection).Assembly);
+            _ = cfg.AddOpenBehavior(typeof(LoggingBehavior<,>));
+        });
+    }
 
-            AddValidators(services);
+    private static void AddValidators(IServiceCollection services)
+    {
+        _ = services.AddValidatorsFromAssembly(typeof(ApplicationInjection).Assembly);
+    }
 
-            AddAutoMappers(services);
-
-            _ = services.AddHttpClient();
-
-            return services;
-        }
-
-        private static void AddMediatR(IServiceCollection services)
-        {
-            _ = services.AddMediatR(cfg =>
-            {
-                _ = cfg.RegisterServicesFromAssembly(typeof(ApplicationInjection).Assembly);
-                _ = cfg.AddOpenBehavior(typeof(LoggingBehavior<,>));
-            });
-        }
-
-        private static void AddValidators(IServiceCollection services)
-        {
-            _ = services.AddValidatorsFromAssembly(typeof(ApplicationInjection).Assembly);
-        }
-
-        private static void AddAutoMappers(IServiceCollection services)
-        {
-            _ = services.AddAutoMapper(cfg =>
-            {
-                cfg.AddMaps(typeof(ApplicationInjection).Assembly);
-            });
-        }
+    private static void AddAutoMappers(IServiceCollection services)
+    {
+        _ = services.AddAutoMapper(cfg => { cfg.AddMaps(typeof(ApplicationInjection).Assembly); });
     }
 }

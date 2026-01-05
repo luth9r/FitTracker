@@ -1,18 +1,17 @@
-namespace FitTracker.Application.Interfaces
+namespace FitTracker.Application.Interfaces;
+
+/// <summary>
+///     Service for password hashing and verification.
+/// </summary>
+public interface IPasswordHasher
 {
     /// <summary>
-    /// Service for password hashing and verification.
+    ///     Hash plain text password.
     /// </summary>
-    public interface IPasswordHasher
-    {
-        /// <summary>
-        /// Hash plain text password.
-        /// </summary>
-        string HashPassword(string password);
+    string HashPassword(string password);
 
-        /// <summary>
-        /// Verify password against hash.
-        /// </summary>
-        bool VerifyPassword(string password, string hash);
-    }
+    /// <summary>
+    ///     Verify password against hash.
+    /// </summary>
+    bool VerifyPassword(string password, string hash);
 }

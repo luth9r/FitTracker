@@ -3,14 +3,13 @@ using FitTracker.Application.Interfaces;
 using FitTracker.Application.Validators.CommonValidators;
 using FluentValidation;
 
-namespace FitTracker.Application.Validators
+namespace FitTracker.Application.Validators;
+
+public class ForgotPasswordRequestValidator : AbstractValidator<ForgotPasswordRequest>
 {
-    public class ForgotPasswordRequestValidator : AbstractValidator<ForgotPasswordRequest>
+    public ForgotPasswordRequestValidator(ILocalizationService localization)
     {
-        public ForgotPasswordRequestValidator(ILocalizationService localization)
-        {
-            RuleFor(x => x.Email)
-                .WithEmailRules(localization);
-        }
+        RuleFor(x => x.Email)
+            .WithEmailRules(localization);
     }
 }

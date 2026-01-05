@@ -1,286 +1,309 @@
 using FitTracker.Domain.Enums;
 
-namespace FitTracker.Domain.Entities
+namespace FitTracker.Domain.Entities;
+
+/// <summary>
+///     Represents an exercise that can be performed as part of a workout.
+/// </summary>
+public class Exercise : BaseEntity
 {
     /// <summary>
-    /// Represents an exercise that can be performed as part of a workout.
+    ///     The maximum length allowed for the exercise name.
     /// </summary>
-    public class Exercise : BaseEntity
+    public const int NameMaxLength = 100;
+
+    /// <summary>
+    ///     The maximum length allowed for the exercise description.
+    /// </summary>
+    public const int DescriptionMaxLength = 1000;
+
+    /// <summary>
+    ///     The maximum length allowed for the muscle group name.
+    /// </summary>
+    public const int MuscleGroupMaxLength = 50;
+
+    /// <summary>
+    ///     The maximum length allowed for the equipment name.
+    /// </summary>
+    public const int EquipmentMaxLength = 50;
+
+    /// <summary>
+    ///     The maximum length allowed for the image URL.
+    /// </summary>
+    public const int ImageUrlMaxLength = 500;
+
+    /// <summary>
+    ///     The maximum length allowed for the video URL.
+    /// </summary>
+    public const int VideoUrlMaxLength = 500;
+
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="Exercise" /> class.
+    /// </summary>
+    /// <param name="id">The unique identifier.</param>
+    /// <param name="name">The name of the exercise.</param>
+    /// <param name="description">The description of the exercise.</param>
+    /// <param name="imageUrl">The URL of the exercise image.</param>
+    /// <param name="videoUrl">The URL of the exercise video.</param>
+    /// <param name="muscleGroup">The muscle group targeted by the exercise.</param>
+    /// <param name="equipment">The equipment required for the exercise.</param>
+    /// <param name="createdByUserId">The ID of the user who created the exercise.</param>
+    /// <param name="createdAt">The date and time of creation.</param>
+    /// <param name="updatedAt">The date and time of the last update.</param>
+    internal Exercise(
+        Guid id,
+        string name,
+        string? description,
+        string? imageUrl,
+        string? videoUrl,
+        MuscleGroup muscleGroup,
+        Equipment equipment,
+        Guid? createdByUserId,
+        DateTime createdAt,
+        DateTime updatedAt)
+        : base(id, createdAt, updatedAt)
     {
-        /// <summary>
-        /// The maximum length allowed for the exercise name.
-        /// </summary>
-        public const int NameMaxLength = 100;
+        Name = name;
+        Description = description;
+        ImageUrl = imageUrl;
+        VideoUrl = videoUrl;
+        MuscleGroup = muscleGroup;
+        Equipment = equipment;
+        CreatedByUserId = createdByUserId;
+    }
 
-        /// <summary>
-        /// The maximum length allowed for the exercise description.
-        /// </summary>
-        public const int DescriptionMaxLength = 1000;
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="Exercise" /> class.
+    /// </summary>
+    private Exercise()
+    {
+    }
 
-        /// <summary>
-        /// The maximum length allowed for the muscle group name.
-        /// </summary>
-        public const int MuscleGroupMaxLength = 50;
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="Exercise" /> class.
+    /// </summary>
+    /// <param name="name">The name of the exercise.</param>
+    /// <param name="muscleGroup">The muscle group targeted by the exercise.</param>
+    /// <param name="equipment">The equipment required for the exercise.</param>
+    /// <param name="description">The description of the exercise.</param>
+    /// <param name="imageUrl">The URL of the exercise image.</param>
+    /// <param name="videoUrl">The URL of the exercise video.</param>
+    /// <param name="createdByUserId">The ID of the user who created the exercise.</param>
+    private Exercise(
+        string name,
+        MuscleGroup muscleGroup,
+        Equipment equipment,
+        string? description = null,
+        string? imageUrl = null,
+        string? videoUrl = null,
+        Guid? createdByUserId = null)
+    {
+        // Guard clauses
+        ValidateName(name);
 
-        /// <summary>
-        /// The maximum length allowed for the equipment name.
-        /// </summary>
-        public const int EquipmentMaxLength = 50;
-
-        /// <summary>
-        /// The maximum length allowed for the image URL.
-        /// </summary>
-        public const int ImageUrlMaxLength = 500;
-
-        /// <summary>
-        /// The maximum length allowed for the video URL.
-        /// </summary>
-        public const int VideoUrlMaxLength = 500;
-
-        /// <summary>
-        /// Gets the name of the exercise.
-        /// </summary>
-        public string Name { get; private set; } = default!;
-
-        /// <summary>
-        /// Gets the description of the exercise.
-        /// </summary>
-        public string? Description { get; private set; }
-
-        /// <summary>
-        /// Gets the URL of the exercise image.
-        /// </summary>
-        public string? ImageUrl { get; private set; }
-
-        /// <summary>
-        /// Gets the URL of the exercise video.
-        /// </summary>
-        public string? VideoUrl { get; private set; }
-
-        /// <summary>
-        /// Gets the muscle group targeted by the exercise.
-        /// </summary>
-        public MuscleGroup MuscleGroup { get; private set; }
-
-        /// <summary>
-        /// Gets the equipment required for the exercise.
-        /// </summary>
-        public Equipment Equipment { get; private set; }
-
-        /// <summary>
-        /// Gets the ID of the user who created the exercise, or null if it's a standard system exercise.
-        /// </summary>
-        public Guid? CreatedByUserId { get; private set; }
-
-        /// <summary>
-        /// Determines whether the exercise is a custom exercise created by a user.
-        /// </summary>
-        /// <returns><c>true</c> if the exercise is custom; otherwise, <c>false</c>.</returns>
-        public bool IsCustomExercise() => CreatedByUserId.HasValue;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Exercise"/> class.
-        /// </summary>
-        /// <param name="id">The unique identifier.</param>
-        /// <param name="name">The name of the exercise.</param>
-        /// <param name="description">The description of the exercise.</param>
-        /// <param name="imageUrl">The URL of the exercise image.</param>
-        /// <param name="videoUrl">The URL of the exercise video.</param>
-        /// <param name="muscleGroup">The muscle group targeted by the exercise.</param>
-        /// <param name="equipment">The equipment required for the exercise.</param>
-        /// <param name="createdByUserId">The ID of the user who created the exercise.</param>
-        /// <param name="createdAt">The date and time of creation.</param>
-        /// <param name="updatedAt">The date and time of the last update.</param>
-        internal Exercise(
-            Guid id,
-            string name,
-            string? description,
-            string? imageUrl,
-            string? videoUrl,
-            MuscleGroup muscleGroup,
-            Equipment equipment,
-            Guid? createdByUserId,
-            DateTime createdAt,
-            DateTime updatedAt)
-            : base(id, createdAt, updatedAt)
+        if (description?.Length > DescriptionMaxLength)
         {
-            Name = name;
-            Description = description;
-            ImageUrl = imageUrl;
-            VideoUrl = videoUrl;
-            MuscleGroup = muscleGroup;
-            Equipment = equipment;
-            CreatedByUserId = createdByUserId;
+            throw new ArgumentOutOfRangeException(
+                nameof(description),
+                description.Length,
+                $"Description length must not exceed {DescriptionMaxLength} characters.");
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Exercise"/> class.
-        /// </summary>
-        private Exercise()
+        if (imageUrl?.Length > ImageUrlMaxLength)
         {
+            throw new ArgumentOutOfRangeException(
+                nameof(imageUrl),
+                imageUrl.Length,
+                $"Image URL length must not exceed {ImageUrlMaxLength} characters.");
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Exercise"/> class.
-        /// </summary>
-        /// <param name="name">The name of the exercise.</param>
-        /// <param name="muscleGroup">The muscle group targeted by the exercise.</param>
-        /// <param name="equipment">The equipment required for the exercise.</param>
-        /// <param name="description">The description of the exercise.</param>
-        /// <param name="imageUrl">The URL of the exercise image.</param>
-        /// <param name="videoUrl">The URL of the exercise video.</param>
-        /// <param name="createdByUserId">The ID of the user who created the exercise.</param>
-        private Exercise(
-            string name,
-            MuscleGroup muscleGroup,
-            Equipment equipment,
-            string? description = null,
-            string? imageUrl = null,
-            string? videoUrl = null,
-            Guid? createdByUserId = null)
-            : base()
+        if (videoUrl?.Length > VideoUrlMaxLength)
         {
-            // Guard clauses
-            ValidateName(name);
-
-            if (description?.Length > DescriptionMaxLength)
-            {
-                throw new ArgumentOutOfRangeException(nameof(description), description.Length, $"Description length must not exceed {DescriptionMaxLength} characters.");
-            }
-
-            if (imageUrl?.Length > ImageUrlMaxLength)
-            {
-                throw new ArgumentOutOfRangeException(nameof(imageUrl), imageUrl.Length, $"Image URL length must not exceed {ImageUrlMaxLength} characters.");
-            }
-
-            if (videoUrl?.Length > VideoUrlMaxLength)
-            {
-                throw new ArgumentOutOfRangeException(nameof(videoUrl), videoUrl.Length, $"Video URL length must not exceed {VideoUrlMaxLength} characters.");
-            }
-
-            Name = name;
-            MuscleGroup = muscleGroup;
-            Equipment = equipment;
-            Description = description;
-            ImageUrl = imageUrl;
-            VideoUrl = videoUrl;
-            CreatedByUserId = createdByUserId;
+            throw new ArgumentOutOfRangeException(
+                nameof(videoUrl),
+                videoUrl.Length,
+                $"Video URL length must not exceed {VideoUrlMaxLength} characters.");
         }
 
-        /// <summary>
-        /// Validates the exercise name.
-        /// </summary>
-        /// <param name="name">Exercise name to validate.</param>
-        private static void ValidateName(string name)
-        {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                throw new ArgumentException("Name cannot be null or whitespace.", nameof(name));
-            }
+        Name = name;
+        MuscleGroup = muscleGroup;
+        Equipment = equipment;
+        Description = description;
+        ImageUrl = imageUrl;
+        VideoUrl = videoUrl;
+        CreatedByUserId = createdByUserId;
+    }
 
-            if (name.Length > NameMaxLength)
-            {
-                throw new ArgumentOutOfRangeException(nameof(name), name.Length, $"Name length must not exceed {NameMaxLength} characters.");
-            }
+    /// <summary>
+    ///     Gets the name of the exercise.
+    /// </summary>
+    public string Name { get; private set; } = default!;
+
+    /// <summary>
+    ///     Gets the description of the exercise.
+    /// </summary>
+    public string? Description { get; private set; }
+
+    /// <summary>
+    ///     Gets the URL of the exercise image.
+    /// </summary>
+    public string? ImageUrl { get; private set; }
+
+    /// <summary>
+    ///     Gets the URL of the exercise video.
+    /// </summary>
+    public string? VideoUrl { get; private set; }
+
+    /// <summary>
+    ///     Gets the muscle group targeted by the exercise.
+    /// </summary>
+    public MuscleGroup MuscleGroup { get; private set; }
+
+    /// <summary>
+    ///     Gets the equipment required for the exercise.
+    /// </summary>
+    public Equipment Equipment { get; private set; }
+
+    /// <summary>
+    ///     Gets the ID of the user who created the exercise, or null if it's a standard system exercise.
+    /// </summary>
+    public Guid? CreatedByUserId { get; }
+
+    /// <summary>
+    ///     Determines whether the exercise is a custom exercise created by a user.
+    /// </summary>
+    /// <returns><c>true</c> if the exercise is custom; otherwise, <c>false</c>.</returns>
+    public bool IsCustomExercise()
+    {
+        return CreatedByUserId.HasValue;
+    }
+
+    /// <summary>
+    ///     Validates the exercise name.
+    /// </summary>
+    /// <param name="name">Exercise name to validate.</param>
+    private static void ValidateName(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            throw new ArgumentException("Name cannot be null or whitespace.", nameof(name));
         }
 
-        /// <summary>
-        /// Creates a new standard system exercise.
-        /// </summary>
-        /// <param name="name">The name of the exercise.</param>
-        /// <param name="muscleGroup">The muscle group targeted by the exercise.</param>
-        /// <param name="equipment">The equipment required for the exercise.</param>
-        /// <param name="description">The description of the exercise.</param>
-        /// <param name="imageUrl">The URL of the exercise image.</param>
-        /// <param name="videoUrl">The URL of the exercise video.</param>
-        /// <returns>A new instance of the <see cref="Exercise"/> class.</returns>
-        public static Exercise CreateStandard(
-            string name,
-            MuscleGroup muscleGroup,
-            Equipment equipment,
-            string? description = null,
-            string? imageUrl = null,
-            string? videoUrl = null)
+        if (name.Length > NameMaxLength)
         {
-            return new Exercise(name, muscleGroup, equipment, description, imageUrl, videoUrl, null);
+            throw new ArgumentOutOfRangeException(
+                nameof(name),
+                name.Length,
+                $"Name length must not exceed {NameMaxLength} characters.");
+        }
+    }
+
+    /// <summary>
+    ///     Creates a new standard system exercise.
+    /// </summary>
+    /// <param name="name">The name of the exercise.</param>
+    /// <param name="muscleGroup">The muscle group targeted by the exercise.</param>
+    /// <param name="equipment">The equipment required for the exercise.</param>
+    /// <param name="description">The description of the exercise.</param>
+    /// <param name="imageUrl">The URL of the exercise image.</param>
+    /// <param name="videoUrl">The URL of the exercise video.</param>
+    /// <returns>A new instance of the <see cref="Exercise" /> class.</returns>
+    public static Exercise CreateStandard(
+        string name,
+        MuscleGroup muscleGroup,
+        Equipment equipment,
+        string? description = null,
+        string? imageUrl = null,
+        string? videoUrl = null)
+    {
+        return new Exercise(name, muscleGroup, equipment, description, imageUrl, videoUrl);
+    }
+
+    /// <summary>
+    ///     Creates a new custom exercise for a user.
+    /// </summary>
+    /// <param name="userId">The ID of the user creating the exercise.</param>
+    /// <param name="name">The name of the exercise.</param>
+    /// <param name="muscleGroup">The muscle group targeted by the exercise.</param>
+    /// <param name="equipment">The equipment required for the exercise.</param>
+    /// <param name="description">The description of the exercise.</param>
+    /// <param name="imageUrl">The URL of the exercise image.</param>
+    /// <param name="videoUrl">The URL of the exercise video.</param>
+    /// <returns>A new instance of the <see cref="Exercise" /> class.</returns>
+    public static Exercise CreateCustom(
+        Guid userId,
+        string name,
+        MuscleGroup muscleGroup,
+        Equipment equipment,
+        string? description = null,
+        string? imageUrl = null,
+        string? videoUrl = null)
+    {
+        if (userId == Guid.Empty)
+        {
+            throw new ArgumentException("UserId cannot be empty for custom exercise", nameof(userId));
         }
 
-        /// <summary>
-        /// Creates a new custom exercise for a user.
-        /// </summary>
-        /// <param name="userId">The ID of the user creating the exercise.</param>
-        /// <param name="name">The name of the exercise.</param>
-        /// <param name="muscleGroup">The muscle group targeted by the exercise.</param>
-        /// <param name="equipment">The equipment required for the exercise.</param>
-        /// <param name="description">The description of the exercise.</param>
-        /// <param name="imageUrl">The URL of the exercise image.</param>
-        /// <param name="videoUrl">The URL of the exercise video.</param>
-        /// <returns>A new instance of the <see cref="Exercise"/> class.</returns>
-        public static Exercise CreateCustom(
-            Guid userId,
-            string name,
-            MuscleGroup muscleGroup,
-            Equipment equipment,
-            string? description = null,
-            string? imageUrl = null,
-            string? videoUrl = null)
-        {
-            if (userId == Guid.Empty)
-            {
-                throw new ArgumentException("UserId cannot be empty for custom exercise", nameof(userId));
-            }
+        return new Exercise(name, muscleGroup, equipment, description, imageUrl, videoUrl, userId);
+    }
 
-            return new Exercise(name, muscleGroup, equipment, description, imageUrl, videoUrl, userId);
+    /// <summary>
+    ///     Updates the exercise details. Only applicable for custom exercises.
+    /// </summary>
+    /// <param name="name">The new name of the exercise.</param>
+    /// <param name="muscleGroup">The new muscle group of the exercise.</param>
+    /// <param name="equipment">The new equipment required for the exercise.</param>
+    /// <param name="description">The new description of the exercise.</param>
+    public void Update(string name, MuscleGroup muscleGroup, Equipment equipment, string? description = null)
+    {
+        if (!IsCustomExercise())
+        {
+            throw new InvalidOperationException(
+                "Cannot update standard exercises. Only custom exercises can be modified.");
         }
 
-        /// <summary>
-        /// Updates the exercise details. Only applicable for custom exercises.
-        /// </summary>
-        /// <param name="name">The new name of the exercise.</param>
-        /// <param name="muscleGroup">The new muscle group of the exercise.</param>
-        /// <param name="equipment">The new equipment required for the exercise.</param>
-        /// <param name="description">The new description of the exercise.</param>
-        public void Update(string name, MuscleGroup muscleGroup, Equipment equipment, string? description = null)
+        ValidateName(name);
+
+        if (description?.Length > DescriptionMaxLength)
         {
-            if (!IsCustomExercise())
-            {
-                throw new InvalidOperationException("Cannot update standard exercises. Only custom exercises can be modified.");
-            }
-
-            ValidateName(name);
-
-            if (description?.Length > DescriptionMaxLength)
-            {
-                throw new ArgumentOutOfRangeException(nameof(description), description.Length, $"Description length must not exceed {DescriptionMaxLength} characters.");
-            }
-
-            Name = name;
-            MuscleGroup = muscleGroup;
-            Equipment = equipment;
-            Description = description;
-            UpdatedAt = DateTime.UtcNow;
+            throw new ArgumentOutOfRangeException(
+                nameof(description),
+                description.Length,
+                $"Description length must not exceed {DescriptionMaxLength} characters.");
         }
 
-        /// <summary>
-        /// Updates the media URLS of the exercise.
-        /// </summary>
-        /// <param name="imageUrl">The new image URL.</param>
-        /// <param name="videoUrl">The new video URL.</param>
-        public void UpdateMedia(string? imageUrl, string? videoUrl)
+        Name = name;
+        MuscleGroup = muscleGroup;
+        Equipment = equipment;
+        Description = description;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
+    /// <summary>
+    ///     Updates the media URLS of the exercise.
+    /// </summary>
+    /// <param name="imageUrl">The new image URL.</param>
+    /// <param name="videoUrl">The new video URL.</param>
+    public void UpdateMedia(string? imageUrl, string? videoUrl)
+    {
+        if (imageUrl?.Length > ImageUrlMaxLength)
         {
-            if (imageUrl?.Length > ImageUrlMaxLength)
-            {
-                throw new ArgumentOutOfRangeException(nameof(imageUrl), imageUrl.Length, $"Image URL length must not exceed {ImageUrlMaxLength} characters.");
-            }
-
-            if (videoUrl?.Length > VideoUrlMaxLength)
-            {
-                throw new ArgumentOutOfRangeException(nameof(videoUrl), videoUrl.Length, $"Video URL length must not exceed {VideoUrlMaxLength} characters.");
-            }
-
-            ImageUrl = imageUrl;
-            VideoUrl = videoUrl;
-            UpdatedAt = DateTime.UtcNow;
+            throw new ArgumentOutOfRangeException(
+                nameof(imageUrl),
+                imageUrl.Length,
+                $"Image URL length must not exceed {ImageUrlMaxLength} characters.");
         }
+
+        if (videoUrl?.Length > VideoUrlMaxLength)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(videoUrl),
+                videoUrl.Length,
+                $"Video URL length must not exceed {VideoUrlMaxLength} characters.");
+        }
+
+        ImageUrl = imageUrl;
+        VideoUrl = videoUrl;
+        UpdatedAt = DateTime.UtcNow;
     }
 }
