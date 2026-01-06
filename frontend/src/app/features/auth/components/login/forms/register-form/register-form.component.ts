@@ -5,9 +5,9 @@ import { TranslateModule } from '@ngx-translate/core';
 import { AuthInputFieldComponent } from '../../../ui/auth-input-field/auth-input-field.component';
 import { ValidationChecklistComponent } from '../../../ui/validation-checklist/validation-checklist.component';
 import { ModalService } from '../../../../../../shared/utils/modal.service';
-import { 
-  EmailVerificationModalComponent, 
-  EmailVerificationData 
+import {
+  EmailVerificationModalComponent,
+  EmailVerificationData
 } from '../../../ui/email-verification-modal/email-verification-modal.component';
 
 export interface RegisterFormData {
@@ -37,6 +37,7 @@ export class RegisterFormComponent {
   @Input() usernameValidationState = { minLength: false, noSpaces: false };
   @Input() passwordValidationState = { minLength: false, oneLetter: false, oneNumber: false };
   @Input() confirmPasswordValidationState = { matches: false };
+  @Input() emailValidationState = { isValid: false };
   @Input() activeField: string | null = null;
   @Input() value = '';
 
@@ -81,10 +82,25 @@ export class RegisterFormComponent {
     );
   }
 
+  get showEmailValidation(): boolean {
+    return (
+      this.activeField === 'email' &&
+      this.formData.email.length > 0 &&
+      !this.emailValidationState.isValid
+    );
+  }
+
   get hasUsernameError(): boolean {
     return (
       this.formData.username.length > 0 &&
       !Object.values(this.usernameValidationState).every((v) => v)
+    );
+  }
+
+  get hasEmailError(): boolean {
+    return (
+      this.formData.email.length > 0 &&
+      !this.emailValidationState.isValid
     );
   }
 

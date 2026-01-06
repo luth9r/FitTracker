@@ -10,7 +10,15 @@
     "PASSWORD_PLACEHOLDER": "••••••••",
     "CONFIRM_PASSWORD": "Підтвердження пароля",
     "CONFIRM_PASSWORD_PLACEHOLDER": "••••••••",
+    "EMAIL_REQUIRED": "Електронна пошта обов'язкова",
+    "EMAIL_INVALID": "Будь ласка, введіть правильний email",
     "FORGOT_PASSWORD": "Забули пароль?",
+    "FORGOTPASSWORD_TITLE": "Забули пароль?",
+    "FORGOTPASSWORD_SUBTITLE": "Введіть вашу електронну адресу і ми надішлемо інструкції для відновлення пароля.",
+    "FORGOTPASSWORD_SUBMIT": "Надіслати інструкції",
+    "FORGOTPASSWORD_SUCCESS_TITLE": "Лист надіслано!",
+    "FORGOTPASSWORD_SUCCESS_TEXT": "Ми надіслали інструкції для відновлення пароля на вашу електронну адресу. Будь ласка, перевірте свою поштову скриньку.",
+    "BACK_TO_LOGIN": "Повернутися до входу",
     "SUBMIT_BUTTON_LOGIN": "Увійти",
     "SUBMIT_BUTTON_SIGNUP": "Створити акаунт",
     "OR": "або",
@@ -58,6 +66,7 @@
     "VALIDATION": {
       "USERNAME_MINLENGTH": "Не менше 3 символів",
       "USERNAME_NOSPACES": "Не може містити пробіли",
+      "EMAIL_ISVALID": "Правильний формат електронної пошти",
       "PASSWORD_MINLENGTH": "Не менше 8 символів",
       "PASSWORD_ONELETTER": "Щонайменше одна літера",
       "PASSWORD_ONENUMBER": "Щонайменше одна цифра",
@@ -77,20 +86,20 @@
     "VERIFYING_TITLE": "Перевірка Email",
     "PLEASE_WAIT": "Будь ласка, зачекайте...",
     "VERIFYING_MESSAGE": "Перевіряємо вашу адресу електронної пошти...",
-    
+
     "SUCCESS_TITLE": "Email підтверджено!",
     "SUCCESS_SUBTITLE": "Ваш обліковий запис активовано",
     "SUCCESS_WELCOME": "Ласкаво просимо",
     "SUCCESS_MESSAGE": "Ваш email успішно підтверджено! Ви увійшли в систему і незабаром будете перенаправлені на головну панель.",
     "GO_TO_DASHBOARD": "Перейти до панелі",
-    
+
     "ERROR_TITLE": "Помилка перевірки",
     "ERROR_SUBTITLE": "Щось пішло не так",
     "ERROR_NO_TOKEN": "Неправильне посилання для перевірки. Токен не надано.",
     "NEED_NEW_LINK_TITLE": "Потрібне нове посилання для перевірки?",
     "NEED_NEW_LINK_MESSAGE": "Термін дії посилання міг минути або воно вже використане. Ви можете запросити нове на сторінці входу.",
     "BACK_TO_LOGIN": "Повернутися до входу",
-    
+
     "NEED_HELP": "Потрібна допомога?",
     "CONTACT_SUPPORT": "Зв'яжіться з нашою службою підтримки за адресою",
     "COPYRIGHT": "© 2025 FitTracker. Усі права захищені."

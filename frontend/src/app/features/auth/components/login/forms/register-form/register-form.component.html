@@ -34,10 +34,20 @@
     fieldName="email"
     type="email"
     [(value)]="formData.email"
+    [hasError]="hasEmailError"
     (focus)="onFieldFocus('email')"
     (blur)="onFieldBlur()"
+    (validateOnChange)="onValidateChange('email', $event)"
   >
   </app-auth-input-field>
+
+  <!-- Email validation checklist -->
+  <app-validation-checklist
+    [validationState]="emailValidationState"
+    translationPrefix="REGISTER.VALIDATION.EMAIL_"
+    [shouldShow]="showEmailValidation"
+  >
+  </app-validation-checklist>
 
   <!-- Password -->
   <app-auth-input-field

@@ -26,7 +26,11 @@
 
   <!-- Forgot Password -->
   <div class="forgot-password-container">
-    <button type="button" class="forgot-password">
+    <button
+      type="button"
+      class="forgot-password"
+      (click)="openForgotPasswordModal()"
+    >
       {{ 'LOGIN.FORGOT_PASSWORD' | translate }}
     </button>
   </div>

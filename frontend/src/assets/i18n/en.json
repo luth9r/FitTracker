@@ -11,6 +11,14 @@
     "CONFIRM_PASSWORD": "Confirm Password",
     "CONFIRM_PASSWORD_PLACEHOLDER": "••••••••",
     "FORGOT_PASSWORD": "Forgot password?",
+    "EMAIL_REQUIRED": "Email is required",
+    "EMAIL_INVALID": "Please enter a valid email",
+    "FORGOTPASSWORD_TITLE": "Forgot Password?",
+    "FORGOTPASSWORD_SUBTITLE": "Enter your email address and we'll send you instructions to reset your password.",
+    "FORGOTPASSWORD_SUBMIT": "Send Instructions",
+    "FORGOTPASSWORD_SUCCESS_TITLE": "Email Sent!",
+    "FORGOTPASSWORD_SUCCESS_TEXT": "We've sent password reset instructions to your email address. Please check your inbox.",
+    "BACK_TO_LOGIN": "Back to Sign In",
     "SUBMIT_BUTTON_LOGIN": "Sign In",
     "SUBMIT_BUTTON_SIGNUP": "Create Account",
     "OR": "or",
@@ -58,6 +66,7 @@
     "VALIDATION": {
       "USERNAME_MINLENGTH": "At least 3 characters",
       "USERNAME_NOSPACES": "Cannot contain spaces",
+      "EMAIL_ISVALID": "Valid email format",
       "PASSWORD_MINLENGTH": "At least 8 characters",
       "PASSWORD_ONELETTER": "At least one letter",
       "PASSWORD_ONENUMBER": "At least one number",
@@ -78,20 +87,20 @@
     "VERIFYING_TITLE": "Verifying Email",
     "PLEASE_WAIT": "Please wait...",
     "VERIFYING_MESSAGE": "Verifying your email address...",
-    
+
     "SUCCESS_TITLE": "Email Verified!",
     "SUCCESS_SUBTITLE": "Your account is now active",
     "SUCCESS_WELCOME": "Welcome",
     "SUCCESS_MESSAGE": "Your email has been successfully verified! You are now logged in and will be redirected to your dashboard shortly.",
     "GO_TO_DASHBOARD": "Go to Dashboard",
-    
+
     "ERROR_TITLE": "Verification Failed",
     "ERROR_SUBTITLE": "Something went wrong",
     "ERROR_NO_TOKEN": "Invalid verification link. No token provided.",
     "NEED_NEW_LINK_TITLE": "Need a new verification link?",
     "NEED_NEW_LINK_MESSAGE": "The link may have expired or been used already. You can request a new one from the login page.",
     "BACK_TO_LOGIN": "Back to Login",
-    
+
     "NEED_HELP": "Need help?",
     "CONTACT_SUPPORT": "Contact our support team at",
     "COPYRIGHT": "© 2025 FitTracker. All rights reserved."
