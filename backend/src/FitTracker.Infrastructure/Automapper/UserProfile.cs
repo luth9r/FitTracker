@@ -21,25 +21,28 @@ public class UserProfile : Profile
                 isEmailVerified: src.IsEmailVerified,
                 googleProviderId: src.GoogleProviderId,
                 createdAt: src.CreatedAt,
-                updatedAt: src.UpdatedAt));
+                updatedAt: src.UpdatedAt))
+            .ForMember(dest => dest.DomainEvents, opt => opt.Ignore());
 
         _ = CreateMap<User, UserEf>()
-            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-            .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.Username))
-            .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
-            .ForMember(dest => dest.PasswordHash, opt => opt.MapFrom(src => src.PasswordHash))
-            .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName))
-            .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName))
-            .ForMember(dest => dest.Avatar, opt => opt.MapFrom(src => src.Avatar))
-            .ForMember(dest => dest.Bio, opt => opt.MapFrom(src => src.Bio))
-            .ForMember(dest => dest.IsEmailVerified, opt => opt.MapFrom(src => src.IsEmailVerified))
-            .ForMember(dest => dest.GoogleProviderId, opt => opt.MapFrom(src => src.GoogleProviderId))
             .ForMember(dest => dest.Workouts, opt => opt.Ignore())
             .ForMember(dest => dest.CustomExercises, opt => opt.Ignore())
             .ForMember(dest => dest.WorkoutTemplates, opt => opt.Ignore())
             .ForMember(dest => dest.UserAchievements, opt => opt.Ignore())
             .ForMember(dest => dest.ExerciseRecords, opt => opt.Ignore())
-            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt))
-            .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore());
+            .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
+            .ForMember(dest => dest.DomainEvents, opt => opt.Ignore())
+            .AfterMap((src, dest) =>
+            {
+                if (src.DomainEvents == null || src!.DomainEvents.Count == 0)
+                {
+                    return;
+                }
+
+                foreach (var domainEvent in src.DomainEvents)
+                {
+                    dest.AddDomainEvent(domainEvent);
+                }
+            });
     }
 }

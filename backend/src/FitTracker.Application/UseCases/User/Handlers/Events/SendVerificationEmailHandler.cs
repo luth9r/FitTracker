@@ -1,5 +1,5 @@
-using FitTracker.Application.Events;
 using FitTracker.Application.Interfaces;
+using FitTracker.Domain.Events;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -33,8 +33,8 @@ public sealed class SendVerificationEmailHandler(
         var verificationLinkBase = configuration["App:VerificationLinkBase"];
         var verificationLink = $"{verificationLinkBase}?token={verificationToken}";
 
-        var subject = localization.GetString("Email.Verification.Subject");
-        var bodyTemplate = localization.GetString("Email.Verification.Body");
+        var subject = localization.GetString("Email.Verification.Subject", notification.Culture);
+        var bodyTemplate = localization.GetString("Email.Verification.Body", notification.Culture);
 
         var emailBody = bodyTemplate
             .Replace("{0}", notification.Username)

@@ -1,6 +1,6 @@
 using FitTracker.Application.DTOs.Auth;
 using FitTracker.Application.Interfaces;
-using FitTracker.Application.Validators.CommonValidators;
+using FitTracker.Application.Validators.Extensions;
 using FluentValidation;
 
 namespace FitTracker.Application.Validators;

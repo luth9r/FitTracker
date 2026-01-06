@@ -1,4 +1,4 @@
-using FitTracker.Api.Controllers.Extensions;
+using FitTracker.Api.Extensions;
 using FitTracker.Application.DTOs.Auth;
 using FitTracker.Application.DTOs.Auth.Google;
 using FitTracker.Application.UseCases.User.Commands;

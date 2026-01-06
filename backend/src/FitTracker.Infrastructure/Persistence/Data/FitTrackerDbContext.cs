@@ -1,6 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
+using FitTracker.Domain.Abstract.Interfaces;
 using FitTracker.Infrastructure.Persistence.Data.Entities;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace FitTracker.Infrastructure.Persistence.Data;
 
@@ -34,6 +36,8 @@ public class FitTrackerDbContext : DbContext
 
     public DbSet<ExerciseRecordEf> ExerciseRecords { get; set; } = null!;
 
+    public DbSet<OutboxMessage> OutboxMessages { get; set; } = null!;
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -45,6 +49,15 @@ public class FitTrackerDbContext : DbContext
     }
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        UpdateAuditLog();
+
+        ProcessDomainEvents();
+
+        return await base.SaveChangesAsync(cancellationToken);
+    }
+
+    private void UpdateAuditLog()
     {
         // Automatically set UpdatedAt for modified entities
         foreach (var entry in ChangeTracker.Entries<BaseEntityEf>())
@@ -61,7 +74,40 @@ public class FitTrackerDbContext : DbContext
                     break;
             }
         }
+    }
 
-        return await base.SaveChangesAsync(cancellationToken);
+    private void ProcessDomainEvents()
+    {
+        // Process all domain events in the current context
+        var domainEntities = ChangeTracker.Entries<IHasDomainEvents>()
+            .Where(x => x.Entity.DomainEvents.Any())
+            .Select(x => x.Entity)
+            .ToList();
+
+        var outboxMessages = domainEntities
+            .SelectMany(entity =>
+            {
+                var events = entity.DomainEvents.ToList();
+                entity.ClearDomainEvents(); // Clear events so they don't get processed twice
+                return events;
+            })
+            .Select(domainEvent => new OutboxMessage
+            {
+                Id = Guid.NewGuid(),
+                OccurredOnUtc = DateTime.UtcNow,
+                Type = domainEvent.GetType().Name,
+                Content = JsonConvert.SerializeObject(
+                    domainEvent,
+                    new JsonSerializerSettings
+                    {
+                        TypeNameHandling = TypeNameHandling.All,
+                    }),
+            })
+            .ToList();
+
+        if (outboxMessages.Any())
+        {
+            OutboxMessages.AddRange(outboxMessages);
+        }
     }
 }

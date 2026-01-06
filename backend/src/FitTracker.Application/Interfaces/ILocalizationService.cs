@@ -24,4 +24,12 @@ public interface ILocalizationService
     ///     that are currently available in the service.
     /// </returns>
     IEnumerable<string> GetAvailableCultures();
+
+    /// <summary>
+    ///     Retrieves the culture information for the current context.
+    /// </summary>
+    /// <returns>
+    ///     A string representing the current culture's code (e.g., "en-US").
+    /// </returns>
+    string GetCurrentCulture();
 }

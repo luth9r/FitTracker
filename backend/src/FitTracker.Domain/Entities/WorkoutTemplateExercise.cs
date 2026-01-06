@@ -1,3 +1,5 @@
+using FitTracker.Domain.Abstract;
+
 namespace FitTracker.Domain.Entities;
 
 /// <summary>

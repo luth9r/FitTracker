@@ -1,7 +1,7 @@
 using FitTracker.Application.Interfaces;
 using FluentValidation;
 
-namespace FitTracker.Application.Validators.CommonValidators;
+namespace FitTracker.Application.Validators.Extensions;
 
 /// <summary>
 ///     Extension methods for FluentValidation rule builders providing common validation rules.

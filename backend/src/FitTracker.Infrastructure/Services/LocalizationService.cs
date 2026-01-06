@@ -29,10 +29,8 @@ public class LocalizationService(
         return provider.GetString(key, culture);
     }
 
-    /// <summary>
-    ///     Get current culture from Accept-Language Header.
-    /// </summary>
-    private string GetCurrentCulture()
+    /// <inheritdoc />
+    public string GetCurrentCulture()
     {
         try
         {

@@ -1,6 +1,7 @@
 using FitTracker.Application.Events;
 using FitTracker.Application.Interfaces;
 using FitTracker.Application.UseCases.User.Handlers.Events;
+using FitTracker.Domain.Events;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -39,12 +40,13 @@ public class SendVerificationEmailHandlerTests
         var userId = Guid.NewGuid();
         var username = "TestUser";
         var email = "test@example.com";
+        var culture = "en-US";
         var generatedToken = "verification-jwt-token";
         var verificationLinkBase = "https://app.com/verify-email";
         var subject = "Verify your email";
         var bodyTemplate = "Hello {0}, verify here: {1}";
 
-        var notification = new UserRegisteredEvent(userId, email, username);
+        var notification = new UserRegisteredEvent(userId, email, username, culture);
 
         _jwtTokenServiceMock
             .Setup(x => x.GenerateVerificationToken(userId))
@@ -55,11 +57,11 @@ public class SendVerificationEmailHandlerTests
             .Returns(verificationLinkBase);
 
         _localizationMock
-            .Setup(x => x.GetString("Email.Verification.Subject"))
+            .Setup(x => x.GetString("Email.Verification.Subject", culture))
             .Returns(subject);
 
         _localizationMock
-            .Setup(x => x.GetString("Email.Verification.Body"))
+            .Setup(x => x.GetString("Email.Verification.Body", culture))
             .Returns(bodyTemplate);
 
         // Act

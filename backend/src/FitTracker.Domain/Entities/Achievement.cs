@@ -1,3 +1,4 @@
+using FitTracker.Domain.Abstract;
 using FitTracker.Domain.Enums;
 
 namespace FitTracker.Domain.Entities;

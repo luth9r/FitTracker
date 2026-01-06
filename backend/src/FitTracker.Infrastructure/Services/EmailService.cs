@@ -2,10 +2,13 @@ using System.Net;
 using System.Net.Mail;
 using FitTracker.Application.Interfaces;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace FitTracker.Infrastructure.Services;
 
-public sealed class EmailService(IConfiguration configuration) : IEmailService
+public sealed class EmailService(
+    IConfiguration configuration,
+    ILogger<EmailService> logger) : IEmailService
 {
     private readonly string _origin = configuration["EmailSettings.Origin"] ?? "no-reply@fittracker.com";
     private readonly string _smtpHost = configuration["Email:SmtpHost"] ?? "localhost";
@@ -18,6 +21,8 @@ public sealed class EmailService(IConfiguration configuration) : IEmailService
         string htmlBody,
         CancellationToken cancellationToken = default)
     {
+        logger.LogInformation("Attempting to send email. Origin: '{Origin}', Recipient: '{To}'", _origin, to);
+
         using var client = new SmtpClient(_smtpHost, _smtpPort)
         {
             Credentials = new NetworkCredential(),

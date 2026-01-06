@@ -1,12 +1,18 @@
+using Castle.Core.Logging;
 using FitTracker.Infrastructure.Services;
 using FitTrackerInfrastructure.Tests.TestDoubles;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Moq;
+using ILogger = Castle.Core.Logging.ILogger;
 
 namespace FitTrackerInfrastructure.Tests.Services;
 
 public class EmailServiceTests
 {
+    private readonly Mock<ILogger<EmailService>> _loggerMock = new();
+
     private IConfiguration BuildConfiguration()
     {
         var configData = new Dictionary<string, string>
@@ -28,7 +34,7 @@ public class EmailServiceTests
         var config = BuildConfiguration();
 
         // Act
-        var service = new EmailService(config);
+        var service = new EmailService(config, _loggerMock.Object);
 
         // Assert
         service.Should().NotBeNull();
@@ -41,7 +47,7 @@ public class EmailServiceTests
         var emptyConfig = new ConfigurationBuilder().Build();
 
         // Act
-        var service = new EmailService(emptyConfig);
+        var service = new EmailService(emptyConfig, _loggerMock.Object);
 
         // Assert
         service.Should().NotBeNull();
@@ -61,7 +67,7 @@ public class EmailServiceTests
             .Build();
 
         // Act
-        var service = new EmailService(config);
+        var service = new EmailService(config, _loggerMock.Object);
 
         // Assert
         service.Should().NotBeNull();

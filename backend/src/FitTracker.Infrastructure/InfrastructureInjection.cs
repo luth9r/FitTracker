@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using FitTracker.Application.Interfaces;
 using FitTracker.Domain.Abstract.Interfaces;
+using FitTracker.Infrastructure.BackgroundJobs;
 using FitTracker.Infrastructure.Localization;
 using FitTracker.Infrastructure.Persistence.Data;
 using FitTracker.Infrastructure.Persistence.Repositories;
@@ -25,6 +26,8 @@ public static class InfrastructureInjection
         AddLocalization(services);
 
         AddRepositories(services);
+
+        AddHostedServices(services);
 
         AddAuthAndTokens(services, configuration);
 
@@ -86,6 +89,13 @@ public static class InfrastructureInjection
         _ = services.AddScoped<IWorkoutReadRepository, WorkoutReadRepository>();
         _ = services.AddScoped<ISetReadRepository, SetReadRepository>();
         _ = services.AddScoped<IExerciseReadRepository, ExerciseReadRepository>();
+    }
+
+    private static void AddHostedServices(IServiceCollection services)
+    {
+        services.AddHostedService<OutboxProcessor>();
+        services.AddHostedService<OutboxCleaner>();
+        services.AddHostedService<UnverifiedUserCleaner>();
     }
 
     private static void AddAuthAndTokens(IServiceCollection services, IConfiguration configuration)

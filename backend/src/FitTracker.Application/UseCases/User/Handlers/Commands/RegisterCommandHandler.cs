@@ -1,7 +1,6 @@
 using AutoMapper;
 using CSharpFunctionalExtensions;
 using FitTracker.Application.DTOs.Auth;
-using FitTracker.Application.Events;
 using FitTracker.Application.Interfaces;
 using FitTracker.Application.UseCases.User.Commands;
 using FitTracker.Domain.Abstract.Interfaces;
@@ -20,7 +19,6 @@ namespace FitTracker.Application.UseCases.User.Handlers.Commands;
 /// <param name="userWriteRepository">The <see cref="IUserWriteRepository" />.</param>
 /// <param name="mapper">The <see cref="IMapper" />.</param>
 /// <param name="unitOfWork">The <see cref="IUnitOfWork" />.</param>
-/// <param name="mediator">The <see cref="IMediator" />.</param>
 /// <param name="localization">The <see cref="ILocalizationService" />.</param>
 /// <param name="hasher">The <see cref="IPasswordHasher" />.</param>
 /// <param name="logger">The <see cref="ILogger{RegisterCommandHandler}" />.</param>
@@ -29,7 +27,6 @@ public sealed class RegisterCommandHandler(
     IUserWriteRepository userWriteRepository,
     IMapper mapper,
     IUnitOfWork unitOfWork,
-    IMediator mediator,
     ILocalizationService localization,
     IPasswordHasher hasher,
     ILogger<RegisterCommandHandler> logger)
@@ -47,6 +44,7 @@ public sealed class RegisterCommandHandler(
     {
         logger.LogDebug("Starting user registration process for username: {Username}", request.User.Username);
 
+        var currentCulture = localization.GetCurrentCulture();
         var userRequest = request.User;
 
         var existingUser = await userReadRepository.GetByUsernameReadonlyAsync(userRequest.Username, cancellationToken);
@@ -71,9 +69,8 @@ public sealed class RegisterCommandHandler(
         var user = UserEntity.Create(
             userRequest.Username,
             userRequest.Email,
-            hasher.HashPassword(userRequest.Password));
-
-        logger.LogDebug("BEFORE SaveChanges: {Id}", user.Id);
+            hasher.HashPassword(userRequest.Password),
+            culture: currentCulture);
 
         // Add to trackings
         await userWriteRepository.AddAsync(user, cancellationToken);
@@ -82,8 +79,6 @@ public sealed class RegisterCommandHandler(
         _ = await unitOfWork.SaveChangesAsync(cancellationToken);
 
         logger.LogDebug("AFTER SaveChanges: {Id}", user.Id);
-
-        await mediator.Publish(new UserRegisteredEvent(user.Id, user.Email, user.Username), cancellationToken);
 
         var response = mapper.Map<RegisterResponse>(user);
 

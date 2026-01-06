@@ -1,3 +1,6 @@
+using FitTracker.Domain.Abstract;
+using FitTracker.Domain.Events;
+
 namespace FitTracker.Domain.Entities;
 
 /// <summary>
@@ -211,15 +214,21 @@ public class User : BaseEntity
     /// <param name="passwordHash">The hashed password.</param>
     /// <param name="firstName">The first name.</param>
     /// <param name="lastName">The last name.</param>
+    /// <param name="culture">The culture to use for email localization.</param>
     /// <returns>A new instance of <see cref="User" />.</returns>
     public static User Create(
         string username,
         string email,
         string passwordHash,
         string? firstName = null,
-        string? lastName = null)
+        string? lastName = null,
+        string culture = "en-US")
     {
-        return new User(username, email, passwordHash, firstName, lastName);
+        var user = new User(username, email, passwordHash, firstName, lastName);
+
+        // Add domain event
+        user.AddDomainEvent(new UserRegisteredEvent(user.Id, user.Email, user.Username, culture));
+        return user;
     }
 
     /// <summary>

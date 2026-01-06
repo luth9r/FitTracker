@@ -1,7 +1,7 @@
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace FitTracker.Api.Controllers.Extensions;
+namespace FitTracker.Api.Extensions;
 
 internal static class ValidationExtensions
 {

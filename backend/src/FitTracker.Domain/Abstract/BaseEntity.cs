@@ -1,10 +1,17 @@
-namespace FitTracker.Domain.Entities;
+using FitTracker.Domain.Abstract.Interfaces;
+
+namespace FitTracker.Domain.Abstract;
 
 /// <summary>
 ///     Represents the base entity with common properties.
 /// </summary>
-public abstract class BaseEntity
+public abstract class BaseEntity : IHasDomainEvents
 {
+    /// <summary>
+    ///     Stores domain events associated with the entity.
+    /// </summary>
+    private readonly List<IDomainEvent> _domainEvents = new();
+
     /// <summary>
     ///     Initializes a new instance of the <see cref="BaseEntity" /> class.
     /// </summary>
@@ -53,6 +60,21 @@ public abstract class BaseEntity
     ///     Gets or sets the date and time when the entity was last updated.
     /// </summary>
     public DateTime UpdatedAt { get; protected set; }
+
+    /// <inheritdoc />
+    public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
+
+    /// <inheritdoc />
+    public void AddDomainEvent(IDomainEvent domainEvent)
+    {
+        _domainEvents.Add(domainEvent);
+    }
+
+    /// <inheritdoc />
+    public void ClearDomainEvents()
+    {
+        _domainEvents.Clear();
+    }
 
     /// <summary>
     ///     Determines whether the specified object is equal to the current object.

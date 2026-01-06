@@ -1,5 +1,6 @@
 using AutoMapper;
 using FitTracker.Domain.Entities;
+using FitTracker.Infrastructure.Automapper;
 using FitTracker.Infrastructure.Persistence.Data;
 using FitTracker.Infrastructure.Persistence.Data.Entities;
 using FitTracker.Infrastructure.Persistence.Repositories;
@@ -25,7 +26,7 @@ public sealed class UserReadRepositoryTests
 
     private static IMapper BuildMapper()
     {
-        var config = new MapperConfiguration(cfg => cfg.CreateMap<UserEf, User>(), NullLoggerFactory.Instance);
+        var config = new MapperConfiguration(cfg => cfg.AddProfile<UserProfile>(), NullLoggerFactory.Instance);
 
         return config.CreateMapper();
     }
