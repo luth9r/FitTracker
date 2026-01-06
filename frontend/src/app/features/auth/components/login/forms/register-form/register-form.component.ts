@@ -98,10 +98,7 @@ export class RegisterFormComponent {
   }
 
   get hasEmailError(): boolean {
-    return (
-      this.formData.email.length > 0 &&
-      !this.emailValidationState.isValid
-    );
+    return this.formData.email.length > 0 && !this.emailValidationState.isValid;
   }
 
   get hasPasswordError(): boolean {

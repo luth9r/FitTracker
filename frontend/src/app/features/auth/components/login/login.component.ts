@@ -53,6 +53,7 @@ export class LoginComponent {
   usernameValidationState = { minLength: false, noSpaces: false };
   passwordValidationState = { minLength: false, oneLetter: false, oneNumber: false };
   confirmPasswordValidationState = { matches: false };
+  emailValidationState = { isValid: false };
 
   // Temporary state for validation
   private registerPassword = '';
@@ -124,6 +125,11 @@ export class LoginComponent {
   // Validation handler for register form
   onValidateChange(field: string, value: string) {
     switch (field) {
+      case 'email':
+      this.emailValidationState = { 
+        isValid: this.validationService.validateEmail(value) 
+      };
+      break;
       case 'username':
         this.usernameValidationState = this.validationService.validateUsername(value);
         break;
@@ -190,11 +196,12 @@ export class LoginComponent {
       formData.confirmPassword
     );
 
+    const isEmailValid = this.validationService.validateEmail(formData.email);
     const isUsernameValid = Object.values(this.usernameValidationState).every((v) => v);
     const isPasswordValid = Object.values(this.passwordValidationState).every((v) => v);
     const isConfirmPasswordValid = this.confirmPasswordValidationState.matches;
 
-    if (!isUsernameValid || !isPasswordValid || !isConfirmPasswordValid) {
+    if (!isUsernameValid || !isEmailValid || !isPasswordValid || !isConfirmPasswordValid) {
       this.toast.show('error', 'LOGIN.ERRORS.VALIDATION_FAILED');
       this.isLoading = false;
       return;
@@ -321,5 +328,6 @@ export class LoginComponent {
     this.usernameValidationState = { minLength: false, noSpaces: false };
     this.passwordValidationState = { minLength: false, oneLetter: false, oneNumber: false };
     this.confirmPasswordValidationState = { matches: false };
+    this.emailValidationState = { isValid: false };
   }
 }
