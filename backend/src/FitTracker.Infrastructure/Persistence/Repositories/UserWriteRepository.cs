@@ -11,6 +11,11 @@ internal sealed class UserWriteRepository(
     FitTrackerDbContext context,
     IMapper mapper) : IUserWriteRepository
 {
+    private static readonly Func<FitTrackerDbContext, string, IAsyncEnumerable<UserEf>> GetUserEfByEmailCompiled =
+        EF.CompileAsyncQuery((FitTrackerDbContext dbContext, string email) =>
+            dbContext.Users
+                .Where(u => u.Email == email));
+
     /// <inheritdoc />
     public async Task AddAsync(User user, CancellationToken cancellationToken)
     {
@@ -28,5 +33,20 @@ internal sealed class UserWriteRepository(
         context.Entry(userEf).State = EntityState.Modified;
 
         context.Entry(userEf).Property(x => x.CreatedAt).IsModified = false;
+    }
+
+    /// <inheritdoc />
+    public async Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken)
+    {
+        var userEf = await GetUserEfByEmailCompiled(context, email)
+            .FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
+
+        if (userEf == null)
+        {
+            return null;
+        }
+
+        var user = mapper.Map<User>(userEf);
+        return user;
     }
 }

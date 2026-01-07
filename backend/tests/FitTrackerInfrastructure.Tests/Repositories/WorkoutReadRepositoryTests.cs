@@ -1,4 +1,5 @@
 using AutoMapper;
+using FitTracker.Domain.Abstract.Interfaces;
 using FitTracker.Infrastructure.Automapper;
 using FitTracker.Infrastructure.Persistence.Data;
 using FitTracker.Infrastructure.Persistence.Data.Entities;
@@ -9,32 +10,19 @@ using Microsoft.Extensions.Logging.Abstractions;
 
 namespace FitTrackerInfrastructure.Tests.Repositories;
 
-public sealed class WorkoutReadRepositoryTests
+public sealed class WorkoutReadRepositoryTests : RepositoryTestBase
 {
-    private static FitTrackerDbContext BuildContext()
+    private readonly IWorkoutReadRepository _repository;
+
+    public WorkoutReadRepositoryTests()
     {
-        var options = new DbContextOptionsBuilder<FitTrackerDbContext>()
-            .UseInMemoryDatabase(Guid.NewGuid().ToString())
-            .Options;
-
-        return new FitTrackerDbContext(options);
-    }
-
-    private static IMapper BuildMapper()
-    {
-        var config = new MapperConfiguration(cfg => cfg.AddProfile<WorkoutProfile>(), NullLoggerFactory.Instance);
-
-        return config.CreateMapper();
+        _repository = new WorkoutReadRepository(context, mapper);
     }
 
     [Fact]
     public async Task GetCompletedByUserIdAsync_ShouldReturnOnlyCompletedWorkouts()
     {
         // Arrange
-        await using var context = BuildContext();
-        var mapper = BuildMapper();
-        var repository = new WorkoutReadRepository(context, mapper);
-
         var userId = Guid.NewGuid();
 
         var workouts = new[]
@@ -84,7 +72,7 @@ public sealed class WorkoutReadRepositoryTests
         await context.SaveChangesAsync();
 
         // Act
-        var result = await repository.GetCompletedByUserIdAsync(userId, CancellationToken.None);
+        var result = await _repository.GetCompletedByUserIdAsync(userId, CancellationToken.None);
 
         // Assert
         result.Should().HaveCount(2);
@@ -95,10 +83,6 @@ public sealed class WorkoutReadRepositoryTests
     public async Task GetCompletedByUserIdAsync_ShouldReturnOrderedByWorkoutDate()
     {
         // Arrange
-        await using var context = BuildContext();
-        var mapper = BuildMapper();
-        var repository = new WorkoutReadRepository(context, mapper);
-
         var userId = Guid.NewGuid();
 
         var workouts = new[]
@@ -148,7 +132,7 @@ public sealed class WorkoutReadRepositoryTests
         await context.SaveChangesAsync();
 
         // Act
-        var result = await repository.GetCompletedByUserIdAsync(userId, CancellationToken.None);
+        var result = await _repository.GetCompletedByUserIdAsync(userId, CancellationToken.None);
 
         // Assert
         result.Should().HaveCount(3);
@@ -161,10 +145,6 @@ public sealed class WorkoutReadRepositoryTests
     public async Task GetCompletedByUserIdAsync_ShouldReturnOnlyUserWorkouts()
     {
         // Arrange
-        await using var context = BuildContext();
-        var mapper = BuildMapper();
-        var repository = new WorkoutReadRepository(context, mapper);
-
         var userId1 = Guid.NewGuid();
         var userId2 = Guid.NewGuid();
 
@@ -202,7 +182,7 @@ public sealed class WorkoutReadRepositoryTests
         await context.SaveChangesAsync();
 
         // Act
-        var result = await repository.GetCompletedByUserIdAsync(userId1, CancellationToken.None);
+        var result = await _repository.GetCompletedByUserIdAsync(userId1, CancellationToken.None);
 
         // Assert
         result.Should().HaveCount(1);
@@ -213,14 +193,10 @@ public sealed class WorkoutReadRepositoryTests
     public async Task GetCompletedByUserIdAsync_WhenNoCompletedWorkouts_ShouldReturnEmptyList()
     {
         // Arrange
-        await using var context = BuildContext();
-        var mapper = BuildMapper();
-        var repository = new WorkoutReadRepository(context, mapper);
-
         var userId = Guid.NewGuid();
 
         // Act
-        var result = await repository.GetCompletedByUserIdAsync(userId, CancellationToken.None);
+        var result = await _repository.GetCompletedByUserIdAsync(userId, CancellationToken.None);
 
         // Assert
         result.Should().BeEmpty();
@@ -230,10 +206,6 @@ public sealed class WorkoutReadRepositoryTests
     public async Task GetRecentByUserIdAsync_ShouldReturnSpecifiedNumberOfWorkouts()
     {
         // Arrange
-        await using var context = BuildContext();
-        var mapper = BuildMapper();
-        var repository = new WorkoutReadRepository(context, mapper);
-
         var userId = Guid.NewGuid();
 
         var workouts = new[]
@@ -283,7 +255,7 @@ public sealed class WorkoutReadRepositoryTests
         await context.SaveChangesAsync();
 
         // Act
-        var result = await repository.GetRecentByUserIdAsync(userId, 2, CancellationToken.None);
+        var result = await _repository.GetRecentByUserIdAsync(userId, 2, CancellationToken.None);
 
         // Assert
         result.Should().HaveCount(2);
@@ -293,10 +265,6 @@ public sealed class WorkoutReadRepositoryTests
     public async Task GetRecentByUserIdAsync_ShouldReturnOrderedByWorkoutDateDescending()
     {
         // Arrange
-        await using var context = BuildContext();
-        var mapper = BuildMapper();
-        var repository = new WorkoutReadRepository(context, mapper);
-
         var userId = Guid.NewGuid();
 
         var workouts = new[]
@@ -346,7 +314,7 @@ public sealed class WorkoutReadRepositoryTests
         await context.SaveChangesAsync();
 
         // Act
-        var result = await repository.GetRecentByUserIdAsync(userId, 3, CancellationToken.None);
+        var result = await _repository.GetRecentByUserIdAsync(userId, 3, CancellationToken.None);
 
         // Assert
         result.Should().HaveCount(3);
@@ -359,10 +327,6 @@ public sealed class WorkoutReadRepositoryTests
     public async Task GetRecentByUserIdAsync_ShouldReturnOnlyUserWorkouts()
     {
         // Arrange
-        await using var context = BuildContext();
-        var mapper = BuildMapper();
-        var repository = new WorkoutReadRepository(context, mapper);
-
         var userId1 = Guid.NewGuid();
         var userId2 = Guid.NewGuid();
 
@@ -400,7 +364,7 @@ public sealed class WorkoutReadRepositoryTests
         await context.SaveChangesAsync();
 
         // Act
-        var result = await repository.GetRecentByUserIdAsync(userId1, 10, CancellationToken.None);
+        var result = await _repository.GetRecentByUserIdAsync(userId1, 10, CancellationToken.None);
 
         // Assert
         result.Should().HaveCount(1);
@@ -411,14 +375,10 @@ public sealed class WorkoutReadRepositoryTests
     public async Task GetRecentByUserIdAsync_WhenNoWorkouts_ShouldReturnEmptyList()
     {
         // Arrange
-        await using var context = BuildContext();
-        var mapper = BuildMapper();
-        var repository = new WorkoutReadRepository(context, mapper);
-
         var userId = Guid.NewGuid();
 
         // Act
-        var result = await repository.GetRecentByUserIdAsync(userId, 5, CancellationToken.None);
+        var result = await _repository.GetRecentByUserIdAsync(userId, 5, CancellationToken.None);
 
         // Assert
         result.Should().BeEmpty();
@@ -428,10 +388,6 @@ public sealed class WorkoutReadRepositoryTests
     public async Task GetRecentByUserIdAsync_WhenTakeIsZero_ShouldReturnEmptyList()
     {
         // Arrange
-        await using var context = BuildContext();
-        var mapper = BuildMapper();
-        var repository = new WorkoutReadRepository(context, mapper);
-
         var userId = Guid.NewGuid();
 
         var workout = new WorkoutEf
@@ -452,7 +408,7 @@ public sealed class WorkoutReadRepositoryTests
         await context.SaveChangesAsync();
 
         // Act
-        var result = await repository.GetRecentByUserIdAsync(userId, 0, CancellationToken.None);
+        var result = await _repository.GetRecentByUserIdAsync(userId, 0, CancellationToken.None);
 
         // Assert
         result.Should().BeEmpty();

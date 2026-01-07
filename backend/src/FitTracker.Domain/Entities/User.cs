@@ -302,7 +302,6 @@ public class User : BaseEntity
         LastName = lastName;
         Bio = bio;
         Avatar = avatar;
-        UpdatedAt = DateTime.UtcNow;
     }
 
     /// <summary>
@@ -320,7 +319,6 @@ public class User : BaseEntity
         }
 
         Email = email.ToLowerInvariant();
-        UpdatedAt = DateTime.UtcNow;
     }
 
     /// <summary>
@@ -335,7 +333,6 @@ public class User : BaseEntity
         }
 
         PasswordHash = passwordHash;
-        UpdatedAt = DateTime.UtcNow;
     }
 
     /// <summary>
@@ -344,7 +341,6 @@ public class User : BaseEntity
     public void SetEmailVerified()
     {
         IsEmailVerified = true;
-        UpdatedAt = DateTime.UtcNow;
     }
 
     /// <summary>
@@ -399,5 +395,29 @@ public class User : BaseEntity
         }
 
         return Username;
+    }
+
+    public void RequestVerificationEmail(string culture)
+    {
+        if (IsEmailVerified)
+        {
+            throw new InvalidOperationException("Email already verified");
+        }
+
+        var resendEvent = new UserRequestedVerificationEvent(Id, Email, Username, culture);
+
+        AddDomainEvent(resendEvent);
+    }
+
+    public void RequestPasswordReset(string culture)
+    {
+        if (!IsEmailVerified)
+        {
+            throw new InvalidOperationException("Email not verified");
+        }
+
+        var passwordResetEvent = new UserRequestedPasswordResetEvent(Id, Email, Username, culture);
+
+        AddDomainEvent(passwordResetEvent);
     }
 }

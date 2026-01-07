@@ -1,4 +1,5 @@
 using AutoMapper;
+using FitTracker.Domain.Abstract.Interfaces;
 using FitTracker.Domain.Entities;
 using FitTracker.Infrastructure.Persistence.Data;
 using FitTracker.Infrastructure.Persistence.Data.Entities;
@@ -10,33 +11,19 @@ using Moq;
 
 namespace FitTrackerInfrastructure.Tests.Repositories;
 
-public sealed class SetReadRepositoryTests
+public sealed class SetReadRepositoryTests : RepositoryTestBase
 {
-    private readonly Mock<IMapper> _mapperMock = new();
+    private readonly ISetReadRepository _repository;
 
-    private static FitTrackerDbContext BuildContext()
+    public SetReadRepositoryTests()
     {
-        var options = new DbContextOptionsBuilder<FitTrackerDbContext>()
-            .UseInMemoryDatabase(Guid.NewGuid().ToString())
-            .Options;
-
-        return new FitTrackerDbContext(options);
-    }
-
-    private static IMapper BuildMapper()
-    {
-        var config = new MapperConfiguration(cfg => cfg.CreateMap<SetEf, Set>(), NullLoggerFactory.Instance);
-
-        return config.CreateMapper();
+        _repository = new SetReadRepository(context, mapper);
     }
 
     [Fact]
     public async Task GetTotalWeightLiftedAsync_ShouldCalculateCorrectTotal()
     {
         // Arrange
-        await using var context = BuildContext();
-        var repository = new SetReadRepository(context, _mapperMock.Object);
-
         var userId = Guid.NewGuid();
         var exerciseId = Guid.NewGuid();
 
@@ -92,7 +79,7 @@ public sealed class SetReadRepositoryTests
         await context.SaveChangesAsync();
 
         // Act
-        var result = await repository.GetTotalWeightLiftedAsync(userId, CancellationToken.None);
+        var result = await _repository.GetTotalWeightLiftedAsync(userId, CancellationToken.None);
 
         // Assert
         result.Should().Be(1960); // (100 * 10) + (80 * 12)
@@ -102,13 +89,10 @@ public sealed class SetReadRepositoryTests
     public async Task GetTotalWeightLiftedAsync_ShouldReturnZeroForUserWithoutSets()
     {
         // Arrange
-        await using var context = BuildContext();
-        var repository = new SetReadRepository(context, _mapperMock.Object);
-
         var userId = Guid.NewGuid();
 
         // Act
-        var result = await repository.GetTotalWeightLiftedAsync(userId, CancellationToken.None);
+        var result = await _repository.GetTotalWeightLiftedAsync(userId, CancellationToken.None);
 
         // Assert
         result.Should().Be(0);
@@ -118,9 +102,6 @@ public sealed class SetReadRepositoryTests
     public async Task GetTotalWeightLiftedAsync_ShouldOnlyCountSpecificUserSets()
     {
         // Arrange
-        await using var context = BuildContext();
-        var repository = new SetReadRepository(context, _mapperMock.Object);
-
         var userId1 = Guid.NewGuid();
         var userId2 = Guid.NewGuid();
         var exerciseId = Guid.NewGuid();
@@ -200,7 +181,7 @@ public sealed class SetReadRepositoryTests
         await context.SaveChangesAsync();
 
         // Act
-        var result = await repository.GetTotalWeightLiftedAsync(userId1, CancellationToken.None);
+        var result = await _repository.GetTotalWeightLiftedAsync(userId1, CancellationToken.None);
 
         // Assert
         result.Should().Be(500); // Only user1's sets: 100 * 5
@@ -210,9 +191,6 @@ public sealed class SetReadRepositoryTests
     public async Task GetTotalWeightLiftedAsync_ShouldCountMultipleWorkouts()
     {
         // Arrange
-        await using var context = BuildContext();
-        var repository = new SetReadRepository(context, _mapperMock.Object);
-
         var userId = Guid.NewGuid();
         var exerciseId1 = Guid.NewGuid();
         var exerciseId2 = Guid.NewGuid();
@@ -292,7 +270,7 @@ public sealed class SetReadRepositoryTests
         await context.SaveChangesAsync();
 
         // Act
-        var result = await repository.GetTotalWeightLiftedAsync(userId, CancellationToken.None);
+        var result = await _repository.GetTotalWeightLiftedAsync(userId, CancellationToken.None);
 
         // Assert
         result.Should().Be(1250); // (50 * 10) + (75 * 10)

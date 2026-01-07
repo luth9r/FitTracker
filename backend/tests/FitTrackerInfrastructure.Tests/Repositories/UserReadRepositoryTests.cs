@@ -1,4 +1,5 @@
 using AutoMapper;
+using FitTracker.Domain.Abstract.Interfaces;
 using FitTracker.Domain.Entities;
 using FitTracker.Infrastructure.Automapper;
 using FitTracker.Infrastructure.Persistence.Data;
@@ -11,34 +12,19 @@ using Moq;
 
 namespace FitTrackerInfrastructure.Tests.Repositories;
 
-public sealed class UserReadRepositoryTests
+public sealed class UserReadRepositoryTests : RepositoryTestBase
 {
-    private readonly Mock<IMapper> _mapperMock = new();
+    private readonly IUserReadRepository _repository;
 
-    private static FitTrackerDbContext BuildContext()
+    public UserReadRepositoryTests()
     {
-        var options = new DbContextOptionsBuilder<FitTrackerDbContext>()
-            .UseInMemoryDatabase(Guid.NewGuid().ToString())
-            .Options;
-
-        return new FitTrackerDbContext(options);
-    }
-
-    private static IMapper BuildMapper()
-    {
-        var config = new MapperConfiguration(cfg => cfg.AddProfile<UserProfile>(), NullLoggerFactory.Instance);
-
-        return config.CreateMapper();
+        _repository = new UserReadRepository(context, mapper);
     }
 
     [Fact]
     public async Task GetByIdReadonlyAsync_WhenUserExists_ShouldReturnUser()
     {
         // Arrange
-        await using var context = BuildContext();
-        var mapper = BuildMapper();
-        var repository = new UserReadRepository(context, mapper);
-
         var userId = Guid.NewGuid();
         var userEf = new UserEf
         {
@@ -56,7 +42,7 @@ public sealed class UserReadRepositoryTests
         await context.SaveChangesAsync();
 
         // Act
-        var result = await repository.GetByIdReadonlyAsync(userId, CancellationToken.None);
+        var result = await _repository.GetByIdReadonlyAsync(userId, CancellationToken.None);
 
         // Assert
         result.Should().NotBeNull();
@@ -71,14 +57,10 @@ public sealed class UserReadRepositoryTests
     public async Task GetByIdReadonlyAsync_WhenUserDoesNotExist_ShouldReturnNull()
     {
         // Arrange
-        await using var context = BuildContext();
-        var mapper = BuildMapper();
-        var repository = new UserReadRepository(context, mapper);
-
         var nonExistentId = Guid.NewGuid();
 
         // Act
-        var result = await repository.GetByIdReadonlyAsync(nonExistentId, CancellationToken.None);
+        var result = await _repository.GetByIdReadonlyAsync(nonExistentId, CancellationToken.None);
 
         // Assert
         result.Should().BeNull();
@@ -88,10 +70,6 @@ public sealed class UserReadRepositoryTests
     public async Task GetByUsernameReadonlyAsync_WhenUserExists_ShouldReturnUser()
     {
         // Arrange
-        await using var context = BuildContext();
-        var mapper = BuildMapper();
-        var repository = new UserReadRepository(context, mapper);
-
         var userEf = new UserEf
         {
             Id = Guid.NewGuid(),
@@ -106,7 +84,7 @@ public sealed class UserReadRepositoryTests
         await context.SaveChangesAsync();
 
         // Act
-        var result = await repository.GetByUsernameReadonlyAsync("johndoe", CancellationToken.None);
+        var result = await _repository.GetByUsernameReadonlyAsync("johndoe", CancellationToken.None);
 
         // Assert
         result.Should().NotBeNull();
@@ -118,12 +96,8 @@ public sealed class UserReadRepositoryTests
     public async Task GetByUsernameReadonlyAsync_WhenUserDoesNotExist_ShouldReturnNull()
     {
         // Arrange
-        await using var context = BuildContext();
-        var mapper = BuildMapper();
-        var repository = new UserReadRepository(context, mapper);
-
         // Act
-        var result = await repository.GetByUsernameReadonlyAsync("nonexistent", CancellationToken.None);
+        var result = await _repository.GetByUsernameReadonlyAsync("nonexistent", CancellationToken.None);
 
         // Assert
         result.Should().BeNull();
@@ -133,10 +107,6 @@ public sealed class UserReadRepositoryTests
     public async Task GetByEmailReadonlyAsync_WhenUserExists_ShouldReturnUser()
     {
         // Arrange
-        await using var context = BuildContext();
-        var mapper = BuildMapper();
-        var repository = new UserReadRepository(context, mapper);
-
         var userEf = new UserEf
         {
             Id = Guid.NewGuid(),
@@ -151,7 +121,7 @@ public sealed class UserReadRepositoryTests
         await context.SaveChangesAsync();
 
         // Act
-        var result = await repository.GetByEmailReadonlyAsync("unique@example.com", CancellationToken.None);
+        var result = await _repository.GetByEmailReadonlyAsync("unique@example.com", CancellationToken.None);
 
         // Assert
         result.Should().NotBeNull();
@@ -163,12 +133,8 @@ public sealed class UserReadRepositoryTests
     public async Task GetByEmailReadonlyAsync_WhenUserDoesNotExist_ShouldReturnNull()
     {
         // Arrange
-        await using var context = BuildContext();
-        var mapper = BuildMapper();
-        var repository = new UserReadRepository(context, mapper);
-
         // Act
-        var result = await repository.GetByEmailReadonlyAsync("nonexistent@example.com", CancellationToken.None);
+        var result = await _repository.GetByEmailReadonlyAsync("nonexistent@example.com", CancellationToken.None);
 
         // Assert
         result.Should().BeNull();
@@ -178,10 +144,6 @@ public sealed class UserReadRepositoryTests
     public async Task GetByGoogleTokenReadonlyAsync_WhenUserExists_ShouldReturnUser()
     {
         // Arrange
-        await using var context = BuildContext();
-        var mapper = BuildMapper();
-        var repository = new UserReadRepository(context, mapper);
-
         var googleToken = "google_123456789";
         var userEf = new UserEf
         {
@@ -197,7 +159,7 @@ public sealed class UserReadRepositoryTests
         await context.SaveChangesAsync();
 
         // Act
-        var result = await repository.GetByGoogleTokenReadonlyAsync(googleToken, CancellationToken.None);
+        var result = await _repository.GetByGoogleTokenReadonlyAsync(googleToken, CancellationToken.None);
 
         // Assert
         result.Should().NotBeNull();
@@ -209,12 +171,8 @@ public sealed class UserReadRepositoryTests
     public async Task GetByGoogleTokenReadonlyAsync_WhenUserDoesNotExist_ShouldReturnNull()
     {
         // Arrange
-        await using var context = BuildContext();
-        var mapper = BuildMapper();
-        var repository = new UserReadRepository(context, mapper);
-
         // Act
-        var result = await repository.GetByGoogleTokenReadonlyAsync("nonexistent_token", CancellationToken.None);
+        var result = await _repository.GetByGoogleTokenReadonlyAsync("nonexistent_token", CancellationToken.None);
 
         // Assert
         result.Should().BeNull();
@@ -224,10 +182,6 @@ public sealed class UserReadRepositoryTests
     public async Task GetByUsernameReadonlyAsync_WithMultipleUsers_ShouldReturnCorrectUser()
     {
         // Arrange
-        await using var context = BuildContext();
-        var mapper = BuildMapper();
-        var repository = new UserReadRepository(context, mapper);
-
         var users = new[]
         {
             new UserEf
@@ -265,7 +219,7 @@ public sealed class UserReadRepositoryTests
         await context.SaveChangesAsync();
 
         // Act
-        var result = await repository.GetByUsernameReadonlyAsync("user2", CancellationToken.None);
+        var result = await _repository.GetByUsernameReadonlyAsync("user2", CancellationToken.None);
 
         // Assert
         result.Should().NotBeNull();

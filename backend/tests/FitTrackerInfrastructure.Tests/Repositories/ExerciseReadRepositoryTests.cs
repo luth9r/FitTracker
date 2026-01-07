@@ -1,6 +1,8 @@
 using AutoMapper;
+using FitTracker.Domain.Abstract.Interfaces;
 using FitTracker.Domain.Entities;
 using FitTracker.Domain.Enums;
+using FitTracker.Infrastructure.Persistence;
 using FitTracker.Infrastructure.Persistence.Data;
 using FitTracker.Infrastructure.Persistence.Data.Entities;
 using FitTracker.Infrastructure.Persistence.Repositories;
@@ -12,34 +14,20 @@ using Moq;
 
 namespace FitTrackerInfrastructure.Tests.Repositories;
 
-public sealed class ExerciseReadRepositoryTests
+public sealed class ExerciseReadRepositoryTests : RepositoryTestBase
 {
-    private readonly Mock<IMapper> _mapperMock = new();
 
-    private static FitTrackerDbContext BuildContext()
+    private readonly IExerciseReadRepository _repository;
+
+    public ExerciseReadRepositoryTests()
     {
-        var options = new DbContextOptionsBuilder<FitTrackerDbContext>()
-            .UseInMemoryDatabase(Guid.NewGuid().ToString())
-            .Options;
-
-        return new FitTrackerDbContext(options);
-    }
-
-    private static IMapper BuildMapper()
-    {
-        var config = new MapperConfiguration(cfg => cfg.CreateMap<ExerciseEf, Exercise>(), NullLoggerFactory.Instance);
-
-        return config.CreateMapper();
+        _repository = new ExerciseReadRepository(context, mapper);
     }
 
     [Fact]
     public async Task GetExercisesAsync_Standard_ShouldReturnOnlyStandard()
     {
         // Arrange
-        await using var context = BuildContext();
-        var mapper = BuildMapper();
-        var repo = new ExerciseReadRepository(context, mapper);
-
         var userId = Guid.NewGuid();
 
         context.Exercises.AddRange(
@@ -50,7 +38,7 @@ public sealed class ExerciseReadRepositoryTests
         await context.SaveChangesAsync();
 
         // Act
-        var result = await repo.GetExercisesAsync(ExerciseFilterType.Standard, null, CancellationToken.None);
+        var result = await _repository.GetExercisesAsync(ExerciseFilterType.Standard, null, CancellationToken.None);
 
         // Assert
         result.Should().HaveCount(2);
@@ -61,10 +49,6 @@ public sealed class ExerciseReadRepositoryTests
     public async Task GetExercisesAsync_Custom_ShouldReturnOnlyUserCustom()
     {
         // Arrange
-        await using var context = BuildContext();
-        var mapper = BuildMapper();
-        var repo = new ExerciseReadRepository(context, mapper);
-
         var userId = Guid.NewGuid();
         var otherUserId = Guid.NewGuid();
 
@@ -75,7 +59,7 @@ public sealed class ExerciseReadRepositoryTests
         await context.SaveChangesAsync();
 
         // Act
-        var result = await repo.GetExercisesAsync(ExerciseFilterType.Custom, userId, CancellationToken.None);
+        var result = await _repository.GetExercisesAsync(ExerciseFilterType.Custom, userId, CancellationToken.None);
 
         // Assert
         result.Should().HaveCount(1);
@@ -88,15 +72,11 @@ public sealed class ExerciseReadRepositoryTests
     public async Task GetExercisesAsync_Custom_WithoutUserId_ShouldThrowArgumentException(string? userIdString)
     {
         // Arrange
-        await using var context = BuildContext();
-        var mapper = BuildMapper();
-        var repo = new ExerciseReadRepository(context, mapper);
-
         Guid? userId = userIdString is null ? null : Guid.Parse(userIdString);
 
         // Act
         var act = async () =>
-            await repo.GetExercisesAsync(ExerciseFilterType.Custom, userId, CancellationToken.None);
+            await _repository.GetExercisesAsync(ExerciseFilterType.Custom, userId, CancellationToken.None);
 
         // Assert
         await act.Should()
@@ -109,10 +89,6 @@ public sealed class ExerciseReadRepositoryTests
     public async Task GetExercisesAsync_All_ShouldReturnStandardAndUserCustom()
     {
         // Arrange
-        await using var context = BuildContext();
-        var mapper = BuildMapper();
-        var repo = new ExerciseReadRepository(context, mapper);
-
         var userId = Guid.NewGuid();
         var otherUserId = Guid.NewGuid();
 
@@ -124,7 +100,7 @@ public sealed class ExerciseReadRepositoryTests
         await context.SaveChangesAsync();
 
         // Act
-        var result = await repo.GetExercisesAsync(ExerciseFilterType.All, userId, CancellationToken.None);
+        var result = await _repository.GetExercisesAsync(ExerciseFilterType.All, userId, CancellationToken.None);
 
         // Assert
         result.Select(x => x.Name)
@@ -137,15 +113,11 @@ public sealed class ExerciseReadRepositoryTests
     public async Task GetExercisesAsync_All_WithoutUserId_ShouldThrowArgumentException(string? userIdString)
     {
         // Arrange
-        await using var context = BuildContext();
-        var mapper = BuildMapper();
-        var repo = new ExerciseReadRepository(context, mapper);
-
         Guid? userId = userIdString is null ? null : Guid.Parse(userIdString);
 
         // Act
         var act = async () =>
-            await repo.GetExercisesAsync(ExerciseFilterType.All, userId, CancellationToken.None);
+            await _repository.GetExercisesAsync(ExerciseFilterType.All, userId, CancellationToken.None);
 
         // Assert
         await act.Should()
@@ -160,10 +132,6 @@ public sealed class ExerciseReadRepositoryTests
         // Arrange
         var userId = Guid.NewGuid();
         var exerciseId = Guid.NewGuid();
-
-        await using var context = BuildContext();
-
-        var repository = new ExerciseReadRepository(context, _mapperMock.Object);
 
         var exerciseEf = new ExerciseEf
         {
@@ -252,7 +220,7 @@ public sealed class ExerciseReadRepositoryTests
         await context.SaveChangesAsync();
 
         // Act
-        var result = await repository.GetExerciseDetailsAsync(exerciseId, userId);
+        var result = await _repository.GetExerciseDetailsAsync(exerciseId, userId);
 
         // Assert
         result.Should().NotBeNull();

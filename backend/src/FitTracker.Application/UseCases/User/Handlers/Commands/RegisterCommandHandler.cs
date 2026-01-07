@@ -56,8 +56,7 @@ public sealed class RegisterCommandHandler(
                 localization.GetString("Auth.Register.UsernameAlreadyExists"));
         }
 
-        var existingUserByEmail =
-            await userReadRepository.GetByEmailReadonlyAsync(userRequest.Email, cancellationToken);
+        var existingUserByEmail = await userReadRepository.GetByEmailReadonlyAsync(userRequest.Email, cancellationToken);
         if (existingUserByEmail != null)
         {
             logger.LogWarning("Registration failed: Email {Email} already exists.", userRequest.Email);

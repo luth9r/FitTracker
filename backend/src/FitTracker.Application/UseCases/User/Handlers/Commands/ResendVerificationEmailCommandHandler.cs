@@ -1,5 +1,4 @@
 using CSharpFunctionalExtensions;
-using FitTracker.Application.Events;
 using FitTracker.Application.Interfaces;
 using FitTracker.Application.UseCases.User.Commands;
 using FitTracker.Domain.Abstract.Interfaces;
@@ -11,17 +10,20 @@ using ResultExtensions = FitTracker.Application.Extensions.ResultExtensions;
 namespace FitTracker.Application.UseCases.User.Handlers.Commands;
 
 /// <summary>
-///     Handler for processing resend verification email queries.
-/// </summary>
-/// <param name="userReadRepository">The <see cref="IUserReadRepository" />.</param>
-/// <param name="mediator">The <see cref="IMediator" />.</param>
-/// <param name="logger">The <see cref="ILogger{ResendVerificationEmailQueryHandler}" />.</param>
-/// <param name="localization">The <see cref="ILocalizationService" />.</param>
+/// Handles the process of resending a verification email to a user.
+/// </summary> <param name="userReadRepository"> Repository for retrieving user data in a read-only context.</param>
+/// <param name="userWriteRepository">Repository for performing modifications on user data.</param>
+/// <param name="logger"> Logging service used to log information, warnings, and errors during processing. </param>
+/// <param name="localization"> Service for obtaining localization and cultural settings.</param>
+/// <param name="rateLimitService"> Service used to enforce rate-limiting rules.</param>
+/// <param name="unit">Unit of work responsible for committing transactional operations.</param>
 public sealed class ResendVerificationEmailCommandHandler(
     IUserReadRepository userReadRepository,
-    IMediator mediator,
+    IUserWriteRepository userWriteRepository,
     ILogger<ResendVerificationEmailCommandHandler> logger,
-    ILocalizationService localization)
+    ILocalizationService localization,
+    IRateLimitService rateLimitService,
+    IUnitOfWork unit)
     : IRequestHandler<ResendVerificationEmailCommand, Result<Unit, ValidationResult>>
 {
     /// <summary>
@@ -34,6 +36,8 @@ public sealed class ResendVerificationEmailCommandHandler(
         ResendVerificationEmailCommand request,
         CancellationToken cancellationToken)
     {
+        var culture = localization.GetCurrentCulture();
+
         // Retrieve user by email
         var user = await userReadRepository.GetByEmailReadonlyAsync(request.Email, cancellationToken);
 
@@ -41,7 +45,7 @@ public sealed class ResendVerificationEmailCommandHandler(
         {
             // Security: Return success to prevent email enumeration
             logger.LogWarning("Resend verification email requested for non-existing email: {Email}", request.Email);
-            return Unit.Value;
+            return Result.Success<Unit, ValidationResult>(Unit.Value);
         }
 
         // Check if email is already verified
@@ -52,13 +56,22 @@ public sealed class ResendVerificationEmailCommandHandler(
                 request.Email);
             return ResultExtensions.ValidationFailure<Unit>(
                 nameof(request.Email),
-                localization.GetString("User.EmailAlreadyVerified"));
+                localization.GetString("User.EmailAlreadyVerified", culture));
         }
 
-        // Publish event to trigger verification email sending
-        await mediator.Publish(
-            new UserRequestedVerificationEvent(user.Id, request.Email, user.Username),
-            cancellationToken);
+        var key = $"ratelimit:email:{user.Id}";
+        if (!await rateLimitService.IsAllowedAsync(key, TimeSpan.FromMinutes(1)))
+        {
+            return ResultExtensions.ValidationFailure<Unit>(
+                nameof(request.Email),
+                localization.GetString("User.RateLimitExceeded", culture));
+        }
+
+        user.RequestVerificationEmail(culture);
+
+        userWriteRepository.Update(user);
+
+        await unit.SaveChangesAsync(cancellationToken);
 
         logger.LogInformation("Verification email resend requested for user: {UserId}", user.Id);
 

@@ -1,4 +1,5 @@
 using AutoMapper;
+using FitTracker.Domain.Abstract.Interfaces;
 using FitTracker.Domain.Entities;
 using FitTracker.Infrastructure.Automapper;
 using FitTracker.Infrastructure.Persistence.Data;
@@ -10,32 +11,19 @@ using Microsoft.Extensions.Logging.Abstractions;
 
 namespace FitTrackerInfrastructure.Tests.Repositories;
 
-public sealed class UserWriteRepositoryTests
+public sealed class UserWriteRepositoryTests : RepositoryTestBase
 {
-    private static FitTrackerDbContext BuildContext()
+    private readonly IUserWriteRepository _repository;
+
+    public UserWriteRepositoryTests()
     {
-        var options = new DbContextOptionsBuilder<FitTrackerDbContext>()
-            .UseInMemoryDatabase(Guid.NewGuid().ToString())
-            .Options;
-
-        return new FitTrackerDbContext(options);
-    }
-
-    private static IMapper BuildMapper()
-    {
-        var config = new MapperConfiguration(cfg => { cfg.AddProfile<UserProfile>(); }, NullLoggerFactory.Instance);
-
-        return config.CreateMapper();
+        _repository = new UserWriteRepository(context, mapper);
     }
 
     [Fact]
     public async Task AddAsync_ShouldAddUserToContext()
     {
         // Arrange
-        await using var context = BuildContext();
-        var mapper = BuildMapper();
-        var repository = new UserWriteRepository(context, mapper);
-
         var user = User.Create(
             "newuser",
             "newuser@example.com",
@@ -44,7 +32,7 @@ public sealed class UserWriteRepositoryTests
             "Doe");
 
         // Act
-        await repository.AddAsync(user, CancellationToken.None);
+        await _repository.AddAsync(user, CancellationToken.None);
         await context.SaveChangesAsync();
 
         // Assert
@@ -59,16 +47,12 @@ public sealed class UserWriteRepositoryTests
     public async Task AddAsync_ShouldAddMultipleUsers()
     {
         // Arrange
-        await using var context = BuildContext();
-        var mapper = BuildMapper();
-        var repository = new UserWriteRepository(context, mapper);
-
         var user1 = User.Create("user1", "user1@example.com", "hash1");
         var user2 = User.Create("user2", "user2@example.com", "hash2");
 
         // Act
-        await repository.AddAsync(user1, CancellationToken.None);
-        await repository.AddAsync(user2, CancellationToken.None);
+        await _repository.AddAsync(user1, CancellationToken.None);
+        await _repository.AddAsync(user2, CancellationToken.None);
         await context.SaveChangesAsync();
 
         // Assert
@@ -81,10 +65,6 @@ public sealed class UserWriteRepositoryTests
     public async Task AddAsync_GoogleUser_ShouldAddUserWithGoogleProviderId()
     {
         // Arrange
-        await using var context = BuildContext();
-        var mapper = BuildMapper();
-        var repository = new UserWriteRepository(context, mapper);
-
         var googleUser = User.CreateGoogleUser(
             "google@example.com",
             "google_123456",
@@ -92,7 +72,7 @@ public sealed class UserWriteRepositoryTests
             "Smith");
 
         // Act
-        await repository.AddAsync(googleUser, CancellationToken.None);
+        await _repository.AddAsync(googleUser, CancellationToken.None);
         await context.SaveChangesAsync();
 
         // Assert
@@ -108,10 +88,6 @@ public sealed class UserWriteRepositoryTests
     public async Task Update_ShouldUpdateExistingUser()
     {
         // Arrange
-        await using var context = BuildContext();
-        var mapper = BuildMapper();
-        var repository = new UserWriteRepository(context, mapper);
-
         var user = User.Create("testuser", "test@example.com", "hash123");
         var userEf = mapper.Map<UserEf>(user);
         context.Users.Add(userEf);
@@ -124,7 +100,7 @@ public sealed class UserWriteRepositoryTests
         userToUpdate.UpdateProfile("UpdatedFirst", "UpdatedLast", "Updated bio", null);
 
         // Act
-        repository.Update(userToUpdate);
+        _repository.Update(userToUpdate);
         await context.SaveChangesAsync();
 
         // Assert
@@ -139,10 +115,6 @@ public sealed class UserWriteRepositoryTests
     public async Task Update_ShouldNotModifyCreatedAt()
     {
         // Arrange
-        await using var context = BuildContext();
-        var mapper = BuildMapper();
-        var repository = new UserWriteRepository(context, mapper);
-
         var originalCreatedAt = DateTime.UtcNow;
         var user = User.Create("testuser", "test@example.com", "hash123");
 
@@ -161,7 +133,7 @@ public sealed class UserWriteRepositoryTests
         userToUpdate.UpdateProfile("NewName", null, null, null);
 
         // Act
-        repository.Update(userToUpdate);
+        _repository.Update(userToUpdate);
         await context.SaveChangesAsync();
 
         // Assert

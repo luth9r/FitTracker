@@ -3,14 +3,18 @@ using FitTracker.Application.Interfaces;
 using FitTracker.Domain.Abstract.Interfaces;
 using FitTracker.Infrastructure.BackgroundJobs;
 using FitTracker.Infrastructure.Localization;
+using FitTracker.Infrastructure.Messaging.Consumers;
+using FitTracker.Infrastructure.Persistence;
 using FitTracker.Infrastructure.Persistence.Data;
 using FitTracker.Infrastructure.Persistence.Repositories;
 using FitTracker.Infrastructure.Services;
 using FitTracker.Infrastructure.Settings;
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using StackExchange.Redis;
 
 namespace FitTracker.Infrastructure;
 
@@ -22,6 +26,12 @@ public static class InfrastructureInjection
         IConfiguration configuration)
     {
         AddDatabase(services, configuration);
+
+        AddRedis(services);
+
+        AddRebbitMq(services);
+
+        AddSignals(services);
 
         AddLocalization(services);
 
@@ -116,5 +126,65 @@ public static class InfrastructureInjection
     private static void AddAutoMappers(IServiceCollection services)
     {
         _ = services.AddAutoMapper(cfg => { cfg.AddMaps(typeof(InfrastructureInjection).Assembly); });
+    }
+
+    private static void AddRedis(IServiceCollection services)
+    {
+        services.AddSingleton<IConnectionMultiplexer>(sp =>
+            ConnectionMultiplexer.Connect("localhost:6379"));
+        services.AddScoped<IRateLimitService, RedisRateLimitService>();
+    }
+
+    private static void AddRebbitMq(IServiceCollection services)
+    {
+        services.AddMassTransit(x =>
+        {
+            x.AddConsumer<UserVerificationRequestedConsumer>();
+            x.AddConsumer<UserRegisteredConsumer>();
+            x.AddConsumer<UserRequestedPasswordResetConsumer>();
+
+            x.UsingRabbitMq((context, cfg) =>
+            {
+                cfg.Host("localhost");
+
+                cfg.ReceiveEndpoint(
+                    "user-verification-queue",
+                    e =>
+                    {
+                        e.UseMessageRetry(r => r.Interval(3, TimeSpan.FromSeconds(5)));
+
+                        e.PrefetchCount = 16;
+
+                        e.ConfigureConsumer<UserVerificationRequestedConsumer>(context);
+                    });
+
+                cfg.ReceiveEndpoint(
+                    "user-registered-queue",
+                    e =>
+                    {
+                        e.UseMessageRetry(r => r.Interval(3, TimeSpan.FromSeconds(5)));
+
+                        e.PrefetchCount = 16;
+
+                        e.ConfigureConsumer<UserRegisteredConsumer>(context);
+                    });
+
+                cfg.ReceiveEndpoint(
+                    "user-requested-password-reset-queue",
+                    e =>
+                    {
+                        e.UseMessageRetry(r => r.Interval(3, TimeSpan.FromSeconds(5)));
+
+                        e.PrefetchCount = 16;
+
+                        e.ConfigureConsumer<UserRequestedPasswordResetConsumer>(context);
+                    });
+            });
+        });
+    }
+
+    private static void AddSignals(IServiceCollection services)
+    {
+        services.AddSingleton<OutboxSignal>();
     }
 }

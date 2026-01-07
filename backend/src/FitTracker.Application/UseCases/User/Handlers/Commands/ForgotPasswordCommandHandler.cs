@@ -1,38 +1,60 @@
 using CSharpFunctionalExtensions;
-using FitTracker.Application.Events;
+using FitTracker.Application.Interfaces;
 using FitTracker.Application.UseCases.User.Commands;
 using FitTracker.Domain.Abstract.Interfaces;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace FitTracker.Application.UseCases.User.Handlers.Commands;
 
 /// <summary>
-///     Handles the <see cref="ForgotPasswordCommand" /> to initiate password reset process.
-///     Always returns success (<see cref="Result.Success()" />) regardless of user existence for security.
+/// Handler responsible for managing forgot password command execution.
 /// </summary>
-/// <param name="readRepository">Repository for readonly user queries by email.</param>
-/// <param name="mediator">MediatR instance for publishing domain events.</param>
+/// <param name="readRepository">The repository for reading user-related data.</param>
+/// <param name="writeRepository">The repository for writing user-related data.</param>
+/// <param name="unit">The unit of work for managing transactions.</param>
+/// <param name="rateLimitService">The service responsible for ensuring rate-limiting on requests.</param>
+/// <param name="localization">The service for handling culture-specific information.</param>
+/// <param name="logger">The logger for capturing diagnostic and error information.</param>
 public class ForgotPasswordCommandHandler(
     IUserReadRepository readRepository,
-    IMediator mediator) : IRequestHandler<ForgotPasswordCommand, Result>
+    IUserWriteRepository writeRepository,
+    IUnitOfWork unit,
+    IRateLimitService rateLimitService,
+    ILocalizationService localization,
+    ILogger<ForgotPasswordCommandHandler> logger) : IRequestHandler<ForgotPasswordCommand, Result>
 {
     /// <summary>
-    ///     Processes the forgot password request asynchronously.
+    /// Handles the ForgotPasswordCommand to initiate a password reset process for a user.
     /// </summary>
-    /// <param name="request">Forgot password command containing user email.</param>
-    /// <param name="cancellationToken">Cancellation token for async operation.</param>
-    /// <returns>Success result. Publishes password reset event if user exists.</returns>
+    /// <param name="request">The command containing the email address of the user requesting the password reset.</param>
+    /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
+    /// <returns>A Result instance indicating the success or failure of the operation.</returns>
     public async Task<Result> Handle(ForgotPasswordCommand request, CancellationToken cancellationToken)
     {
+        var culture = localization.GetCurrentCulture();
         var user = await readRepository.GetByEmailReadonlyAsync(request.Email, cancellationToken);
-        if (user is null)
+        if (user is null || !user.IsEmailVerified)
         {
+            if (user is { IsEmailVerified: false })
+            {
+                logger.LogWarning("Password reset denied: Email {Email} is not verified.", request.Email);
+            }
+
             return Result.Success();
         }
 
-        await mediator.Publish(
-            new UserPasswordResetRequestedEvent(user.Id, request.Email, user.Username),
-            cancellationToken);
+        var key = $"ratelimit:password-reset:{user.Id}";
+        if (!await rateLimitService.IsAllowedAsync(key, TimeSpan.FromMinutes(1)))
+        {
+            return Result.Failure(localization.GetString("User.RateLimitExceeded", culture));
+        }
+
+        user.RequestPasswordReset(culture);
+
+        writeRepository.Update(user);
+
+        await unit.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }

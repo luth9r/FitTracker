@@ -1,5 +1,4 @@
 ﻿using FitTracker.Domain.Abstract.Interfaces;
-using MediatR;
 
 namespace FitTracker.Domain.Events;
 
@@ -10,5 +9,5 @@ namespace FitTracker.Domain.Events;
 /// <param name="Email">The user's email address.</param>
 /// <param name="Username">The user's username.</param>
 /// <param name="Culture">The culture to use for email localization.</param>
-public record UserRegisteredEvent(Guid UserId, string Email, string Username, string Culture)
-    : IDomainEvent, INotification;
+public sealed record UserRegisteredEvent(Guid UserId, string Email, string Username, string Culture)
+    : IDomainEvent;

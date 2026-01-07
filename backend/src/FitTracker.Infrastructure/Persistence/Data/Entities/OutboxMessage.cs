@@ -1,5 +1,9 @@
 ﻿namespace FitTracker.Infrastructure.Persistence.Data.Entities;
 
+/// <summary>
+///     Represents a message intended for use with the outbox pattern, facilitating reliable communication between systems
+///     by storing event data that can be eventually processed and dispatched.
+/// </summary>
 public class OutboxMessage
 {
     public Guid Id { get; set; }

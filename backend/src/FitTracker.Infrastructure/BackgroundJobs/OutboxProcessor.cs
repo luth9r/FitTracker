@@ -1,5 +1,6 @@
-﻿using FitTracker.Infrastructure.Persistence.Data;
-using MediatR;
+﻿using FitTracker.Infrastructure.Persistence;
+using FitTracker.Infrastructure.Persistence.Data;
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -15,6 +16,7 @@ namespace FitTracker.Infrastructure.BackgroundJobs;
 /// <param name="logger">The <see cref="ILogger{OutboxProcessor}" />.</param>
 public sealed class OutboxProcessor(
     IServiceScopeFactory scopeFactory,
+    OutboxSignal signal,
     ILogger<OutboxProcessor> logger) : BackgroundService
 {
     /// <summary>
@@ -42,7 +44,16 @@ public sealed class OutboxProcessor(
                 logger.LogError(ex, "An error occurred while processing outbox messages.");
             }
 
-            await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
+            using var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(stoppingToken);
+            timeoutCts.CancelAfter(TimeSpan.FromSeconds(10));
+            try
+            {
+                await signal.Reader.WaitToReadAsync(timeoutCts.Token);
+            }
+            catch (OperationCanceledException)
+            {
+                // Everything is fine, we just timed out
+            }
         }
     }
 
@@ -57,9 +68,11 @@ public sealed class OutboxProcessor(
     {
         using var scope = scopeFactory.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<FitTrackerDbContext>();
-        var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-        // Take 20 messages to process in a single batch
+        // Use MassTransit to publish events to RabbitMQ
+        var publishEndpoint = scope.ServiceProvider.GetRequiredService<IPublishEndpoint>();
+
+        // Take 20 messages from the database
         var messages = await context.OutboxMessages
             .Where(m => m.ProcessedOnUtc == null)
             .OrderBy(m => m.OccurredOnUtc)
@@ -75,28 +88,28 @@ public sealed class OutboxProcessor(
         {
             try
             {
-                // Deserializing JSON content
-                var domainEvent = JsonConvert.DeserializeObject<INotification>(
+                var domainEvent = JsonConvert.DeserializeObject(
                     message.Content,
                     new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All });
 
                 if (domainEvent != null)
                 {
-                    // Publishing domain event
-                    // Here SendVerificationEmailHandler works
-                    await mediator.Publish(domainEvent, stoppingToken);
+                    // Publish the event to RabbitMQ
+                    await publishEndpoint.Publish(domainEvent, stoppingToken);
                 }
 
                 message.ProcessedOnUtc = DateTime.UtcNow;
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Failed to process outbox message {MessageId}", message.Id);
+                logger.LogError(
+                    ex,
+                    "An error occurred while processing outbox message with Id: {MessageId}",
+                    message.Id);
                 message.Error = ex.Message;
             }
         }
 
-        // Save changes
         await context.SaveChangesAsync(stoppingToken);
     }
 }

@@ -23,6 +23,8 @@
         <PackageReference Include="AutoMapper" Version="15.1.0"/>
         <PackageReference Include="BCrypt.Net-Next" Version="4.0.3"/>
         <PackageReference Include="CSharpFunctionalExtensions" Version="3.6.0"/>
+        <PackageReference Include="MassTransit" Version="8.5.7"/>
+        <PackageReference Include="MassTransit.RabbitMQ" Version="8.5.7"/>
         <PackageReference Include="MediatR" Version="13.1.0"/>
         <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.3.0"/>
         <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.0"/>
@@ -36,6 +38,7 @@
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.0"/>
         <PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" Version="10.0.0"/>
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0"/>
+        <PackageReference Include="StackExchange.Redis" Version="2.10.1"/>
         <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

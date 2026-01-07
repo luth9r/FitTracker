@@ -9,9 +9,12 @@ namespace FitTracker.Infrastructure.Persistence.Data;
 [ExcludeFromCodeCoverage]
 public class FitTrackerDbContext : DbContext
 {
-    public FitTrackerDbContext(DbContextOptions<FitTrackerDbContext> options)
+    private readonly OutboxSignal _outboxSignal;
+
+    public FitTrackerDbContext(DbContextOptions<FitTrackerDbContext> options, OutboxSignal outboxSignal)
         : base(options)
     {
+        _outboxSignal = outboxSignal;
     }
 
     public DbSet<UserEf> Users { get; set; } = null!;
@@ -45,7 +48,10 @@ public class FitTrackerDbContext : DbContext
         // Apply all entity configurations
         _ = modelBuilder.ApplyConfigurationsFromAssembly(typeof(FitTrackerDbContext).Assembly);
 
-        FitTrackerSeeder.SeedData(modelBuilder);
+        if (Database.IsNpgsql())
+        {
+            FitTrackerSeeder.SeedData(modelBuilder);
+        }
     }
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
@@ -54,7 +60,15 @@ public class FitTrackerDbContext : DbContext
 
         ProcessDomainEvents();
 
-        return await base.SaveChangesAsync(cancellationToken);
+        var result = await base.SaveChangesAsync(cancellationToken);
+
+        if (ChangeTracker.Entries<OutboxMessage>().Any(e => e.State == EntityState.Added))
+        {
+            // Trigger a signal to send outbox messages
+            _outboxSignal.Writer.TryWrite(true);
+        }
+
+        return result;
     }
 
     private void UpdateAuditLog()

@@ -129,6 +129,7 @@
   },
   "User": {
     "NotFound": "User not found",
-    "EmailAlreadyVerified": "Email is already verified"
+    "EmailAlreadyVerified": "Email is already verified",
+    "RateLimitExceeded": "Rate limit exceeded"
   }
 }
