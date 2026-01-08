@@ -146,7 +146,6 @@ public static class InfrastructureInjection
 
             x.AddConsumersFromNamespaceContaining<UserVerificationRequestedConsumer>();
 
-
             x.UsingRabbitMq((context, cfg) =>
             {
                 cfg.Host("localhost");
@@ -154,39 +153,6 @@ public static class InfrastructureInjection
                 cfg.UseConsumeFilter(typeof(LoggingFilter<>), context);
 
                 cfg.ConfigureEndpoints(context);
-
-                // cfg.ReceiveEndpoint(
-                //     "user-verification-queue",
-                //     e =>
-                //     {
-                //         e.UseMessageRetry(r => r.Interval(3, TimeSpan.FromSeconds(5)));
-                //
-                //         e.PrefetchCount = 16;
-                //
-                //         e.ConfigureConsumer<UserVerificationRequestedConsumer>(context);
-                //     });
-                //
-                // cfg.ReceiveEndpoint(
-                //     "user-registered-queue",
-                //     e =>
-                //     {
-                //         e.UseMessageRetry(r => r.Interval(3, TimeSpan.FromSeconds(5)));
-                //
-                //         e.PrefetchCount = 16;
-                //
-                //         e.ConfigureConsumer<UserRegisteredConsumer>(context);
-                //     });
-                //
-                // cfg.ReceiveEndpoint(
-                //     "user-requested-password-reset-queue",
-                //     e =>
-                //     {
-                //         e.UseMessageRetry(r => r.Interval(3, TimeSpan.FromSeconds(5)));
-                //
-                //         e.PrefetchCount = 16;
-                //
-                //         e.ConfigureConsumer<UserRequestedPasswordResetConsumer>(context);
-                //     });
             });
         });
     }

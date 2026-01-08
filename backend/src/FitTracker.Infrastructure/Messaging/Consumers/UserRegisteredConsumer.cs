@@ -2,7 +2,6 @@
 using FitTracker.Domain.Events;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 
 namespace FitTracker.Infrastructure.Messaging.Consumers;
 
@@ -15,13 +14,11 @@ namespace FitTracker.Infrastructure.Messaging.Consumers;
 /// <param name="configuration">Dependency for accessing application configuration values.</param>
 /// <param name="emailService">Dependency for sending email notifications.</param>
 /// <param name="localization">Dependency for retrieving localized strings for email subject and body.</param>
-/// <param name="logger">Dependency for logging events and errors during message consumption.</param>
 public sealed class UserRegisteredConsumer(
     IJwtTokenGenerator jwtTokenService,
     IConfiguration configuration,
     IEmailService emailService,
-    ILocalizationService localization,
-    ILogger<UserRegisteredConsumer> logger) : IConsumer<UserRegisteredEvent>
+    ILocalizationService localization) : IConsumer<UserRegisteredEvent>
 {
     /// <summary>
     /// Consumes the UserRegisteredEvent message, generates a verification token, and sends a verification email
@@ -45,7 +42,5 @@ public sealed class UserRegisteredConsumer(
                 .Replace("{1}", verificationLink);
 
             await emailService.SendEmailAsync(notification.Email, subject, emailBody, context.CancellationToken);
-
-            logger.LogInformation("Verification email sent to {Email} via RabbitMQ Consumer", notification.Email);
     }
 }

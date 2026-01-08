@@ -2,7 +2,6 @@
 using FitTracker.Domain.Events;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 
 namespace FitTracker.Infrastructure.Messaging.Consumers;
 
@@ -14,13 +13,11 @@ namespace FitTracker.Infrastructure.Messaging.Consumers;
 /// <param name="tokenGenerator">Dependency for generating JWT tokens, including verification tokens.</param>
 /// <param name="configuration">Dependency for accessing application configuration values.</param>
 /// <param name="localization">Dependency for retrieving localized strings for email subject and body.</param>
-/// <param name="logger">Dependency for logging events and errors during message consumption.</param>
 public class UserRequestedPasswordResetConsumer(
     IEmailService emailService,
     IJwtTokenGenerator tokenGenerator,
     IConfiguration configuration,
-    ILocalizationService localization,
-    ILogger<UserRequestedPasswordResetConsumer> logger) : IConsumer<UserRequestedPasswordResetEvent>
+    ILocalizationService localization) : IConsumer<UserRequestedPasswordResetEvent>
 {
     /// <summary>
     ///     Consumes the <see cref="UserRequestedPasswordResetEvent" /> and handles the process of sending
@@ -45,7 +42,5 @@ public class UserRequestedPasswordResetConsumer(
             .Replace("{1}", verificationLink);
 
         await emailService.SendEmailAsync(context.Message.Email, subject, emailBody, context.CancellationToken);
-
-        logger.LogInformation("Reset password email sent to {Email}", context.Message.Email);
     }
 }

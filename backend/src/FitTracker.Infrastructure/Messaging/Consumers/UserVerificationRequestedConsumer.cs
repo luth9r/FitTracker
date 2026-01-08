@@ -2,7 +2,6 @@
 using FitTracker.Domain.Events;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 
 namespace FitTracker.Infrastructure.Messaging.Consumers;
 
@@ -19,14 +18,11 @@ public sealed class UserVerificationRequestedConsumer(
     IEmailService emailService,
     IJwtTokenGenerator tokenGenerator,
     IConfiguration configuration,
-    ILocalizationService localization,
-    ILogger<UserVerificationRequestedConsumer> logger) : IConsumer<UserRequestedVerificationEvent>
+    ILocalizationService localization) : IConsumer<UserRequestedVerificationEvent>
 {
     public async Task Consume(ConsumeContext<UserRequestedVerificationEvent> context)
     {
         var notification = context.Message;
-
-        logger.LogInformation("Processing email verification for: {Email}", notification.Email);
 
         // Generate verification token
         var verificationToken = tokenGenerator.GenerateVerificationToken(notification.UserId);
@@ -46,7 +42,5 @@ public sealed class UserVerificationRequestedConsumer(
         // Send verification email
         // If email sending fails, MassTransit will retry the message
         await emailService.SendEmailAsync(notification.Email, subject, emailBody, context.CancellationToken);
-
-        logger.LogInformation("Verification email successfully sent to {Email}", notification.Email);
     }
 }
