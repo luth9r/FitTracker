@@ -24,6 +24,46 @@ public class Set : BaseEntity
     public const double MaxWeightKg = 10000d;
 
     /// <summary>
+    ///     Gets the unique identifier of the workout exercise this set belongs to.
+    /// </summary>
+    public Guid WorkoutExerciseId { get; private set; }
+
+    /// <summary>
+    ///     Gets the sequential number of this set within the workout exercise.
+    /// </summary>
+    public int SetNumber { get; private set; }
+
+    /// <summary>
+    ///     Gets the weight used for this set.
+    /// </summary>
+    public double WeightKg { get; private set; }
+
+    /// <summary>
+    ///     Gets the number of repetitions performed in this set.
+    /// </summary>
+    public int Reps { get; private set; }
+
+    /// <summary>
+    ///     Gets the rest period in seconds before the next set, or null if not specified.
+    /// </summary>
+    public int? RestSeconds { get; private set; }
+
+    /// <summary>
+    ///     Gets the type of this set (Normal, Dropset, Superset, etc.).
+    /// </summary>
+    public SetType SetType { get; private set; }
+
+    /// <summary>
+    ///     Gets a value indicating whether this set has been completed.
+    /// </summary>
+    public bool IsCompleted { get; private set; }
+
+    /// <summary>
+    ///     Gets the date and time when this set was completed, or null if not yet completed.
+    /// </summary>
+    public DateTime? CompletedAt { get; private set; }
+
+    /// <summary>
     ///     Initializes a new instance of the <see cref="Set" /> class.
     /// </summary>
     /// <param name="id">The unique identifier.</param>
@@ -133,46 +173,6 @@ public class Set : BaseEntity
         SetType = setType;
         IsCompleted = false;
     }
-
-    /// <summary>
-    ///     Gets the unique identifier of the workout exercise this set belongs to.
-    /// </summary>
-    public Guid WorkoutExerciseId { get; private set; }
-
-    /// <summary>
-    ///     Gets the sequential number of this set within the workout exercise.
-    /// </summary>
-    public int SetNumber { get; private set; }
-
-    /// <summary>
-    ///     Gets the weight used for this set.
-    /// </summary>
-    public double WeightKg { get; private set; }
-
-    /// <summary>
-    ///     Gets the number of repetitions performed in this set.
-    /// </summary>
-    public int Reps { get; private set; }
-
-    /// <summary>
-    ///     Gets the rest period in seconds before the next set, or null if not specified.
-    /// </summary>
-    public int? RestSeconds { get; private set; }
-
-    /// <summary>
-    ///     Gets the type of this set (Normal, Dropset, Superset, etc.).
-    /// </summary>
-    public SetType SetType { get; private set; }
-
-    /// <summary>
-    ///     Gets a value indicating whether this set has been completed.
-    /// </summary>
-    public bool IsCompleted { get; private set; }
-
-    /// <summary>
-    ///     Gets the date and time when this set was completed, or null if not yet completed.
-    /// </summary>
-    public DateTime? CompletedAt { get; private set; }
 
     /// <summary>
     ///     Creates a new <see cref="Set" />.

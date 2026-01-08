@@ -13,6 +13,21 @@ public abstract class BaseEntity : IHasDomainEvents
     private readonly List<IDomainEvent> _domainEvents = new();
 
     /// <summary>
+    ///     Gets or sets the unique identifier.
+    /// </summary>
+    public Guid Id { get; protected set; }
+
+    /// <summary>
+    ///     Gets or sets the date and time when the entity was created.
+    /// </summary>
+    public DateTime CreatedAt { get; protected set; }
+
+    /// <summary>
+    ///     Gets or sets the date and time when the entity was last updated.
+    /// </summary>
+    public DateTime UpdatedAt { get; protected set; }
+
+    /// <summary>
     ///     Initializes a new instance of the <see cref="BaseEntity" /> class.
     /// </summary>
     protected BaseEntity()
@@ -45,21 +60,6 @@ public abstract class BaseEntity : IHasDomainEvents
         CreatedAt = createdAt;
         UpdatedAt = updatedAt;
     }
-
-    /// <summary>
-    ///     Gets or sets the unique identifier.
-    /// </summary>
-    public Guid Id { get; protected set; }
-
-    /// <summary>
-    ///     Gets or sets the date and time when the entity was created.
-    /// </summary>
-    public DateTime CreatedAt { get; protected set; }
-
-    /// <summary>
-    ///     Gets or sets the date and time when the entity was last updated.
-    /// </summary>
-    public DateTime UpdatedAt { get; protected set; }
 
     /// <inheritdoc />
     public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();

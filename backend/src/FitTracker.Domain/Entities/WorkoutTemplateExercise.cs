@@ -23,6 +23,26 @@ public class WorkoutTemplateExercise : BaseEntity
     public const int MaxOrderIndex = 1000;
 
     /// <summary>
+    ///     Gets the unique identifier of the workout template.
+    /// </summary>
+    public Guid WorkoutTemplateId { get; private set; }
+
+    /// <summary>
+    ///     Gets the unique identifier of the exercise.
+    /// </summary>
+    public Guid ExerciseId { get; private set; }
+
+    /// <summary>
+    ///     Gets the order index of this exercise in the template.
+    /// </summary>
+    public int OrderIndex { get; private set; }
+
+    /// <summary>
+    ///     Gets the notes for this exercise in the template.
+    /// </summary>
+    public string? Notes { get; private set; }
+
+    /// <summary>
     ///     Initializes a new instance of the <see cref="WorkoutTemplateExercise" /> class.
     /// </summary>
     /// <param name="id">The unique identifier.</param>
@@ -101,26 +121,6 @@ public class WorkoutTemplateExercise : BaseEntity
         OrderIndex = orderIndex;
         Notes = notes;
     }
-
-    /// <summary>
-    ///     Gets the unique identifier of the workout template.
-    /// </summary>
-    public Guid WorkoutTemplateId { get; private set; }
-
-    /// <summary>
-    ///     Gets the unique identifier of the exercise.
-    /// </summary>
-    public Guid ExerciseId { get; private set; }
-
-    /// <summary>
-    ///     Gets the order index of this exercise in the template.
-    /// </summary>
-    public int OrderIndex { get; private set; }
-
-    /// <summary>
-    ///     Gets the notes for this exercise in the template.
-    /// </summary>
-    public string? Notes { get; private set; }
 
     /// <summary>
     ///     Creates a new <see cref="WorkoutTemplateExercise" />.

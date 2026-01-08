@@ -10,8 +10,9 @@ using ResultExtensions = FitTracker.Application.Extensions.ResultExtensions;
 namespace FitTracker.Application.UseCases.User.Handlers.Commands;
 
 /// <summary>
-/// Handles the process of resending a verification email to a user.
-/// </summary> <param name="userReadRepository"> Repository for retrieving user data in a read-only context.</param>
+///     Handles the process of resending a verification email to a user.
+/// </summary>
+/// <param name="userReadRepository"> Repository for retrieving user data in a read-only context.</param>
 /// <param name="userWriteRepository">Repository for performing modifications on user data.</param>
 /// <param name="logger"> Logging service used to log information, warnings, and errors during processing. </param>
 /// <param name="localization"> Service for obtaining localization and cultural settings.</param>

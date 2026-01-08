@@ -24,6 +24,36 @@ public class TemplateSet : BaseEntity
     public const int MaxRestSeconds = 3600;
 
     /// <summary>
+    ///     Gets the unique identifier of the workout template exercise this set belongs to.
+    /// </summary>
+    public Guid WorkoutTemplateExerciseId { get; private set; }
+
+    /// <summary>
+    ///     Gets the sequential number of this set within the template exercise.
+    /// </summary>
+    public int SetNumber { get; private set; }
+
+    /// <summary>
+    ///     Gets the planned weight for this set.
+    /// </summary>
+    public double PlannedWeightKg { get; private set; }
+
+    /// <summary>
+    ///     Gets the planned number of repetitions for this set.
+    /// </summary>
+    public int PlannedReps { get; private set; }
+
+    /// <summary>
+    ///     Gets the planned rest period in seconds before the next set, or null if not specified.
+    /// </summary>
+    public int? RestSeconds { get; private set; }
+
+    /// <summary>
+    ///     Gets the type of this set (Normal, Dropset, Superset, etc.).
+    /// </summary>
+    public SetType SetType { get; private set; }
+
+    /// <summary>
     ///     Initializes a new instance of the <see cref="TemplateSet" /> class.
     /// </summary>
     /// <param name="id">The unique identifier.</param>
@@ -122,36 +152,6 @@ public class TemplateSet : BaseEntity
         RestSeconds = restSeconds;
         SetType = setType;
     }
-
-    /// <summary>
-    ///     Gets the unique identifier of the workout template exercise this set belongs to.
-    /// </summary>
-    public Guid WorkoutTemplateExerciseId { get; private set; }
-
-    /// <summary>
-    ///     Gets the sequential number of this set within the template exercise.
-    /// </summary>
-    public int SetNumber { get; private set; }
-
-    /// <summary>
-    ///     Gets the planned weight for this set.
-    /// </summary>
-    public double PlannedWeightKg { get; private set; }
-
-    /// <summary>
-    ///     Gets the planned number of repetitions for this set.
-    /// </summary>
-    public int PlannedReps { get; private set; }
-
-    /// <summary>
-    ///     Gets the planned rest period in seconds before the next set, or null if not specified.
-    /// </summary>
-    public int? RestSeconds { get; private set; }
-
-    /// <summary>
-    ///     Gets the type of this set (Normal, Dropset, Superset, etc.).
-    /// </summary>
-    public SetType SetType { get; private set; }
 
     /// <summary>
     ///     Creates a new <see cref="TemplateSet" />.

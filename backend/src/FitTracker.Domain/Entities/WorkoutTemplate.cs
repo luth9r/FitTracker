@@ -23,6 +23,31 @@ public class WorkoutTemplate : BaseEntity
     public const int DescriptionMaxLength = 1000;
 
     /// <summary>
+    ///     Gets the unique identifier of the user who owns the template.
+    /// </summary>
+    public Guid UserId { get; private set; }
+
+    /// <summary>
+    ///     Gets the name of the template.
+    /// </summary>
+    public string Name { get; private set; } = default!;
+
+    /// <summary>
+    ///     Gets the description of the template.
+    /// </summary>
+    public string? Description { get; private set; }
+
+    /// <summary>
+    ///     Gets the total number of times this template has been used.
+    /// </summary>
+    public int UsageCount { get; private set; }
+
+    /// <summary>
+    ///     Gets the date and time when the template was last used.
+    /// </summary>
+    public DateTime? LastUsedAt { get; private set; }
+
+    /// <summary>
     ///     Initializes a new instance of the <see cref="WorkoutTemplate" /> class.
     /// </summary>
     /// <param name="id">The unique identifier.</param>
@@ -97,31 +122,6 @@ public class WorkoutTemplate : BaseEntity
         Description = description;
         UsageCount = 0;
     }
-
-    /// <summary>
-    ///     Gets the unique identifier of the user who owns the template.
-    /// </summary>
-    public Guid UserId { get; private set; }
-
-    /// <summary>
-    ///     Gets the name of the template.
-    /// </summary>
-    public string Name { get; private set; } = default!;
-
-    /// <summary>
-    ///     Gets the description of the template.
-    /// </summary>
-    public string? Description { get; private set; }
-
-    /// <summary>
-    ///     Gets the total number of times this template has been used.
-    /// </summary>
-    public int UsageCount { get; private set; }
-
-    /// <summary>
-    ///     Gets the date and time when the template was last used.
-    /// </summary>
-    public DateTime? LastUsedAt { get; private set; }
 
     /// <summary>
     ///     Creates a new <see cref="WorkoutTemplate" />.

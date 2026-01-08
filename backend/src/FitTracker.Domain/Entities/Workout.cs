@@ -28,6 +28,61 @@ public class Workout : BaseEntity
     public const int MaxDurationHours = 12;
 
     /// <summary>
+    ///     Gets the unique identifier of the user who performed the workout.
+    /// </summary>
+    public Guid UserId { get; private set; }
+
+    /// <summary>
+    ///     Gets the unique identifier of the workout template used, if any.
+    /// </summary>
+    public Guid? WorkoutTemplateId { get; private set; }
+
+    /// <summary>
+    ///     Gets the name of the workout.
+    /// </summary>
+    public string Name { get; private set; } = default!;
+
+    /// <summary>
+    ///     Gets the notes for the workout.
+    /// </summary>
+    public string? Notes { get; private set; }
+
+    /// <summary>
+    ///     Gets the date of the workout.
+    /// </summary>
+    public DateTime WorkoutDate { get; private set; }
+
+    /// <summary>
+    ///     Gets the duration of the workout.
+    /// </summary>
+    public TimeSpan Duration { get; private set; }
+
+    /// <summary>
+    ///     Gets a value indicating whether the workout is completed.
+    /// </summary>
+    public bool IsCompleted { get; private set; }
+
+    /// <summary>
+    ///     Gets a value indicating whether the workout is currently in progress.
+    /// </summary>
+    public bool IsInProgress { get; private set; }
+
+    /// <summary>
+    ///     Gets the date and time when the workout started.
+    /// </summary>
+    public DateTime? StartedAt { get; private set; }
+
+    /// <summary>
+    ///     Gets the date and time when the workout was completed.
+    /// </summary>
+    public DateTime? CompletedAt { get; private set; }
+
+    /// <summary>
+    ///     Gets the total volume lifted during the workout in kilograms.
+    /// </summary>
+    public double TotalVolumeKg { get; private set; }
+
+    /// <summary>
     ///     Initializes a new instance of the <see cref="Workout" /> class.
     /// </summary>
     /// <param name="id">The unique identifier.</param>
@@ -129,61 +184,6 @@ public class Workout : BaseEntity
         IsInProgress = false;
         TotalVolumeKg = 0;
     }
-
-    /// <summary>
-    ///     Gets the unique identifier of the user who performed the workout.
-    /// </summary>
-    public Guid UserId { get; private set; }
-
-    /// <summary>
-    ///     Gets the unique identifier of the workout template used, if any.
-    /// </summary>
-    public Guid? WorkoutTemplateId { get; private set; }
-
-    /// <summary>
-    ///     Gets the name of the workout.
-    /// </summary>
-    public string Name { get; private set; } = default!;
-
-    /// <summary>
-    ///     Gets the notes for the workout.
-    /// </summary>
-    public string? Notes { get; private set; }
-
-    /// <summary>
-    ///     Gets the date of the workout.
-    /// </summary>
-    public DateTime WorkoutDate { get; private set; }
-
-    /// <summary>
-    ///     Gets the duration of the workout.
-    /// </summary>
-    public TimeSpan Duration { get; private set; }
-
-    /// <summary>
-    ///     Gets a value indicating whether the workout is completed.
-    /// </summary>
-    public bool IsCompleted { get; private set; }
-
-    /// <summary>
-    ///     Gets a value indicating whether the workout is currently in progress.
-    /// </summary>
-    public bool IsInProgress { get; private set; }
-
-    /// <summary>
-    ///     Gets the date and time when the workout started.
-    /// </summary>
-    public DateTime? StartedAt { get; private set; }
-
-    /// <summary>
-    ///     Gets the date and time when the workout was completed.
-    /// </summary>
-    public DateTime? CompletedAt { get; private set; }
-
-    /// <summary>
-    ///     Gets the total volume lifted during the workout in kilograms.
-    /// </summary>
-    public double TotalVolumeKg { get; private set; }
 
     /// <summary>
     ///     Creates a new <see cref="Workout" />.

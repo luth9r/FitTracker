@@ -8,6 +8,31 @@ namespace FitTracker.Domain.Entities;
 public class UserAchievement : BaseEntity
 {
     /// <summary>
+    ///     Gets the unique identifier of the user who owns this achievement record.
+    /// </summary>
+    public Guid UserId { get; private set; }
+
+    /// <summary>
+    ///     Gets the unique identifier of the achievement.
+    /// </summary>
+    public Guid AchievementId { get; private set; }
+
+    /// <summary>
+    ///     Gets the current progress value towards unlocking the achievement.
+    /// </summary>
+    public int Progress { get; private set; }
+
+    /// <summary>
+    ///     Gets a value indicating whether the achievement has been unlocked.
+    /// </summary>
+    public bool IsUnlocked { get; private set; }
+
+    /// <summary>
+    ///     Gets the date and time when the achievement was unlocked, or null if not yet unlocked.
+    /// </summary>
+    public DateTime? UnlockedAt { get; private set; }
+
+    /// <summary>
     ///     Initializes a new instance of the <see cref="UserAchievement" /> class.
     /// </summary>
     /// <param name="id">The unique identifier.</param>
@@ -67,31 +92,6 @@ public class UserAchievement : BaseEntity
         Progress = 0;
         IsUnlocked = false;
     }
-
-    /// <summary>
-    ///     Gets the unique identifier of the user who owns this achievement record.
-    /// </summary>
-    public Guid UserId { get; private set; }
-
-    /// <summary>
-    ///     Gets the unique identifier of the achievement.
-    /// </summary>
-    public Guid AchievementId { get; private set; }
-
-    /// <summary>
-    ///     Gets the current progress value towards unlocking the achievement.
-    /// </summary>
-    public int Progress { get; private set; }
-
-    /// <summary>
-    ///     Gets a value indicating whether the achievement has been unlocked.
-    /// </summary>
-    public bool IsUnlocked { get; private set; }
-
-    /// <summary>
-    ///     Gets the date and time when the achievement was unlocked, or null if not yet unlocked.
-    /// </summary>
-    public DateTime? UnlockedAt { get; private set; }
 
     /// <summary>
     ///     Creates a new <see cref="UserAchievement" /> record.

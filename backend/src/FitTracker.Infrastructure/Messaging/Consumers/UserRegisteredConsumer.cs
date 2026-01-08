@@ -6,9 +6,9 @@ using Microsoft.Extensions.Configuration;
 namespace FitTracker.Infrastructure.Messaging.Consumers;
 
 /// <summary>
-/// Consumer class that listens for the <see cref="UserRegisteredEvent"/> and processes user registration events.
-/// This consumer is responsible for generating a verification token, constructing a verification link,
-/// and sending the verification email to the newly registered user.
+///     Consumer class that listens for the <see cref="UserRegisteredEvent" /> and processes user registration events.
+///     This consumer is responsible for generating a verification token, constructing a verification link,
+///     and sending the verification email to the newly registered user.
 /// </summary>
 /// <param name="jwtTokenService">Dependency for generating JWT tokens, including verification tokens.</param>
 /// <param name="configuration">Dependency for accessing application configuration values.</param>
@@ -21,26 +21,26 @@ public sealed class UserRegisteredConsumer(
     ILocalizationService localization) : IConsumer<UserRegisteredEvent>
 {
     /// <summary>
-    /// Consumes the UserRegisteredEvent message, generates a verification token, and sends a verification email
-    /// to the user based on the event data.
+    ///     Consumes the UserRegisteredEvent message, generates a verification token, and sends a verification email
+    ///     to the user based on the event data.
     /// </summary>
     /// <param name="context"> The consume context containing the UserRegisteredEvent message and related metadata. </param>
     /// <returns> A task representing the asynchronous operation. </returns>
     public async Task Consume(ConsumeContext<UserRegisteredEvent> context)
     {
-            var notification = context.Message;
+        var notification = context.Message;
 
-            var verificationToken = jwtTokenService.GenerateVerificationToken(notification.UserId);
-            var verificationLinkBase = configuration["App:VerificationLinkBase"];
-            var verificationLink = $"{verificationLinkBase}?token={verificationToken}";
+        var verificationToken = jwtTokenService.GenerateVerificationToken(notification.UserId);
+        var verificationLinkBase = configuration["App:VerificationLinkBase"];
+        var verificationLink = $"{verificationLinkBase}?token={verificationToken}";
 
-            var subject = localization.GetString("Email.Verification.Subject", notification.Culture);
-            var bodyTemplate = localization.GetString("Email.Verification.Body", notification.Culture);
+        var subject = localization.GetString("Email.Verification.Subject", notification.Culture);
+        var bodyTemplate = localization.GetString("Email.Verification.Body", notification.Culture);
 
-            var emailBody = bodyTemplate
-                .Replace("{0}", notification.Username)
-                .Replace("{1}", verificationLink);
+        var emailBody = bodyTemplate
+            .Replace("{0}", notification.Username)
+            .Replace("{1}", verificationLink);
 
-            await emailService.SendEmailAsync(notification.Email, subject, emailBody, context.CancellationToken);
+        await emailService.SendEmailAsync(notification.Email, subject, emailBody, context.CancellationToken);
     }
 }

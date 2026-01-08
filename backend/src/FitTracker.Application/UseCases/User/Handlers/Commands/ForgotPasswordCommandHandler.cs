@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 namespace FitTracker.Application.UseCases.User.Handlers.Commands;
 
 /// <summary>
-/// Handler responsible for managing forgot password command execution.
+///     Handler responsible for managing forgot password command execution.
 /// </summary>
 /// <param name="readRepository">The repository for reading user-related data.</param>
 /// <param name="writeRepository">The repository for writing user-related data.</param>
@@ -25,7 +25,7 @@ public class ForgotPasswordCommandHandler(
     ILogger<ForgotPasswordCommandHandler> logger) : IRequestHandler<ForgotPasswordCommand, Result>
 {
     /// <summary>
-    /// Handles the ForgotPasswordCommand to initiate a password reset process for a user.
+    ///     Handles the ForgotPasswordCommand to initiate a password reset process for a user.
     /// </summary>
     /// <param name="request">The command containing the email address of the user requesting the password reset.</param>
     /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>

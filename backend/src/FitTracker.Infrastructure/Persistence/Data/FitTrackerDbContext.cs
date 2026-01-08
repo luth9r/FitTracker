@@ -11,12 +11,6 @@ public class FitTrackerDbContext : DbContext
 {
     private readonly OutboxSignal _outboxSignal;
 
-    public FitTrackerDbContext(DbContextOptions<FitTrackerDbContext> options, OutboxSignal outboxSignal)
-        : base(options)
-    {
-        _outboxSignal = outboxSignal;
-    }
-
     public DbSet<UserEf> Users { get; set; } = null!;
 
     public DbSet<WorkoutEf> Workouts { get; set; } = null!;
@@ -41,17 +35,10 @@ public class FitTrackerDbContext : DbContext
 
     public DbSet<OutboxMessage> OutboxMessages { get; set; } = null!;
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    public FitTrackerDbContext(DbContextOptions<FitTrackerDbContext> options, OutboxSignal outboxSignal)
+        : base(options)
     {
-        base.OnModelCreating(modelBuilder);
-
-        // Apply all entity configurations
-        _ = modelBuilder.ApplyConfigurationsFromAssembly(typeof(FitTrackerDbContext).Assembly);
-
-        if (Database.IsNpgsql())
-        {
-            FitTrackerSeeder.SeedData(modelBuilder);
-        }
+        _outboxSignal = outboxSignal;
     }
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
@@ -69,6 +56,19 @@ public class FitTrackerDbContext : DbContext
         }
 
         return result;
+    }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        // Apply all entity configurations
+        _ = modelBuilder.ApplyConfigurationsFromAssembly(typeof(FitTrackerDbContext).Assembly);
+
+        if (Database.IsNpgsql())
+        {
+            FitTrackerSeeder.SeedData(modelBuilder);
+        }
     }
 
     private void UpdateAuditLog()

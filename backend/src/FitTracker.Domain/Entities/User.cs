@@ -44,6 +44,56 @@ public class User : BaseEntity
     public const int AvatarMaxLength = 500;
 
     /// <summary>
+    ///     Gets the username of the user.
+    /// </summary>
+    public string Username { get; }
+
+    /// <summary>
+    ///     Gets the email address of the user.
+    /// </summary>
+    public string Email { get; private set; }
+
+    /// <summary>
+    ///     Gets the hashed password of the user.
+    /// </summary>
+    public string? PasswordHash { get; private set; }
+
+    /// <summary>
+    ///     Gets the first name of the user.
+    /// </summary>
+    public string? FirstName { get; private set; }
+
+    /// <summary>
+    ///     Gets the last name of the user.
+    /// </summary>
+    public string? LastName { get; private set; }
+
+    /// <summary>
+    ///     Gets the URL of the user's avatar.
+    /// </summary>
+    public string? Avatar { get; private set; }
+
+    /// <summary>
+    ///     Gets the biography or bio of the user.
+    /// </summary>
+    public string? Bio { get; private set; }
+
+    /// <summary>
+    ///     Gets a value indicating whether the user's email address has been verified.
+    /// </summary>
+    public bool IsEmailVerified { get; private set; }
+
+    /// <summary>
+    ///     Gets the Google provider ID if linked.
+    /// </summary>
+    public string? GoogleProviderId { get; private set; }
+
+    /// <summary>
+    ///     Gets the display name of the user (alias for GetFullName).
+    /// </summary>
+    public string DisplayName => GetFullName();
+
+    /// <summary>
     ///     Initializes a new instance of the <see cref="User" /> class.
     /// </summary>
     /// <param name="id">The unique identifier.</param>
@@ -155,56 +205,6 @@ public class User : BaseEntity
         LastName = lastName;
         IsEmailVerified = false;
     }
-
-    /// <summary>
-    ///     Gets the username of the user.
-    /// </summary>
-    public string Username { get; }
-
-    /// <summary>
-    ///     Gets the email address of the user.
-    /// </summary>
-    public string Email { get; private set; }
-
-    /// <summary>
-    ///     Gets the hashed password of the user.
-    /// </summary>
-    public string? PasswordHash { get; private set; }
-
-    /// <summary>
-    ///     Gets the first name of the user.
-    /// </summary>
-    public string? FirstName { get; private set; }
-
-    /// <summary>
-    ///     Gets the last name of the user.
-    /// </summary>
-    public string? LastName { get; private set; }
-
-    /// <summary>
-    ///     Gets the URL of the user's avatar.
-    /// </summary>
-    public string? Avatar { get; private set; }
-
-    /// <summary>
-    ///     Gets the biography or bio of the user.
-    /// </summary>
-    public string? Bio { get; private set; }
-
-    /// <summary>
-    ///     Gets a value indicating whether the user's email address has been verified.
-    /// </summary>
-    public bool IsEmailVerified { get; private set; }
-
-    /// <summary>
-    ///     Gets the Google provider ID if linked.
-    /// </summary>
-    public string? GoogleProviderId { get; private set; }
-
-    /// <summary>
-    ///     Gets the display name of the user (alias for GetFullName).
-    /// </summary>
-    public string DisplayName => GetFullName();
 
     /// <summary>
     ///     Creates a new <see cref="User" />.

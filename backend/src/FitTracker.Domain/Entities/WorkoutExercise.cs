@@ -18,6 +18,26 @@ public class WorkoutExercise : BaseEntity
     public const int MaxOrderIndex = 1000;
 
     /// <summary>
+    ///     Gets the unique identifier of the workout.
+    /// </summary>
+    public Guid WorkoutId { get; private set; }
+
+    /// <summary>
+    ///     Gets the unique identifier of the exercise.
+    /// </summary>
+    public Guid ExerciseId { get; private set; }
+
+    /// <summary>
+    ///     Gets the order index of this exercise in the workout.
+    /// </summary>
+    public int OrderIndex { get; private set; }
+
+    /// <summary>
+    ///     Gets the notes for this exercise in the workout.
+    /// </summary>
+    public string? Notes { get; private set; }
+
+    /// <summary>
     ///     Initializes a new instance of the <see cref="WorkoutExercise" /> class.
     /// </summary>
     /// <param name="id">The unique identifier.</param>
@@ -96,26 +116,6 @@ public class WorkoutExercise : BaseEntity
         OrderIndex = orderIndex;
         Notes = notes;
     }
-
-    /// <summary>
-    ///     Gets the unique identifier of the workout.
-    /// </summary>
-    public Guid WorkoutId { get; private set; }
-
-    /// <summary>
-    ///     Gets the unique identifier of the exercise.
-    /// </summary>
-    public Guid ExerciseId { get; private set; }
-
-    /// <summary>
-    ///     Gets the order index of this exercise in the workout.
-    /// </summary>
-    public int OrderIndex { get; private set; }
-
-    /// <summary>
-    ///     Gets the notes for this exercise in the workout.
-    /// </summary>
-    public string? Notes { get; private set; }
 
     /// <summary>
     ///     Creates a new <see cref="WorkoutExercise" />.

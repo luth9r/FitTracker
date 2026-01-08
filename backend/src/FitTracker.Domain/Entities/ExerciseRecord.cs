@@ -8,6 +8,81 @@ namespace FitTracker.Domain.Entities;
 public class ExerciseRecord : BaseEntity
 {
     /// <summary>
+    ///     Gets the unique identifier of the user who owns this record.
+    /// </summary>
+    public Guid UserId { get; private set; }
+
+    /// <summary>
+    ///     Gets the unique identifier of the exercise associated with this record.
+    /// </summary>
+    public Guid ExerciseId { get; private set; }
+
+    /// <summary>
+    ///     Gets the maximum weight lifted for this exercise (1RM or max weight).
+    /// </summary>
+    public double MaxWeightKg { get; private set; }
+
+    /// <summary>
+    ///     Gets the maximum number of repetitions achieved in a single set.
+    /// </summary>
+    public int MaxReps { get; private set; }
+
+    /// <summary>
+    ///     Gets the maximum volume (weight × reps) achieved in a single set.
+    /// </summary>
+    public double MaxVolume { get; private set; }
+
+    /// <summary>
+    ///     Gets the maximum total volume achieved in a single workout session.
+    /// </summary>
+    public double MaxTotalVolumeKg { get; private set; }
+
+    /// <summary>
+    ///     Gets the date and time when the maximum weight record was set.
+    /// </summary>
+    public DateTime MaxWeightDate { get; private set; }
+
+    /// <summary>
+    ///     Gets the date and time when the maximum reps record was set.
+    /// </summary>
+    public DateTime MaxRepsDate { get; private set; }
+
+    /// <summary>
+    ///     Gets the date and time when the maximum volume record was set.
+    /// </summary>
+    public DateTime MaxVolumeDate { get; private set; }
+
+    /// <summary>
+    ///     Gets the date and time when the maximum total volume record was set.
+    /// </summary>
+    public DateTime MaxTotalVolumeDate { get; private set; }
+
+    /// <summary>
+    ///     Gets the total number of workout sessions where this exercise was performed.
+    /// </summary>
+    public int TotalWorkouts { get; private set; }
+
+    /// <summary>
+    ///     Gets the total number of sets performed for this exercise.
+    /// </summary>
+    public int TotalSets { get; private set; }
+
+    /// <summary>
+    ///     Gets the total number of repetitions performed for this exercise.
+    /// </summary>
+    public int TotalReps { get; private set; }
+
+    /// <summary>
+    ///     Gets the total weight lifted across all sets for this exercise.
+    /// </summary>
+    public double TotalLiftedKg { get; private set; }
+
+    /// <summary>
+    ///     Gets the date and time when this exercise was last performed.
+    /// </summary>
+    public DateTime LastPerformed { get; private set; }
+
+    /// <summary>
     ///     Initializes a new instance of the <see cref="ExerciseRecord" /> class.
     /// </summary>
     /// <param name="id">The unique identifier.</param>
@@ -111,81 +186,6 @@ public class ExerciseRecord : BaseEntity
         MaxTotalVolumeDate = now;
         LastPerformed = now;
     }
-
-    /// <summary>
-    ///     Gets the unique identifier of the user who owns this record.
-    /// </summary>
-    public Guid UserId { get; private set; }
-
-    /// <summary>
-    ///     Gets the unique identifier of the exercise associated with this record.
-    /// </summary>
-    public Guid ExerciseId { get; private set; }
-
-    /// <summary>
-    ///     Gets the maximum weight lifted for this exercise (1RM or max weight).
-    /// </summary>
-    public double MaxWeightKg { get; private set; }
-
-    /// <summary>
-    ///     Gets the maximum number of repetitions achieved in a single set.
-    /// </summary>
-    public int MaxReps { get; private set; }
-
-    /// <summary>
-    ///     Gets the maximum volume (weight × reps) achieved in a single set.
-    /// </summary>
-    public double MaxVolume { get; private set; }
-
-    /// <summary>
-    ///     Gets the maximum total volume achieved in a single workout session.
-    /// </summary>
-    public double MaxTotalVolumeKg { get; private set; }
-
-    /// <summary>
-    ///     Gets the date and time when the maximum weight record was set.
-    /// </summary>
-    public DateTime MaxWeightDate { get; private set; }
-
-    /// <summary>
-    ///     Gets the date and time when the maximum reps record was set.
-    /// </summary>
-    public DateTime MaxRepsDate { get; private set; }
-
-    /// <summary>
-    ///     Gets the date and time when the maximum volume record was set.
-    /// </summary>
-    public DateTime MaxVolumeDate { get; private set; }
-
-    /// <summary>
-    ///     Gets the date and time when the maximum total volume record was set.
-    /// </summary>
-    public DateTime MaxTotalVolumeDate { get; private set; }
-
-    /// <summary>
-    ///     Gets the total number of workout sessions where this exercise was performed.
-    /// </summary>
-    public int TotalWorkouts { get; private set; }
-
-    /// <summary>
-    ///     Gets the total number of sets performed for this exercise.
-    /// </summary>
-    public int TotalSets { get; private set; }
-
-    /// <summary>
-    ///     Gets the total number of repetitions performed for this exercise.
-    /// </summary>
-    public int TotalReps { get; private set; }
-
-    /// <summary>
-    ///     Gets the total weight lifted across all sets for this exercise.
-    /// </summary>
-    public double TotalLiftedKg { get; private set; }
-
-    /// <summary>
-    ///     Gets the date and time when this exercise was last performed.
-    /// </summary>
-    public DateTime LastPerformed { get; private set; }
 
     /// <summary>
     ///     Creates a new <see cref="ExerciseRecord" /> for a user and exercise.

@@ -19,6 +19,36 @@ public class Achievement : BaseEntity
     public const int DescriptionMaxLength = 500;
 
     /// <summary>
+    ///     Gets the type of the achievement.
+    /// </summary>
+    public AchievementType Type { get; }
+
+    /// <summary>
+    ///     Gets the name of the achievement.
+    /// </summary>
+    public string Name { get; private set; } = default!;
+
+    /// <summary>
+    ///     Gets the description of the achievement.
+    /// </summary>
+    public string Description { get; private set; } = default!;
+
+    /// <summary>
+    ///     Gets the URL of the achievement icon.
+    /// </summary>
+    public string IconUrl { get; private set; } = default!;
+
+    /// <summary>
+    ///     Gets the target value required to unlock the achievement.
+    /// </summary>
+    public int Target { get; }
+
+    /// <summary>
+    ///     Gets the tier of the achievement.
+    /// </summary>
+    public AchievementTier Tier { get; private set; }
+
+    /// <summary>
     ///     Initializes a new instance of the <see cref="Achievement" /> class.
     /// </summary>
     /// <param name="id">The unique identifier.</param>
@@ -56,36 +86,6 @@ public class Achievement : BaseEntity
     private Achievement()
     {
     }
-
-    /// <summary>
-    ///     Gets the type of the achievement.
-    /// </summary>
-    public AchievementType Type { get; }
-
-    /// <summary>
-    ///     Gets the name of the achievement.
-    /// </summary>
-    public string Name { get; private set; } = default!;
-
-    /// <summary>
-    ///     Gets the description of the achievement.
-    /// </summary>
-    public string Description { get; private set; } = default!;
-
-    /// <summary>
-    ///     Gets the URL of the achievement icon.
-    /// </summary>
-    public string IconUrl { get; private set; } = default!;
-
-    /// <summary>
-    ///     Gets the target value required to unlock the achievement.
-    /// </summary>
-    public int Target { get; }
-
-    /// <summary>
-    ///     Gets the tier of the achievement.
-    /// </summary>
-    public AchievementTier Tier { get; private set; }
 
     /// <summary>
     ///     Determines whether the achievement is related to a workout streak.

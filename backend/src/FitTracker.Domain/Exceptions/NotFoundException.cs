@@ -5,6 +5,8 @@ namespace FitTracker.Domain.Exceptions;
 /// </summary>
 public class NotFoundException : Exception
 {
+    public string ErrorCode { get; }
+
     public NotFoundException(string message)
         : base(message)
     {
@@ -15,6 +17,4 @@ public class NotFoundException : Exception
     {
         ErrorCode = errorCode;
     }
-
-    public string ErrorCode { get; }
 }

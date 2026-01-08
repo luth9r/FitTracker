@@ -39,6 +39,41 @@ public class Exercise : BaseEntity
     public const int VideoUrlMaxLength = 500;
 
     /// <summary>
+    ///     Gets the name of the exercise.
+    /// </summary>
+    public string Name { get; private set; } = default!;
+
+    /// <summary>
+    ///     Gets the description of the exercise.
+    /// </summary>
+    public string? Description { get; private set; }
+
+    /// <summary>
+    ///     Gets the URL of the exercise image.
+    /// </summary>
+    public string? ImageUrl { get; private set; }
+
+    /// <summary>
+    ///     Gets the URL of the exercise video.
+    /// </summary>
+    public string? VideoUrl { get; private set; }
+
+    /// <summary>
+    ///     Gets the muscle group targeted by the exercise.
+    /// </summary>
+    public MuscleGroup MuscleGroup { get; private set; }
+
+    /// <summary>
+    ///     Gets the equipment required for the exercise.
+    /// </summary>
+    public Equipment Equipment { get; private set; }
+
+    /// <summary>
+    ///     Gets the ID of the user who created the exercise, or null if it's a standard system exercise.
+    /// </summary>
+    public Guid? CreatedByUserId { get; }
+
+    /// <summary>
     ///     Initializes a new instance of the <see cref="Exercise" /> class.
     /// </summary>
     /// <param name="id">The unique identifier.</param>
@@ -136,67 +171,12 @@ public class Exercise : BaseEntity
     }
 
     /// <summary>
-    ///     Gets the name of the exercise.
-    /// </summary>
-    public string Name { get; private set; } = default!;
-
-    /// <summary>
-    ///     Gets the description of the exercise.
-    /// </summary>
-    public string? Description { get; private set; }
-
-    /// <summary>
-    ///     Gets the URL of the exercise image.
-    /// </summary>
-    public string? ImageUrl { get; private set; }
-
-    /// <summary>
-    ///     Gets the URL of the exercise video.
-    /// </summary>
-    public string? VideoUrl { get; private set; }
-
-    /// <summary>
-    ///     Gets the muscle group targeted by the exercise.
-    /// </summary>
-    public MuscleGroup MuscleGroup { get; private set; }
-
-    /// <summary>
-    ///     Gets the equipment required for the exercise.
-    /// </summary>
-    public Equipment Equipment { get; private set; }
-
-    /// <summary>
-    ///     Gets the ID of the user who created the exercise, or null if it's a standard system exercise.
-    /// </summary>
-    public Guid? CreatedByUserId { get; }
-
-    /// <summary>
     ///     Determines whether the exercise is a custom exercise created by a user.
     /// </summary>
     /// <returns><c>true</c> if the exercise is custom; otherwise, <c>false</c>.</returns>
     public bool IsCustomExercise()
     {
         return CreatedByUserId.HasValue;
-    }
-
-    /// <summary>
-    ///     Validates the exercise name.
-    /// </summary>
-    /// <param name="name">Exercise name to validate.</param>
-    private static void ValidateName(string name)
-    {
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            throw new ArgumentException("Name cannot be null or whitespace.", nameof(name));
-        }
-
-        if (name.Length > NameMaxLength)
-        {
-            throw new ArgumentOutOfRangeException(
-                nameof(name),
-                name.Length,
-                $"Name length must not exceed {NameMaxLength} characters.");
-        }
     }
 
     /// <summary>
@@ -306,5 +286,25 @@ public class Exercise : BaseEntity
         ImageUrl = imageUrl;
         VideoUrl = videoUrl;
         UpdatedAt = DateTime.UtcNow;
+    }
+
+    /// <summary>
+    ///     Validates the exercise name.
+    /// </summary>
+    /// <param name="name">Exercise name to validate.</param>
+    private static void ValidateName(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            throw new ArgumentException("Name cannot be null or whitespace.", nameof(name));
+        }
+
+        if (name.Length > NameMaxLength)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(name),
+                name.Length,
+                $"Name length must not exceed {NameMaxLength} characters.");
+        }
     }
 }
