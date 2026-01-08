@@ -1,4 +1,5 @@
-﻿using FitTracker.Infrastructure.Persistence;
+﻿using FitTracker.Domain.Abstract.Interfaces;
+using FitTracker.Infrastructure.Persistence;
 using FitTracker.Infrastructure.Persistence.Data;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
@@ -95,7 +96,17 @@ public sealed class OutboxProcessor(
                 if (domainEvent != null)
                 {
                     // Publish the event to RabbitMQ
-                    await publishEndpoint.Publish(domainEvent, stoppingToken);
+                    await publishEndpoint.Publish(
+                        domainEvent,
+                        eventContext =>
+                        {
+                            if (domainEvent is IDomainEvent baseEvent)
+                            {
+                                // Set the correlation ID from the outbox message
+                                eventContext.CorrelationId = baseEvent.CorrelationId;
+                            }
+                        },
+                        stoppingToken);
                 }
 
                 message.ProcessedOnUtc = DateTime.UtcNow;

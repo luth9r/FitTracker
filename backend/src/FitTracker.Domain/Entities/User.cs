@@ -227,7 +227,7 @@ public class User : BaseEntity
         var user = new User(username, email, passwordHash, firstName, lastName);
 
         // Add domain event
-        user.AddDomainEvent(new UserRegisteredEvent(user.Id, user.Email, user.Username, culture));
+        user.AddDomainEvent(UserRegisteredEvent.Create(user.Id, user.Email, user.Username, culture));
         return user;
     }
 
@@ -404,7 +404,7 @@ public class User : BaseEntity
             throw new InvalidOperationException("Email already verified");
         }
 
-        var resendEvent = new UserRequestedVerificationEvent(Id, Email, Username, culture);
+        var resendEvent = UserRequestedVerificationEvent.Create(Id, Email, Username, culture);
 
         AddDomainEvent(resendEvent);
     }
@@ -416,7 +416,7 @@ public class User : BaseEntity
             throw new InvalidOperationException("Email not verified");
         }
 
-        var passwordResetEvent = new UserRequestedPasswordResetEvent(Id, Email, Username, culture);
+        var passwordResetEvent = UserRequestedPasswordResetEvent.Create(Id, Email, Username, culture);
 
         AddDomainEvent(passwordResetEvent);
     }

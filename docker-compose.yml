@@ -112,11 +112,23 @@ services:
     image: rabbitmq:3-management
     container_name: fit-tracker-rabbit
     ports:
-      - "5672:5672"   # Порт для передачи данных (MassTransit)
-      - "15672:15672" # Порт для Админ-панели (Dashboard)
+      - "5672:5672"
+      - "15672:15672"
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
+
+  seq:
+    image: datalust/seq:latest
+    container_name: fittracker-seq
+    environment:
+      - ACCEPT_EULA=Y
+      - SEQ_FIRSTRUN_ADMINPASSWORD=guest
+    ports:
+      - "8080:80"
+      - "5341:5341"
+    restart: always
+
 
 networks:
   fittracker-network:

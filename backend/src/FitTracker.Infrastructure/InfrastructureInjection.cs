@@ -3,6 +3,7 @@ using FitTracker.Application.Interfaces;
 using FitTracker.Domain.Abstract.Interfaces;
 using FitTracker.Infrastructure.BackgroundJobs;
 using FitTracker.Infrastructure.Localization;
+using FitTracker.Infrastructure.Messaging;
 using FitTracker.Infrastructure.Messaging.Consumers;
 using FitTracker.Infrastructure.Persistence;
 using FitTracker.Infrastructure.Persistence.Data;
@@ -143,42 +144,49 @@ public static class InfrastructureInjection
             x.AddConsumer<UserRegisteredConsumer>();
             x.AddConsumer<UserRequestedPasswordResetConsumer>();
 
+            x.AddConsumersFromNamespaceContaining<UserVerificationRequestedConsumer>();
+
+
             x.UsingRabbitMq((context, cfg) =>
             {
                 cfg.Host("localhost");
 
-                cfg.ReceiveEndpoint(
-                    "user-verification-queue",
-                    e =>
-                    {
-                        e.UseMessageRetry(r => r.Interval(3, TimeSpan.FromSeconds(5)));
+                cfg.UseConsumeFilter(typeof(LoggingFilter<>), context);
 
-                        e.PrefetchCount = 16;
+                cfg.ConfigureEndpoints(context);
 
-                        e.ConfigureConsumer<UserVerificationRequestedConsumer>(context);
-                    });
-
-                cfg.ReceiveEndpoint(
-                    "user-registered-queue",
-                    e =>
-                    {
-                        e.UseMessageRetry(r => r.Interval(3, TimeSpan.FromSeconds(5)));
-
-                        e.PrefetchCount = 16;
-
-                        e.ConfigureConsumer<UserRegisteredConsumer>(context);
-                    });
-
-                cfg.ReceiveEndpoint(
-                    "user-requested-password-reset-queue",
-                    e =>
-                    {
-                        e.UseMessageRetry(r => r.Interval(3, TimeSpan.FromSeconds(5)));
-
-                        e.PrefetchCount = 16;
-
-                        e.ConfigureConsumer<UserRequestedPasswordResetConsumer>(context);
-                    });
+                // cfg.ReceiveEndpoint(
+                //     "user-verification-queue",
+                //     e =>
+                //     {
+                //         e.UseMessageRetry(r => r.Interval(3, TimeSpan.FromSeconds(5)));
+                //
+                //         e.PrefetchCount = 16;
+                //
+                //         e.ConfigureConsumer<UserVerificationRequestedConsumer>(context);
+                //     });
+                //
+                // cfg.ReceiveEndpoint(
+                //     "user-registered-queue",
+                //     e =>
+                //     {
+                //         e.UseMessageRetry(r => r.Interval(3, TimeSpan.FromSeconds(5)));
+                //
+                //         e.PrefetchCount = 16;
+                //
+                //         e.ConfigureConsumer<UserRegisteredConsumer>(context);
+                //     });
+                //
+                // cfg.ReceiveEndpoint(
+                //     "user-requested-password-reset-queue",
+                //     e =>
+                //     {
+                //         e.UseMessageRetry(r => r.Interval(3, TimeSpan.FromSeconds(5)));
+                //
+                //         e.PrefetchCount = 16;
+                //
+                //         e.ConfigureConsumer<UserRequestedPasswordResetConsumer>(context);
+                //     });
             });
         });
     }

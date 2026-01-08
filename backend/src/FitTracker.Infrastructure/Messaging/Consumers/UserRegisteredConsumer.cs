@@ -31,22 +31,21 @@ public sealed class UserRegisteredConsumer(
     /// <returns> A task representing the asynchronous operation. </returns>
     public async Task Consume(ConsumeContext<UserRegisteredEvent> context)
     {
-        logger.LogInformation("==== CONSUMER GET EMAIL FOR{Email} ====", context.Message.Email);
-        var notification = context.Message;
+            var notification = context.Message;
 
-        var verificationToken = jwtTokenService.GenerateVerificationToken(notification.UserId);
-        var verificationLinkBase = configuration["App:VerificationLinkBase"];
-        var verificationLink = $"{verificationLinkBase}?token={verificationToken}";
+            var verificationToken = jwtTokenService.GenerateVerificationToken(notification.UserId);
+            var verificationLinkBase = configuration["App:VerificationLinkBase"];
+            var verificationLink = $"{verificationLinkBase}?token={verificationToken}";
 
-        var subject = localization.GetString("Email.Verification.Subject", notification.Culture);
-        var bodyTemplate = localization.GetString("Email.Verification.Body", notification.Culture);
+            var subject = localization.GetString("Email.Verification.Subject", notification.Culture);
+            var bodyTemplate = localization.GetString("Email.Verification.Body", notification.Culture);
 
-        var emailBody = bodyTemplate
-            .Replace("{0}", notification.Username)
-            .Replace("{1}", verificationLink);
+            var emailBody = bodyTemplate
+                .Replace("{0}", notification.Username)
+                .Replace("{1}", verificationLink);
 
-        await emailService.SendEmailAsync(notification.Email, subject, emailBody, context.CancellationToken);
+            await emailService.SendEmailAsync(notification.Email, subject, emailBody, context.CancellationToken);
 
-        logger.LogInformation("Verification email sent to {Email} via RabbitMQ Consumer", notification.Email);
+            logger.LogInformation("Verification email sent to {Email} via RabbitMQ Consumer", notification.Email);
     }
 }

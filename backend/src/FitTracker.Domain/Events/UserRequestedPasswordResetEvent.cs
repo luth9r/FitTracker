@@ -1,4 +1,4 @@
-﻿using FitTracker.Domain.Abstract.Interfaces;
+﻿using FitTracker.Domain.Abstract;
 
 namespace FitTracker.Domain.Events;
 
@@ -9,5 +9,19 @@ namespace FitTracker.Domain.Events;
 /// <param name="Email">The email address where the reset link will be sent.</param>
 /// <param name="Username">The username of the user requesting password reset.</param>
 /// <param name="Culture">The culture to use for email localization.</param>
-public sealed record UserRequestedPasswordResetEvent(Guid UserId, string Email, string Username, string Culture)
-    : IDomainEvent;
+public sealed record UserRequestedPasswordResetEvent(
+    Guid UserId,
+    string Email,
+    string Username,
+    string Culture)
+    : DomainEvent
+{
+    public static UserRequestedPasswordResetEvent Create(Guid userId, string email, string username, string culture)
+    {
+        return new UserRequestedPasswordResetEvent(userId, email, username, culture)
+        {
+            CorrelationId = Guid.NewGuid(),
+            OccurredOnUtc = DateTime.UtcNow,
+        };
+    }
+}
