@@ -1,0 +1,238 @@
+{
+  "LOGIN": {
+    "TITLE": "FitTracker",
+    "SUBTITLE": "Your path to better fitness",
+    "SIGN_IN": "Sign In",
+    "SIGN_UP": "Sign Up",
+    "EMAIL": "Email",
+    "EMAIL_PLACEHOLDER": "your@email.com",
+    "PASSWORD": "Password",
+    "PASSWORD_PLACEHOLDER": "••••••••",
+    "CONFIRM_PASSWORD": "Confirm Password",
+    "CONFIRM_PASSWORD_PLACEHOLDER": "••••••••",
+    "FORGOT_PASSWORD": "Forgot password?",
+    "EMAIL_REQUIRED": "Email is required",
+    "EMAIL_INVALID": "Please enter a valid email",
+    "FORGOTPASSWORD_TITLE": "Forgot Password?",
+    "FORGOTPASSWORD_SUBTITLE": "Enter your email address and we'll send you instructions to reset your password.",
+    "FORGOTPASSWORD_SUBMIT": "Send Instructions",
+    "FORGOTPASSWORD_SUCCESS_TITLE": "Email Sent!",
+    "FORGOTPASSWORD_SUCCESS_TEXT": "We've sent password reset instructions to your email address. Please check your inbox.",
+    "BACK_TO_LOGIN": "Back to Sign In",
+    "SUBMIT_BUTTON_LOGIN": "Sign In",
+    "SUBMIT_BUTTON_SIGNUP": "Create Account",
+    "OR": "or",
+    "WITH_GOOGLE_LOGIN": "Sign in with Google",
+    "WITH_GOOGLE_SIGNUP": "Sign up with Google",
+    "WITH_GITHUB": "GitHub",
+    "FOOTER_QUESTION_LOGIN": "Don't have an account?",
+    "FOOTER_LINK_LOGIN": "Sign Up",
+    "FOOTER_QUESTION_SIGNUP": "Already have an account?",
+    "FOOTER_LINK_SIGNUP": "Sign In",
+    "TERMS_TOP_1": "By signing in, you agree to our",
+    "TERMS_TOP_2": "and",
+    "TERMS_LINK_1": "Terms of Service",
+    "TERMS_LINK_2": "Privacy Policy",
+    "LOADING": "Loading...",
+    "SUCCESS": {
+      "REGISTER": "Registration successful!",
+      "LOGIN": "Login successful!"
+    },
+    "ERRORS": {
+      "PASSWORDS_DO_NOT_MATCH": "Passwords do not match!",
+      "GOOGLE_NOT_IMPLEMENTED": "Google sign-in not yet implemented.",
+      "USERNAME_TOO_SHORT": "Username must be at least 3 characters.",
+      "API_UNREACHABLE": "Unable to connect to server.",
+      "UNKNOWN": "An unknown error occurred. Please try again.",
+      "PASSWORD_MIN_LENGTH": "Password must be at least 8 characters.",
+      "PASSWORD_ONE_LETTER": "Password must contain at least one letter.",
+      "PASSWORD_ONE_NUMBER": "Password must contain at least one number.",
+      "VALIDATION_FAILED": "Please correct form errors.",
+      "EMPTY_FIELDS": "Please fill in all required fields.",
+      "UNKNOWN_GOOGLE": "Unknown Google error",
+      "GOOGLE_CONFIG_ERROR": "Google configuration error"
+    },
+    "GOOGLE_COMPLETE": {
+      "TITLE": "Complete Your Profile",
+      "SUBTITLE": "Please provide a username to complete registration",
+      "EMAIL": "Email",
+      "SUBMIT_BUTTON": "Complete Registration",
+      "LOADING": "Completing..."
+    }
+  },
+  "REGISTER": {
+    "USERNAME": "Username",
+    "USERNAME_PLACEHOLDER": "your_unique_username",
+    "VALIDATION": {
+      "USERNAME_minLength": "At least 3 characters",
+      "USERNAME_noSpaces": "Cannot contain spaces",
+      "EMAIL_isValid": "Valid email format",
+      "PASSWORD_minLength": "At least 8 characters",
+      "PASSWORD_oneLetter": "At least one letter",
+      "PASSWORD_oneNumber": "At least one number",
+      "CONFIRM_matches": "Passwords do not match"
+    }
+  },
+  "VERIFICATION": {
+    "TITLE": "Verify Your Email",
+    "MESSAGE": "We've sent a verification email to:",
+    "INSTRUCTION": "Please check your inbox and click the verification link to activate your account. If you don't see the email, check your spam folder.",
+    "RESEND_BUTTON": "Resend Verification Email",
+    "WAIT_MESSAGE": "You can request a new email in {{seconds}} seconds",
+    "RESENDING": "Sending...",
+    "CLOSE_BUTTON": "Close",
+    "RESEND_SUCCESS": "Verification email sent successfully!"
+  },
+  "VERIFY_EMAIL": {
+    "VERIFYING_TITLE": "Verifying Email",
+    "PLEASE_WAIT": "Please wait...",
+    "VERIFYING_MESSAGE": "Verifying your email address...",
+
+    "SUCCESS_TITLE": "Email Verified!",
+    "SUCCESS_SUBTITLE": "Your account is now active",
+    "SUCCESS_WELCOME": "Welcome",
+    "SUCCESS_MESSAGE": "Your email has been successfully verified! You are now logged in and will be redirected to your dashboard shortly.",
+    "GO_TO_DASHBOARD": "Go to Dashboard",
+
+    "ERROR_TITLE": "Verification Failed",
+    "ERROR_SUBTITLE": "Something went wrong",
+    "ERROR_NO_TOKEN": "Invalid verification link. No token provided.",
+    "NEED_NEW_LINK_TITLE": "Need a new verification link?",
+    "NEED_NEW_LINK_MESSAGE": "The link may have expired or been used already. You can request a new one from the login page.",
+    "BACK_TO_LOGIN": "Back to Login",
+
+    "NEED_HELP": "Need help?",
+    "CONTACT_SUPPORT": "Contact our support team at",
+    "COPYRIGHT": "© 2025 FitTracker. All rights reserved."
+  },
+  "HOME": {
+    "TITLE": "Dashboard",
+    "SUBTITLE": "Track your workout progress",
+    "LOADING": "Loading your data...",
+    "STATS": {
+      "TOTAL_WORKOUTS": "Total Workouts",
+      "TRAINING_DAYS": "Training Days",
+      "CURRENT_STREAK": "Current Streak",
+      "DAYS_SUFFIX": "days",
+      "TOTAL_WEIGHT": "Total Weight"
+    },
+    "AVG_VOLUME": {
+      "TITLE": "Average Volume",
+      "SUBTITLE": "Per workout",
+      "UNITS": "{{unit}}",
+      "OF": "of"
+    },
+    "RECENT_WORKOUTS": {
+      "TITLE": "Recent Workouts",
+      "VIEW_ALL": "View All",
+      "DURATION": "Duration",
+      "MIN_SUFFIX": "min",
+      "TOTAL_VOLUME": "Total Volume",
+      "EMPTY": "No workouts yet",
+      "TAG_STRENGTH": "Strength"
+    },
+    "NAV": {
+      "HOME": "Home",
+      "EXERCISES": "Exercises",
+      "PROGRESS": "Progress",
+      "PROFILE": "Profile"
+    },
+    "EMPTY_STATE": {
+      "TITLE": "Start Your Journey",
+      "DESCRIPTION": "You don't have any workouts yet. Create your first workout and start tracking your progress!",
+      "CTA": "Create Workout"
+    },
+    "ERROR_STATE": {
+      "TITLE": "Unable to Load Dashboard",
+      "DESCRIPTION": "We couldn't connect to the server. Please check your internet connection and try again."
+    }
+  },
+  "EXERCISES": {
+    "TITLE": "Exercises",
+    "SUBTITLE": "Browse your exercise library",
+    "SEARCH_PLACEHOLDER": "Search exercises",
+    "LOADING": "Loading...",
+    "BADGE": {
+      "STANDARD": "Standard",
+      "CUSTOM": "Custom"
+    },
+    "EMPTY": {
+      "TITLE": "No exercises found",
+      "SUBTITLE": "Try changing your search or filters"
+    },
+    "ERROR_STATE": {
+      "TITLE": "Unable to Load Exercises",
+      "DESCRIPTION": "We couldn't load the exercises list. Please check your connection and try again."
+    },
+    "FILTERS": {
+      "TYPE_LABEL": "Type",
+      "TYPE_ALL": "All",
+      "TYPE_STANDARD": "Standard",
+      "TYPE_CUSTOM": "Custom",
+      "TITLE": "Filters",
+      "TOGGLE": "Toggle filters",
+      "CLOSE": "Close filters",
+      "CATEGORY_LABEL": "Category",
+      "MUSCLE_LABEL": "Muscle Group",
+      "CATEGORY": {
+        "ALL": "All"
+      },
+      "MUSCLE": {
+        "ALL": "All"
+      }
+    },
+    "DETAILS": {
+      "NEVER": "Never performed",
+      "TABS": {
+        "INFO": "Info",
+        "STATS": "Statistics"
+      },
+      "NO_IMAGE": "No image",
+      "MUSCLE_GROUP": "Muscle Group",
+      "EQUIPMENT": "Equipment",
+      "DESCRIPTION": "Description",
+      "VOLUME_HISTORY": "Volume History",
+      "NO_DATA_PERIOD": "No data for this period",
+      "PERIOD": {
+        "1M": "1M",
+        "3M": "3M",
+        "6M": "6M",
+        "1Y": "1Y"
+      },
+      "STATS": {
+        "LAST_PERFORMED": "Last Performed",
+        "WORKOUTS": "workouts",
+        "TOTAL_SETS": "Total Sets",
+        "REPS": "reps",
+        "TOTAL_LIFTED": "Total Lifted"
+      },
+      "RECORDS": {
+        "TITLE": "Personal Records",
+        "MAX_WEIGHT": "Max Weight",
+        "MAX_REPS": "Max Reps",
+        "MAX_SET_VOLUME": "Max Set Volume",
+        "MAX_WORKOUT_VOLUME": "Max Workout Volume"
+      },
+      "ERROR_STATE": {
+        "TITLE": "Exercise Not Found",
+        "DESCRIPTION": "We couldn't load this exercise. It may have been deleted or you don't have access."
+      }
+    },
+    "FAB": {
+      "ADD": "Add Exercise"
+    }
+  },
+  "COMMON": {
+    "UNITS": {
+      "KG": "kg",
+      "LBS": "lbs"
+    },
+    "NEVER": "Never",
+    "RETRY": "Try Again",
+    "ERROR_STATE": {
+      "TITLE": "Something Went Wrong",
+      "DESCRIPTION": "We couldn't load the data. Please check your connection and try again.",
+      "RETRY": "Try Again"
+    }
+  }
+}

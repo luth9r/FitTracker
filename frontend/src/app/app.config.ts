@@ -1,4 +1,4 @@
-import { ApplicationConfig, APP_INITIALIZER } from '@angular/core';
+import { ApplicationConfig, APP_INITIALIZER, isDevMode } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
@@ -9,6 +9,7 @@ import { Observable } from 'rxjs';
 import { provideAnimations } from '@angular/platform-browser/animations';
 
 import { provideOAuthClient, OAuthService, AuthConfig } from 'angular-oauth2-oidc';
+import { provideServiceWorker } from '@angular/service-worker';
 
 const YOUR_GOOGLE_CLIENT_ID =
   '719113265141-v8ckgmea9bob1nd65f4396n93o16dcqd.apps.googleusercontent.com';
@@ -78,6 +79,12 @@ export const appConfig: ApplicationConfig = {
       useFactory: initializeOAuth,
       deps: [OAuthService],
       multi: true,
-    },
+    }, provideServiceWorker('ngsw-worker.js', {
+            enabled: !isDevMode(),
+            registrationStrategy: 'registerWhenStable:30000'
+          }), provideServiceWorker('ngsw-worker.js', {
+            enabled: !isDevMode(),
+            registrationStrategy: 'registerWhenStable:30000'
+          }),
   ],
 };

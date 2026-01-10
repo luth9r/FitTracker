@@ -1,0 +1,220 @@
+{
+  "LOGIN": {
+    "TITLE": "FitTracker",
+    "SUBTITLE": "Твій шлях до кращої форми",
+    "SIGN_IN": "Увійти",
+    "SIGN_UP": "Зареєструватися",
+    "EMAIL": "Електронна пошта",
+    "EMAIL_PLACEHOLDER": "your@email.com",
+    "PASSWORD": "Пароль",
+    "PASSWORD_PLACEHOLDER": "••••••••",
+    "CONFIRM_PASSWORD": "Підтвердження пароля",
+    "CONFIRM_PASSWORD_PLACEHOLDER": "••••••••",
+    "EMAIL_REQUIRED": "Електронна пошта обов'язкова",
+    "EMAIL_INVALID": "Будь ласка, введіть правильний email",
+    "FORGOT_PASSWORD": "Забули пароль?",
+    "FORGOTPASSWORD_TITLE": "Забули пароль?",
+    "FORGOTPASSWORD_SUBTITLE": "Введіть вашу електронну адресу і ми надішлемо інструкції для відновлення пароля.",
+    "FORGOTPASSWORD_SUBMIT": "Надіслати інструкції",
+    "FORGOTPASSWORD_SUCCESS_TITLE": "Лист надіслано!",
+    "FORGOTPASSWORD_SUCCESS_TEXT": "Ми надіслали інструкції для відновлення пароля на вашу електронну адресу. Будь ласка, перевірте свою поштову скриньку.",
+    "BACK_TO_LOGIN": "Повернутися до входу",
+    "SUBMIT_BUTTON_LOGIN": "Увійти",
+    "SUBMIT_BUTTON_SIGNUP": "Створити акаунт",
+    "OR": "або",
+    "WITH_GOOGLE_LOGIN": "Увійти через Google",
+    "WITH_GOOGLE_SIGNUP": "Зареєструватися через Google",
+    "WITH_GITHUB": "GitHub",
+    "FOOTER_QUESTION_LOGIN": "Ще не маєте акаунта?",
+    "FOOTER_LINK_LOGIN": "Зареєструватися",
+    "FOOTER_QUESTION_SIGNUP": "Вже маєте акаунт?",
+    "FOOTER_LINK_SIGNUP": "Увійти",
+    "TERMS_TOP_1": "Входячи, ви погоджуєтесь з нашими",
+    "TERMS_TOP_2": "та",
+    "TERMS_LINK_1": "Умовами користування",
+    "TERMS_LINK_2": "Політикою конфіденційності",
+    "LOADING": "Завантаження...",
+    "SUCCESS": {
+      "REGISTER": "Реєстрація успішна!",
+      "LOGIN": "Вхід успішний!"
+    },
+    "ERRORS": {
+      "PASSWORDS_DO_NOT_MATCH": "Паролі не співпадають!",
+      "GOOGLE_NOT_IMPLEMENTED": "Вхід через Google ще не реалізовано.",
+      "USERNAME_TOO_SHORT": "Імʼя користувача має містити щонайменше 3 символи.",
+      "API_UNREACHABLE": "Не вдалося підключитися до сервера.",
+      "UNKNOWN": "Сталася невідома помилка. Спробуйте ще раз.",
+      "PASSWORD_MIN_LENGTH": "Пароль має містити щонайменше 8 символів.",
+      "PASSWORD_ONE_LETTER": "Пароль має містити щонайменше одну літеру.",
+      "PASSWORD_ONE_NUMBER": "Пароль має містити щонайменше одну цифру.",
+      "VALIDATION_FAILED": "Будь ласка, виправте помилки у формі.",
+      "EMPTY_FIELDS": "Будь ласка, заповніть усі обовʼязкові поля.",
+      "UNKNOWN_GOOGLE": "Невідома помилка Google",
+      "GOOGLE_CONFIG_ERROR": "Помилка конфігурації Google"
+    },
+    "GOOGLE_COMPLETE": {
+      "TITLE": "Завершіть профіль",
+      "SUBTITLE": "Будь ласка, вкажіть імʼя користувача, щоб завершити реєстрацію",
+      "EMAIL": "Електронна пошта",
+      "SUBMIT_BUTTON": "Завершити реєстрацію",
+      "LOADING": "Завершення..."
+    }
+  },
+  "REGISTER": {
+    "USERNAME": "Імʼя користувача",
+    "USERNAME_PLACEHOLDER": "your_unique_username",
+    "VALIDATION": {
+      "USERNAME_MINLENGTH": "Не менше 3 символів",
+      "USERNAME_NOSPACES": "Не може містити пробіли",
+      "EMAIL_ISVALID": "Правильний формат електронної пошти",
+      "PASSWORD_MINLENGTH": "Не менше 8 символів",
+      "PASSWORD_ONELETTER": "Щонайменше одна літера",
+      "PASSWORD_ONENUMBER": "Щонайменше одна цифра",
+      "CONFIRM_MATCHES": "Паролі не співпадають"
+    }
+  },
+  "VERIFICATION": {
+    "TITLE": "Підтвердіть свою пошту",
+    "MESSAGE": "Ми надіслали лист для підтвердження на:",
+    "INSTRUCTION": "Будь ласка, перевірте свою поштову скриньку та натисніть на посилання для підтвердження, щоб активувати обліковий запис. Якщо не бачите листа, перевірте папку «Спам».",
+    "RESEND_BUTTON": "Надіслати лист повторно",
+    "WAIT_MESSAGE": "Ви зможете повторно надіслати лист через {{seconds}} сек.",
+    "RESENDING": "Надсилаємо...",
+    "CLOSE_BUTTON": "Закрити",
+    "RESEND_SUCCESS": "Лист для підтвердження надіслано успішно!"
+  },
+  "VERIFY_EMAIL": {
+    "VERIFYING_TITLE": "Перевірка Email",
+    "PLEASE_WAIT": "Будь ласка, зачекайте...",
+    "VERIFYING_MESSAGE": "Перевіряємо вашу адресу електронної пошти...",
+
+    "SUCCESS_TITLE": "Email підтверджено!",
+    "SUCCESS_SUBTITLE": "Ваш обліковий запис активовано",
+    "SUCCESS_WELCOME": "Ласкаво просимо",
+    "SUCCESS_MESSAGE": "Ваш email успішно підтверджено! Ви увійшли в систему і незабаром будете перенаправлені на головну панель.",
+    "GO_TO_DASHBOARD": "Перейти до панелі",
+
+    "ERROR_TITLE": "Помилка перевірки",
+    "ERROR_SUBTITLE": "Щось пішло не так",
+    "ERROR_NO_TOKEN": "Неправильне посилання для перевірки. Токен не надано.",
+    "NEED_NEW_LINK_TITLE": "Потрібне нове посилання для перевірки?",
+    "NEED_NEW_LINK_MESSAGE": "Термін дії посилання міг минути або воно вже використане. Ви можете запросити нове на сторінці входу.",
+    "BACK_TO_LOGIN": "Повернутися до входу",
+
+    "NEED_HELP": "Потрібна допомога?",
+    "CONTACT_SUPPORT": "Зв'яжіться з нашою службою підтримки за адресою",
+    "COPYRIGHT": "© 2025 FitTracker. Усі права захищені."
+  },
+  "HOME": {
+    "TITLE": "Панель",
+    "SUBTITLE": "Відстежуйте свій прогрес у тренуваннях",
+    "LOADING": "Завантаження ваших даних...",
+    "STATS": {
+      "TOTAL_WORKOUTS": "Усього тренувань",
+      "TRAINING_DAYS": "Днів тренувань",
+      "CURRENT_STREAK": "Поточна серія",
+      "DAYS_SUFFIX": "днів",
+      "TOTAL_WEIGHT": "Загальна вага"
+    },
+    "AVG_VOLUME": {
+      "TITLE": "Середній обʼєм",
+      "SUBTITLE": "За тренування",
+      "UNITS": "{{unit}}",
+      "OF": "з"
+    },
+    "RECENT_WORKOUTS": {
+      "TITLE": "Останні тренування",
+      "VIEW_ALL": "Показати всі",
+      "DURATION": "Тривалість",
+      "MIN_SUFFIX": "хв",
+      "TOTAL_VOLUME": "Загальний обʼєм",
+      "EMPTY": "Поки що немає тренувань",
+      "TAG_STRENGTH": "Сила"
+    },
+    "NAV": {
+      "HOME": "Головна",
+      "EXERCISES": "Вправи",
+      "PROGRESS": "Прогрес",
+      "PROFILE": "Профіль"
+    },
+    "EMPTY_STATE": {
+      "TITLE": "Почніть свій шлях",
+      "DESCRIPTION": "У вас ще немає жодного тренування. Створіть перше тренування та почніть відстежувати прогрес!",
+      "CTA": "Створити тренування"
+    }
+  },
+  "EXERCISES": {
+    "TITLE": "Вправи",
+    "SUBTITLE": "Переглядайте свою бібліотеку вправ",
+    "SEARCH_PLACEHOLDER": "Пошук вправ",
+    "LOADING": "Завантаження...",
+    "BADGE": {
+      "STANDARD": "Стандартні",
+      "CUSTOM": "Кастомні"
+    },
+    "EMPTY": {
+      "TITLE": "Вправ не знайдено",
+      "SUBTITLE": "Спробуйте змінити пошук або фільтри"
+    },
+    "FILTERS": {
+      "TYPE_LABEL": "Тип",
+      "TYPE_ALL": "Усі",
+      "TYPE_STANDARD": "Стандартні",
+      "TYPE_CUSTOM": "Кастомні",
+      "TITLE": "Фільтри",
+      "TOGGLE": "Перемкнути фільтри",
+      "CLOSE": "Закрити фільтри",
+      "CATEGORY_LABEL": "Категорія",
+      "MUSCLE_LABEL": "Група мʼязів",
+      "CATEGORY": {
+        "ALL": "Усі"
+      },
+      "MUSCLE": {
+        "ALL": "Усі"
+      }
+    },
+    "DETAILS": {
+      "NEVER": "Ніколи не виконувалась",
+      "TABS": {
+        "INFO": "Інформація",
+        "STATS": "Статистика"
+      },
+      "NO_IMAGE": "Без зображення",
+      "MUSCLE_GROUP": "Група м'язів",
+      "EQUIPMENT": "Обладнання",
+      "DESCRIPTION": "Опис",
+      "VOLUME_HISTORY": "Історія об'єму",
+      "NO_DATA_PERIOD": "Немає даних за цей період",
+      "PERIOD": {
+        "1M": "1М",
+        "3M": "3М",
+        "6M": "6М",
+        "1Y": "1Р"
+      },
+      "STATS": {
+        "LAST_PERFORMED": "Останнє виконання",
+        "WORKOUTS": "тренувань",
+        "TOTAL_SETS": "Всього підходів",
+        "REPS": "повторень",
+        "TOTAL_LIFTED": "Всього піднято"
+      },
+      "RECORDS": {
+        "TITLE": "Особисті рекорди",
+        "MAX_WEIGHT": "Максимальна вага",
+        "MAX_REPS": "Максимум повторень",
+        "MAX_SET_VOLUME": "Макс. об'єм підходу",
+        "MAX_WORKOUT_VOLUME": "Макс. об'єм тренування"
+      }
+    },
+    "FAB": {
+      "ADD": "Додати вправу"
+    }
+  },
+  "COMMON": {
+    "UNITS": {
+      "KG": "кг",
+      "LBS": "фунт"
+    },
+    "NEVER": "Ніколи"
+  }
+}
