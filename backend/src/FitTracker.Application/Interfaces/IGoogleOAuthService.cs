@@ -19,6 +19,16 @@ public interface IGoogleOAuthService
     Task<TokenResponse> ExchangeCodeForTokensAsync(string code, string codeVerifier);
 
     /// <summary>
+    ///     Exchanges authorization code for tokens.
+    /// </summary>
+    /// <param name="code">The authorization code.</param>
+    /// <returns>
+    ///     A <see cref="Task{TResult}" /> representing the asynchronous operation, containing the
+    ///     <see cref="TokenResponse" />.
+    /// </returns>
+    Task<TokenResponse> ExchangeCodeForTokensAsync(string code);
+
+    /// <summary>
     ///     Validates the given ID token and returns its payload.
     /// </summary>
     /// <param name="idToken">The ID token to validate.</param>

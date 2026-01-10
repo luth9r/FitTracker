@@ -86,6 +86,34 @@ public sealed class AuthController(IMediator mediator) : ControllerBase
     }
 
     /// <summary>
+    ///     Authenticates a user via Google Mobile authentication.
+    /// </summary>
+    /// <param name="googleMobileAuthRequest">
+    ///     The <see cref="GoogleMobileAuthRequest" /> containing the Google authentication
+    ///     code.
+    /// </param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>
+    ///     The <see cref="LoginResponse" /> containing the authentication details, or
+    ///     <see cref="ValidationProblemDetails" /> if authentication fails.
+    /// </returns>
+    [HttpPost("mobile-google-auth")]
+    public async Task<IActionResult> MobileGoogleAuth(
+        [FromBody] GoogleMobileAuthRequest googleMobileAuthRequest,
+        CancellationToken cancellationToken)
+    {
+        var command = new GoogleMobileAuthCommand(googleMobileAuthRequest);
+        var result = await mediator.Send(command, cancellationToken);
+        if (result.IsFailure)
+        {
+            return ValidationProblem(result.Error.ToModelState());
+        }
+
+        SetAuthCookie(result.Value.JWT);
+        return Ok(result.Value);
+    }
+
+    /// <summary>
     ///     Registers a new user.
     /// </summary>
     /// <param name="registerRequest">The <see cref="RegisterRequest" />.</param>

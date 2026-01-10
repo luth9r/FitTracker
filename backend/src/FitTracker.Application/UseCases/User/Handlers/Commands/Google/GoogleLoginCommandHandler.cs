@@ -43,13 +43,6 @@ public sealed class GoogleLoginCommandHandler(
         var tokenResponse = await googleOAuthService.ExchangeCodeForTokensAsync(
             request.Request.Code,
             request.Request.CodeVerifier);
-        if (tokenResponse == null)
-        {
-            logger.LogWarning("Google Token validation failed.");
-            return ResultExtensions.ValidationFailure<LoginResponse>(
-                nameof(request.Request.Code),
-                localization.GetString("Google.Auth.InvalidToken"));
-        }
 
         logger.LogDebug("Attempting to validate Google IdToken.");
 

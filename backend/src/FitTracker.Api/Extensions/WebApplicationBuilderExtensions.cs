@@ -176,7 +176,17 @@ internal static class WebApplicationBuilderExtensions
                         .GetSection("Cors:AllowedOrigins")
                         .Get<string[]>() ?? new[] { "http://localhost:4200" };
 
-                    _ = policy.WithOrigins(allowedOrigins)
+                    policy.SetIsOriginAllowed(origin =>
+                        {
+                            // If it`s a mobile app, allow any origin
+                            if (string.IsNullOrWhiteSpace(origin))
+                            {
+                                return true;
+                            }
+
+                            // If it`s a web app, allow only allowed origins
+                            return allowedOrigins.Any(o => new Uri(o).Host == new Uri(origin).Host);
+                        })
                         .AllowAnyMethod()
                         .AllowAnyHeader()
                         .AllowCredentials();

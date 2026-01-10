@@ -355,7 +355,6 @@ public class User : BaseEntity
         }
 
         PasswordHash = newPasswordHash;
-        UpdatedAt = DateTime.UtcNow;
     }
 
     /// <summary>
@@ -369,8 +368,12 @@ public class User : BaseEntity
             throw new ArgumentException("Google provider ID is required", nameof(googleProviderId));
         }
 
+        if (GoogleProviderId != null)
+        {
+            throw new InvalidOperationException("Google provider ID already set");
+        }
+
         GoogleProviderId = googleProviderId;
-        UpdatedAt = DateTime.UtcNow;
     }
 
     /// <summary>
