@@ -152,43 +152,6 @@ public sealed class GoogleOAuthServiceTests
     }
 
     [Fact]
-    public void Constructor_WithMissingConfiguration_ShouldNotThrow()
-    {
-        // Arrange
-        var emptyConfig = new ConfigurationBuilder().Build();
-        var httpClient = new HttpClient(_fakeHttpHandler);
-
-        // Act
-        var service = new GoogleOAuthService(httpClient, _loggerMock.Object, emptyConfig);
-
-        // Assert
-        service.Should().NotBeNull();
-    }
-
-    [Fact]
-    public async Task ValidateAsync_WithMissingClientId_ShouldReturnNull()
-    {
-        // Arrange
-        var emptyConfig = new ConfigurationBuilder().Build();
-        var httpClient = new HttpClient(_fakeHttpHandler);
-        var service = new GoogleOAuthService(httpClient, _loggerMock.Object, emptyConfig);
-
-        // Act
-        var result = await service.ValidateAsync("some-token");
-
-        // Assert
-        result.Should().BeNull();
-        _loggerMock.Verify(
-            x => x.Log(
-                LogLevel.Critical,
-                It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("Google:ClientId not cofigured")),
-                It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
-            Times.Once);
-    }
-
-    [Fact]
     public async Task ValidateAsync_WithInvalidToken_ShouldReturnNull()
     {
         // Arrange

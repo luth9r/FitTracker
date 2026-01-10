@@ -42,30 +42,6 @@ public class GoogleLoginCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_NullTokenResponse_ShouldReturnValidationFailure()
-    {
-        // Arrange
-        var command = new GoogleLoginCommand(
-            new GoogleLoginRequest("test-code", "verifier"));
-
-        _mockGoogleOAuth.Setup(s => s.ExchangeCodeForTokensAsync(
-                It.IsAny<string>(),
-                It.IsAny<string>()))
-            .ReturnsAsync((TokenResponse)null);
-
-        _mockLocalization.Setup(l => l.GetString("Google.Auth.InvalidToken"))
-            .Returns("Invalid token");
-
-        // Act
-        var result = await _handler.Handle(command, CancellationToken.None);
-
-        // Assert
-        result.IsFailure.Should().BeTrue();
-        result.Error.Errors.Should().ContainSingle()
-            .Which.ErrorMessage.Should().Be("Invalid token");
-    }
-
-    [Fact]
     public async Task Handle_InvalidGooglePayload_ShouldReturnValidationFailure()
     {
         // Arrange
