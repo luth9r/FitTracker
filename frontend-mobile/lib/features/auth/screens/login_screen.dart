@@ -5,6 +5,7 @@ import '../../../services/auth_service.dart';
 import '../../../services/notification_service.dart';
 import '../../../services/validation_service.dart';
 import '../../../core/app_colors.dart';
+import '../widgets/email_verification_modal.dart';
 import '../widgets/login_form.dart';
 import '../widgets/register_form.dart';
 
@@ -211,28 +212,11 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _showEmailVerificationModal(String email) {
-    showDialog(
+    showModalBottomSheet(
       context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: AppColors.colorCardBg,
-        title: Text(
-          'VERIFICATION.TITLE'.tr(),
-          style: const TextStyle(color: AppColors.colorTextPrimary),
-        ),
-        content: Text(
-          'VERIFICATION.SENT_TO'.tr(args: [email]),
-          style: const TextStyle(color: AppColors.colorTextSecondary),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(
-              'OK',
-              style: TextStyle(color: AppColors.colorPrimary),
-            ),
-          ),
-        ],
-      ),
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => EmailVerificationModal(email: email),
     );
   }
 
@@ -269,7 +253,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             _buildHeader(),
                             const SizedBox(height: 20),
                             _buildToggle(),
-                            const SizedBox(height: 16),
+                            const SizedBox(height: 24),
                             _authMode == 'login'
                                 ? LoginForm(
                               isLoading: _isFormLoading,
@@ -281,9 +265,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               onValidate: _onValidateChange,
                               onSubmit: _onRegisterSubmit,
                             ),
-                            const SizedBox(height: 16),
+                            const SizedBox(height: 20),
                             _buildDivider(),
-                            const SizedBox(height: 16),
+                            const SizedBox(height: 20),
                             _buildSocialButton(),
                             const SizedBox(height: 24),
                             _buildFooter(),

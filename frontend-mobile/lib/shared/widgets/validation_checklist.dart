@@ -24,7 +24,7 @@ class ValidationChecklist extends StatelessWidget {
         final bool isValid = entry.value;
         final Color statusColor = isValid
             ? AppColors.colorAccentSuccess
-            : AppColors.colorMessageError;
+            : AppColors.colorAccentDanger;
 
         return Padding(
           padding: const EdgeInsets.only(top: 0, bottom: 2),

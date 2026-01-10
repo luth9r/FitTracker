@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import '../../../services/notification_service.dart';
 import '../../../shared/widgets/validation_checklist.dart';
-import '../../../shared/widgets/auth_input_field.dart';
 import '../../../core/app_colors.dart';
+import '../../../core/auth_input_styles.dart';
 
 class RegisterForm extends StatefulWidget {
   final bool isLoading;
@@ -27,6 +28,8 @@ class _RegisterFormState extends State<RegisterForm> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmController = TextEditingController();
+  final _notificationService = NotificationService();
+
 
   final Map<String, FocusNode> _nodes = {
     'username': FocusNode(),
@@ -34,6 +37,16 @@ class _RegisterFormState extends State<RegisterForm> {
     'password': FocusNode(),
     'confirmPassword': FocusNode(),
   };
+
+  final Map<String, bool> _touched = {
+    'username': false,
+    'email': false,
+    'password': false,
+    'confirmPassword': false,
+  };
+
+  bool _obscurePassword = true;
+  bool _obscureConfirm = true;
 
   @override
   void dispose() {
@@ -51,13 +64,68 @@ class _RegisterFormState extends State<RegisterForm> {
   void initState() {
     super.initState();
     for (var entry in _nodes.entries) {
-      entry.value.addListener(() => setState(() {}));
+      entry.value.addListener(() {
+        if (!entry.value.hasFocus) {
+          setState(() {
+            _touched[entry.key] = true;
+          });
+        }
+        setState(() {});
+      });
     }
   }
-
-  bool _hasError(String field, String text) {
+  
+  bool _hasError(String field) {
     final state = widget.validations[field] ?? {};
-    return text.isNotEmpty && state.containsValue(false);
+    final isTouched = _touched[field] ?? false;
+    
+    final hasInvalidChecks = state.containsValue(false);
+    
+    return isTouched && hasInvalidChecks;
+  }
+
+  bool _isFieldValid(String field) {
+    final state = widget.validations[field] ?? {};
+    return !state.containsValue(false);
+  }
+
+  void _submit() {
+    setState(() {
+      _touched.updateAll((key, value) => true);
+    });
+
+    final username = _usernameController.text.trim();
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+    final confirm = _confirmController.text.trim();
+
+
+    if (username.isEmpty || email.isEmpty || password.isEmpty || confirm.isEmpty) {
+      _notificationService.showToast(
+          'LOGIN.ERRORS.EMPTY_FIELDS'.tr(),
+          isError: true
+      );
+      return;
+    }
+    
+    final allValid = _isFieldValid('username') &&
+        _isFieldValid('email') &&
+        _isFieldValid('password') &&
+        _isFieldValid('confirmPassword');
+
+    if (!allValid) {
+      _notificationService.showToast(
+          'LOGIN.ERRORS.VALIDATION_FAILED'.tr(),
+          isError: true
+      );
+      return;
+    }
+    
+    widget.onSubmit({
+      'username': username,
+      'email': email,
+      'password': password,
+    });
   }
 
   @override
@@ -71,6 +139,7 @@ class _RegisterFormState extends State<RegisterForm> {
           field: 'username',
           controller: _usernameController,
           prefix: 'REGISTER.VALIDATION.USERNAME_',
+          icon: Icons.person_outline,
         ),
         _buildField(
           label: 'LOGIN.EMAIL'.tr(),
@@ -78,7 +147,8 @@ class _RegisterFormState extends State<RegisterForm> {
           field: 'email',
           controller: _emailController,
           prefix: 'REGISTER.VALIDATION.EMAIL_',
-          type: 'email',
+          icon: Icons.email_outlined,
+          keyboardType: TextInputType.emailAddress,
         ),
         _buildField(
           label: 'LOGIN.PASSWORD'.tr(),
@@ -86,7 +156,10 @@ class _RegisterFormState extends State<RegisterForm> {
           field: 'password',
           controller: _passwordController,
           prefix: 'REGISTER.VALIDATION.PASSWORD_',
-          type: 'password',
+          icon: Icons.lock_outline,
+          isPassword: true,
+          obscureText: _obscurePassword,
+          onToggleVisibility: () => setState(() => _obscurePassword = !_obscurePassword),
         ),
         _buildField(
           label: 'LOGIN.CONFIRM_PASSWORD'.tr(),
@@ -94,7 +167,10 @@ class _RegisterFormState extends State<RegisterForm> {
           field: 'confirmPassword',
           controller: _confirmController,
           prefix: 'REGISTER.VALIDATION.CONFIRM_',
-          type: 'password',
+          icon: Icons.lock_outline,
+          isPassword: true,
+          obscureText: _obscureConfirm,
+          onToggleVisibility: () => setState(() => _obscureConfirm = !_obscureConfirm),
         ),
         const SizedBox(height: 24),
         _buildSubmitButton(),
@@ -108,33 +184,55 @@ class _RegisterFormState extends State<RegisterForm> {
     required String field,
     required TextEditingController controller,
     required String prefix,
-    String type = 'text',
+    required IconData icon,
+    bool isPassword = false,
+    bool obscureText = false,
+    VoidCallback? onToggleVisibility,
+    TextInputType keyboardType = TextInputType.text,
   }) {
     final state = widget.validations[field] ?? {};
     final focusNode = _nodes[field]!;
     final bool showChecklist = focusNode.hasFocus;
-    final bool hasError = controller.text.isNotEmpty && state.containsValue(false);
+    final bool hasError = _hasError(field);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        AuthInputField(
-          label: label,
-          placeholder: placeholder,
-          fieldName: field,
-          type: type,
+        TextField(
           controller: controller,
           focusNode: focusNode,
-          hasError: hasError,
+          keyboardType: keyboardType,
+          obscureText: isPassword && obscureText,
           onChanged: (val) {
             widget.onValidate(field, val);
+            setState(() {});
           },
+          style: const TextStyle(color: AppColors.colorTextPrimary),
+          decoration: AuthInputStyles.authInputDecoration(
+            labelText: label,
+            hintText: placeholder,
+            errorText: null,
+            hasError: hasError,
+            prefixIcon: Icon(
+              icon,
+              color: hasError ? AppColors.colorAccentDanger : AppColors.colorTextSecondary,
+            ),
+            suffixIcon: isPassword
+                ? IconButton(
+              icon: Icon(
+                obscureText ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                color: AppColors.colorTextSecondary,
+              ),
+              onPressed: onToggleVisibility,
+            )
+                : null,
+          ),
         ),
-        
+
         if (showChecklist) ...[
           const SizedBox(height: 8),
           Padding(
-            padding: const EdgeInsets.only(left: 4),
+            padding: const EdgeInsets.only(left: 16),
             child: ValidationChecklist(
               validationState: state,
               translationPrefix: prefix,
@@ -182,14 +280,5 @@ class _RegisterFormState extends State<RegisterForm> {
         ),
       ),
     );
-  }
-
-
-  void _submit() {
-    widget.onSubmit({
-      'username': _usernameController.text,
-      'email': _emailController.text,
-      'password': _passwordController.text,
-    });
   }
 }

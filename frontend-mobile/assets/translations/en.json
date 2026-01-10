@@ -12,6 +12,7 @@
     "CONFIRM_PASSWORD_PLACEHOLDER": "••••••••",
     "FORGOT_PASSWORD": "Forgot password?",
     "EMAIL_REQUIRED": "Email is required",
+    "PASSWORD_REQUIRED": "Password is required",
     "EMAIL_INVALID": "Please enter a valid email",
     "FORGOTPASSWORD_TITLE": "Forgot Password?",
     "FORGOTPASSWORD_SUBTITLE": "Enter your email address and we'll send you instructions to reset your password.",
@@ -78,7 +79,7 @@
     "MESSAGE": "We've sent a verification email to:",
     "INSTRUCTION": "Please check your inbox and click the verification link to activate your account. If you don't see the email, check your spam folder.",
     "RESEND_BUTTON": "Resend Verification Email",
-    "WAIT_MESSAGE": "You can request a new email in {{seconds}} seconds",
+    "WAIT_MESSAGE": "You can request a new email in {} seconds",
     "RESENDING": "Sending...",
     "CLOSE_BUTTON": "Close",
     "RESEND_SUCCESS": "Verification email sent successfully!"
