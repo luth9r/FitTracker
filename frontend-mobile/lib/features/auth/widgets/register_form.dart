@@ -1,9 +1,10 @@
-import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import '../../../services/notification_service.dart';
-import '../../../shared/widgets/validation_checklist.dart';
+import 'package:flutter/material.dart';
+
 import '../../../core/app_colors.dart';
 import '../../../core/auth_input_styles.dart';
+import '../../../services/notification_service.dart';
+import '../../../shared/widgets/validation_checklist.dart';
 
 class RegisterForm extends StatefulWidget {
   final bool isLoading;
@@ -29,7 +30,6 @@ class _RegisterFormState extends State<RegisterForm> {
   final _passwordController = TextEditingController();
   final _confirmController = TextEditingController();
   final _notificationService = NotificationService();
-
 
   final Map<String, FocusNode> _nodes = {
     'username': FocusNode(),
@@ -74,13 +74,13 @@ class _RegisterFormState extends State<RegisterForm> {
       });
     }
   }
-  
+
   bool _hasError(String field) {
     final state = widget.validations[field] ?? {};
     final isTouched = _touched[field] ?? false;
-    
+
     final hasInvalidChecks = state.containsValue(false);
-    
+
     return isTouched && hasInvalidChecks;
   }
 
@@ -99,28 +99,31 @@ class _RegisterFormState extends State<RegisterForm> {
     final password = _passwordController.text.trim();
     final confirm = _confirmController.text.trim();
 
-
-    if (username.isEmpty || email.isEmpty || password.isEmpty || confirm.isEmpty) {
+    if (username.isEmpty ||
+        email.isEmpty ||
+        password.isEmpty ||
+        confirm.isEmpty) {
       _notificationService.showToast(
-          'LOGIN.ERRORS.EMPTY_FIELDS'.tr(),
-          isError: true
+        'Errors.Auth.InvalidCredentials'.tr(),
+        isError: true,
       );
       return;
     }
-    
-    final allValid = _isFieldValid('username') &&
+
+    final allValid =
+        _isFieldValid('username') &&
         _isFieldValid('email') &&
         _isFieldValid('password') &&
         _isFieldValid('confirmPassword');
 
     if (!allValid) {
       _notificationService.showToast(
-          'LOGIN.ERRORS.VALIDATION_FAILED'.tr(),
-          isError: true
+        'Errors.Auth.InvalidCredentials'.tr(),
+        isError: true,
       );
       return;
     }
-    
+
     widget.onSubmit({
       'username': username,
       'email': email,
@@ -134,43 +137,45 @@ class _RegisterFormState extends State<RegisterForm> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _buildField(
-          label: 'REGISTER.USERNAME'.tr(),
-          placeholder: 'REGISTER.USERNAME_PLACEHOLDER'.tr(),
+          label: 'Register.Username'.tr(),
+          placeholder: 'Register.UsernamePlaceholder'.tr(),
           field: 'username',
           controller: _usernameController,
-          prefix: 'REGISTER.VALIDATION.USERNAME_',
+          prefix: 'Register.Validation.Username',
           icon: Icons.person_outline,
         ),
         _buildField(
-          label: 'LOGIN.EMAIL'.tr(),
-          placeholder: 'LOGIN.EMAIL_PLACEHOLDER'.tr(),
+          label: 'Login.Email'.tr(),
+          placeholder: 'Login.EmailPlaceholder'.tr(),
           field: 'email',
           controller: _emailController,
-          prefix: 'REGISTER.VALIDATION.EMAIL_',
+          prefix: 'Register.Validation.Email',
           icon: Icons.email_outlined,
           keyboardType: TextInputType.emailAddress,
         ),
         _buildField(
-          label: 'LOGIN.PASSWORD'.tr(),
-          placeholder: 'LOGIN.PASSWORD_PLACEHOLDER'.tr(),
+          label: 'Login.Password'.tr(),
+          placeholder: 'Login.PasswordPlaceholder'.tr(),
           field: 'password',
           controller: _passwordController,
-          prefix: 'REGISTER.VALIDATION.PASSWORD_',
+          prefix: 'Register.Validation.Password',
           icon: Icons.lock_outline,
           isPassword: true,
           obscureText: _obscurePassword,
-          onToggleVisibility: () => setState(() => _obscurePassword = !_obscurePassword),
+          onToggleVisibility: () =>
+              setState(() => _obscurePassword = !_obscurePassword),
         ),
         _buildField(
-          label: 'LOGIN.CONFIRM_PASSWORD'.tr(),
-          placeholder: 'LOGIN.CONFIRM_PASSWORD_PLACEHOLDER'.tr(),
+          label: 'Login.ConfirmPassword'.tr(),
+          placeholder: 'Login.ConfirmPasswordPlaceholder'.tr(),
           field: 'confirmPassword',
           controller: _confirmController,
-          prefix: 'REGISTER.VALIDATION.CONFIRM_',
+          prefix: 'Register.Validation.Confirm',
           icon: Icons.lock_outline,
           isPassword: true,
           obscureText: _obscureConfirm,
-          onToggleVisibility: () => setState(() => _obscureConfirm = !_obscureConfirm),
+          onToggleVisibility: () =>
+              setState(() => _obscureConfirm = !_obscureConfirm),
         ),
         const SizedBox(height: 24),
         _buildSubmitButton(),
@@ -215,16 +220,20 @@ class _RegisterFormState extends State<RegisterForm> {
             hasError: hasError,
             prefixIcon: Icon(
               icon,
-              color: hasError ? AppColors.colorAccentDanger : AppColors.colorTextSecondary,
+              color: hasError
+                  ? AppColors.colorAccentDanger
+                  : AppColors.colorTextSecondary,
             ),
             suffixIcon: isPassword
                 ? IconButton(
-              icon: Icon(
-                obscureText ? Icons.visibility_outlined : Icons.visibility_off_outlined,
-                color: AppColors.colorTextSecondary,
-              ),
-              onPressed: onToggleVisibility,
-            )
+                    icon: Icon(
+                      obscureText
+                          ? Icons.visibility_outlined
+                          : Icons.visibility_off_outlined,
+                      color: AppColors.colorTextSecondary,
+                    ),
+                    onPressed: onToggleVisibility,
+                  )
                 : null,
           ),
         ),
@@ -264,20 +273,20 @@ class _RegisterFormState extends State<RegisterForm> {
         ),
         child: widget.isLoading
             ? const SizedBox(
-          width: 20,
-          height: 20,
-          child: CircularProgressIndicator(
-            strokeWidth: 2,
-            color: Colors.white,
-          ),
-        )
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Colors.white,
+                ),
+              )
             : Text(
-          'LOGIN.SUBMIT_BUTTON_SIGNUP'.tr(),
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
+                'Login.SubmitButtonSignup'.tr(),
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
       ),
     );
   }

@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
+
 import '../../../core/app_colors.dart';
 import '../../../core/auth_input_styles.dart';
 import '../../../services/notification_service.dart';
@@ -78,8 +79,11 @@ class _LoginFormState extends State<LoginForm> {
     return password.isNotEmpty;
   }
 
-  bool get _hasEmailError => _emailTouched && !_validateEmail(_emailController.text);
-  bool get _hasPasswordError => _passwordTouched && !_validatePassword(_passwordController.text);
+  bool get _hasEmailError =>
+      _emailTouched && !_validateEmail(_emailController.text);
+
+  bool get _hasPasswordError =>
+      _passwordTouched && !_validatePassword(_passwordController.text);
 
   void _handleSubmit() {
     setState(() {
@@ -92,20 +96,20 @@ class _LoginFormState extends State<LoginForm> {
 
     if (email.isEmpty || password.isEmpty) {
       _notificationService.showToast(
-          'LOGIN.ERRORS.EMPTY_FIELDS'.tr(),
-          isError: true
+        'Errors.Auth.InvalidCredentials'.tr(),
+        isError: true,
       );
       return;
     }
-    
+
     if (!_validateEmail(email) || !_validatePassword(password)) {
       _notificationService.showToast(
-          'LOGIN.ERRORS.INVALID_FIELDS'.tr(),
-          isError: true
+        'Errors.Auth.InvalidCredentials'.tr(),
+        isError: true,
       );
       return;
     }
-    
+
     widget.onSubmit(email, password);
   }
 
@@ -131,13 +135,15 @@ class _LoginFormState extends State<LoginForm> {
           onChanged: (_) => setState(() {}),
           style: const TextStyle(color: AppColors.colorTextPrimary),
           decoration: AuthInputStyles.authInputDecoration(
-            labelText: 'LOGIN.EMAIL'.tr(),
-            hintText: 'LOGIN.EMAIL_PLACEHOLDER'.tr(),
-            errorText: _hasEmailError ? 'LOGIN.EMAIL_INVALID'.tr() : null,
+            labelText: 'Login.Email'.tr(),
+            hintText: 'Login.EmailPlaceholder'.tr(),
+            errorText: _hasEmailError ? 'Login.EmailInvalid'.tr() : null,
             hasError: _hasEmailError,
             prefixIcon: Icon(
               Icons.email_outlined,
-              color: _hasEmailError ? AppColors.colorAccentDanger : AppColors.colorTextSecondary,
+              color: _hasEmailError
+                  ? AppColors.colorAccentDanger
+                  : AppColors.colorTextSecondary,
             ),
           ),
         ),
@@ -152,20 +158,25 @@ class _LoginFormState extends State<LoginForm> {
           onChanged: (_) => setState(() {}),
           style: const TextStyle(color: AppColors.colorTextPrimary),
           decoration: AuthInputStyles.authInputDecoration(
-            labelText: 'LOGIN.PASSWORD'.tr(),
-            hintText: 'LOGIN.PASSWORD_PLACEHOLDER'.tr(),
-            errorText: _hasPasswordError ? 'LOGIN.PASSWORD_REQUIRED'.tr() : null,
+            labelText: 'Login.Password'.tr(),
+            hintText: 'Login.PasswordPlaceholder'.tr(),
+            errorText: _hasPasswordError ? 'Login.PasswordRequired'.tr() : null,
             hasError: _hasPasswordError,
             prefixIcon: Icon(
               Icons.lock_outline,
-              color: _hasPasswordError ? AppColors.colorAccentDanger : AppColors.colorTextSecondary,
+              color: _hasPasswordError
+                  ? AppColors.colorAccentDanger
+                  : AppColors.colorTextSecondary,
             ),
             suffixIcon: IconButton(
               icon: Icon(
-                _obscurePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                _obscurePassword
+                    ? Icons.visibility_outlined
+                    : Icons.visibility_off_outlined,
                 color: AppColors.colorTextSecondary,
               ),
-              onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+              onPressed: () =>
+                  setState(() => _obscurePassword = !_obscurePassword),
             ),
           ),
         ),
@@ -187,7 +198,7 @@ class _LoginFormState extends State<LoginForm> {
                 fontWeight: FontWeight.w500,
               ),
             ),
-            child: Text('LOGIN.FORGOT_PASSWORD'.tr()),
+            child: Text('Login.ForgotPassword'.tr()),
           ),
         ),
 
@@ -216,20 +227,20 @@ class _LoginFormState extends State<LoginForm> {
         ),
         child: widget.isLoading
             ? const SizedBox(
-          height: 20,
-          width: 20,
-          child: CircularProgressIndicator(
-            strokeWidth: 2,
-            color: Colors.white,
-          ),
-        )
+                height: 20,
+                width: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Colors.white,
+                ),
+              )
             : Text(
-          'LOGIN.SUBMIT_BUTTON_LOGIN'.tr(),
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
+                'Login.SubmitButtonLogin'.tr(),
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
       ),
     );
   }

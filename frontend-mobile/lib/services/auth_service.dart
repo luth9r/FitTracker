@@ -1,9 +1,10 @@
+import 'dart:io';
+
+import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
-import 'package:cookie_jar/cookie_jar.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:path_provider/path_provider.dart';
-import 'dart:io';
 
 // Models
 class LoginResponse {
@@ -30,10 +31,7 @@ class RegisterResponse {
   final String username;
   final String email;
 
-  RegisterResponse({
-    required this.username,
-    required this.email,
-  });
+  RegisterResponse({required this.username, required this.email});
 
   factory RegisterResponse.fromJson(Map<String, dynamic> json) {
     return RegisterResponse(
@@ -55,29 +53,28 @@ class RegisterPayload {
   });
 
   Map<String, dynamic> toJson() {
-    return {
-      'username': username,
-      'email': email,
-      'password': password,
-    };
+    return {'username': username, 'email': email, 'password': password};
   }
 }
 
 class AuthService {
   // Singleton pattern
   static final AuthService _instance = AuthService._internal();
+
   factory AuthService() => _instance;
+
   AuthService._internal() {
     _initDio();
   }
 
   final GoogleSignIn _googleSignIn = GoogleSignIn(
-    serverClientId: '719113265141-v8ckgmea9bob1nd65f4396n93o16dcqd.apps.googleusercontent.com',
+    serverClientId:
+        '719113265141-v8ckgmea9bob1nd65f4396n93o16dcqd.apps.googleusercontent.com',
     scopes: ['email', 'profile'],
   );
 
   late final Dio _dio;
-  
+
   String get _baseUrl {
     if (Platform.isAndroid) {
       return 'http://192.168.1.111:5000';
@@ -87,30 +84,35 @@ class AuthService {
   }
 
   String get _apiUrl => '$_baseUrl/api/auth';
+
   String get _userApiUrl => '$_baseUrl/api/user';
 
   void _initDio() {
-    _dio = Dio(BaseOptions(
-      connectTimeout: const Duration(seconds: 10),
-      receiveTimeout: const Duration(seconds: 10),
-      sendTimeout: const Duration(seconds: 10),
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
-      validateStatus: (status) {
-        return status != null && status < 500;
-      },
-    ));
-    
-    _dio.interceptors.add(LogInterceptor(
-      requestBody: true,
-      responseBody: true,
-      error: true,
-      requestHeader: true,
-      responseHeader: false,
-      request: true,
-    ));
+    _dio = Dio(
+      BaseOptions(
+        connectTimeout: const Duration(seconds: 10),
+        receiveTimeout: const Duration(seconds: 10),
+        sendTimeout: const Duration(seconds: 10),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        validateStatus: (status) {
+          return status != null && status >= 200 && status < 300;
+        },
+      ),
+    );
+
+    _dio.interceptors.add(
+      LogInterceptor(
+        requestBody: true,
+        responseBody: true,
+        error: true,
+        requestHeader: true,
+        responseHeader: false,
+        request: true,
+      ),
+    );
 
     _initCookieManager();
   }
@@ -134,21 +136,20 @@ class AuthService {
       print('[AUTH] Attempting login for: $email');
       final response = await _dio.post(
         '$_apiUrl/login',
-        data: {
-          'email': email,
-          'password': password,
-        },
+        data: {'email': email, 'password': password},
       );
 
-      if (response.statusCode == 200) {
-        print('[AUTH] Login successful');
-        return LoginResponse.fromJson(response.data);
-      } else {
-        throw Exception(response.data['message'] ?? 'Login failed');
-      }
+      // Если дошли сюда - значит 2xx (validateStatus пропустил)
+      print('[AUTH] Login successful');
+      return LoginResponse.fromJson(response.data);
     } on DioException catch (e) {
-      print('[AUTH] Login error: ${e.message}');
-      throw _handleDioError(e);
+      print(
+        '[AUTH] Login DioException: ${e.response?.statusCode} - ${e.response?.data}',
+      );
+      rethrow;
+    } catch (e) {
+      print('[AUTH] Login unexpected error: $e');
+      rethrow;
     }
   }
 
@@ -161,32 +162,20 @@ class AuthService {
         data: payload.toJson(),
       );
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        print('[AUTH] Registration successful');
-        return RegisterResponse.fromJson(response.data);
-      } else {
-        throw Exception(response.data['message'] ?? 'Registration failed');
-      }
+      print('[AUTH] Registration successful');
+      return RegisterResponse.fromJson(response.data);
     } on DioException catch (e) {
-      print('[AUTH] Registration error: ${e.message}');
-      throw _handleDioError(e);
-    }
-  }
-
-  /// Verify Email
-  Future<LoginResponse> verifyEmail(String token) async {
-    try {
-      print('[AUTH] Verifying email with token');
-      final response = await _dio.post(
-        '$_apiUrl/verify-email',
-        queryParameters: {'token': token},
+      print(
+        '[AUTH] Registration DioException: ${e.response?.statusCode} - ${e.response?.data}',
       );
-      return LoginResponse.fromJson(response.data);
-    } on DioException catch (e) {
-      throw _handleDioError(e);
+      rethrow;
+    } catch (e) {
+      print('[AUTH] Registration unexpected error: $e');
+      rethrow;
     }
   }
 
+  /// Google Sign In (Native)
   Future<LoginResponse> signInWithGoogleNative() async {
     try {
       print('[AUTH] Starting Native Google Sign-In');
@@ -197,7 +186,7 @@ class AuthService {
       if (googleUser == null) {
         throw Exception('User cancelled login');
       }
-      
+
       final String? authCode = googleUser.serverAuthCode;
 
       if (authCode == null) {
@@ -205,25 +194,22 @@ class AuthService {
       }
 
       print('[AUTH] Received Auth Code, sending to backend...');
-      
+
       final response = await _dio.post(
         '$_apiUrl/mobile-google-auth',
-        data: {
-          'code': authCode,
-        },
+        data: {'code': authCode},
       );
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        print('[AUTH] Native Google Auth successful');
-        return LoginResponse.fromJson(response.data);
-      } else {
-        throw Exception(response.data['message'] ?? 'Backend auth failed');
-      }
+      print('[AUTH] Native Google Auth successful');
+      return LoginResponse.fromJson(response.data);
     } on DioException catch (e) {
-      throw _handleDioError(e);
+      print(
+        '[AUTH] Google auth DioException: ${e.response?.statusCode} - ${e.response?.data}',
+      );
+      rethrow;
     } catch (e) {
       print('[AUTH] Native Google Error: $e');
-      throw Exception(e.toString());
+      rethrow;
     }
   }
 
@@ -243,13 +229,18 @@ class AuthService {
   Future<void> resendVerificationEmail(String email) async {
     try {
       print('[AUTH] Resending verification email to: $email');
-      await _dio.post(
-        '$_apiUrl/resend-verification',
-        data: {'email': email},
-      );
-      print('[AUTH] Verification email sent');
+      await _dio.post('$_apiUrl/resend-verification', data: {'email': email});
+
+      // Если дошли сюда без exception - значит успех (2xx включая 204)
+      print('[AUTH] Verification email sent successfully');
     } on DioException catch (e) {
-      throw _handleDioError(e);
+      print(
+        '[AUTH] Resend verification DioException: ${e.response?.statusCode} - ${e.response?.data}',
+      );
+      rethrow;
+    } catch (e) {
+      print('[AUTH] Resend verification unexpected error: $e');
+      rethrow;
     }
   }
 
@@ -257,13 +248,17 @@ class AuthService {
   Future<void> forgotPassword(String email) async {
     try {
       print('[AUTH] Sending password reset email to: $email');
-      await _dio.post(
-        '$_apiUrl/forgot-password',
-        data: {'email': email},
-      );
-      print('[AUTH] Password reset email sent');
+      await _dio.post('$_apiUrl/forgot-password', data: {'email': email});
+
+      print('[AUTH] Password reset email sent successfully');
     } on DioException catch (e) {
-      throw _handleDioError(e);
+      print(
+        '[AUTH] Forgot password DioException: ${e.response?.statusCode} - ${e.response?.data}',
+      );
+      rethrow;
+    } catch (e) {
+      print('[AUTH] Forgot password unexpected error: $e');
+      rethrow;
     }
   }
 
@@ -278,42 +273,6 @@ class AuthService {
       print('[AUTH] Logged out - cookies cleared');
     } catch (e) {
       print('[AUTH] Logout error: $e');
-    }
-  }
-
-  /// Error Handler
-  Exception _handleDioError(DioException e) {
-    switch (e.type) {
-      case DioExceptionType.connectionTimeout:
-      case DioExceptionType.sendTimeout:
-      case DioExceptionType.receiveTimeout:
-        return Exception('Connection timeout. Please check your internet connection.');
-
-      case DioExceptionType.badResponse:
-        final statusCode = e.response?.statusCode;
-        final message = e.response?.data['message'];
-
-        if (statusCode == 401) {
-          return Exception('Invalid credentials');
-        } else if (statusCode == 409) {
-          return Exception('User already exists');
-        } else if (statusCode == 400) {
-          return Exception(message ?? 'Invalid request');
-        } else {
-          return Exception(message ?? 'Server error');
-        }
-
-      case DioExceptionType.cancel:
-        return Exception('Request cancelled');
-
-      case DioExceptionType.unknown:
-        if (e.error.toString().contains('SocketException')) {
-          return Exception('Cannot connect to server. Please check your connection.');
-        }
-        return Exception('Unexpected error: ${e.message}');
-
-      default:
-        return Exception('Network error');
     }
   }
 }

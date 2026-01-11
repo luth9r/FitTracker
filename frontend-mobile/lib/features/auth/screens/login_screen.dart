@@ -1,10 +1,13 @@
-import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+
+import '../../../core/app_colors.dart';
 import '../../../services/auth_service.dart';
+import '../../../services/error_service.dart';
 import '../../../services/notification_service.dart';
 import '../../../services/validation_service.dart';
-import '../../../core/app_colors.dart';
+import '../widgets/email_not_verified_modal.dart';
 import '../widgets/email_verification_modal.dart';
 import '../widgets/login_form.dart';
 import '../widgets/register_form.dart';
@@ -20,6 +23,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _authService = AuthService();
   final _validator = ValidationService.instance;
   final _notificationService = NotificationService();
+  final _errorService = ErrorService.instance;
 
   bool _isGoogleLoading = false;
   bool _isFormLoading = false;
@@ -43,21 +47,25 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {
       switch (field) {
         case 'username':
-          registrationsValidations['username'] = _validator.validateUsername(value);
+          registrationsValidations['username'] = _validator.validateUsername(
+            value,
+          );
           break;
         case 'email':
           registrationsValidations['email'] = _validator.validateEmail(value);
           break;
         case 'password':
           _currentPassword = value;
-          registrationsValidations['password'] = _validator.validatePassword(value);
-          registrationsValidations['confirmPassword'] =
-              _validator.validateConfirm(_currentPassword, _currentConfirmPassword);
+          registrationsValidations['password'] = _validator.validatePassword(
+            value,
+          );
+          registrationsValidations['confirmPassword'] = _validator
+              .validateConfirm(_currentPassword, _currentConfirmPassword);
           break;
         case 'confirmPassword':
           _currentConfirmPassword = value;
-          registrationsValidations['confirmPassword'] =
-              _validator.validateConfirm(_currentPassword, value);
+          registrationsValidations['confirmPassword'] = _validator
+              .validateConfirm(_currentPassword, value);
           break;
       }
     });
@@ -68,8 +76,10 @@ class _LoginScreenState extends State<LoginScreen> {
       _authMode = mode;
       _currentPassword = '';
       _currentConfirmPassword = '';
-      registrationsValidations.forEach((k, v) =>
-      registrationsValidations[k] = v.map((key, value) => MapEntry(key, false))
+      registrationsValidations.forEach(
+        (k, v) => registrationsValidations[k] = v.map(
+          (key, value) => MapEntry(key, false),
+        ),
       );
     });
   }
@@ -79,7 +89,7 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       final response = await _authService.login(email, password);
       _notificationService.showToast(
-          'LOGIN.SUCCESS.LOGIN'.tr() + ' Welcome back, ${response.username}!'
+        'Login.Success.Login'.tr(args: [response.username]),
       );
 
       Future.delayed(const Duration(milliseconds: 500), () {
@@ -89,12 +99,32 @@ class _LoginScreenState extends State<LoginScreen> {
       });
     } catch (e) {
       print('[ERROR] Login failed: $e');
-      _notificationService.showToast(_getLocalizedError(e), isError: true);
+      _handleLoginError(e, email);
     } finally {
       if (mounted) {
         setState(() => _isFormLoading = false);
       }
     }
+  }
+
+  void _handleLoginError(dynamic error, String email) {
+    if (_errorService.isErrorCode(error, 'User.EmailNotVerified')) {
+      _showEmailNotVerifiedPrompt(email);
+      return;
+    }
+
+    if (_errorService.isErrorCode(error, 'User.RateLimitExceeded')) {
+      _notificationService.showToast(
+        'Errors.User.RateLimitExceeded'.tr(),
+        isError: true,
+      );
+      return;
+    }
+
+    _notificationService.showToast(
+      _errorService.handleError(error),
+      isError: true,
+    );
   }
 
   Future<void> _onRegisterSubmit(Map<String, String> data) async {
@@ -108,10 +138,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
       await _authService.register(payload);
       _showEmailVerificationModal(data['email']!);
-      _notificationService.showToast('LOGIN.SUCCESS.REGISTER'.tr());
+      _notificationService.showToast('Login.Success.Register'.tr());
     } catch (e) {
       print('[ERROR] Registration failed: $e');
-      _notificationService.showToast(_getLocalizedError(e), isError: true);
+
+      _notificationService.showToast(
+        _errorService.handleError(e),
+        isError: true,
+      );
     } finally {
       if (mounted) {
         setState(() => _isFormLoading = false);
@@ -138,7 +172,6 @@ class _LoginScreenState extends State<LoginScreen> {
           Navigator.pushReplacementNamed(context, '/');
         });
       }
-
     } catch (e) {
       print('[ERROR] Google Sign-In failed: $e');
 
@@ -147,7 +180,10 @@ class _LoginScreenState extends State<LoginScreen> {
         return;
       }
 
-      _notificationService.showToast(_getLocalizedError(e), isError: true);
+      _notificationService.showToast(
+        _errorService.handleError(e),
+        isError: true,
+      );
     } finally {
       if (mounted) {
         setState(() => _isGoogleLoading = false);
@@ -155,60 +191,14 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  String _getLocalizedError(dynamic error) {
-    final errorString = error.toString().toLowerCase();
-
-    if (errorString.contains('socketexception') ||
-        errorString.contains('network') ||
-        errorString.contains('connection')) {
-      return 'LOGIN.ERRORS.API_UNREACHABLE'.tr();
-    }
-
-    if (errorString.contains('google')) {
-      if (errorString.contains('config')) {
-        return 'LOGIN.ERRORS.GOOGLE_CONFIG_ERROR'.tr();
-      }
-      return 'LOGIN.ERRORS.UNKNOWN_GOOGLE'.tr();
-    }
-
-    if (errorString.contains('password')) {
-      if (errorString.contains('match')) {
-        return 'LOGIN.ERRORS.PASSWORDS_DO_NOT_MATCH'.tr();
-      }
-      if (errorString.contains('weak') || errorString.contains('length')) {
-        return 'LOGIN.ERRORS.PASSWORD_MIN_LENGTH'.tr();
-      }
-      if (errorString.contains('letter')) {
-        return 'LOGIN.ERRORS.PASSWORD_ONE_LETTER'.tr();
-      }
-      if (errorString.contains('number')) {
-        return 'LOGIN.ERRORS.PASSWORD_ONE_NUMBER'.tr();
-      }
-    }
-
-    if (errorString.contains('username') && errorString.contains('short')) {
-      return 'LOGIN.ERRORS.USERNAME_TOO_SHORT'.tr();
-    }
-
-    if (errorString.contains('email') && errorString.contains('invalid')) {
-      return 'LOGIN.EMAIL_INVALID'.tr();
-    }
-
-    if (errorString.contains('validation')) {
-      return 'LOGIN.ERRORS.VALIDATION_FAILED'.tr();
-    }
-
-    if (errorString.contains('empty') || errorString.contains('required')) {
-      return 'LOGIN.ERRORS.EMPTY_FIELDS'.tr();
-    }
-
-    String cleanError = error.toString().replaceAll('Exception: ', '');
-
-    if (cleanError.length < 100 && !cleanError.contains('Error:')) {
-      return cleanError;
-    }
-
-    return 'LOGIN.ERRORS.UNKNOWN'.tr();
+  void _showEmailNotVerifiedPrompt(String email) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      isDismissible: true,
+      builder: (context) => EmailNotVerifiedPromptModal(email: email),
+    );
   }
 
   void _showEmailVerificationModal(String email) {
@@ -237,9 +227,7 @@ class _LoginScreenState extends State<LoginScreen> {
             return SingleChildScrollView(
               physics: const ClampingScrollPhysics(),
               child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  minHeight: availableHeight,
-                ),
+                constraints: BoxConstraints(minHeight: availableHeight),
                 child: IntrinsicHeight(
                   child: Column(
                     children: [
@@ -256,15 +244,15 @@ class _LoginScreenState extends State<LoginScreen> {
                             const SizedBox(height: 24),
                             _authMode == 'login'
                                 ? LoginForm(
-                              isLoading: _isFormLoading,
-                              onSubmit: _onLoginSubmit,
-                            )
+                                    isLoading: _isFormLoading,
+                                    onSubmit: _onLoginSubmit,
+                                  )
                                 : RegisterForm(
-                              isLoading: _isFormLoading,
-                              validations: registrationsValidations,
-                              onValidate: _onValidateChange,
-                              onSubmit: _onRegisterSubmit,
-                            ),
+                                    isLoading: _isFormLoading,
+                                    validations: registrationsValidations,
+                                    onValidate: _onValidateChange,
+                                    onSubmit: _onRegisterSubmit,
+                                  ),
                             const SizedBox(height: 20),
                             _buildDivider(),
                             const SizedBox(height: 20),
@@ -274,9 +262,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           ],
                         ),
                       ),
-                      
+
                       const Spacer(),
-                      
+
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 24),
                         child: Column(
@@ -310,7 +298,7 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
       const SizedBox(height: 16),
       Text(
-        'LOGIN.TITLE'.tr(),
+        'Login.Title'.tr(),
         style: const TextStyle(
           fontSize: 30,
           fontWeight: FontWeight.bold,
@@ -318,7 +306,7 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
       Text(
-        'LOGIN.SUBTITLE'.tr(),
+        'Login.Subtitle'.tr(),
         style: const TextStyle(
           color: AppColors.colorTextSecondary,
           fontSize: 14,
@@ -335,8 +323,8 @@ class _LoginScreenState extends State<LoginScreen> {
     ),
     child: Row(
       children: [
-        _toggleButton('login', 'LOGIN.SIGN_IN'.tr()),
-        _toggleButton('register', 'LOGIN.SIGN_UP'.tr()),
+        _toggleButton('login', 'Login.SignIn'.tr()),
+        _toggleButton('register', 'Login.SignUp'.tr()),
       ],
     ),
   );
@@ -375,7 +363,7 @@ class _LoginScreenState extends State<LoginScreen> {
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Text(
-          'LOGIN.OR'.tr(),
+          'Login.Or'.tr(),
           style: const TextStyle(
             color: AppColors.colorTextSecondary,
             fontSize: 13,
@@ -392,7 +380,9 @@ class _LoginScreenState extends State<LoginScreen> {
     return SizedBox(
       width: double.infinity,
       child: OutlinedButton(
-        onPressed: (_isFormLoading || _isGoogleLoading) ? null : _handleGoogleSignIn,
+        onPressed: (_isFormLoading || _isGoogleLoading)
+            ? null
+            : _handleGoogleSignIn,
         style: OutlinedButton.styleFrom(
           padding: const EdgeInsets.all(12),
           side: const BorderSide(color: AppColors.colorBorderStrong),
@@ -403,37 +393,37 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         child: _isGoogleLoading
             ? const SizedBox(
-          width: 20,
-          height: 20,
-          child: CircularProgressIndicator(
-            strokeWidth: 2,
-            color: AppColors.colorTextPrimary,
-          ),
-        )
-            : Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SvgPicture.asset(
-              'assets/icons/google_logo.svg',
-              width: 20,
-              height: 20,
-            ),
-            const SizedBox(width: 12),
-            Flexible(
-              child: Text(
-                (_authMode == 'login'
-                    ? 'LOGIN.WITH_GOOGLE_LOGIN'
-                    : 'LOGIN.WITH_GOOGLE_SIGNUP')
-                    .tr(),
-                style: const TextStyle(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
                   color: AppColors.colorTextPrimary,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
                 ),
+              )
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SvgPicture.asset(
+                    'assets/icons/google_logo.svg',
+                    width: 20,
+                    height: 20,
+                  ),
+                  const SizedBox(width: 12),
+                  Flexible(
+                    child: Text(
+                      (_authMode == 'login'
+                              ? 'Login.WithGoogleLogin'
+                              : 'Login.WithGoogleSignup')
+                          .tr(),
+                      style: const TextStyle(
+                        color: AppColors.colorTextPrimary,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -444,8 +434,8 @@ class _LoginScreenState extends State<LoginScreen> {
       children: [
         Text(
           _authMode == 'login'
-              ? 'LOGIN.FOOTER_QUESTION_LOGIN'.tr()
-              : 'LOGIN.FOOTER_QUESTION_SIGNUP'.tr(),
+              ? 'Login.FooterQuestionLogin'.tr()
+              : 'Login.FooterQuestionSignup'.tr(),
           style: const TextStyle(
             fontSize: 14,
             color: AppColors.colorTextSecondary,
@@ -462,8 +452,8 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           child: Text(
             _authMode == 'login'
-                ? 'LOGIN.FOOTER_LINK_LOGIN'.tr()
-                : 'LOGIN.FOOTER_LINK_SIGNUP'.tr(),
+                ? 'Login.FooterLinkLogin'.tr()
+                : 'Login.FooterLinkSignup'.tr(),
             style: const TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,
@@ -486,18 +476,18 @@ class _LoginScreenState extends State<LoginScreen> {
           height: 1.5,
         ),
         children: [
-          TextSpan(text: '${'LOGIN.TERMS_TOP_1'.tr()} '),
+          TextSpan(text: '${'Login.TermsTop1'.tr()} '),
           TextSpan(
-            text: 'LOGIN.TERMS_LINK_1'.tr(),
+            text: 'Login.TermsLink1'.tr(),
             style: const TextStyle(
               color: AppColors.colorPrimary,
               fontWeight: FontWeight.w600,
               decoration: TextDecoration.underline,
             ),
           ),
-          TextSpan(text: ' ${'LOGIN.TERMS_TOP_2'.tr()} '),
+          TextSpan(text: ' ${'Login.TermsTop2'.tr()} '),
           TextSpan(
-            text: 'LOGIN.TERMS_LINK_2'.tr(),
+            text: 'Login.TermsLink2'.tr(),
             style: const TextStyle(
               color: AppColors.colorPrimary,
               fontWeight: FontWeight.w600,

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/app_colors.dart';
 import '../../../services/auth_service.dart';
+import '../../../services/error_service.dart';
 import '../../../services/notification_service.dart';
 
 class EmailNotVerifiedPromptModal extends StatefulWidget {
@@ -19,6 +20,7 @@ class _EmailNotVerifiedPromptModalState
     extends State<EmailNotVerifiedPromptModal> {
   final _authService = AuthService();
   final _notificationService = NotificationService();
+  final _errorService = ErrorService.instance;
 
   bool _isSending = false;
   bool _emailSent = false;
@@ -48,10 +50,17 @@ class _EmailNotVerifiedPromptModalState
       if (mounted) {
         setState(() => _isSending = false);
 
-        _notificationService.showToast(
-          'Verification.Prompt.SendFailed'.tr(),
-          isError: true,
-        );
+        if (_errorService.isErrorCode(e, 'User.RateLimitExceeded')) {
+          _notificationService.showToast(
+            'Errors.User.RateLimitExceeded'.tr(),
+            isError: true,
+          );
+        } else {
+          _notificationService.showToast(
+            _errorService.handleError(e),
+            isError: true,
+          );
+        }
       }
     }
   }
