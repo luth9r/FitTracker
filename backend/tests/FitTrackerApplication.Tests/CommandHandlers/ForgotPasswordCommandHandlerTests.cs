@@ -16,7 +16,6 @@ public class ForgotPasswordCommandHandlerTests
     private readonly Mock<IUserReadRepository> _mockReadRepository = new();
     private readonly Mock<IUserWriteRepository> _mockWriteRepository = new();
     private readonly Mock<IUnitOfWork> _mockUnit = new();
-    private readonly Mock<IRateLimitService> _mockRateLimitService = new();
     private readonly Mock<ILocalizationService> _mockLocalization = new();
     private readonly Mock<ILogger<ForgotPasswordCommandHandler>> _mockLogger = new();
 
@@ -26,7 +25,6 @@ public class ForgotPasswordCommandHandlerTests
             _mockReadRepository.Object,
             _mockWriteRepository.Object,
             _mockUnit.Object,
-            _mockRateLimitService.Object,
             _mockLocalization.Object,
             _mockLogger.Object);
     }
@@ -87,59 +85,6 @@ public class ForgotPasswordCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_RateLimitExceeded_ShouldReturnFailure()
-    {
-        // Arrange
-        var user = UserTestHelper.CreateTestUser("ratelimited", "ratelimited@example.com", isEmailVerified: true);
-        var command = new ForgotPasswordCommand(user.Email);
-        var culture = "en-US";
-        var errorMessage = "Rate limit exceeded";
-
-        _mockLocalization
-            .Setup(l => l.GetCurrentCulture())
-            .Returns(culture);
-
-        _mockReadRepository
-            .Setup(r => r.GetByEmailReadonlyAsync(command.Email, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(user);
-
-        _mockRateLimitService
-            .Setup(r => r.IsAllowedAsync(
-                $"ratelimit:password-reset:{user.Id}",
-                TimeSpan.FromMinutes(1)))
-            .ReturnsAsync(false);
-
-        _mockLocalization
-            .Setup(l => l.GetString("User.RateLimitExceeded", culture))
-            .Returns(errorMessage);
-
-        // Act
-        var result = await _handler.Handle(command, CancellationToken.None);
-
-        // Assert
-        result.IsFailure.Should().BeTrue();
-        result.Error.Should().Be(errorMessage);
-
-        _mockLocalization.Verify(
-            l => l.GetCurrentCulture(),
-            Times.Once);
-
-        _mockRateLimitService.Verify(
-            r => r.IsAllowedAsync(
-                $"ratelimit:password-reset:{user.Id}",
-                TimeSpan.FromMinutes(1)),
-            Times.Once);
-
-        _mockWriteRepository.Verify(
-            w => w.Update(It.IsAny<User>()),
-            Times.Never);
-
-        _mockUnit.Verify(
-            u => u.SaveChangesAsync(It.IsAny<CancellationToken>()),
-            Times.Never);
-    }
-
-    [Fact]
     public async Task Handle_ValidRequest_ShouldUpdateUserAndSaveChanges()
     {
         // Arrange
@@ -155,12 +100,6 @@ public class ForgotPasswordCommandHandlerTests
             .Setup(r => r.GetByEmailReadonlyAsync(command.Email, It.IsAny<CancellationToken>()))
             .ReturnsAsync(user);
 
-        _mockRateLimitService
-            .Setup(r => r.IsAllowedAsync(
-                $"ratelimit:password-reset:{user.Id}",
-                TimeSpan.FromMinutes(1)))
-            .ReturnsAsync(true);
-
         // Act
         var result = await _handler.Handle(command, CancellationToken.None);
 
@@ -169,14 +108,11 @@ public class ForgotPasswordCommandHandlerTests
         _mockReadRepository.Verify(
             r => r.GetByEmailReadonlyAsync(command.Email, It.IsAny<CancellationToken>()),
             Times.Once);
-        _mockRateLimitService.Verify(
-            r => r.IsAllowedAsync(
-                $"ratelimit:password-reset:{user.Id}",
-                TimeSpan.FromMinutes(1)),
-            Times.Once);
+
         _mockWriteRepository.Verify(
             w => w.Update(user),
             Times.Once);
+        
         _mockUnit.Verify(
             u => u.SaveChangesAsync(It.IsAny<CancellationToken>()),
             Times.Once);

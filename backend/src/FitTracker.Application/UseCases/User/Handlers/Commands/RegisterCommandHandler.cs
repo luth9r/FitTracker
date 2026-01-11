@@ -4,6 +4,7 @@ using FitTracker.Application.DTOs.Auth;
 using FitTracker.Application.Interfaces;
 using FitTracker.Application.UseCases.User.Commands;
 using FitTracker.Domain.Abstract.Interfaces;
+using FitTracker.Domain.Constants;
 using FluentValidation.Results;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -42,34 +43,33 @@ public sealed class RegisterCommandHandler(
         RegisterCommand request,
         CancellationToken cancellationToken)
     {
-        logger.LogDebug("Starting user registration process for username: {Username}", request.User.Username);
+        logger.LogDebug("Starting user registration process for username: {Username}", request.Username);
 
         var currentCulture = localization.GetCurrentCulture();
-        var userRequest = request.User;
 
-        var existingUser = await userReadRepository.GetByUsernameReadonlyAsync(userRequest.Username, cancellationToken);
+        var existingUser = await userReadRepository.GetByUsernameReadonlyAsync(request.Username, cancellationToken);
         if (existingUser != null)
         {
-            logger.LogWarning("Registration failed: Username {Username} already exists.", userRequest.Username);
+            logger.LogWarning("Registration failed: Username {Username} already exists.", request.Username);
             return ResultExtensions.ValidationFailure<RegisterResponse>(
-                nameof(userRequest.Username),
-                localization.GetString("Auth.Register.UsernameAlreadyExists"));
+                nameof(request.Username),
+                DomainErrors.Auth.UsernameAlreadyExists);
         }
 
         var existingUserByEmail =
-            await userReadRepository.GetByEmailReadonlyAsync(userRequest.Email, cancellationToken);
+            await userReadRepository.GetByEmailReadonlyAsync(request.Email, cancellationToken);
         if (existingUserByEmail != null)
         {
-            logger.LogWarning("Registration failed: Email {Email} already exists.", userRequest.Email);
+            logger.LogWarning("Registration failed: Email {Email} already exists.", request.Email);
             return ResultExtensions.ValidationFailure<RegisterResponse>(
-                nameof(userRequest.Email),
-                localization.GetString("Auth.Register.EmailAlreadyExists"));
+                nameof(request.Email),
+                DomainErrors.Auth.EmailAlreadyExists);
         }
 
         var user = UserEntity.Create(
-            userRequest.Username,
-            userRequest.Email,
-            hasher.HashPassword(userRequest.Password),
+            request.Username,
+            request.Email,
+            hasher.HashPassword(request.Password),
             culture: currentCulture);
 
         // Add to trackings

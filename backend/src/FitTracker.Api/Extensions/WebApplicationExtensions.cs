@@ -66,6 +66,8 @@ internal static class WebApplicationExtensions
         _ = app.UseAuthentication();
         _ = app.UseAuthorization();
 
+        _ = app.UseRateLimiter();
+
         _ = app.MapControllers();
 
         return app;

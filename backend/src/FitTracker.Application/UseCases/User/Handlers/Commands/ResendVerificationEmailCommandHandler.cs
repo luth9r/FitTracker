@@ -2,6 +2,7 @@ using CSharpFunctionalExtensions;
 using FitTracker.Application.Interfaces;
 using FitTracker.Application.UseCases.User.Commands;
 using FitTracker.Domain.Abstract.Interfaces;
+using FitTracker.Domain.Constants;
 using FluentValidation.Results;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -16,14 +17,12 @@ namespace FitTracker.Application.UseCases.User.Handlers.Commands;
 /// <param name="userWriteRepository">Repository for performing modifications on user data.</param>
 /// <param name="logger"> Logging service used to log information, warnings, and errors during processing. </param>
 /// <param name="localization"> Service for obtaining localization and cultural settings.</param>
-/// <param name="rateLimitService"> Service used to enforce rate-limiting rules.</param>
 /// <param name="unit">Unit of work responsible for committing transactional operations.</param>
 public sealed class ResendVerificationEmailCommandHandler(
     IUserReadRepository userReadRepository,
     IUserWriteRepository userWriteRepository,
     ILogger<ResendVerificationEmailCommandHandler> logger,
     ILocalizationService localization,
-    IRateLimitService rateLimitService,
     IUnitOfWork unit)
     : IRequestHandler<ResendVerificationEmailCommand, Result<Unit, ValidationResult>>
 {
@@ -57,15 +56,7 @@ public sealed class ResendVerificationEmailCommandHandler(
                 request.Email);
             return ResultExtensions.ValidationFailure<Unit>(
                 nameof(request.Email),
-                localization.GetString("User.EmailAlreadyVerified", culture));
-        }
-
-        var key = $"ratelimit:email:{user.Id}";
-        if (!await rateLimitService.IsAllowedAsync(key, TimeSpan.FromMinutes(1)))
-        {
-            return ResultExtensions.ValidationFailure<Unit>(
-                nameof(request.Email),
-                localization.GetString("User.RateLimitExceeded", culture));
+                DomainErrors.User.EmailAlreadyVerified);
         }
 
         user.RequestVerificationEmail(culture);

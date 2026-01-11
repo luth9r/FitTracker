@@ -28,6 +28,7 @@ public static class ApplicationInjection
         {
             _ = cfg.RegisterServicesFromAssembly(typeof(ApplicationInjection).Assembly);
             _ = cfg.AddOpenBehavior(typeof(LoggingBehavior<,>));
+            _ = cfg.AddOpenBehavior(typeof(RateLimitBehavior<,>));
         });
     }
 

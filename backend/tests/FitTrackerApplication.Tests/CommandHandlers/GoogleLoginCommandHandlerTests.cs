@@ -5,6 +5,7 @@ using FitTracker.Application.Interfaces;
 using FitTracker.Application.UseCases.User.Commands.Google;
 using FitTracker.Application.UseCases.User.Handlers.Commands.Google;
 using FitTracker.Domain.Abstract.Interfaces;
+using FitTracker.Domain.Constants;
 using FitTracker.Domain.Entities;
 using FitTrackerInfrastructure.Tests.Helpers;
 using FluentAssertions;
@@ -18,7 +19,6 @@ public class GoogleLoginCommandHandlerTests
     private readonly GoogleLoginCommandHandler _handler;
     private readonly Mock<IGoogleOAuthService> _mockGoogleOAuth;
     private readonly Mock<IJwtTokenGenerator> _mockJwtService;
-    private readonly Mock<ILocalizationService> _mockLocalization;
     private readonly Mock<ILogger<GoogleLoginCommandHandler>> _mockLogger;
     private readonly Mock<IMapper> _mockMapper;
     private readonly Mock<IUserReadRepository> _mockUserRepo;
@@ -29,7 +29,6 @@ public class GoogleLoginCommandHandlerTests
         _mockGoogleOAuth = new Mock<IGoogleOAuthService>();
         _mockUserRepo = new Mock<IUserReadRepository>();
         _mockJwtService = new Mock<IJwtTokenGenerator>();
-        _mockLocalization = new Mock<ILocalizationService>();
         _mockMapper = new Mock<IMapper>();
 
         _handler = new GoogleLoginCommandHandler(
@@ -37,7 +36,6 @@ public class GoogleLoginCommandHandlerTests
             _mockGoogleOAuth.Object,
             _mockUserRepo.Object,
             _mockJwtService.Object,
-            _mockLocalization.Object,
             _mockMapper.Object);
     }
 
@@ -45,7 +43,7 @@ public class GoogleLoginCommandHandlerTests
     public async Task Handle_InvalidGooglePayload_ShouldReturnValidationFailure()
     {
         // Arrange
-        var command = new GoogleLoginCommand(new GoogleLoginRequest("code", "verifier"));
+        var command = new GoogleLoginCommand("code", "verifier");
         var tokenResponse = new TokenResponse
         {
             AccessToken = "access_token",
@@ -64,16 +62,13 @@ public class GoogleLoginCommandHandlerTests
         _mockGoogleOAuth.Setup(s => s.ValidateAsync(tokenResponse.IdToken))
             .ReturnsAsync((GoogleTokenPayload)null);
 
-        _mockLocalization.Setup(l => l.GetString("Google.Auth.InvalidToken"))
-            .Returns("Invalid payload");
-
         // Act
         var result = await _handler.Handle(command, CancellationToken.None);
 
         // Assert
         result.IsFailure.Should().BeTrue();
         result.Error.Errors.Should().ContainSingle()
-            .Which.ErrorMessage.Should().Be("Invalid payload");
+            .Which.ErrorMessage.Should().Be(DomainErrors.Google.InvalidToken);
     }
 
     [Fact]
@@ -81,7 +76,7 @@ public class GoogleLoginCommandHandlerTests
     {
         // Arrange
         var user = UserTestHelper.CreateGoogleUser("googleuser@example.com");
-        var command = new GoogleLoginCommand(new GoogleLoginRequest("code", "verifier"));
+        var command = new GoogleLoginCommand("code", "verifier");
         var tokenResponse = new TokenResponse
         {
             AccessToken = "mock_access",
@@ -139,7 +134,7 @@ public class GoogleLoginCommandHandlerTests
     {
         // Arrange
         var user = UserTestHelper.CreateTestUser("fallbackuser", "fallback@example.com");
-        var command = new GoogleLoginCommand(new GoogleLoginRequest("code", "verifier"));
+        var command = new GoogleLoginCommand("code", "verifier");
         var tokenResponse = new TokenResponse
         {
             AccessToken = "access_token",
@@ -207,7 +202,7 @@ public class GoogleLoginCommandHandlerTests
     public async Task Handle_UserNotFound_ShouldReturnNotFoundError()
     {
         // Arrange
-        var command = new GoogleLoginCommand(new GoogleLoginRequest("code", "verifier"));
+        var command = new GoogleLoginCommand("code", "verifier");
         var tokenResponse = new TokenResponse
         {
             AccessToken = "access",
@@ -237,15 +232,12 @@ public class GoogleLoginCommandHandlerTests
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync((User)null);
 
-        _mockLocalization.Setup(l => l.GetString("Google.Auth.NotFound"))
-            .Returns("User not found");
-
         // Act
         var result = await _handler.Handle(command, CancellationToken.None);
 
         // Assert
         result.IsFailure.Should().BeTrue();
         result.Error.Errors.Should().ContainSingle()
-            .Which.ErrorMessage.Should().Be("User not found");
+            .Which.ErrorMessage.Should().Be(DomainErrors.Google.NotFound);
     }
 }

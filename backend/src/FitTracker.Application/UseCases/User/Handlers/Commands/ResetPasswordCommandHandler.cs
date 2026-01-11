@@ -3,6 +3,7 @@ using FitTracker.Application.Constants;
 using FitTracker.Application.Interfaces;
 using FitTracker.Application.UseCases.User.Commands;
 using FitTracker.Domain.Abstract.Interfaces;
+using FitTracker.Domain.Constants;
 using FluentValidation.Results;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -17,7 +18,6 @@ namespace FitTracker.Application.UseCases.User.Handlers.Commands;
 /// <param name="userWriteRepository">The user write repository.</param>
 /// <param name="unitOfWork">The unit of work.</param>
 /// <param name="jwtTokenValidator">The JWT token validator.</param>
-/// <param name="localization">The localization service.</param>
 /// <param name="hasher">The password hasher.</param>
 /// <param name="logger">The logger.</param>
 public sealed class ResetPasswordCommandHandler(
@@ -25,7 +25,6 @@ public sealed class ResetPasswordCommandHandler(
     IUserWriteRepository userWriteRepository,
     IUnitOfWork unitOfWork,
     IJwtTokenValidator jwtTokenValidator,
-    ILocalizationService localization,
     IPasswordHasher hasher,
     ILogger<ResetPasswordCommandHandler> logger) : IRequestHandler<ResetPasswordCommand, Result<Unit, ValidationResult>>
 {
@@ -38,7 +37,7 @@ public sealed class ResetPasswordCommandHandler(
         if (validationResult.IsFailure)
         {
             logger.LogWarning("Password reset failed: {Error}", validationResult.Error);
-            return ResultExtensions.ValidationFailure<Unit>(string.Empty, localization.GetString("Auth.InvalidToken"));
+            return ResultExtensions.ValidationFailure<Unit>(string.Empty, DomainErrors.Auth.InvalidToken);
         }
 
         var userId = validationResult.Value;
@@ -47,7 +46,7 @@ public sealed class ResetPasswordCommandHandler(
         if (user == null)
         {
             logger.LogWarning("User not found for email verification. UserId: {UserId}", userId);
-            return ResultExtensions.ValidationFailure<Unit>(string.Empty, localization.GetString("User.UserNotFound"));
+            return ResultExtensions.ValidationFailure<Unit>(string.Empty, DomainErrors.User.NotFound);
         }
 
         var passwordHash = hasher.HashPassword(request.NewPassword);

@@ -4,6 +4,7 @@ using FitTracker.Application.DTOs.Auth;
 using FitTracker.Application.Interfaces;
 using FitTracker.Application.UseCases.User.Commands.Google;
 using FitTracker.Domain.Abstract.Interfaces;
+using FitTracker.Domain.Constants;
 using FluentValidation.Results;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -21,7 +22,6 @@ namespace FitTracker.Application.UseCases.User.Handlers.Commands.Google;
 /// <param name="userWriteRepository">The <see cref="IUserWriteRepository" />.</param>
 /// <param name="unitOfWork">The <see cref="IUnitOfWork" />.</param>
 /// <param name="jwtTokenService">The <see cref="IJwtTokenGenerator" />.</param>
-/// <param name="localization">The <see cref="ILocalizationService" />.</param>
 /// <param name="mapper">The <see cref="IMapper" />.</param>
 public sealed class GoogleRegisterCommandHandler(
     ILogger<GoogleRegisterCommandHandler> logger,
@@ -30,7 +30,6 @@ public sealed class GoogleRegisterCommandHandler(
     IUserWriteRepository userWriteRepository,
     IUnitOfWork unitOfWork,
     IJwtTokenGenerator jwtTokenService,
-    ILocalizationService localization,
     IMapper mapper) : IRequestHandler<GoogleRegisterCommand, Result<LoginResponse, ValidationResult>>
 {
     /// <summary>
@@ -45,8 +44,8 @@ public sealed class GoogleRegisterCommandHandler(
     {
         logger.LogDebug("Starting Google registration process.");
         var tokenResponse = await googleOAuthService.ExchangeCodeForTokensAsync(
-            request.Request.Code,
-            request.Request.CodeVerifier);
+            request.Code,
+            request.CodeVerifier);
 
         logger.LogDebug("Attempting to validate Google IdToken.");
 
@@ -56,8 +55,8 @@ public sealed class GoogleRegisterCommandHandler(
         {
             logger.LogWarning("Google Token validation failed.");
             return ResultExtensions.ValidationFailure<LoginResponse>(
-                nameof(request.Request.Code),
-                localization.GetString("Google.Auth.InvalidToken"));
+                nameof(request.Code),
+                DomainErrors.Google.InvalidToken);
         }
 
         if (await userReadRepository.GetByEmailReadonlyAsync(googlePayload.Email, cancellationToken) != null ||
@@ -68,8 +67,8 @@ public sealed class GoogleRegisterCommandHandler(
                 googlePayload.Email,
                 googlePayload.GoogleId);
             return ResultExtensions.ValidationFailure<LoginResponse>(
-                nameof(request.Request.Code),
-                localization.GetString("Auth.Register.AccountAlreadyExists"));
+                nameof(request.Code),
+                DomainErrors.Auth.AccountAlreadyExists);
         }
 
         var user = UserEntity.CreateGoogleUser(

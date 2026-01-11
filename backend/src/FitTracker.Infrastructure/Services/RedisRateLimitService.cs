@@ -14,7 +14,13 @@ public sealed class RedisRateLimitService(IConnectionMultiplexer redis) : IRateL
     {
         var db = redis.GetDatabase();
 
-        // Set if Not Exists
-        return await db.StringSetAsync(key, "locked", expiration, When.NotExists);
+        var count = await db.StringIncrementAsync(key);
+
+        if (count == 1)
+        {
+            await db.KeyExpireAsync(key, expiration);
+        }
+
+        return count <= 1;
     }
 }

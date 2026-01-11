@@ -1,5 +1,4 @@
 using FitTracker.Application.DTOs.Auth;
-using FitTracker.Application.Interfaces;
 using FitTracker.Application.Validators.Extensions;
 using FluentValidation;
 
@@ -7,15 +6,15 @@ namespace FitTracker.Application.Validators;
 
 public class RegisterRequestValidator : AbstractValidator<RegisterRequest>
 {
-    public RegisterRequestValidator(ILocalizationService localization)
+    public RegisterRequestValidator()
     {
         RuleFor(x => x.Username)
-            .WithUsernameRules(localization);
+            .WithUsernameRules();
 
         RuleFor(x => x.Email)
-            .WithEmailRules(localization);
+            .WithEmailRules();
 
         RuleFor(x => x.Password)
-            .WithPasswordRules(localization);
+            .WithPasswordRules();
     }
 }

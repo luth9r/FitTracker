@@ -1,7 +1,6 @@
 using AutoMapper;
 using CSharpFunctionalExtensions;
 using FitTracker.Application.DTOs.Exercise;
-using FitTracker.Application.Interfaces;
 using FitTracker.Application.UseCases.Exercise.Queries;
 using FitTracker.Domain.Abstract.Interfaces;
 using MediatR;
@@ -18,7 +17,6 @@ namespace FitTracker.Application.UseCases.Exercise.Handlers.Queries;
 public sealed class GetExercisesQueryHandler(
     IExerciseReadRepository readRepository,
     IMapper mapper,
-    ILocalizationService localization,
     ILogger<GetExercisesQueryHandler> logger)
     : IRequestHandler<GetExerciseQuery, Result<IReadOnlyList<ExerciseResponse>>>
 {
@@ -43,10 +41,10 @@ public sealed class GetExercisesQueryHandler(
             {
                 Name = x.IsCustom
                     ? x.Name
-                    : localization.GetString($"Exercise.Name.{x.Name}"),
+                    : $"Exercise.Name.{x.Name}",
 
-                MuscleGroup = localization.GetString($"Exercise.MuscleGroup.{x.MuscleGroup}"),
-                Equipment = localization.GetString($"Exercise.Equipment.{x.Equipment}"),
+                MuscleGroup = $"Exercise.MuscleGroup.{x.MuscleGroup}",
+                Equipment = $"Exercise.Equipment.{x.Equipment}",
             })
             .ToList();
 

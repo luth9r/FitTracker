@@ -1,7 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using CSharpFunctionalExtensions;
 using FitTracker.Application.DTOs.Auth;
-using FitTracker.Application.DTOs.Auth.Google;
 using FluentValidation.Results;
 using MediatR;
 
@@ -10,6 +9,8 @@ namespace FitTracker.Application.UseCases.User.Commands.Google;
 /// <summary>
 ///     Command for logging in with Google.
 /// </summary>
-/// <param name="Request">The <see cref="GoogleLoginRequest" />.</param>
+/// <param name="Code">The authorization code returned from Google.</param>
+/// <param name="CodeVerifier">The code verifier used in PKCE flow.</param>
 [ExcludeFromCodeCoverage]
-public sealed record GoogleLoginCommand(GoogleLoginRequest Request) : IRequest<Result<LoginResponse, ValidationResult>>;
+public sealed record GoogleLoginCommand(string Code, string CodeVerifier)
+    : IRequest<Result<LoginResponse, ValidationResult>>;

@@ -10,6 +10,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using Scalar.AspNetCore;
@@ -174,23 +175,71 @@ internal static class WebApplicationBuilderExtensions
                 {
                     var allowedOrigins = builder.Configuration
                         .GetSection("Cors:AllowedOrigins")
-                        .Get<string[]>() ?? new[] { "http://localhost:4200" };
+                        .Get<string[]>() ?? Array.Empty<string>();
 
-                    policy.SetIsOriginAllowed(origin =>
-                        {
-                            // If it`s a mobile app, allow any origin
-                            if (string.IsNullOrWhiteSpace(origin))
+                    if (builder.Environment.IsDevelopment())
+                    {
+                        policy.SetIsOriginAllowed(origin =>
                             {
-                                return true;
-                            }
+                                if (string.IsNullOrWhiteSpace(origin))
+                                {
+                                    return true;
+                                }
 
-                            // If it`s a web app, allow only allowed origins
-                            return allowedOrigins.Any(o => new Uri(o).Host == new Uri(origin).Host);
-                        })
-                        .AllowAnyMethod()
-                        .AllowAnyHeader()
-                        .AllowCredentials();
+                                if (allowedOrigins.Contains(origin, StringComparer.OrdinalIgnoreCase))
+                                {
+                                    return true;
+                                }
+
+                                try
+                                {
+                                    var uri = new Uri(origin);
+                                    return uri.Host is "localhost" or "127.0.0.1" or "::1";
+                                }
+                                catch
+                                {
+                                    return false;
+                                }
+                            })
+                            .AllowAnyMethod()
+                            .AllowAnyHeader()
+                            .AllowCredentials();
+                    }
+                    else
+                    {
+                        policy.WithOrigins(allowedOrigins)
+                            .AllowAnyMethod()
+                            .AllowAnyHeader()
+                            .AllowCredentials();
+                    }
                 });
+        });
+
+        builder.Services.AddRateLimiter(options =>
+        {
+            options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+            options.AddTokenBucketLimiter(
+                "auth-policy",
+                opt =>
+                {
+                    opt.TokenLimit = 5;
+                    opt.ReplenishmentPeriod = TimeSpan.FromMinutes(1);
+                    opt.TokensPerPeriod = 5;
+                    opt.QueueLimit = 0;
+                });
+
+            options.OnRejected = async (context, token) =>
+            {
+                context.HttpContext.Response.ContentType = "application/json";
+                await context.HttpContext.Response.WriteAsJsonAsync(
+                    new
+                    {
+                        status = 429,
+                        message = "Auth.RateLimit.TooManyRequests",
+                    },
+                    token);
+            };
         });
 
         return builder;

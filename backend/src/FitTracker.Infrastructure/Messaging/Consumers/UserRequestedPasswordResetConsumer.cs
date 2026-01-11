@@ -30,9 +30,9 @@ public class UserRequestedPasswordResetConsumer(
     /// <returns> A task representing the asynchronous operation. </returns>
     public async Task Consume(ConsumeContext<UserRequestedPasswordResetEvent> context)
     {
-        var verificationToken = tokenGenerator.GeneratePasswordResetToken(context.Message.UserId);
-        var verificationLinkBase = configuration["App:ResetPasswordLinkBase"];
-        var verificationLink = $"{verificationLinkBase}?token={verificationToken}";
+        var resetToken = tokenGenerator.GeneratePasswordResetToken(context.Message.UserId);
+        var resetLinkBase = configuration["App:ResetPasswordLinkBase"];
+        var verificationLink = $"{resetLinkBase}?token={resetToken}";
 
         var subject = localization.GetString("Email.ResetPassword.Subject");
         var bodyTemplate = localization.GetString("Email.ResetPassword.Body");

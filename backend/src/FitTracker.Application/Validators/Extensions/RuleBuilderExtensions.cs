@@ -1,4 +1,4 @@
-using FitTracker.Application.Interfaces;
+using FitTracker.Application.Constants;
 using FluentValidation;
 
 namespace FitTracker.Application.Validators.Extensions;
@@ -8,40 +8,34 @@ namespace FitTracker.Application.Validators.Extensions;
 /// </summary>
 public static class RuleBuilderExtensions
 {
-    public static IRuleBuilderOptions<T, string> WithPasswordRules<T>(
-        this IRuleBuilder<T, string> ruleBuilder,
-        ILocalizationService localization)
+    public static IRuleBuilderOptions<T, string> WithPasswordRules<T>(this IRuleBuilder<T, string> ruleBuilder)
     {
         return ruleBuilder
             .NotEmpty()
-            .WithMessage(_ => localization.GetString("Validation.User.Password.Required"))
+            .WithMessage(ValidationKeys.User.Password.Required)
             .MinimumLength(8)
-            .WithMessage(_ => localization.GetString("Validation.User.Password.Length"))
+            .WithMessage(ValidationKeys.User.Password.Length)
             .Matches(@"[a-zA-Z]")
-            .WithMessage(_ => localization.GetString("Validation.User.Password.LetterRequired"))
+            .WithMessage(ValidationKeys.User.Password.LetterRequired)
             .Matches(@"\d")
-            .WithMessage(_ => localization.GetString("Validation.User.Password.NumberRequired"));
+            .WithMessage(ValidationKeys.User.Password.NumberRequired);
     }
 
-    public static IRuleBuilderOptions<T, string> WithEmailRules<T>(
-        this IRuleBuilder<T, string> ruleBuilder,
-        ILocalizationService localization)
+    public static IRuleBuilderOptions<T, string> WithEmailRules<T>(this IRuleBuilder<T, string> ruleBuilder)
     {
         return ruleBuilder
             .NotEmpty()
-            .WithMessage(_ => localization.GetString("Validation.User.Email.Required"))
+            .WithMessage(ValidationKeys.User.Email.Required)
             .EmailAddress()
-            .WithMessage(_ => localization.GetString("Validation.User.Email.InvalidFormat"));
+            .WithMessage(ValidationKeys.User.Email.InvalidFormat);
     }
 
-    public static IRuleBuilderOptions<T, string> WithUsernameRules<T>(
-        this IRuleBuilder<T, string> ruleBuilder,
-        ILocalizationService localization)
+    public static IRuleBuilderOptions<T, string> WithUsernameRules<T>(this IRuleBuilder<T, string> ruleBuilder)
     {
         return ruleBuilder
             .NotEmpty()
-            .WithMessage(_ => localization.GetString("Validation.User.Username.Required"))
+            .WithMessage(ValidationKeys.User.Username.Required)
             .MinimumLength(3)
-            .WithMessage(_ => localization.GetString("Validation.User.Username.Length"));
+            .WithMessage(ValidationKeys.User.Username.Length);
     }
 }

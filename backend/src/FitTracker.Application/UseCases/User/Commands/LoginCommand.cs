@@ -9,6 +9,7 @@ namespace FitTracker.Application.UseCases.User.Commands;
 /// <summary>
 ///     Command for logging in.
 /// </summary>
-/// <param name="Request">The <see cref="LoginRequest" />.</param>
+/// <param name="Email">User's email address.</param>
+/// <param name="Password">User's password.</param>
 [ExcludeFromCodeCoverage]
-public sealed record LoginCommand(LoginRequest Request) : IRequest<Result<LoginResponse, ValidationResult>>;
+public sealed record LoginCommand(string Email, string Password) : IRequest<Result<LoginResponse, ValidationResult>>;

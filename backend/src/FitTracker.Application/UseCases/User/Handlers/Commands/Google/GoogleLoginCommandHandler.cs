@@ -4,6 +4,7 @@ using FitTracker.Application.DTOs.Auth;
 using FitTracker.Application.Interfaces;
 using FitTracker.Application.UseCases.User.Commands.Google;
 using FitTracker.Domain.Abstract.Interfaces;
+using FitTracker.Domain.Constants;
 using FluentValidation.Results;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -18,14 +19,12 @@ namespace FitTracker.Application.UseCases.User.Handlers.Commands.Google;
 /// <param name="googleOAuthService">The <see cref="IGoogleOAuthService" />.</param>
 /// <param name="userReadRepository">The <see cref="IUserReadRepository" />.</param>
 /// <param name="jwtTokenService">The <see cref="IJwtTokenGenerator" />.</param>
-/// <param name="localization">The <see cref="ILocalizationService" />.</param>
 /// <param name="mapper">The <see cref="IMapper" />.</param>
 public sealed class GoogleLoginCommandHandler(
     ILogger<GoogleLoginCommandHandler> logger,
     IGoogleOAuthService googleOAuthService,
     IUserReadRepository userReadRepository,
     IJwtTokenGenerator jwtTokenService,
-    ILocalizationService localization,
     IMapper mapper) : IRequestHandler<GoogleLoginCommand, Result<LoginResponse, ValidationResult>>
 {
     /// <summary>
@@ -41,8 +40,8 @@ public sealed class GoogleLoginCommandHandler(
         logger.LogDebug("Starting Google login process.");
 
         var tokenResponse = await googleOAuthService.ExchangeCodeForTokensAsync(
-            request.Request.Code,
-            request.Request.CodeVerifier);
+            request.Code,
+            request.CodeVerifier);
 
         logger.LogDebug("Attempting to validate Google IdToken.");
 
@@ -52,8 +51,8 @@ public sealed class GoogleLoginCommandHandler(
         {
             logger.LogWarning("Google Token validation failed.");
             return ResultExtensions.ValidationFailure<LoginResponse>(
-                nameof(request.Request.Code),
-                localization.GetString("Google.Auth.InvalidToken"));
+                nameof(request.Code),
+                DomainErrors.Google.InvalidToken);
         }
 
         logger.LogDebug("Google Token validated for email: {Email}", googlePayload.Email);
@@ -71,8 +70,8 @@ public sealed class GoogleLoginCommandHandler(
                 logger.LogDebug("User not found.");
 
                 return ResultExtensions.ValidationFailure<LoginResponse>(
-                    nameof(request.Request.Code),
-                    localization.GetString("Google.Auth.NotFound"));
+                    nameof(request.Code),
+                    DomainErrors.Google.NotFound);
             }
         }
         else

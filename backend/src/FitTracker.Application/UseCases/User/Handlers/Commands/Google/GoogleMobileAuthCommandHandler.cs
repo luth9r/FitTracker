@@ -4,6 +4,7 @@ using FitTracker.Application.DTOs.Auth;
 using FitTracker.Application.Interfaces;
 using FitTracker.Application.UseCases.User.Commands.Google;
 using FitTracker.Domain.Abstract.Interfaces;
+using FitTracker.Domain.Constants;
 using FluentValidation.Results;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -21,7 +22,6 @@ namespace FitTracker.Application.UseCases.User.Handlers.Commands.Google;
 /// <param name="userWriteRepository">The user write repository.</param>
 /// <param name="unitOfWork">The unit of work.</param>
 /// <param name="jwtTokenService">The JWT token service.</param>
-/// <param name="localization">The localization service.</param>
 /// <param name="mapper">The mapper.</param>
 /// <param name="logger">The logger.</param>
 public class GoogleMobileAuthCommandHandler(
@@ -30,7 +30,6 @@ public class GoogleMobileAuthCommandHandler(
     IUserWriteRepository userWriteRepository,
     IUnitOfWork unitOfWork,
     IJwtTokenGenerator jwtTokenService,
-    ILocalizationService localization,
     IMapper mapper,
     ILogger<GoogleMobileAuthCommandHandler> logger)
     : IRequestHandler<GoogleMobileAuthCommand, Result<LoginResponse, ValidationResult>>
@@ -47,7 +46,7 @@ public class GoogleMobileAuthCommandHandler(
         GoogleMobileAuthCommand request,
         CancellationToken cancellationToken)
     {
-        var tokenResponse = await googleOAuthService.ExchangeCodeForTokensAsync(request.Request.Code);
+        var tokenResponse = await googleOAuthService.ExchangeCodeForTokensAsync(request.Code);
 
         logger.LogDebug("Attempting to validate Google IdToken.");
 
@@ -57,8 +56,8 @@ public class GoogleMobileAuthCommandHandler(
         {
             logger.LogWarning("Google Token validation failed.");
             return ResultExtensions.ValidationFailure<LoginResponse>(
-                nameof(request.Request.Code),
-                localization.GetString("Google.Auth.InvalidToken"));
+                nameof(request.Code),
+                DomainErrors.Google.InvalidToken);
         }
 
         var user = await userReadRepository.GetByGoogleTokenReadonlyAsync(googlePayload.GoogleId, cancellationToken)

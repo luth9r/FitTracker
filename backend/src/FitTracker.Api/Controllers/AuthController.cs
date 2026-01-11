@@ -6,6 +6,7 @@ using FitTracker.Application.UseCases.User.Commands.Google;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace FitTracker.Api.Controllers;
 
@@ -14,6 +15,7 @@ namespace FitTracker.Api.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
+[EnableRateLimiting("auth-policy")]
 [AllowAnonymous]
 public sealed class AuthController(IMediator mediator) : ControllerBase
 {
@@ -28,7 +30,7 @@ public sealed class AuthController(IMediator mediator) : ControllerBase
         [FromBody] LoginRequest loginRequest,
         CancellationToken cancellationToken)
     {
-        var command = new LoginCommand(loginRequest);
+        var command = new LoginCommand(loginRequest.Email, loginRequest.Password);
         var result = await mediator.Send(command, cancellationToken);
 
         if (result.IsFailure)
@@ -51,7 +53,7 @@ public sealed class AuthController(IMediator mediator) : ControllerBase
         [FromBody] GoogleLoginRequest googleRequest,
         CancellationToken cancellationToken)
     {
-        var command = new GoogleLoginCommand(googleRequest);
+        var command = new GoogleLoginCommand(googleRequest.Code, googleRequest.CodeVerifier);
         var result = await mediator.Send(command, cancellationToken);
 
         if (result.IsFailure)
@@ -74,7 +76,7 @@ public sealed class AuthController(IMediator mediator) : ControllerBase
         [FromBody] GoogleRegisterRequest googleRegisterRequest,
         CancellationToken cancellationToken)
     {
-        var command = new GoogleRegisterCommand(googleRegisterRequest);
+        var command = new GoogleRegisterCommand(googleRegisterRequest.Code, googleRegisterRequest.CodeVerifier);
         var result = await mediator.Send(command, cancellationToken);
         if (result.IsFailure)
         {
@@ -102,7 +104,7 @@ public sealed class AuthController(IMediator mediator) : ControllerBase
         [FromBody] GoogleMobileAuthRequest googleMobileAuthRequest,
         CancellationToken cancellationToken)
     {
-        var command = new GoogleMobileAuthCommand(googleMobileAuthRequest);
+        var command = new GoogleMobileAuthCommand(googleMobileAuthRequest.Code);
         var result = await mediator.Send(command, cancellationToken);
         if (result.IsFailure)
         {
@@ -124,7 +126,9 @@ public sealed class AuthController(IMediator mediator) : ControllerBase
         [FromBody] RegisterRequest registerRequest,
         CancellationToken cancellationToken)
     {
-        var result = await mediator.Send(new RegisterCommand(registerRequest), cancellationToken);
+        var result = await mediator.Send(
+            new RegisterCommand(registerRequest.Username, registerRequest.Email, registerRequest.Password),
+            cancellationToken);
         if (result.IsFailure)
         {
             return ValidationProblem(result.Error.ToModelState());

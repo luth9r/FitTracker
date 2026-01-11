@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using CSharpFunctionalExtensions;
 using FitTracker.Application.Extensions.MedaitR;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -37,7 +36,16 @@ public class LoggingBehavior<TRequest, TResponse>(ILogger<LoggingBehavior<TReque
 
         try
         {
-            response = await next();
+            response = await next(cancellationToken);
+        }
+        catch (OperationCanceledException)
+        {
+            stopwatch.Stop();
+            logger.LogWarning(
+                "[CANCELLED] Handling {RequestName} was cancelled after {TimeMs}ms",
+                requestName,
+                stopwatch.ElapsedMilliseconds);
+            throw;
         }
         catch (Exception ex)
         {
@@ -53,19 +61,50 @@ public class LoggingBehavior<TRequest, TResponse>(ILogger<LoggingBehavior<TReque
         stopwatch.Stop();
         var timeTaken = stopwatch.ElapsedMilliseconds;
 
-        if (response is Result result && result.IsFailure)
-        {
-            logger.LogWarning(
-                "[FAILURE] Handling {RequestName} failed after {TimeMs}ms. Error: {Error}",
-                requestName,
-                timeTaken,
-                result.Error);
-        }
-        else
-        {
-            logger.LogInformation("[END] Handled {RequestName} successfully in {TimeMs}ms", requestName, timeTaken);
-        }
+        LogResult(response, requestName, timeTaken);
 
         return response;
+    }
+
+    private void LogResult(TResponse response, string requestName, long timeTaken)
+    {
+        if (response == null)
+        {
+            logger.LogInformation(
+                "[END] Handled {RequestName} successfully (null response) in {TimeMs}ms",
+                requestName,
+                timeTaken);
+            return;
+        }
+
+        try
+        {
+            var type = response.GetType();
+
+            var isFailure = type.GetProperty("IsFailure")?.GetValue(response) as bool? ?? false;
+
+            if (isFailure)
+            {
+                var error = type.GetProperty("Error")?.GetValue(response);
+
+                logger.LogWarning(
+                    "[FAILURE] Handling {RequestName} failed after {TimeMs}ms. Error: {Error}",
+                    requestName,
+                    timeTaken,
+                    error ?? "Unknown error");
+            }
+            else
+            {
+                logger.LogInformation(
+                    "[END] Handled {RequestName} successfully in {TimeMs}ms",
+                    requestName,
+                    timeTaken);
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogTrace(ex, "Failed to reflect result properties for {RequestName}", requestName);
+            logger.LogInformation("[END] Handled {RequestName} in {TimeMs}ms", requestName, timeTaken);
+        }
     }
 }

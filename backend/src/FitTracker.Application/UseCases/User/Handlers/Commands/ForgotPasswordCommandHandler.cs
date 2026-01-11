@@ -13,14 +13,12 @@ namespace FitTracker.Application.UseCases.User.Handlers.Commands;
 /// <param name="readRepository">The repository for reading user-related data.</param>
 /// <param name="writeRepository">The repository for writing user-related data.</param>
 /// <param name="unit">The unit of work for managing transactions.</param>
-/// <param name="rateLimitService">The service responsible for ensuring rate-limiting on requests.</param>
 /// <param name="localization">The service for handling culture-specific information.</param>
 /// <param name="logger">The logger for capturing diagnostic and error information.</param>
 public class ForgotPasswordCommandHandler(
     IUserReadRepository readRepository,
     IUserWriteRepository writeRepository,
     IUnitOfWork unit,
-    IRateLimitService rateLimitService,
     ILocalizationService localization,
     ILogger<ForgotPasswordCommandHandler> logger) : IRequestHandler<ForgotPasswordCommand, Result>
 {
@@ -42,12 +40,6 @@ public class ForgotPasswordCommandHandler(
             }
 
             return Result.Success();
-        }
-
-        var key = $"ratelimit:password-reset:{user.Id}";
-        if (!await rateLimitService.IsAllowedAsync(key, TimeSpan.FromMinutes(1)))
-        {
-            return Result.Failure(localization.GetString("User.RateLimitExceeded", culture));
         }
 
         user.RequestPasswordReset(culture);

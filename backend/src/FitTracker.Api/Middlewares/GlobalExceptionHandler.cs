@@ -13,9 +13,9 @@ public sealed class GlobalExceptionHandler : IExceptionHandler
     {
         var (statusCode, title) = exception switch
         {
-            NotFoundException => (StatusCodes.Status404NotFound, "Resource Not Found"),
-            ArgumentException => (StatusCodes.Status400BadRequest, "Bad Request"),
-            _ => (StatusCodes.Status500InternalServerError, "Internal Server Error"),
+            NotFoundException nfe => (StatusCodes.Status404NotFound, nfe.ErrorCode ?? "Resource.NotFound"),
+            ArgumentException => (StatusCodes.Status400BadRequest, "Auth.Unauthorized"),
+            _ => (StatusCodes.Status500InternalServerError, "Server.InternalError"),
         };
 
         var problemDetails = new ProblemDetails
@@ -27,15 +27,6 @@ public sealed class GlobalExceptionHandler : IExceptionHandler
                 : exception.Message,
             Instance = httpContext.Request.Path,
         };
-
-        if (exception is NotFoundException nfe)
-        {
-            problemDetails.Extensions.Add("errorCode", nfe.ErrorCode);
-        }
-        else if (statusCode == StatusCodes.Status500InternalServerError)
-        {
-            problemDetails.Extensions.Add("errorCode", "INTERNAL_SERVER_ERROR");
-        }
 
         httpContext.Response.StatusCode = statusCode;
 
