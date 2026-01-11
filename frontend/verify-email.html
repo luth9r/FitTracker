@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Verification - FitTracker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-smoothing: antialiased;
+            user-select: none;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #0f172a;
+            color: #94a3b8;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 440px;
+            width: 100%;
+            background-color: #1e293b;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.4s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            padding: 24px 24px 16px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .icon-container {
+            width: 48px;
+            height: 48px;
+            background: rgba(91, 75, 138, 0.15);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+
+        .icon-container .material-symbols-outlined {
+            font-size: 28px;
+            color: #5b4b8a;
+        }
+
+        .modal-body {
+            padding: 0 24px 24px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #f1f5f9;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 32px;
+        }
+
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 0;
+        }
+
+        .spinner-large {
+            width: 48px;
+            height: 48px;
+            border: 4px solid rgba(91, 75, 138, 0.2);
+            border-top-color: #5b4b8a;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        .success-container {
+            text-align: center;
+            padding: 40px 0;
+            display: none;
+        }
+
+        .success-container.show {
+            display: block;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .success-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .success-icon .material-symbols-outlined {
+            font-size: 64px;
+            color: #5b4b8a;
+        }
+
+        .success-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #f1f5f9;
+            margin-bottom: 8px;
+        }
+
+        .success-text {
+            font-size: 14px;
+            color: #64748b;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        .error-container {
+            text-align: center;
+            padding: 40px 20px;
+            display: none;
+        }
+
+        .error-container.show {
+            display: block;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .error-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .error-icon .material-symbols-outlined {
+            font-size: 64px;
+            color: #ef4444;
+        }
+
+        .error-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #f1f5f9;
+            margin-bottom: 8px;
+        }
+
+        .error-description {
+            font-size: 14px;
+            color: #64748b;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .close-text {
+            font-size: 14px;
+            color: #94a3b8;
+            margin-top: 20px;
+        }
+
+        .redirect-text {
+            font-size: 13px;
+            color: #64748b;
+            margin-top: 16px;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 0;
+            }
+
+            .container {
+                border-radius: 0;
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .modal-header {
+                padding: 20px 20px 12px;
+            }
+
+            .modal-body {
+                padding: 0 20px 20px;
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="modal-header">
+            <div class="icon-container">
+                <span class="material-symbols-outlined">verified_user</span>
+            </div>
+        </div>
+
+        <div class="modal-body">
+            <div id="loadingContainer" class="loading-container">
+                <h1 id="verifyingTitle">Verifying Email</h1>
+                <p class="subtitle" id="verifyingSubtitle">Please wait while we verify your email address...</p>
+                <div class="spinner-large"></div>
+                <p class="loading-text" id="loadingText">Processing your request...</p>
+            </div>
+
+            <div class="success-container" id="successContainer">
+                <div class="success-icon">
+                    <span class="material-symbols-outlined">check_circle</span>
+                </div>
+                <h2 class="success-title" id="successTitle">Email Verified Successfully!</h2>
+                <p class="success-text" id="successText">Your email has been verified. You are now logged in and will be redirected to the app shortly.</p>
+                <p class="redirect-text" id="redirectText">Redirecting in <span id="countdown">3</span> seconds...</p>
+            </div>
+
+            <div class="error-container" id="errorContainer">
+                <div class="error-icon">
+                    <span class="material-symbols-outlined">error</span>
+                </div>
+                <h2 class="error-title" id="errorTitle">Verification Failed</h2>
+                <p class="error-description" id="errorDescription">We couldn't verify your email. The link may have expired or is invalid.</p>
+                <p class="close-text" id="closeText">You can close this page now.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:5000/api';
+
+        const translations = {
+            en: {
+                verifyingTitle: "Verifying Email",
+                verifyingSubtitle: "Please wait while we verify your email address...",
+                loadingText: "Processing your request...",
+                successTitle: "Email Verified Successfully!",
+                successText: "Your email has been verified. You are now logged in and will be redirected to the app shortly.",
+                redirectText: "Redirecting in {0} seconds...",
+                errorTitle: "Verification Failed",
+                errorInvalidToken: "Invalid or expired verification link. Please try registering again.",
+                errorGeneric: "We couldn't verify your email. Please try again or contact support.",
+                closeText: "You can close this page now."
+            },
+            uk: {
+                verifyingTitle: "Підтвердження email",
+                verifyingSubtitle: "Будь ласка, зачекайте, поки ми підтверджуємо вашу email адресу...",
+                loadingText: "Обробка вашого запиту...",
+                successTitle: "Email успішно підтверджено!",
+                successText: "Вашу email адресу підтверджено. Ви увійшли в систему і незабаром будете перенаправлені до додатку.",
+                redirectText: "Перенаправлення через {0} секунд...",
+                errorTitle: "Помилка підтвердження",
+                errorInvalidToken: "Недійсне або прострочене посилання для підтвердження. Спробуйте зареєструватися знову.",
+                errorGeneric: "Не вдалося підтвердити ваш email. Спробуйте ще раз або зверніться до служби підтримки.",
+                closeText: "Ви можете закрити цю сторінку."
+            }
+        };
+
+        let currentLang = 'en';
+        let verificationToken = null;
+
+        function detectLanguage() {
+            const browserLang = navigator.language || navigator.userLanguage;
+            currentLang = browserLang.toLowerCase().startsWith('uk') ? 'uk' : 'en';
+            applyTranslations();
+        }
+
+        function getTokenFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('token');
+        }
+
+        function applyTranslations() {
+            const t = translations[currentLang];
+            document.getElementById('verifyingTitle').textContent = t.verifyingTitle;
+            document.getElementById('verifyingSubtitle').textContent = t.verifyingSubtitle;
+            document.getElementById('loadingText').textContent = t.loadingText;
+            document.getElementById('successTitle').textContent = t.successTitle;
+            document.getElementById('successText').textContent = t.successText;
+            document.getElementById('errorTitle').textContent = t.errorTitle;
+            document.getElementById('closeText').textContent = t.closeText;
+        }
+
+        function showSuccess() {
+            const t = translations[currentLang];
+            document.getElementById('loadingContainer').style.display = 'none';
+            document.getElementById('successContainer').classList.add('show');
+
+            let countdown = 3;
+            const countdownElement = document.getElementById('countdown');
+            const redirectTextElement = document.getElementById('redirectText');
+            
+            redirectTextElement.innerHTML = t.redirectText.replace('{0}', `<span id="countdown">${countdown}</span>`);
+            
+            const interval = setInterval(() => {
+                countdown--;
+                document.getElementById('countdown').textContent = countdown;
+                
+                if (countdown <= 0) {
+                    clearInterval(interval);
+                    window.location.href = '/';
+                }
+            }, 1000);
+        }
+
+        function showError(message) {
+            const t = translations[currentLang];
+            document.getElementById('loadingContainer').style.display = 'none';
+            document.getElementById('errorDescription').textContent = message || t.errorGeneric;
+            document.getElementById('errorContainer').classList.add('show');
+        }
+
+        async function verifyEmail() {
+            const t = translations[currentLang];
+
+            if (!verificationToken) {
+                showError(t.errorInvalidToken);
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/verify-email?token=${encodeURIComponent(verificationToken)}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include'
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('Verification successful:', data);
+                    showSuccess();
+                } else {
+                    const errorData = await response.json().catch(() => ({}));
+                    const errorMessage = errorData.errors 
+                        ? Object.values(errorData.errors).flat().join('. ') 
+                        : (errorData.title || t.errorGeneric);
+                    
+                    showError(errorMessage);
+                }
+            } catch (error) {
+                console.error('Verification error:', error);
+                showError(t.errorGeneric);
+            }
+        }
+
+        // Initialize
+        detectLanguage();
+        verificationToken = getTokenFromUrl();
+
+        if (!verificationToken) {
+            const t = translations[currentLang];
+            showError(t.errorInvalidToken);
+        } else {
+            verifyEmail();
+        }
+    </script>
+</body>
+</html>
