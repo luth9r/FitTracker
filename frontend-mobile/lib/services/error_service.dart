@@ -6,17 +6,14 @@ class ErrorService {
 
   ErrorService._internal();
 
-  /// Извлекает код ошибки из DioException
   String? extractErrorCode(dynamic error) {
     if (error is DioException && error.response?.data != null) {
       try {
         final responseData = error.response!.data;
 
-        // Проверяем поле 'errors' (validation errors)
         if (responseData is Map && responseData['errors'] != null) {
           final errors = responseData['errors'] as Map;
 
-          // Перебираем все поля ошибок (включая "General")
           for (var entry in errors.entries) {
             final fieldErrors = entry.value;
 
@@ -28,7 +25,6 @@ class ErrorService {
           }
         }
 
-        // Проверяем поле 'detail'
         if (responseData is Map && responseData['detail'] != null) {
           final detail = responseData['detail'].toString();
           if (_isKnownErrorCode(detail)) {
@@ -37,7 +33,6 @@ class ErrorService {
           }
         }
 
-        // Проверяем поле 'title'
         if (responseData is Map && responseData['title'] != null) {
           final title = responseData['title'].toString();
           if (title.contains('.') || _isKnownErrorCode(title)) {
@@ -52,7 +47,6 @@ class ErrorService {
     return null;
   }
 
-  /// Проверяет, является ли текст известным кодом ошибки
   bool _isKnownErrorCode(String text) {
     final knownPrefixes = [
       'Auth.',
@@ -65,20 +59,16 @@ class ErrorService {
     return knownPrefixes.any((prefix) => text.startsWith(prefix));
   }
 
-  /// Получает локализованное сообщение об ошибке
   String getLocalizedError(dynamic error, String? errorCode) {
-    // Если есть код ошибки, пытаемся найти перевод
     if (errorCode != null) {
       final translationKey = 'Errors.$errorCode';
       final translated = translationKey.tr();
 
-      // Если перевод найден (ключ изменился)
       if (translated != translationKey) {
         return translated;
       }
     }
 
-    // Проверяем сетевые ошибки
     final errorString = error.toString().toLowerCase();
     if (errorString.contains('socketexception') ||
         errorString.contains('network') ||
@@ -86,7 +76,6 @@ class ErrorService {
       return 'Errors.Network.Unreachable'.tr();
     }
 
-    // Если код ошибки известен, но перевода нет - форматируем его
     if (errorCode != null) {
       return errorCode
           .replaceAll('Auth.', '')
@@ -98,17 +87,14 @@ class ErrorService {
           .replaceAll('.', ' ');
     }
 
-    // Дефолтная ошибка
     return 'Errors.Unknown'.tr();
   }
 
-  /// Проверяет, является ли ошибка конкретным кодом
   bool isErrorCode(dynamic error, String code) {
     final errorCode = extractErrorCode(error);
     return errorCode == code;
   }
-
-  /// Обрабатывает специфичные ошибки и возвращает локализованное сообщение
+  
   String handleError(dynamic error) {
     final errorCode = extractErrorCode(error);
     print('[DEBUG] Error code: $errorCode');

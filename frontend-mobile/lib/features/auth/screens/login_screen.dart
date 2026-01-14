@@ -7,6 +7,7 @@ import '../../../services/auth_service.dart';
 import '../../../services/error_service.dart';
 import '../../../services/notification_service.dart';
 import '../../../services/validation_service.dart';
+import '../../home/screens/home_screen.dart';
 import '../widgets/email_not_verified_modal.dart';
 import '../widgets/email_verification_modal.dart';
 import '../widgets/login_form.dart';
@@ -94,7 +95,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
       Future.delayed(const Duration(milliseconds: 500), () {
         if (mounted) {
-          Navigator.pushReplacementNamed(context, '/');
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => const HomeScreen()),
+            (route) => false,
+          );
         }
       });
     } catch (e) {

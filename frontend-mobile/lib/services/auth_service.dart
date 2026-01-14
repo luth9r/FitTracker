@@ -4,7 +4,10 @@ import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:isar_community/isar.dart';
 import 'package:path_provider/path_provider.dart';
+
+import '../data/models/user_model.dart';
 
 // Models
 class LoginResponse {
@@ -58,13 +61,68 @@ class RegisterPayload {
 }
 
 class AuthService {
-  // Singleton pattern
   static final AuthService _instance = AuthService._internal();
 
   factory AuthService() => _instance;
 
+  late final Dio _dio;
+  late final PersistCookieJar _cookieJar;
+  late final Isar _isar;
+  bool _isInitialized = false;
+
+  Isar get isar => _isar;
+
   AuthService._internal() {
-    _initDio();
+    _dio = Dio(
+      BaseOptions(
+        baseUrl: _baseUrl,
+        connectTimeout: const Duration(seconds: 10),
+        receiveTimeout: const Duration(seconds: 10),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        validateStatus: (status) => status != null && status < 300,
+      ),
+    );
+
+    _dio.interceptors.add(
+      LogInterceptor(requestBody: true, responseBody: true),
+    );
+  }
+
+  Future<void> initialize() async {
+    if (_isInitialized) return;
+
+    try {
+      final appDocDir = await getApplicationDocumentsDirectory();
+
+      _isar = await Isar.open([UserCacheSchema], directory: appDocDir.path);
+      print('[AUTH] Isar DB ready');
+
+      final cookiePath = '${appDocDir.path}/.cookies/';
+      _cookieJar = PersistCookieJar(storage: FileStorage(cookiePath));
+
+      _dio.interceptors.add(CookieManager(_cookieJar));
+
+      var cookies = await _cookieJar.loadForRequest(Uri.parse(_baseUrl));
+      print('[AUTH] Cookies loaded: ${cookies.length}');
+
+      _isInitialized = true;
+      print('[AUTH] Service fully initialized');
+    } catch (e) {
+      print('[AUTH] Initialization error: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> persistUser(String email, String username) async {
+    await _isar.writeTxn(() async {
+      await _isar.userCaches.clear();
+      await _isar.userCaches.put(
+        UserCache(email: email, username: username, lastLogin: DateTime.now()),
+      );
+    });
   }
 
   final GoogleSignIn _googleSignIn = GoogleSignIn(
@@ -72,8 +130,6 @@ class AuthService {
         '719113265141-v8ckgmea9bob1nd65f4396n93o16dcqd.apps.googleusercontent.com',
     scopes: ['email', 'profile'],
   );
-
-  late final Dio _dio;
 
   String get _baseUrl {
     if (Platform.isAndroid) {
@@ -87,49 +143,6 @@ class AuthService {
 
   String get _userApiUrl => '$_baseUrl/api/user';
 
-  void _initDio() {
-    _dio = Dio(
-      BaseOptions(
-        connectTimeout: const Duration(seconds: 10),
-        receiveTimeout: const Duration(seconds: 10),
-        sendTimeout: const Duration(seconds: 10),
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        validateStatus: (status) {
-          return status != null && status >= 200 && status < 300;
-        },
-      ),
-    );
-
-    _dio.interceptors.add(
-      LogInterceptor(
-        requestBody: true,
-        responseBody: true,
-        error: true,
-        requestHeader: true,
-        responseHeader: false,
-        request: true,
-      ),
-    );
-
-    _initCookieManager();
-  }
-
-  Future<void> _initCookieManager() async {
-    try {
-      final appDocDir = await getApplicationDocumentsDirectory();
-      final cookieJar = PersistCookieJar(
-        storage: FileStorage('${appDocDir.path}/.cookies/'),
-      );
-      _dio.interceptors.add(CookieManager(cookieJar));
-      print('[AUTH] Cookie manager initialized');
-    } catch (e) {
-      print('[AUTH] Error initializing cookies: $e');
-    }
-  }
-
   /// Regular Login
   Future<LoginResponse> login(String email, String password) async {
     try {
@@ -138,8 +151,6 @@ class AuthService {
         '$_apiUrl/login',
         data: {'email': email, 'password': password},
       );
-
-      // Если дошли сюда - значит 2xx (validateStatus пропустил)
       print('[AUTH] Login successful');
       return LoginResponse.fromJson(response.data);
     } on DioException catch (e) {
@@ -217,10 +228,51 @@ class AuthService {
   Future<bool> checkAuth() async {
     try {
       final response = await _dio.get('$_userApiUrl/me');
-      final userId = response.data['userId'];
-      return userId != null;
+
+      if (response.statusCode == 200) {
+        final username = response.data['username'];
+        final email = response.data['email'];
+
+        await _isar.writeTxn(() async {
+          await _isar.userCaches.clear();
+          await _isar.userCaches.put(
+            UserCache(
+              username: username,
+              email: email,
+              lastLogin: DateTime.now(),
+            ),
+          );
+        });
+
+        print('[AUTH] Cache updated from server');
+        return true;
+      }
+      return false;
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 401) {
+        print('[AUTH] Session expired. Clearing data...');
+        await logout();
+        return false;
+      }
+
+      if (e.type == DioExceptionType.connectionTimeout ||
+          e.type == DioExceptionType.connectionError ||
+          e.error is SocketException) {
+        print('[AUTH] Offline mode. Checking local cache...');
+
+        final cachedUser = await _isar.userCaches.where().findFirst();
+
+        if (cachedUser != null) {
+          print(
+            '[AUTH] Found cached user: ${cachedUser.username}. Access granted (Offline).',
+          );
+          return true;
+        }
+      }
+
+      return false;
     } catch (e) {
-      print('[AUTH] Check auth failed: $e');
+      print('[AUTH] Unexpected error during checkAuth: $e');
       return false;
     }
   }
@@ -231,7 +283,6 @@ class AuthService {
       print('[AUTH] Resending verification email to: $email');
       await _dio.post('$_apiUrl/resend-verification', data: {'email': email});
 
-      // Если дошли сюда без exception - значит успех (2xx включая 204)
       print('[AUTH] Verification email sent successfully');
     } on DioException catch (e) {
       print(
@@ -265,12 +316,13 @@ class AuthService {
   /// Logout
   Future<void> logout() async {
     try {
-      final appDocDir = await getApplicationDocumentsDirectory();
-      final cookieJar = PersistCookieJar(
-        storage: FileStorage('${appDocDir.path}/.cookies/'),
-      );
-      await cookieJar.deleteAll();
-      print('[AUTH] Logged out - cookies cleared');
+      await _cookieJar.deleteAll();
+
+      await _isar.writeTxn(() async {
+        await _isar.userCaches.clear();
+      });
+
+      print('[AUTH] Logged out - all data cleared');
     } catch (e) {
       print('[AUTH] Logout error: $e');
     }

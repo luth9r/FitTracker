@@ -1,13 +1,20 @@
-import 'package:fittracker_mobile/services/notification_service.dart';
-import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:fittracker_mobile/services/auth_service.dart';
+import 'package:flutter/material.dart';
 import 'package:overlay_support/overlay_support.dart';
-import 'features/auth/screens/login_screen.dart';
+
+import 'auth_guard.dart';
 import 'core/app_colors.dart';
+import 'features/auth/screens/login_screen.dart';
+import 'features/home/screens/home_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
+
+  print('[MAIN] Initializing AuthService...');
+  await AuthService().initialize();
+  print('[MAIN] AuthService ready. Launching app...');
 
   runApp(
     EasyLocalization(
@@ -43,7 +50,11 @@ class FitTrackerApp extends StatelessWidget {
           ),
         ),
 
-        home: const LoginScreen(),
+        home: const AuthGuard(),
+        routes: {
+          '/login': (context) => const LoginScreen(),
+          '/home': (context) => const HomeScreen(),
+        },
       ),
     );
   }

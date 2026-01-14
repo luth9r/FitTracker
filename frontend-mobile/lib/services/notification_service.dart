@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:overlay_support/overlay_support.dart';
+
 import '../core/app_colors.dart';
 
 class NotificationService {
-  // Singleton pattern
   static final NotificationService _instance = NotificationService._internal();
+
   factory NotificationService() => _instance;
+
   NotificationService._internal();
 
   void showToast(String message, {bool isError = false}) {
     showOverlayNotification(
-          (context) {
+      (context) {
         return _CustomToastWidget(
           message: message,
           isError: isError,
@@ -54,13 +56,15 @@ class _CustomToastWidgetState extends State<_CustomToastWidget>
       vsync: this,
     );
 
-    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 0.8,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
 
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
-    );
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
 
     _controller.forward();
   }
@@ -83,7 +87,10 @@ class _CustomToastWidgetState extends State<_CustomToastWidget>
             child: Material(
               color: Colors.transparent,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 14,
+                ),
                 decoration: BoxDecoration(
                   color: widget.isError
                       ? AppColors.colorAccentDanger
