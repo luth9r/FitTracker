@@ -1,8 +1,14 @@
 using FitTracker.Api.Extensions;
-using FitTracker.Application.DTOs.Auth;
-using FitTracker.Application.DTOs.Auth.Google;
-using FitTracker.Application.UseCases.User.Commands;
-using FitTracker.Application.UseCases.User.Commands.Google;
+using FitTracker.Application.Features.User.Commands.ForgotPassword;
+using FitTracker.Application.Features.User.Commands.GoogleLogin;
+using FitTracker.Application.Features.User.Commands.GoogleMobileAuth;
+using FitTracker.Application.Features.User.Commands.GoogleRegister;
+using FitTracker.Application.Features.User.Commands.Login;
+using FitTracker.Application.Features.User.Commands.Register;
+using FitTracker.Application.Features.User.Commands.ResendVerificationEmail;
+using FitTracker.Application.Features.User.Commands.ResetPassword;
+using FitTracker.Application.Features.User.Commands.VerifyEmail;
+using FitTracker.Application.Features.User.Common;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -38,7 +44,7 @@ public sealed class AuthController(IMediator mediator) : ControllerBase
             return ValidationProblem(result.Error.ToModelState());
         }
 
-        SetAuthCookie(result.Value.JWT);
+        SetAuthCookie(result.Value.Jwt);
         return Ok(result.Value);
     }
 
@@ -61,7 +67,7 @@ public sealed class AuthController(IMediator mediator) : ControllerBase
             return ValidationProblem(result.Error.ToModelState());
         }
 
-        SetAuthCookie(result.Value.JWT);
+        SetAuthCookie(result.Value.Jwt);
         return Ok(result.Value);
     }
 
@@ -83,7 +89,7 @@ public sealed class AuthController(IMediator mediator) : ControllerBase
             return ValidationProblem(result.Error.ToModelState());
         }
 
-        SetAuthCookie(result.Value.JWT);
+        SetAuthCookie(result.Value.Jwt);
         return Ok(result.Value);
     }
 
@@ -111,7 +117,7 @@ public sealed class AuthController(IMediator mediator) : ControllerBase
             return ValidationProblem(result.Error.ToModelState());
         }
 
-        SetAuthCookie(result.Value.JWT);
+        SetAuthCookie(result.Value.Jwt);
         return Ok(result.Value);
     }
 
@@ -140,15 +146,15 @@ public sealed class AuthController(IMediator mediator) : ControllerBase
     /// <summary>
     ///     Resends the email verification link.
     /// </summary>
-    /// <param name="resendRequest">The <see cref="ResendVerificationRequest" />.</param>
+    /// <param name="resendEmailRequest">The <see cref="ResendVerificationEmailRequest" />.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>Success or <see cref="ValidationProblemDetails" /> if the resend fails.</returns>
     [HttpPost("resend-verification")]
     public async Task<IActionResult> ResendVerificationEmail(
-        [FromBody] ResendVerificationRequest resendRequest,
+        [FromBody] ResendVerificationEmailRequest resendEmailRequest,
         CancellationToken cancellationToken)
     {
-        var command = new ResendVerificationEmailCommand(resendRequest.Email);
+        var command = new ResendVerificationEmailCommand(resendEmailRequest.Email);
         var result = await mediator.Send(command, cancellationToken);
 
         if (result.IsFailure)
@@ -183,7 +189,7 @@ public sealed class AuthController(IMediator mediator) : ControllerBase
             return ValidationProblem(result.Error.ToModelState());
         }
 
-        SetAuthCookie(result.Value.JWT);
+        SetAuthCookie(result.Value.Jwt);
         return Ok(result.Value);
     }
 

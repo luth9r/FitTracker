@@ -1,5 +1,5 @@
 using System.Net.Http.Json;
-using FitTracker.Application.DTOs.Auth.Google;
+using FitTracker.Application.Features.User.Common;
 using FitTracker.Application.Interfaces;
 using Google.Apis.Auth;
 using Microsoft.Extensions.Configuration;

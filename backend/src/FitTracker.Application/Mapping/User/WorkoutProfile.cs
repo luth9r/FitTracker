@@ -1,5 +1,5 @@
 using AutoMapper;
-using FitTracker.Application.DTOs.Users;
+using FitTracker.Application.Features.User.Queries.GetRecentWorkouts;
 using FitTracker.Domain.ReadModels;
 
 namespace FitTracker.Application.Mapping.User;

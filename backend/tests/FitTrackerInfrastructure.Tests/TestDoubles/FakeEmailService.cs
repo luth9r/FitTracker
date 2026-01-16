@@ -2,7 +2,7 @@ using FitTracker.Application.Interfaces;
 
 namespace FitTrackerInfrastructure.Tests.TestDoubles;
 
-public class FakeEmailService : IEmailService
+internal class FakeEmailService : IEmailService
 {
     public List<SentEmail> SentEmails { get; } = new();
 

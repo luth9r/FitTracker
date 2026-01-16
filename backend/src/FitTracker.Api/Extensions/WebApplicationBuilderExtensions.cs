@@ -4,7 +4,7 @@ using System.Security.Claims;
 using System.Text;
 using FitTracker.Api.Middlewares;
 using FitTracker.Application;
-using FitTracker.Application.Validators;
+using FitTracker.Application.Features.User.Commands.Login;
 using FitTracker.Infrastructure;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

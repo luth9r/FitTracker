@@ -27,4 +27,8 @@
         <ProjectReference Include="..\FitTrackerDomain.Tests\FitTrackerDomain.Tests.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+        <Folder Include="User\" />
+    </ItemGroup>
+
 </Project>

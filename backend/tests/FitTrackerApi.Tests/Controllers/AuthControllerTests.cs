@@ -1,9 +1,14 @@
 using CSharpFunctionalExtensions;
 using FitTracker.Api.Controllers;
-using FitTracker.Application.DTOs.Auth;
-using FitTracker.Application.DTOs.Auth.Google;
-using FitTracker.Application.UseCases.User.Commands;
-using FitTracker.Application.UseCases.User.Commands.Google;
+using FitTracker.Application.Features.User.Commands.ForgotPassword;
+using FitTracker.Application.Features.User.Commands.GoogleLogin;
+using FitTracker.Application.Features.User.Commands.GoogleRegister;
+using FitTracker.Application.Features.User.Commands.Login;
+using FitTracker.Application.Features.User.Commands.Register;
+using FitTracker.Application.Features.User.Commands.ResendVerificationEmail;
+using FitTracker.Application.Features.User.Commands.ResetPassword;
+using FitTracker.Application.Features.User.Commands.VerifyEmail;
+using FitTracker.Application.Features.User.Common;
 using FluentAssertions;
 using FluentValidation.Results;
 using MediatR;
@@ -249,7 +254,7 @@ public class AuthControllerTests
     {
         // Arrange
         var email = "test@gmail.com";
-        var request = new ResendVerificationRequest(email);
+        var request = new ResendVerificationEmailRequest(email);
 
         _mediatorMock
             .Setup(m => m.Send(It.IsAny<ResendVerificationEmailCommand>(), It.IsAny<CancellationToken>()))
@@ -273,7 +278,7 @@ public class AuthControllerTests
     {
         // Arrange
         var email = "verified@gmail.com";
-        var request = new ResendVerificationRequest(email);
+        var request = new ResendVerificationEmailRequest(email);
 
         var validationFailure = new ValidationFailure(nameof(email), "Email is already verified")
         {

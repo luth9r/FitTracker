@@ -3,7 +3,7 @@ using System.Text;
 
 namespace FitTrackerInfrastructure.Tests.TestDoubles;
 
-public class FakeHttpMessageHandler : HttpMessageHandler
+internal class FakeHttpMessageHandler : HttpMessageHandler
 {
     private readonly Queue<HttpResponseMessage> _responses = new();
 

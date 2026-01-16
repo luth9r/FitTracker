@@ -1,8 +1,9 @@
 using System.Security.Claims;
 using CSharpFunctionalExtensions;
 using FitTracker.Api.Controllers;
-using FitTracker.Application.DTOs.Exercise;
-using FitTracker.Application.UseCases.Exercise.Queries;
+using FitTracker.Application.Features.Exercise.Common;
+using FitTracker.Application.Features.Exercise.Queries.GetExerciseById;
+using FitTracker.Application.Features.Exercise.Queries.GetExercises;
 using FitTracker.Domain.Enums;
 using FluentAssertions;
 using MediatR;
@@ -65,7 +66,7 @@ public class ExerciseControllerTests
 
         _mediatorMock
             .Setup(m => m.Send(
-                It.Is<GetExerciseQuery>(q =>
+                It.Is<GetExercisesQuery>(q =>
                     q.Type == filterType &&
                     q.UserId == userId),
                 It.IsAny<CancellationToken>()))
@@ -85,7 +86,7 @@ public class ExerciseControllerTests
         value[0].Name.Should().Be("Barbell Bench Press");
 
         _mediatorMock.Verify(m => m.Send(
-                It.Is<GetExerciseQuery>(q =>
+                It.Is<GetExercisesQuery>(q =>
                     q.Type == ExerciseFilterType.Standard &&
                     q.UserId == userId),
                 It.IsAny<CancellationToken>()),
@@ -125,7 +126,7 @@ public class ExerciseControllerTests
 
         _mediatorMock
             .Setup(m => m.Send(
-                It.Is<GetExerciseQuery>(q =>
+                It.Is<GetExercisesQuery>(q =>
                     q.Type == filterType &&
                     q.UserId == userId),
                 It.IsAny<CancellationToken>()))
@@ -146,7 +147,7 @@ public class ExerciseControllerTests
         value.Should().ContainSingle(x => !x.IsCustom);
 
         _mediatorMock.Verify(m => m.Send(
-                It.Is<GetExerciseQuery>(q =>
+                It.Is<GetExercisesQuery>(q =>
                     q.Type == ExerciseFilterType.All &&
                     q.UserId == userId),
                 It.IsAny<CancellationToken>()),
@@ -164,7 +165,7 @@ public class ExerciseControllerTests
 
         _mediatorMock
             .Setup(m => m.Send(
-                It.Is<GetExerciseQuery>(q =>
+                It.Is<GetExercisesQuery>(q =>
                     q.Type == ExerciseFilterType.All &&
                     q.UserId == userId),
                 It.IsAny<CancellationToken>()))
@@ -183,7 +184,7 @@ public class ExerciseControllerTests
         value.Should().BeEmpty();
 
         _mediatorMock.Verify(m => m.Send(
-                It.Is<GetExerciseQuery>(q =>
+                It.Is<GetExercisesQuery>(q =>
                     q.Type == ExerciseFilterType.All &&
                     q.UserId == userId),
                 It.IsAny<CancellationToken>()),
@@ -235,7 +236,7 @@ public class ExerciseControllerTests
         _mediatorMock
             .Setup(m => m.Send(
                 It.Is<GetExerciseByIdQuery>(q =>
-                    q.exerciseId == exerciseId &&
+                    q.ExerciseId == exerciseId &&
                     q.UserId == userId),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Success(expectedResponse));
@@ -254,7 +255,7 @@ public class ExerciseControllerTests
 
         _mediatorMock.Verify(m => m.Send(
                 It.Is<GetExerciseByIdQuery>(q =>
-                    q.exerciseId == exerciseId &&
+                    q.ExerciseId == exerciseId &&
                     q.UserId == userId),
                 It.IsAny<CancellationToken>()),
             Times.Once);

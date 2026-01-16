@@ -30,4 +30,17 @@ public static class ValidationKeys
         public const string CodeRequired = "Validation.Google.Code.Required";
         public const string CodeVerifierRequired = "Validation.Google.CodeVerifier.Required";
     }
+
+    public static class Exercise
+    {
+        public const string NameRequired = "Validation.Exercise.Name.Required";
+        public const string NameLength = "Validation.Exercise.Name.Length";
+        public const string EquipmentNotValid = "Validation.Exercise.Equipment.NotValid";
+        public const string MuscleGroupNotValid = "Validation.Exercise.MuscleGroup.NotValid";
+        public const string DescriptionLength = "Validation.Exercise.Description.Length";
+        public const string FileSizeTooLarge = "Validation.Exercise.File.TooLarge";
+        public const string InvalidImageType = "Validation.Exercise.InvalidImageType";
+
+        public const string NameAlreadyExists = "Validation.Exercise.VideoUrl.NameAlreadyExists";
+    }
 }

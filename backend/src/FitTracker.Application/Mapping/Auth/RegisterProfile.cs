@@ -1,5 +1,5 @@
 using AutoMapper;
-using FitTracker.Application.DTOs.Auth;
+using FitTracker.Application.Features.User.Commands.Register;
 using UserEntity = FitTracker.Domain.Entities.User;
 
 namespace FitTracker.Application.Mapping.Auth;

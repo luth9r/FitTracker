@@ -24,4 +24,10 @@ public class DomainErrors
         public const string EmailNotVerified = "User.EmailNotVerified";
         public const string RateLimitExceeded = "User.RateLimitExceeded";
     }
+
+    public static class Exercise
+    {
+        public const string AlreadyExists = "Exercise.AlreadyExists";
+        public const string NotFound = "Exercise.NotFound";
+    }
 }

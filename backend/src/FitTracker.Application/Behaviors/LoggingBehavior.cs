@@ -1,5 +1,5 @@
 using System.Diagnostics;
-using FitTracker.Application.Extensions.MedaitR;
+using FitTracker.Application.Extensions;
 using MediatR;
 using Microsoft.Extensions.Logging;
 

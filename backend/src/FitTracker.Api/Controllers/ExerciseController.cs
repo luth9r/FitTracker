@@ -1,4 +1,7 @@
-using FitTracker.Application.UseCases.Exercise.Queries;
+using FitTracker.Api.Extensions;
+using FitTracker.Application.Features.Exercise.Commands.CreateExercise;
+using FitTracker.Application.Features.Exercise.Queries.GetExerciseById;
+using FitTracker.Application.Features.Exercise.Queries.GetExercises;
 using FitTracker.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +16,7 @@ public sealed class ExerciseController(IMediator mediator) : BaseApiController
         [FromQuery] ExerciseFilterType type = ExerciseFilterType.All,
         CancellationToken cancellationToken = default)
     {
-        var query = new GetExerciseQuery(type, CurrentUserId);
+        var query = new GetExercisesQuery(type, CurrentUserId);
         var result = await mediator.Send(query, cancellationToken);
 
         return Ok(result.Value);
@@ -28,5 +31,40 @@ public sealed class ExerciseController(IMediator mediator) : BaseApiController
         var result = await mediator.Send(query, cancellationToken);
 
         return Ok(result.Value);
+    }
+
+    /// <summary>
+    ///     Adds a new exercise to the system.
+    /// </summary>
+    /// <param name="request">
+    ///     The details of the exercise to be added, including name, muscle group, equipment, description,
+    ///     and an optional image.
+    /// </param>
+    /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
+    /// <returns>
+    ///     An IActionResult indicating the outcome of the operation. Returns a Created response on success or a
+    ///     validation error response otherwise.
+    /// </returns>
+    [HttpPost("add")]
+    public async Task<IActionResult> AddExercise(
+        [FromForm] CreateExerciseRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var command = new CreateExerciseCommand(
+            request.Name,
+            request.MuscleGroup,
+            request.Equipment,
+            request.Description,
+            request.Image,
+            CurrentUserId);
+
+        var result = await mediator.Send(command, cancellationToken);
+
+        if (result.IsFailure)
+        {
+            return ValidationProblem(result.Error.ToModelState());
+        }
+
+        return Created();
     }
 }

@@ -1,5 +1,5 @@
 using AutoMapper;
-using FitTracker.Application.DTOs.Auth;
+using FitTracker.Application.Features.User.Common;
 using UserEntity = FitTracker.Domain.Entities.User;
 
 namespace FitTracker.Application.Mapping.Auth;
@@ -12,6 +12,6 @@ public class LoginProfile : Profile
             .ConstructUsing(src => new LoginResponse(
                 Username: src.Username,
                 Email: src.Email,
-                JWT: string.Empty));
+                Jwt: string.Empty));
     }
 }

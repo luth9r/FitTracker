@@ -1,8 +1,8 @@
 using System.Security.Claims;
 using CSharpFunctionalExtensions;
 using FitTracker.Api.Controllers;
-using FitTracker.Application.DTOs.Users;
-using FitTracker.Application.UseCases.User.Queries;
+using FitTracker.Application.Features.User.Queries.GetRecentWorkouts;
+using FitTracker.Application.Features.User.Queries.GetUserStats;
 using FluentAssertions;
 using MediatR;
 using Microsoft.AspNetCore.Http;

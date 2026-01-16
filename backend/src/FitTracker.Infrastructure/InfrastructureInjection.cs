@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using Azure.Storage.Blobs;
 using FitTracker.Application.Interfaces;
 using FitTracker.Domain.Abstract.Interfaces;
 using FitTracker.Infrastructure.BackgroundJobs;
@@ -31,6 +32,8 @@ public static class InfrastructureInjection
         AddRedis(services);
 
         AddRebbitMq(services);
+
+        AddAzureBlobStorage(services, configuration);
 
         AddSignals(services);
 
@@ -100,6 +103,7 @@ public static class InfrastructureInjection
         _ = services.AddScoped<IWorkoutReadRepository, WorkoutReadRepository>();
         _ = services.AddScoped<ISetReadRepository, SetReadRepository>();
         _ = services.AddScoped<IExerciseReadRepository, ExerciseReadRepository>();
+        _ = services.AddScoped<IExerciseWriteRepository, ExerciseWriteRepository>();
     }
 
     private static void AddHostedServices(IServiceCollection services)
@@ -160,5 +164,17 @@ public static class InfrastructureInjection
     private static void AddSignals(IServiceCollection services)
     {
         services.AddSingleton<OutboxSignal>();
+    }
+
+    private static void AddAzureBlobStorage(IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddSingleton(x =>
+            new BlobServiceClient(
+                configuration["AzureStorage:ConnectionString"] ??
+                throw new ArgumentNullException(
+                    nameof(configuration),
+                    "AzureStorage:ConnectionString is not configured")));
+
+        services.AddScoped<IBlobStorageService, BlobStorageService>();
     }
 }

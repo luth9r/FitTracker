@@ -12,9 +12,7 @@
 
     <ItemGroup>
         <Folder Include="Exceptions\"/>
-        <Folder Include="Services\"/>
-        <Folder Include="UseCases\Exercise\Commands\"/>
-        <Folder Include="UseCases\Exercise\Handlers\Commands\"/>
+        <Folder Include="Features\User\Commands\"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -24,6 +22,7 @@
         <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.0"/>
         <PackageReference Include="Google.Apis.Auth" Version="1.72.0"/>
         <PackageReference Include="MediatR" Version="13.1.0"/>
+        <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="2.3.0"/>
         <PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.0"/>
         <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.0"/>
         <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">

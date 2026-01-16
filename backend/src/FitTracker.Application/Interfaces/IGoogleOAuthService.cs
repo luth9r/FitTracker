@@ -1,4 +1,4 @@
-﻿using FitTracker.Application.DTOs.Auth.Google;
+﻿using FitTracker.Application.Features.User.Common;
 
 namespace FitTracker.Application.Interfaces;
 

@@ -20,15 +20,4 @@ public interface IUserWriteRepository
     /// </summary>
     /// <param name="user">The user entity to update.</param>
     void Update(User user);
-
-    /// <summary>
-    ///     Retrieves a user by their email address asynchronously.
-    /// </summary>
-    /// <param name="email">The email address of the user to retrieve.</param>
-    /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
-    /// <returns>
-    ///     A task that represents the asynchronous operation. The task result contains the user entity if found, or null
-    ///     if no user is associated with the specified email.
-    /// </returns>
-    Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken);
 }

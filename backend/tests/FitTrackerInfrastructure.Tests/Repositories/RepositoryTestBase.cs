@@ -2,6 +2,7 @@
 using FitTracker.Infrastructure;
 using FitTracker.Infrastructure.Persistence;
 using FitTracker.Infrastructure.Persistence.Data;
+using FitTrackerInfrastructure.Tests.TestDoubles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
@@ -22,10 +23,7 @@ public class RepositoryTestBase : IDisposable
 
         context = new FitTrackerDbContext(options, new OutboxSignal());
 
-        var config = new MapperConfiguration(cfg =>
-        {
-            cfg.AddMaps(typeof(InfrastructureInjection).Assembly);
-        }, NullLoggerFactory.Instance);
+        var config = MapperConfigurationHelper.Create();
 
         mapper = config.CreateMapper();
 

@@ -39,4 +39,6 @@ public interface IExerciseReadRepository
         Guid userId,
         int fromDateMonths = 24,
         CancellationToken cancellationToken = default);
+
+    Task<Exercise?> GetExerciseByName(string exerciseName, Guid userId, CancellationToken cancellationToken = default);
 }

@@ -1,4 +1,6 @@
-using FitTracker.Application.UseCases.User.Queries;
+using System.Security.Claims;
+using FitTracker.Application.Features.User.Queries.GetRecentWorkouts;
+using FitTracker.Application.Features.User.Queries.GetUserStats;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,7 +18,10 @@ public sealed class UserController(IMediator mediator) : BaseApiController
     {
         var userId = CurrentUserId;
 
-        return Ok(new { UserId = userId });
+        var username = User.FindFirstValue(ClaimTypes.Name);
+        var email = User.FindFirstValue(ClaimTypes.Email);
+
+        return Ok(new { UserId = userId, Username = username, Email = email });
     }
 
     /// <summary>

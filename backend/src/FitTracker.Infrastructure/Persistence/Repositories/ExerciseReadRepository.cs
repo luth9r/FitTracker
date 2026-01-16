@@ -135,4 +135,18 @@ internal sealed class ExerciseReadRepository(
             hasRecords ? recordEf!.LastPerformed : null,
             volumeHistory);
     }
+
+    public async Task<Exercise?> GetExerciseByName(
+        string exerciseName,
+        Guid userId,
+        CancellationToken cancellationToken = default)
+    {
+        var exercise = await context.Exercises
+            .AsNoTracking()
+            .Where(x => x.CreatedByUserId == userId && x.Name == exerciseName)
+            .ProjectTo<Exercise>(mapper.ConfigurationProvider)
+            .FirstOrDefaultAsync(cancellationToken);
+
+        return exercise;
+    }
 }

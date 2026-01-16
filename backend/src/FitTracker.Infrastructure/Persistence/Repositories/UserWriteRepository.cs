@@ -34,19 +34,4 @@ internal sealed class UserWriteRepository(
 
         context.Entry(userEf).Property(x => x.CreatedAt).IsModified = false;
     }
-
-    /// <inheritdoc />
-    public async Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken)
-    {
-        var userEf = await GetUserEfByEmailCompiled(context, email)
-            .FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
-
-        if (userEf == null)
-        {
-            return null;
-        }
-
-        var user = mapper.Map<User>(userEf);
-        return user;
-    }
 }

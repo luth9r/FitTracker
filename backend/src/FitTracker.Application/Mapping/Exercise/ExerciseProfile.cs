@@ -1,5 +1,6 @@
 using AutoMapper;
-using FitTracker.Application.DTOs.Exercise;
+using FitTracker.Application.Features.Exercise.Common;
+using FitTracker.Application.Features.Exercise.Queries.GetExerciseById;
 using FitTracker.Domain.ReadModels;
 using ExerciseEntity = FitTracker.Domain.Entities.Exercise;
 
@@ -10,19 +11,37 @@ public class ExerciseProfile : Profile
     public ExerciseProfile()
     {
         _ = CreateMap<ExerciseEntity, ExerciseResponse>()
-            .ConstructUsing(src => new ExerciseResponse(
-                src.Id,
-                src.Name,
-                src.Description,
-                src.ImageUrl,
-                src.VideoUrl,
-                string.Empty,
-                string.Empty,
-                src.CreatedByUserId.HasValue));
+            .ForCtorParam(
+                "Name",
+                opt => opt.MapFrom(src =>
+                    src.IsCustomExercise() ? src.Name : $"Exercise.Name.{src.Name}"))
+            .ForCtorParam(
+                "MuscleGroup",
+                opt => opt.MapFrom(src =>
+                    $"Exercise.MuscleGroup.{src.MuscleGroup}"))
+            .ForCtorParam(
+                "Equipment",
+                opt => opt.MapFrom(src => $"Exercise.Equipment.{src.Equipment}"))
+            .ForCtorParam(
+                "IsCustom",
+                opt => opt.MapFrom(src =>
+                    src.CreatedByUserId.HasValue));
 
         _ = CreateMap<ExerciseDetails, ExerciseDetailsResponse>()
-            .ForCtorParam("MuscleGroup", opt => opt.MapFrom(s => s.MuscleGroup.ToString()))
-            .ForCtorParam("Equipment", opt => opt.MapFrom(s => s.Equipment.ToString()))
+            .ForCtorParam(
+                "Name",
+                opt => opt.MapFrom(src =>
+                    src.IsCustom
+                        ? src.Name
+                        : $"Exercise.Name.{src.Name}"))
+            .ForCtorParam(
+                "MuscleGroup",
+                opt => opt.MapFrom(src =>
+                    $"Exercise.MuscleGroup.{src.MuscleGroup}"))
+            .ForCtorParam(
+                "Equipment",
+                opt => opt.MapFrom(src =>
+                    $"Exercise.Equipment.{src.Equipment}"))
             .ForCtorParam("VolumeHistory", opt => opt.MapFrom(s => s.VolumeHistory));
 
         CreateMap<ExerciseHistoryPoint, ExerciseHistoryPointResponse>()

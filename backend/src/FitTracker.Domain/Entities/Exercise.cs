@@ -19,16 +19,6 @@ public class Exercise : BaseEntity
     public const int DescriptionMaxLength = 1000;
 
     /// <summary>
-    ///     The maximum length allowed for the muscle group name.
-    /// </summary>
-    public const int MuscleGroupMaxLength = 50;
-
-    /// <summary>
-    ///     The maximum length allowed for the equipment name.
-    /// </summary>
-    public const int EquipmentMaxLength = 50;
-
-    /// <summary>
     ///     The maximum length allowed for the image URL.
     /// </summary>
     public const int ImageUrlMaxLength = 500;
@@ -161,12 +151,12 @@ public class Exercise : BaseEntity
                 $"Video URL length must not exceed {VideoUrlMaxLength} characters.");
         }
 
-        Name = name;
+        Name = name.Trim();
         MuscleGroup = muscleGroup;
         Equipment = equipment;
-        Description = description;
-        ImageUrl = imageUrl;
-        VideoUrl = videoUrl;
+        Description = description?.Trim();
+        ImageUrl = imageUrl?.Trim();
+        VideoUrl = videoUrl?.Trim();
         CreatedByUserId = createdByUserId;
     }
 
