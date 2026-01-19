@@ -16,6 +16,7 @@ public static class ValidationKeys
             public const string Length = "Validation.User.Password.Length";
             public const string LetterRequired = "Validation.User.Password.LetterRequired";
             public const string NumberRequired = "Validation.User.Password.NumberRequired";
+            public const string NotSameAsOld = "Validation.User.Password.NotSameAsOld";
         }
 
         public static class Username
@@ -42,5 +43,11 @@ public static class ValidationKeys
         public const string InvalidImageType = "Validation.Exercise.InvalidImageType";
 
         public const string NameAlreadyExists = "Validation.Exercise.VideoUrl.NameAlreadyExists";
+    }
+
+    public static class Template
+    {
+        public const string NameRequired = "Validation.Template.Name.Required";
+        public const string NameMaxLength = "Validation.Template.Name.MaxLength";
     }
 }

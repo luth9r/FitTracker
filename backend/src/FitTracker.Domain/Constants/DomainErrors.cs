@@ -23,6 +23,7 @@ public class DomainErrors
         public const string EmailAlreadyVerified = "User.EmailAlreadyVerified";
         public const string EmailNotVerified = "User.EmailNotVerified";
         public const string RateLimitExceeded = "User.RateLimitExceeded";
+        public const string InvalidPassword = "User.InvalidPassword";
     }
 
     public static class Exercise
