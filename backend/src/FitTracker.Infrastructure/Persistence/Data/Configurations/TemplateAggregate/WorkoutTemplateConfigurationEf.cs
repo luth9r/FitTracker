@@ -1,13 +1,13 @@
-using FitTracker.Domain.Entities;
-using FitTracker.Infrastructure.Persistence.Data.Entities;
+using FitTracker.Domain.Entities.TemplateAggregate;
+using FitTracker.Infrastructure.Persistence.Data.Entities.TemplateAggregate;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FitTracker.Infrastructure.Persistence.Data.Configurations;
+namespace FitTracker.Infrastructure.Persistence.Data.Configurations.TemplateAggregate;
 
-public class WorkoutTemplateConfigurationEf : IEntityTypeConfiguration<WorkoutTemplateEf>
+public class WorkoutTemplateConfigurationEf : IEntityTypeConfiguration<TemplateWorkoutEf>
 {
-    public void Configure(EntityTypeBuilder<WorkoutTemplateEf> builder)
+    public void Configure(EntityTypeBuilder<TemplateWorkoutEf> builder)
     {
         _ = builder.ToTable("workout_templates");
 
@@ -24,12 +24,12 @@ public class WorkoutTemplateConfigurationEf : IEntityTypeConfiguration<WorkoutTe
 
         _ = builder.Property(wt => wt.Name)
             .HasColumnName("name")
-            .HasMaxLength(WorkoutTemplate.NameMaxLength)
+            .HasMaxLength(TemplateWorkout.NameMaxLength)
             .IsRequired();
 
         _ = builder.Property(wt => wt.Description)
             .HasColumnName("description")
-            .HasMaxLength(WorkoutTemplate.DescriptionMaxLength);
+            .HasMaxLength(TemplateWorkout.DescriptionMaxLength);
 
         _ = builder.Property(wt => wt.UsageCount)
             .HasColumnName("usage_count")

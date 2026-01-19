@@ -1,7 +1,7 @@
 using FitTracker.Domain.Abstract;
 using FitTracker.Domain.Enums;
 
-namespace FitTracker.Domain.Entities;
+namespace FitTracker.Domain.Entities.TemplateAggregate;
 
 /// <summary>
 ///     Represents a planned set within a workout template exercise.

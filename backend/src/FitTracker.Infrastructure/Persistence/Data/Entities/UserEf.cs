@@ -1,3 +1,5 @@
+using FitTracker.Infrastructure.Persistence.Data.Entities.TemplateAggregate;
+
 namespace FitTracker.Infrastructure.Persistence.Data.Entities;
 
 /// <summary>
@@ -63,7 +65,7 @@ public class UserEf : BaseEntityEf
     /// <summary>
     ///     Gets or sets collection of user's workout templates.
     /// </summary>
-    public ICollection<WorkoutTemplateEf> WorkoutTemplates { get; set; } = new HashSet<WorkoutTemplateEf>();
+    public ICollection<TemplateWorkoutEf> WorkoutTemplates { get; set; } = new HashSet<TemplateWorkoutEf>();
 
     /// <summary>
     ///     Gets or sets collection of user's earned achievements.

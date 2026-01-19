@@ -1,9 +1,9 @@
-namespace FitTracker.Infrastructure.Persistence.Data.Entities;
+namespace FitTracker.Infrastructure.Persistence.Data.Entities.TemplateAggregate;
 
 /// <summary>
 ///     Represents an exercise within a workout template.
 /// </summary>
-public class WorkoutTemplateExerciseEf : BaseEntityEf
+public class TemplateWorkoutExerciseEf : BaseEntityEf
 {
     /// <summary>
     ///     Gets or sets iD of the workout template.
@@ -28,7 +28,7 @@ public class WorkoutTemplateExerciseEf : BaseEntityEf
     /// <summary>
     ///     Gets or sets navigation to the workout template.
     /// </summary>
-    public WorkoutTemplateEf? WorkoutTemplate { get; set; } = null!;
+    public TemplateWorkoutEf? WorkoutTemplate { get; set; } = null!;
 
     /// <summary>
     ///     Gets or sets navigation to the exercise.

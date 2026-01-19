@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using FitTracker.Domain.Abstract.Interfaces;
 using FitTracker.Infrastructure.Persistence.Data.Entities;
+using FitTracker.Infrastructure.Persistence.Data.Entities.TemplateAggregate;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
@@ -15,11 +16,11 @@ public class FitTrackerDbContext : DbContext
 
     public DbSet<WorkoutEf> Workouts { get; set; } = null!;
 
-    public DbSet<WorkoutTemplateEf> WorkoutTemplates { get; set; } = null!;
+    public DbSet<TemplateWorkoutEf> WorkoutTemplates { get; set; } = null!;
 
     public DbSet<WorkoutExerciseEf> WorkoutExercises { get; set; } = null!;
 
-    public DbSet<WorkoutTemplateExerciseEf> WorkoutTemplateExercises { get; set; } = null!;
+    public DbSet<TemplateWorkoutExerciseEf> WorkoutTemplateExercises { get; set; } = null!;
 
     public DbSet<SetEf> Sets { get; set; } = null!;
 

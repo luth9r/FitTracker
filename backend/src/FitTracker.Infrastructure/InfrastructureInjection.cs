@@ -104,6 +104,8 @@ public static class InfrastructureInjection
         _ = services.AddScoped<ISetReadRepository, SetReadRepository>();
         _ = services.AddScoped<IExerciseReadRepository, ExerciseReadRepository>();
         _ = services.AddScoped<IExerciseWriteRepository, ExerciseWriteRepository>();
+        _ = services.AddScoped<IWorkoutTemplateReadRepository, TemplateWorkoutReadRepository>();
+        _ = services.AddScoped<IWorkoutTemplateWriteRepository, TemplateWorkoutWriteRepository>();
     }
 
     private static void AddHostedServices(IServiceCollection services)

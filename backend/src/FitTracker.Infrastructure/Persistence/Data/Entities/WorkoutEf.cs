@@ -1,3 +1,5 @@
+using FitTracker.Infrastructure.Persistence.Data.Entities.TemplateAggregate;
+
 namespace FitTracker.Infrastructure.Persistence.Data.Entities;
 
 /// <summary>
@@ -68,7 +70,7 @@ public class WorkoutEf : BaseEntityEf
     /// <summary>
     ///     Gets or sets navigation to the workout template (if used).
     /// </summary>
-    public WorkoutTemplateEf? WorkoutTemplate { get; set; }
+    public TemplateWorkoutEf? WorkoutTemplate { get; set; }
 
     /// <summary>
     ///     Gets or sets collection of exercises performed in this workout.

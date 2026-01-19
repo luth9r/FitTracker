@@ -1226,7 +1226,7 @@ namespace FitTracker.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("FitTracker.Infrastructure.Persistence.Data.Entities.WorkoutTemplateEf", b =>
+            modelBuilder.Entity("FitTracker.Infrastructure.Persistence.Data.Entities.TemplateWorkoutEf", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -1314,7 +1314,7 @@ namespace FitTracker.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("FitTracker.Infrastructure.Persistence.Data.Entities.WorkoutTemplateExerciseEf", b =>
+            modelBuilder.Entity("FitTracker.Infrastructure.Persistence.Data.Entities.TemplateWorkoutExerciseEf", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -1467,13 +1467,13 @@ namespace FitTracker.Infrastructure.Migrations
 
             modelBuilder.Entity("FitTracker.Infrastructure.Persistence.Data.Entities.TemplateSetEf", b =>
                 {
-                    b.HasOne("FitTracker.Infrastructure.Persistence.Data.Entities.WorkoutTemplateExerciseEf", "WorkoutTemplateExercise")
+                    b.HasOne("FitTracker.Infrastructure.Persistence.Data.Entities.TemplateWorkoutExerciseEf", "TemplateWorkoutExercise")
                         .WithMany("PlannedSets")
                         .HasForeignKey("WorkoutTemplateExerciseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("WorkoutTemplateExercise");
+                    b.Navigation("TemplateWorkoutExercise");
                 });
 
             modelBuilder.Entity("FitTracker.Infrastructure.Persistence.Data.Entities.UserAchievementEf", b =>
@@ -1503,14 +1503,14 @@ namespace FitTracker.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("FitTracker.Infrastructure.Persistence.Data.Entities.WorkoutTemplateEf", "WorkoutTemplate")
+                    b.HasOne("FitTracker.Infrastructure.Persistence.Data.Entities.TemplateWorkoutEf", "TemplateWorkout")
                         .WithMany()
                         .HasForeignKey("WorkoutTemplateId")
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("User");
 
-                    b.Navigation("WorkoutTemplate");
+                    b.Navigation("TemplateWorkout");
                 });
 
             modelBuilder.Entity("FitTracker.Infrastructure.Persistence.Data.Entities.WorkoutExerciseEf", b =>
@@ -1532,7 +1532,7 @@ namespace FitTracker.Infrastructure.Migrations
                     b.Navigation("Workout");
                 });
 
-            modelBuilder.Entity("FitTracker.Infrastructure.Persistence.Data.Entities.WorkoutTemplateEf", b =>
+            modelBuilder.Entity("FitTracker.Infrastructure.Persistence.Data.Entities.TemplateWorkoutEf", b =>
                 {
                     b.HasOne("FitTracker.Infrastructure.Persistence.Data.Entities.UserEf", "User")
                         .WithMany("WorkoutTemplates")
@@ -1543,7 +1543,7 @@ namespace FitTracker.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("FitTracker.Infrastructure.Persistence.Data.Entities.WorkoutTemplateExerciseEf", b =>
+            modelBuilder.Entity("FitTracker.Infrastructure.Persistence.Data.Entities.TemplateWorkoutExerciseEf", b =>
                 {
                     b.HasOne("FitTracker.Infrastructure.Persistence.Data.Entities.ExerciseEf", "Exercise")
                         .WithMany()
@@ -1551,7 +1551,7 @@ namespace FitTracker.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("FitTracker.Infrastructure.Persistence.Data.Entities.WorkoutTemplateEf", "WorkoutTemplate")
+                    b.HasOne("FitTracker.Infrastructure.Persistence.Data.Entities.TemplateWorkoutEf", "TemplateWorkout")
                         .WithMany("Exercises")
                         .HasForeignKey("WorkoutTemplateId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1559,7 +1559,7 @@ namespace FitTracker.Infrastructure.Migrations
 
                     b.Navigation("Exercise");
 
-                    b.Navigation("WorkoutTemplate");
+                    b.Navigation("TemplateWorkout");
                 });
 
             modelBuilder.Entity("FitTracker.Infrastructure.Persistence.Data.Entities.ExerciseEf", b =>
@@ -1590,12 +1590,12 @@ namespace FitTracker.Infrastructure.Migrations
                     b.Navigation("Sets");
                 });
 
-            modelBuilder.Entity("FitTracker.Infrastructure.Persistence.Data.Entities.WorkoutTemplateEf", b =>
+            modelBuilder.Entity("FitTracker.Infrastructure.Persistence.Data.Entities.TemplateWorkoutEf", b =>
                 {
                     b.Navigation("Exercises");
                 });
 
-            modelBuilder.Entity("FitTracker.Infrastructure.Persistence.Data.Entities.WorkoutTemplateExerciseEf", b =>
+            modelBuilder.Entity("FitTracker.Infrastructure.Persistence.Data.Entities.TemplateWorkoutExerciseEf", b =>
                 {
                     b.Navigation("PlannedSets");
                 });

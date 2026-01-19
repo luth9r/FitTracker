@@ -1,12 +1,15 @@
 using FitTracker.Domain.Abstract;
+using FitTracker.Domain.Enums;
 
-namespace FitTracker.Domain.Entities;
+namespace FitTracker.Domain.Entities.TemplateAggregate;
 
 /// <summary>
 ///     Represents an exercise within a workout template.
 /// </summary>
-public class WorkoutTemplateExercise : BaseEntity
+public class TemplateWorkoutExercise : BaseEntity
 {
+    private readonly List<TemplateSet> _sets = new();
+
     /// <summary>
     ///     The maximum length allowed for the notes.
     /// </summary>
@@ -42,8 +45,10 @@ public class WorkoutTemplateExercise : BaseEntity
     /// </summary>
     public string? Notes { get; private set; }
 
+    public IReadOnlyCollection<TemplateSet> Sets => _sets.AsReadOnly();
+
     /// <summary>
-    ///     Initializes a new instance of the <see cref="WorkoutTemplateExercise" /> class.
+    ///     Initializes a new instance of the <see cref="TemplateWorkoutExercise" /> class.
     /// </summary>
     /// <param name="id">The unique identifier.</param>
     /// <param name="workoutTemplateId">The unique identifier of the workout template.</param>
@@ -52,14 +57,15 @@ public class WorkoutTemplateExercise : BaseEntity
     /// <param name="notes">The notes.</param>
     /// <param name="createdAt">The date and time of creation.</param>
     /// <param name="updatedAt">The date and time of the last update.</param>
-    internal WorkoutTemplateExercise(
+    internal TemplateWorkoutExercise(
         Guid id,
         Guid workoutTemplateId,
         Guid exerciseId,
         int orderIndex,
         string? notes,
         DateTime createdAt,
-        DateTime updatedAt)
+        DateTime updatedAt,
+        IEnumerable<TemplateSet>? sets = null)
     {
         Id = id;
         WorkoutTemplateId = workoutTemplateId;
@@ -68,23 +74,28 @@ public class WorkoutTemplateExercise : BaseEntity
         Notes = notes;
         CreatedAt = createdAt;
         UpdatedAt = updatedAt;
+
+        if (sets != null)
+        {
+            _sets.AddRange(sets);
+        }
     }
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="WorkoutTemplateExercise" /> class.
+    ///     Initializes a new instance of the <see cref="TemplateWorkoutExercise" /> class.
     /// </summary>
-    private WorkoutTemplateExercise()
+    private TemplateWorkoutExercise()
     {
     }
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="WorkoutTemplateExercise" /> class.
+    ///     Initializes a new instance of the <see cref="TemplateWorkoutExercise" /> class.
     /// </summary>
     /// <param name="workoutTemplateId">The unique identifier of the workout template.</param>
     /// <param name="exerciseId">The unique identifier of the exercise.</param>
     /// <param name="orderIndex">The order index.</param>
     /// <param name="notes">The notes.</param>
-    private WorkoutTemplateExercise(
+    private TemplateWorkoutExercise(
         Guid workoutTemplateId,
         Guid exerciseId,
         int orderIndex,
@@ -123,20 +134,20 @@ public class WorkoutTemplateExercise : BaseEntity
     }
 
     /// <summary>
-    ///     Creates a new <see cref="WorkoutTemplateExercise" />.
+    ///     Creates a new <see cref="TemplateWorkoutExercise" />.
     /// </summary>
     /// <param name="workoutTemplateId">The unique identifier of the workout template.</param>
     /// <param name="exerciseId">The unique identifier of the exercise.</param>
     /// <param name="orderIndex">The order index.</param>
     /// <param name="notes">The notes.</param>
-    /// <returns>A new instance of <see cref="WorkoutTemplateExercise" />.</returns>
-    public static WorkoutTemplateExercise Create(
+    /// <returns>A new instance of <see cref="TemplateWorkoutExercise" />.</returns>
+    public static TemplateWorkoutExercise Create(
         Guid workoutTemplateId,
         Guid exerciseId,
         int orderIndex,
         string? notes = null)
     {
-        return new WorkoutTemplateExercise(workoutTemplateId, exerciseId, orderIndex, notes);
+        return new TemplateWorkoutExercise(workoutTemplateId, exerciseId, orderIndex, notes);
     }
 
     /// <summary>
@@ -217,5 +228,17 @@ public class WorkoutTemplateExercise : BaseEntity
         }
 
         UpdateOrder(OrderIndex + 1);
+    }
+
+    public void AddSet(int setNumber, double weight, int reps, int? rest, SetType type)
+    {
+        var set = TemplateSet.Create(
+            Id,
+            setNumber,
+            weight,
+            reps,
+            rest,
+            type);
+        _sets.Add(set);
     }
 }

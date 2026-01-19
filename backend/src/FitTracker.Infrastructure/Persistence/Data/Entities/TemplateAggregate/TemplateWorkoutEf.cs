@@ -1,9 +1,9 @@
-namespace FitTracker.Infrastructure.Persistence.Data.Entities;
+namespace FitTracker.Infrastructure.Persistence.Data.Entities.TemplateAggregate;
 
 /// <summary>
 ///     Represents a reusable workout template.
 /// </summary>
-public class WorkoutTemplateEf : BaseEntityEf
+public class TemplateWorkoutEf : BaseEntityEf
 {
     /// <summary>
     ///     Gets or sets iD of the user who owns this template.
@@ -38,5 +38,5 @@ public class WorkoutTemplateEf : BaseEntityEf
     /// <summary>
     ///     Gets or sets collection of exercises in this template.
     /// </summary>
-    public ICollection<WorkoutTemplateExerciseEf> Exercises { get; set; } = new HashSet<WorkoutTemplateExerciseEf>();
+    public ICollection<TemplateWorkoutExerciseEf> Exercises { get; set; } = new HashSet<TemplateWorkoutExerciseEf>();
 }

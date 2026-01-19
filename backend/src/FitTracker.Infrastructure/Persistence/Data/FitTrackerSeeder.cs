@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using FitTracker.Infrastructure.Persistence.Data.Entities;
+using FitTracker.Infrastructure.Persistence.Data.Entities.TemplateAggregate;
 using Microsoft.EntityFrameworkCore;
 #pragma warning disable CS8669 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context. Auto-generated code requires an explicit '#nullable' directive in source.
 
@@ -349,7 +350,7 @@ public class FitTrackerSeeder
     {
         var baseDate = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
-        _ = modelBuilder.Entity<WorkoutTemplateEf>().HasData(
+        _ = modelBuilder.Entity<TemplateWorkoutEf>().HasData(
             new
             {
                 Id = pushTemplateId,
@@ -406,7 +407,7 @@ public class FitTrackerSeeder
         var legsExercise1 = Guid.Parse("55555555-5555-5555-5555-555555555555");
         var legsExercise2 = Guid.Parse("55555555-5555-5555-5555-555555555556");
 
-        _ = modelBuilder.Entity<WorkoutTemplateExerciseEf>().HasData(
+        _ = modelBuilder.Entity<TemplateWorkoutExerciseEf>().HasData(
             new
             {
                 Id = pushExercise1,

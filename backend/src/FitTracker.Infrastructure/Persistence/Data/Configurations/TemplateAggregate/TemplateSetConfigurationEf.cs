@@ -1,8 +1,8 @@
-using FitTracker.Infrastructure.Persistence.Data.Entities;
+using FitTracker.Infrastructure.Persistence.Data.Entities.TemplateAggregate;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FitTracker.Infrastructure.Persistence.Data.Configurations;
+namespace FitTracker.Infrastructure.Persistence.Data.Configurations.TemplateAggregate;
 
 public class TemplateSetConfigurationEf : IEntityTypeConfiguration<TemplateSetEf>
 {

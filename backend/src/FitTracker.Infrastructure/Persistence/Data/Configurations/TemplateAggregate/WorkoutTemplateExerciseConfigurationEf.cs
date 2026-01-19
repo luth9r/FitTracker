@@ -1,13 +1,13 @@
-using FitTracker.Domain.Entities;
-using FitTracker.Infrastructure.Persistence.Data.Entities;
+using FitTracker.Domain.Entities.TemplateAggregate;
+using FitTracker.Infrastructure.Persistence.Data.Entities.TemplateAggregate;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FitTracker.Infrastructure.Persistence.Data.Configurations;
+namespace FitTracker.Infrastructure.Persistence.Data.Configurations.TemplateAggregate;
 
-public class WorkoutTemplateExerciseConfigurationEf : IEntityTypeConfiguration<WorkoutTemplateExerciseEf>
+public class WorkoutTemplateExerciseConfigurationEf : IEntityTypeConfiguration<TemplateWorkoutExerciseEf>
 {
-    public void Configure(EntityTypeBuilder<WorkoutTemplateExerciseEf> builder)
+    public void Configure(EntityTypeBuilder<TemplateWorkoutExerciseEf> builder)
     {
         _ = builder.ToTable("workout_template_exercises");
 
@@ -33,7 +33,7 @@ public class WorkoutTemplateExerciseConfigurationEf : IEntityTypeConfiguration<W
 
         _ = builder.Property(wte => wte.Notes)
             .HasColumnName("notes")
-            .HasMaxLength(WorkoutTemplateExercise.NotesMaxLength);
+            .HasMaxLength(TemplateWorkoutExercise.NotesMaxLength);
 
         _ = builder.Property(wte => wte.CreatedAt)
             .HasColumnName("created_at")
