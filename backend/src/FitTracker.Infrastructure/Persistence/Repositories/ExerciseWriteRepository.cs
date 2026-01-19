@@ -10,6 +10,7 @@ public class ExerciseWriteRepository(
     FitTrackerDbContext context,
     IMapper mapper) : IExerciseWriteRepository
 {
+    /// <inheritdoc />
     public async Task AddAsync(Exercise exercise, CancellationToken cancellationToken = default)
     {
         var exerciseEf = mapper.Map<ExerciseEf>(exercise);
@@ -17,6 +18,7 @@ public class ExerciseWriteRepository(
         _ = await context.Exercises.AddAsync(exerciseEf, cancellationToken);
     }
 
+    /// <inheritdoc />
     public Task UpdateAsync(Exercise exercise)
     {
         throw new NotImplementedException();

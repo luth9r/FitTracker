@@ -8,7 +8,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using ResultExtensions = FitTracker.Application.Extensions.ResultExtensions;
 
-namespace FitTracker.Application.Features.User.Commands.ResetPassword;
+namespace FitTracker.Application.Features.User.Commands.ResetPasswordByToken;
 
 /// <summary>
 ///     Handler for processing password reset commands.
@@ -25,7 +25,8 @@ public sealed class ResetPasswordCommandHandler(
     IUnitOfWork unitOfWork,
     IJwtTokenValidator jwtTokenValidator,
     IPasswordHasher hasher,
-    ILogger<ResetPasswordCommandHandler> logger) : IRequestHandler<ResetPasswordCommand, Result<Unit, ValidationResult>>
+    ILogger<ResetPasswordCommandHandler> logger)
+    : IRequestHandler<ResetPasswordCommand, Result<Unit, ValidationResult>>
 {
     public async Task<Result<Unit, ValidationResult>> Handle(
         ResetPasswordCommand request,

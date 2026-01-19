@@ -2,7 +2,7 @@ using AutoMapper;
 using FitTracker.Domain.Entities;
 using FitTracker.Infrastructure.Persistence.Data.Entities;
 
-namespace FitTracker.Infrastructure.Automapper;
+namespace FitTracker.Infrastructure.Automapper.Entities;
 
 public class ExerciseRecordProfile : Profile
 {
@@ -15,7 +15,7 @@ public class ExerciseRecordProfile : Profile
                 exerciseId: src.ExerciseId,
                 maxWeight: src.MaxWeightKg,
                 maxReps: src.MaxReps,
-                maxVolume: src.MaxVolumeKg,
+                maxVolumeKg: src.MaxVolumeKg,
                 maxTotalVolume: src.MaxTotalVolumeKg,
                 maxWeightDate: src.MaxWeightDate,
                 maxRepsDate: src.MaxRepsDate,

@@ -12,7 +12,7 @@
 
     <ItemGroup>
         <Folder Include="Exceptions\"/>
-        <Folder Include="Features\User\Commands\"/>
+        <Folder Include="Features\WorkoutTemplate\Commands\"/>
     </ItemGroup>
 
     <ItemGroup>

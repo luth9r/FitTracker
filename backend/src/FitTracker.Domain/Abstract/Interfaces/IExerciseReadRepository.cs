@@ -34,11 +34,26 @@ public interface IExerciseReadRepository
     /// <param name="fromDateMonths">The number of moths back from today to include in the volume history (0 for all time).</param>
     /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
     /// <returns>An <see cref="ExerciseDetails" /> object containing metadata, PRs, and progress history.</returns>
-    Task<ExerciseDetails> GetExerciseDetailsAsync(
+    Task<ExerciseDetails?> GetExerciseDetailsAsync(
         Guid exerciseId,
         Guid userId,
         int fromDateMonths = 24,
         CancellationToken cancellationToken = default);
 
+    /// <summary>
+    ///     Retrieves an exercise by its name for the specified user.
+    /// </summary>
+    /// <param name="exerciseName">
+    ///     The name of the exercise to retrieve.
+    /// </param>
+    /// <param name="userId">
+    ///     The identifier of the user to filter exercises specific to the user.
+    /// </param>
+    /// <param name="cancellationToken">
+    ///     A token to monitor for cancellation requests.
+    /// </param>
+    /// <returns>
+    ///     The exercise matching the specified name for the user, or null if no match is found.
+    /// </returns>
     Task<Exercise?> GetExerciseByName(string exerciseName, Guid userId, CancellationToken cancellationToken = default);
 }

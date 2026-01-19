@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace FitTracker.Application.Features.User.Commands.ResetPassword;
+namespace FitTracker.Application.Features.User.Commands.ResetPasswordByToken;
 
 /// <summary>
 ///     Request model for resetting a user's password.

@@ -3,9 +3,9 @@ using AutoMapper.QueryableExtensions;
 using FitTracker.Domain.Abstract.Interfaces;
 using FitTracker.Domain.Entities;
 using FitTracker.Domain.Enums;
-using FitTracker.Domain.Exceptions;
 using FitTracker.Domain.ReadModels;
 using FitTracker.Infrastructure.Persistence.Data;
+using FitTracker.Infrastructure.Persistence.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace FitTracker.Infrastructure.Persistence.Repositories;
@@ -58,84 +58,133 @@ internal sealed class ExerciseReadRepository(
     }
 
     /// <inheritdoc />
-    public async Task<ExerciseDetails> GetExerciseDetailsAsync(
+    public async Task<ExerciseDetails?> GetExerciseDetailsAsync(
         Guid exerciseId,
         Guid userId,
         int fromDateMonths = 24,
         CancellationToken cancellationToken = default)
     {
-        if (userId == Guid.Empty)
+        var exerciseEf = await GetExerciseAsync(exerciseId, userId, cancellationToken);
+        if (exerciseEf == null)
         {
-            throw new ArgumentException("UserId is required.", nameof(userId));
+            return null;
         }
 
-        var exerciseEf = await context.Exercises
-                             .AsNoTracking()
-                             .FirstOrDefaultAsync(
-                                 x => x.Id == exerciseId && (x.CreatedByUserId == null || x.CreatedByUserId == userId),
-                                 cancellationToken)
-                         ?? throw new NotFoundException($"Exercise {exerciseId} not found", "EXERCISE_NOT_FOUND");
+        var recordTask = GetExerciseRecordAsync(exerciseId, userId, cancellationToken);
+        var historyTask = GetVolumeHistoryAsync(exerciseId, userId, fromDateMonths, cancellationToken);
 
-        var recordEf = await context.ExerciseRecords
+        await Task.WhenAll(recordTask, historyTask);
+
+        return BuildExerciseDetails(
+            exerciseEf,
+            recordTask.Result,
+            historyTask.Result);
+    }
+
+    private async Task<ExerciseEf?> GetExerciseAsync(Guid exerciseId, Guid userId, CancellationToken cancellationToken)
+    {
+        return await context.Exercises
+            .AsNoTracking()
+            .FirstOrDefaultAsync(
+                x => x.Id == exerciseId && (x.CreatedByUserId == null || x.CreatedByUserId == userId),
+                cancellationToken);
+    }
+
+    private async Task<ExerciseRecordEf?> GetExerciseRecordAsync(
+        Guid exerciseId,
+        Guid userId,
+        CancellationToken cancellationToken)
+    {
+        return await context.ExerciseRecords
             .AsNoTracking()
             .FirstOrDefaultAsync(r => r.ExerciseId == exerciseId && r.UserId == userId, cancellationToken);
+    }
 
-        DateTime? filterThreshold = fromDateMonths > 0
+    private async Task<List<ExerciseHistoryPoint>> GetVolumeHistoryAsync(
+        Guid exerciseId,
+        Guid userId,
+        int fromDateMonths,
+        CancellationToken cancellationToken)
+    {
+        var filterDate = fromDateMonths > 0
             ? DateTime.UtcNow.Date.AddMonths(-fromDateMonths)
-            : null;
+            : (DateTime?)null;
 
-        var volumeHistoryRaw = await (from w in context.Workouts.AsNoTracking()
+        var query = await (
+                from w in context.Workouts.AsNoTracking()
                 join we in context.WorkoutExercises on w.Id equals we.WorkoutId
                 join s in context.Sets on we.Id equals s.WorkoutExerciseId
                 where w.UserId == userId
                       && we.ExerciseId == exerciseId
                       && s.IsCompleted
-                      && (filterThreshold == null || w.WorkoutDate >= filterThreshold)
+                      && (filterDate == null || w.WorkoutDate >= filterDate)
                 group s by w.WorkoutDate.Date
                 into g
                 select new
                 {
                     Date = g.Key,
-                    SumValue = g.Sum(x => x.WeightKg * x.Reps),
+                    Volume = g.Sum(x => x.WeightKg * x.Reps),
                 })
             .OrderBy(x => x.Date)
             .ToListAsync(cancellationToken);
 
-        var volumeHistory = volumeHistoryRaw
-            .Select(x => new ExerciseHistoryPoint(DateOnly.FromDateTime(x.Date), x.SumValue))
+        return query
+            .Select(x => new ExerciseHistoryPoint(DateOnly.FromDateTime(x.Date), x.Volume))
             .ToList();
-
-        var hasRecords = recordEf != null && recordEf.TotalWorkouts > 0;
-        var totalLifted = recordEf?.TotalLiftedKg ?? 0;
-        var totalSets = recordEf?.TotalSets ?? 0;
-
-        return new ExerciseDetails(
-            exerciseEf.Id,
-            exerciseEf.Name,
-            (MuscleGroup)exerciseEf.MuscleGroup,
-            (Equipment)exerciseEf.Equipment,
-            exerciseEf.Description,
-            exerciseEf.ImageUrl,
-            exerciseEf.VideoUrl,
-            exerciseEf.CreatedByUserId.HasValue,
-            recordEf?.MaxWeightKg ?? 0,
-            recordEf?.MaxReps ?? 0,
-            recordEf?.MaxVolumeKg ?? 0,
-            recordEf?.MaxTotalVolumeKg ?? 0,
-            hasRecords ? recordEf!.MaxWeightDate : null,
-            hasRecords ? recordEf!.MaxRepsDate : null,
-            hasRecords ? recordEf!.MaxVolumeDate : null,
-            hasRecords ? recordEf!.MaxTotalVolumeDate : null,
-            recordEf?.TotalWorkouts ?? 0,
-            totalSets,
-            recordEf?.TotalReps ?? 0,
-            totalLifted,
-            totalSets > 0 ? totalLifted / totalSets : 0,
-            totalSets > 0 ? (double)(recordEf?.TotalReps ?? 0) / totalSets : 0,
-            hasRecords ? recordEf!.LastPerformed : null,
-            volumeHistory);
     }
 
+    private static ExerciseDetails BuildExerciseDetails(
+        ExerciseEf ex,
+        ExerciseRecordEf? rec,
+        List<ExerciseHistoryPoint> history)
+    {
+        static double Avg(double total, int count)
+        {
+            return count > 0 ? total / count : 0;
+        }
+
+        var hasRec = rec != null && rec.TotalWorkouts > 0;
+
+        var totalLifted = rec?.TotalLiftedKg ?? 0;
+        var totalSets = rec?.TotalSets ?? 0;
+        var totalReps = rec?.TotalReps ?? 0;
+
+        return new ExerciseDetails(
+
+            // Basic
+            ex.Id,
+            ex.Name,
+            (MuscleGroup)ex.MuscleGroup,
+            (Equipment)ex.Equipment,
+            ex.Description,
+            ex.ImageUrl,
+            ex.VideoUrl,
+            ex.CreatedByUserId.HasValue,
+
+            // Records
+            rec?.MaxWeightKg ?? 0,
+            rec?.MaxReps ?? 0,
+            rec?.MaxVolumeKg ?? 0,
+            rec?.MaxTotalVolumeKg ?? 0,
+
+            // Dates
+            hasRec ? rec!.MaxWeightDate : null,
+            hasRec ? rec!.MaxRepsDate : null,
+            hasRec ? rec!.MaxVolumeDate : null,
+            hasRec ? rec!.MaxTotalVolumeDate : null,
+
+            // Stats
+            rec?.TotalWorkouts ?? 0,
+            totalSets,
+            totalReps,
+            totalLifted,
+            Avg(totalLifted, totalSets),
+            Avg(totalReps, totalSets),
+            hasRec ? rec!.LastPerformed : null,
+            history);
+    }
+
+    /// <inheritdoc />
     public async Task<Exercise?> GetExerciseByName(
         string exerciseName,
         Guid userId,

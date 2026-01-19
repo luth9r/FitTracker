@@ -30,7 +30,7 @@ public class ExerciseRecord : BaseEntity
     /// <summary>
     ///     Gets the maximum volume (weight × reps) achieved in a single set.
     /// </summary>
-    public double MaxVolume { get; private set; }
+    public double MaxVolumeKg { get; private set; }
 
     /// <summary>
     ///     Gets the maximum total volume achieved in a single workout session.
@@ -90,7 +90,7 @@ public class ExerciseRecord : BaseEntity
     /// <param name="exerciseId">The unique identifier of the exercise associated with this record.</param>
     /// <param name="maxWeight">The maximum weight lifted for this exercise.</param>
     /// <param name="maxReps">The maximum number of repetitions achieved in a single set.</param>
-    /// <param name="maxVolume">The maximum volume achieved in a single set.</param>
+    /// <param name="maxVolumeKg">The maximum volume achieved in a single set.</param>
     /// <param name="maxTotalVolume">The maximum total volume achieved in a single workout session.</param>
     /// <param name="maxWeightDate">The date and time when the maximum weight record was set.</param>
     /// <param name="maxRepsDate">The date and time when the maximum reps record was set.</param>
@@ -109,7 +109,7 @@ public class ExerciseRecord : BaseEntity
         Guid exerciseId,
         double maxWeight,
         int maxReps,
-        double maxVolume,
+        double maxVolumeKg,
         double maxTotalVolume,
         DateTime maxWeightDate,
         DateTime maxRepsDate,
@@ -128,7 +128,7 @@ public class ExerciseRecord : BaseEntity
         ExerciseId = exerciseId;
         MaxWeightKg = maxWeight;
         MaxReps = maxReps;
-        MaxVolume = maxVolume;
+        MaxVolumeKg = maxVolumeKg;
         MaxTotalVolumeKg = maxTotalVolume;
         MaxWeightDate = maxWeightDate;
         MaxRepsDate = maxRepsDate;
@@ -172,7 +172,7 @@ public class ExerciseRecord : BaseEntity
 
         MaxWeightKg = 0d;
         MaxReps = 0;
-        MaxVolume = 0;
+        MaxVolumeKg = 0;
         MaxTotalVolumeKg = 0;
         TotalWorkouts = 0;
         TotalSets = 0;
@@ -289,9 +289,9 @@ public class ExerciseRecord : BaseEntity
         }
 
         // Max Volume per Set PR
-        if (maxSetVolume > MaxVolume)
+        if (maxSetVolume > MaxVolumeKg)
         {
-            MaxVolume = maxSetVolume;
+            MaxVolumeKg = maxSetVolume;
             MaxVolumeDate = now;
             newRecord = true;
         }

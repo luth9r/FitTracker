@@ -23,12 +23,17 @@ public sealed class ExerciseController(IMediator mediator) : BaseApiController
     }
 
     [HttpGet("{exerciseId:guid}")]
-    public async Task<IActionResult> GetExerciseDetailsById(
+    public async Task<IActionResult> GetExerciseDetails(
         [FromRoute] Guid exerciseId,
         CancellationToken cancellationToken = default)
     {
         var query = new GetExerciseByIdQuery(exerciseId, CurrentUserId);
         var result = await mediator.Send(query, cancellationToken);
+
+        if (result.IsFailure)
+        {
+            return NotFound();
+        }
 
         return Ok(result.Value);
     }
@@ -45,7 +50,7 @@ public sealed class ExerciseController(IMediator mediator) : BaseApiController
     ///     An IActionResult indicating the outcome of the operation. Returns a Created response on success or a
     ///     validation error response otherwise.
     /// </returns>
-    [HttpPost("add")]
+    [HttpPost]
     public async Task<IActionResult> AddExercise(
         [FromForm] CreateExerciseRequest request,
         CancellationToken cancellationToken = default)
@@ -65,6 +70,9 @@ public sealed class ExerciseController(IMediator mediator) : BaseApiController
             return ValidationProblem(result.Error.ToModelState());
         }
 
-        return Created();
+        return CreatedAtAction(
+            nameof(GetExerciseDetails),
+            new { id = result.Value },
+            result.Value);
     }
 }

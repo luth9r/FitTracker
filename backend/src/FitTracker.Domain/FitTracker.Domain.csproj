@@ -7,9 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <Folder Include="Exceptions\"/>
         <Folder Include="Shared\"/>
-        <Folder Include="Specifications\"/>
-        <Folder Include="ValueObjects\"/>
         <InternalsVisibleTo Include="FitTracker.Infrastructure"/>
         <InternalsVisibleTo Include="FitTrackerInfrastructure.Tests"/>
     </ItemGroup>

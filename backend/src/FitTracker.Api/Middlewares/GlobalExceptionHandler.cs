@@ -1,4 +1,3 @@
-using FitTracker.Domain.Exceptions;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,7 +12,6 @@ public sealed class GlobalExceptionHandler : IExceptionHandler
     {
         var (statusCode, title) = exception switch
         {
-            NotFoundException nfe => (StatusCodes.Status404NotFound, nfe.ErrorCode ?? "Resource.NotFound"),
             ArgumentException => (StatusCodes.Status400BadRequest, "Auth.Unauthorized"),
             _ => (StatusCodes.Status500InternalServerError, "Server.InternalError"),
         };

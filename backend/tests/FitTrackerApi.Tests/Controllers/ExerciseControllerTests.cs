@@ -242,7 +242,7 @@ public class ExerciseControllerTests
             .ReturnsAsync(Result.Success(expectedResponse));
 
         // Act
-        var result = await _controller.GetExerciseDetailsById(exerciseId, CancellationToken.None);
+        var result = await _controller.GetExerciseDetails(exerciseId, CancellationToken.None);
 
         // Assert
         result.Should().BeOfType<OkObjectResult>();

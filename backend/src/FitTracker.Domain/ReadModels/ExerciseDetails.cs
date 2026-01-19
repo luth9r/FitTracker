@@ -20,8 +20,8 @@ namespace FitTracker.Domain.ReadModels;
 /// </param>
 /// <param name="MaxWeightKg">The highest weight ever lifted in a single set.</param>
 /// <param name="MaxReps">The highest number of repetitions ever performed in a single set.</param>
-/// <param name="MaxVolume">The highest volume (Weight x Reps) achieved in a single set.</param>
-/// <param name="MaxTotalVolume">The highest total volume achieved across all sets in a single workout session.</param>
+/// <param name="MaxVolumeKg">The highest volume (Weight x Reps) achieved in a single set.</param>
+/// <param name="MaxTotalVolumeKg">The highest total volume achieved across all sets in a single workout session.</param>
 /// <param name="MaxWeightDate">The date when the maximum weight record was achieved.</param>
 /// <param name="MaxRepsDate">The date when the maximum repetitions record was achieved.</param>
 /// <param name="MaxVolumeDate">The date when the maximum single-set volume record was achieved.</param>
@@ -29,7 +29,7 @@ namespace FitTracker.Domain.ReadModels;
 /// <param name="TotalWorkouts">Cumulative number of workouts where this exercise was performed.</param>
 /// <param name="TotalSets">Cumulative number of completed sets for this exercise.</param>
 /// <param name="TotalReps">Cumulative number of repetitions performed for this exercise.</param>
-/// <param name="TotalLifted">Cumulative weight lifted across all sessions (tonnage).</param>
+/// <param name="TotalLiftedKg">Cumulative weight lifted across all sessions (tonnage).</param>
 /// <param name="AvgWeightPerSet">Average weight lifted per set across all performances.</param>
 /// <param name="AvgRepsPerSet">Average number of repetitions performed per set.</param>
 /// <param name="LastPerformed">The date and time of the most recent performance of this exercise.</param>
@@ -49,8 +49,8 @@ public sealed record ExerciseDetails(
     // PR / records
     double MaxWeightKg,
     int MaxReps,
-    double MaxVolume,
-    double MaxTotalVolume,
+    double MaxVolumeKg,
+    double MaxTotalVolumeKg,
     DateTime? MaxWeightDate,
     DateTime? MaxRepsDate,
     DateTime? MaxVolumeDate,
@@ -58,7 +58,7 @@ public sealed record ExerciseDetails(
     int TotalWorkouts,
     int TotalSets,
     int TotalReps,
-    double TotalLifted,
+    double TotalLiftedKg,
     double AvgWeightPerSet,
     double AvgRepsPerSet,
     DateTime? LastPerformed,

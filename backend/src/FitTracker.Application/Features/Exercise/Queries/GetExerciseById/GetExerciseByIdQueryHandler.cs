@@ -1,5 +1,6 @@
 using AutoMapper;
 using CSharpFunctionalExtensions;
+using FitTracker.Application.Constants;
 using FitTracker.Domain.Abstract.Interfaces;
 using MediatR;
 
@@ -32,6 +33,11 @@ public sealed class GetExerciseByIdQueryHandler(
             request.ExerciseId,
             request.UserId,
             cancellationToken: cancellationToken);
+
+        if (exercise is null)
+        {
+            return Result.Failure<ExerciseDetailsResponse>(ErrorKeys.NotFound);
+        }
 
         var result = mapper.Map<ExerciseDetailsResponse>(exercise);
 

@@ -6,7 +6,7 @@ using FitTracker.Application.Features.User.Commands.GoogleRegister;
 using FitTracker.Application.Features.User.Commands.Login;
 using FitTracker.Application.Features.User.Commands.Register;
 using FitTracker.Application.Features.User.Commands.ResendVerificationEmail;
-using FitTracker.Application.Features.User.Commands.ResetPassword;
+using FitTracker.Application.Features.User.Commands.ResetPasswordByToken;
 using FitTracker.Application.Features.User.Commands.VerifyEmail;
 using FitTracker.Application.Features.User.Common;
 using FluentAssertions;

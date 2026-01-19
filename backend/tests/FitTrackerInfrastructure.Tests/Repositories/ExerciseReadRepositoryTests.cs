@@ -233,11 +233,11 @@ public sealed class ExerciseReadRepositoryTests : RepositoryTestBase
         result.TotalWorkouts.Should().Be(2);
         result.TotalSets.Should().Be(4);
         result.TotalReps.Should().Be(32);
-        result.TotalLifted.Should().Be(3200);
+        result.TotalLiftedKg.Should().Be(3200);
         result.MaxWeightKg.Should().Be(100);
         result.MaxReps.Should().Be(8);
-        result.MaxVolume.Should().Be(800);
-        result.MaxTotalVolume.Should().Be(3000);
+        result.MaxVolumeKg.Should().Be(800);
+        result.MaxTotalVolumeKg.Should().Be(3000);
         result.LastPerformed.Should().Be(new DateTime(2025, 12, 4));
 
         result.VolumeHistory.Should().HaveCount(2);

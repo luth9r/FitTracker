@@ -1,7 +1,7 @@
 using FitTracker.Application.Extensions;
 using FluentValidation;
 
-namespace FitTracker.Application.Features.User.Commands.ResetPassword;
+namespace FitTracker.Application.Features.User.Commands.ResetPasswordByToken;
 
 public class ResetPasswordRequestValidator : AbstractValidator<ResetPasswordRequest>
 {
