@@ -3,7 +3,7 @@ using FitTracker.Domain.Entities;
 using FitTracker.Domain.Enums;
 using FitTracker.Infrastructure.Persistence.Data.Entities;
 
-namespace FitTracker.Infrastructure.Automapper;
+namespace FitTracker.Infrastructure.Automapper.Entities;
 
 public class AchievementProfile : Profile
 {

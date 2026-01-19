@@ -2,7 +2,7 @@ using AutoMapper;
 using FitTracker.Domain.Entities;
 using FitTracker.Infrastructure.Persistence.Data.Entities;
 
-namespace FitTracker.Infrastructure.Automapper;
+namespace FitTracker.Infrastructure.Automapper.Entities;
 
 public class WorkoutExerciseProfile : Profile
 {

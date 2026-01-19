@@ -4,7 +4,7 @@ using FitTracker.Domain.Enums;
 using FitTracker.Infrastructure.Automapper.Extensions;
 using FitTracker.Infrastructure.Persistence.Data.Entities;
 
-namespace FitTracker.Infrastructure.Automapper;
+namespace FitTracker.Infrastructure.Automapper.Entities;
 
 public class ExerciseProfile : Profile
 {

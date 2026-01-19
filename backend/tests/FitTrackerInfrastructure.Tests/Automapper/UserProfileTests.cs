@@ -2,6 +2,7 @@
 using AutoMapper;
 using FitTracker.Domain.Entities;
 using FitTracker.Infrastructure.Automapper;
+using FitTracker.Infrastructure.Automapper.Entities;
 using FitTracker.Infrastructure.Persistence.Data.Entities;
 using FluentAssertions;
 using FitTrackerInfrastructure.Tests.Helpers;
