@@ -26,7 +26,7 @@ public sealed class GetUserStatsQueryHandler(
     {
         logger.LogDebug("Starting get user stats process for user: {UserId}", request.UserId);
 
-        var workouts = await workoutReadRepository.GetCompletedByUserIdAsync(request.UserId, cancellationToken);
+        var workouts = await workoutReadRepository.GetCompletedByUserIdReadonlyAsync(request.UserId, cancellationToken);
 
         if (workouts.Count == 0)
         {

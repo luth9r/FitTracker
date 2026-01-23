@@ -24,7 +24,6 @@ namespace FitTracker.Application.Features.User.Commands.ChangePassword;
 ///     A unit of work pattern implementation to commit changes as a single transaction.
 /// </param>
 public sealed class ChangePasswordCommandHandler(
-    IUserReadRepository readRepository,
     IUserWriteRepository writeRepository,
     IPasswordHasher hasher,
     IUnitOfWork unitOfWork) : IRequestHandler<ChangePasswordCommand, Result<Unit, ValidationResult>>
@@ -33,7 +32,7 @@ public sealed class ChangePasswordCommandHandler(
         ChangePasswordCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await readRepository.GetByIdReadonlyAsync(request.UserId, cancellationToken);
+        var user = await writeRepository.FindByIdAsync(request.UserId, cancellationToken);
 
         if (user is null)
         {
@@ -54,9 +53,9 @@ public sealed class ChangePasswordCommandHandler(
 
         var newPasswordHash = hasher.HashPassword(request.NewPassword);
 
-        user.UpdatePasswordHash(newPasswordHash);
+        user.ChangePasswordHash(newPasswordHash);
 
-        writeRepository.Update(user);
+        await writeRepository.UpdateAsync(user, cancellationToken);
 
         await unitOfWork.SaveChangesAsync(CancellationToken.None);
 

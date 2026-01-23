@@ -33,7 +33,7 @@ public sealed class GetRecentWorkoutsQueryHandler(
             request.UserId,
             request.Take);
 
-        var workouts = await workoutReadRepository.GetRecentByUserIdAsync(
+        var workouts = await workoutReadRepository.GetRecentByUserIdReadonlyAsync(
             request.UserId,
             request.Take,
             cancellationToken);

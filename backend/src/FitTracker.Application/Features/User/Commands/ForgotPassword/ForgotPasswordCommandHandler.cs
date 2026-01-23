@@ -9,13 +9,11 @@ namespace FitTracker.Application.Features.User.Commands.ForgotPassword;
 /// <summary>
 ///     Handler responsible for managing forgot password command execution.
 /// </summary>
-/// <param name="readRepository">The repository for reading user-related data.</param>
 /// <param name="writeRepository">The repository for writing user-related data.</param>
 /// <param name="unit">The unit of work for managing transactions.</param>
 /// <param name="localization">The service for handling culture-specific information.</param>
 /// <param name="logger">The logger for capturing diagnostic and error information.</param>
 public sealed class ForgotPasswordCommandHandler(
-    IUserReadRepository readRepository,
     IUserWriteRepository writeRepository,
     IUnitOfWork unit,
     ILocalizationService localization,
@@ -30,7 +28,7 @@ public sealed class ForgotPasswordCommandHandler(
     public async Task<Result> Handle(ForgotPasswordCommand request, CancellationToken cancellationToken)
     {
         var culture = localization.GetCurrentCulture();
-        var user = await readRepository.GetByEmailReadonlyAsync(request.Email, cancellationToken);
+        var user = await writeRepository.FindByEmailAsync(request.Email, cancellationToken);
         if (user is null || !user.IsEmailVerified)
         {
             if (user is { IsEmailVerified: false })
@@ -43,7 +41,7 @@ public sealed class ForgotPasswordCommandHandler(
 
         user.RequestPasswordReset(culture);
 
-        writeRepository.Update(user);
+        await writeRepository.UpdateAsync(user, cancellationToken);
 
         await unit.SaveChangesAsync(CancellationToken.None);
 

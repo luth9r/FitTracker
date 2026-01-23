@@ -38,7 +38,7 @@ public sealed class ExerciseReadRepositoryTests : RepositoryTestBase
         await context.SaveChangesAsync();
 
         // Act
-        var result = await _repository.GetExercisesAsync(ExerciseFilterType.Standard, null, CancellationToken.None);
+        var result = await _repository.GetExercisesReadonlyAsync(ExerciseFilterType.Standard, null, CancellationToken.None);
 
         // Assert
         result.Should().HaveCount(2);
@@ -59,7 +59,7 @@ public sealed class ExerciseReadRepositoryTests : RepositoryTestBase
         await context.SaveChangesAsync();
 
         // Act
-        var result = await _repository.GetExercisesAsync(ExerciseFilterType.Custom, userId, CancellationToken.None);
+        var result = await _repository.GetExercisesReadonlyAsync(ExerciseFilterType.Custom, userId, CancellationToken.None);
 
         // Assert
         result.Should().HaveCount(1);
@@ -76,7 +76,7 @@ public sealed class ExerciseReadRepositoryTests : RepositoryTestBase
 
         // Act
         var act = async () =>
-            await _repository.GetExercisesAsync(ExerciseFilterType.Custom, userId, CancellationToken.None);
+            await _repository.GetExercisesReadonlyAsync(ExerciseFilterType.Custom, userId, CancellationToken.None);
 
         // Assert
         await act.Should()
@@ -100,7 +100,7 @@ public sealed class ExerciseReadRepositoryTests : RepositoryTestBase
         await context.SaveChangesAsync();
 
         // Act
-        var result = await _repository.GetExercisesAsync(ExerciseFilterType.All, userId, CancellationToken.None);
+        var result = await _repository.GetExercisesReadonlyAsync(ExerciseFilterType.All, userId, CancellationToken.None);
 
         // Assert
         result.Select(x => x.Name)
@@ -117,7 +117,7 @@ public sealed class ExerciseReadRepositoryTests : RepositoryTestBase
 
         // Act
         var act = async () =>
-            await _repository.GetExercisesAsync(ExerciseFilterType.All, userId, CancellationToken.None);
+            await _repository.GetExercisesReadonlyAsync(ExerciseFilterType.All, userId, CancellationToken.None);
 
         // Assert
         await act.Should()
@@ -220,7 +220,7 @@ public sealed class ExerciseReadRepositoryTests : RepositoryTestBase
         await context.SaveChangesAsync();
 
         // Act
-        var result = await _repository.GetExerciseDetailsAsync(exerciseId, userId);
+        var result = await _repository.FindExerciseDetailsReadonlyAsync(exerciseId, userId);
 
         // Assert
         result.Should().NotBeNull();

@@ -325,7 +325,7 @@ public class User : BaseEntity
     ///     Updates the user's password hash.
     /// </summary>
     /// <param name="passwordHash">The new password hash.</param>
-    public void UpdatePasswordHash(string passwordHash)
+    public void ChangePasswordHash(string passwordHash)
     {
         if (string.IsNullOrWhiteSpace(passwordHash))
         {

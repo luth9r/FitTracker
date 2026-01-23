@@ -29,7 +29,7 @@ public sealed class GetExerciseByIdQueryHandler(
         GetExerciseByIdQuery request,
         CancellationToken cancellationToken)
     {
-        var exercise = await exerciseReadRepository.GetExerciseDetailsAsync(
+        var exercise = await exerciseReadRepository.FindExerciseDetailsReadonlyAsync(
             request.ExerciseId,
             request.UserId,
             cancellationToken: cancellationToken);

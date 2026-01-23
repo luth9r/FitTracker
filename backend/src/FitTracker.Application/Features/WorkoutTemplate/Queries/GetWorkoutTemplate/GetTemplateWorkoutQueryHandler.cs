@@ -29,7 +29,7 @@ public sealed class GetTemplateWorkoutQueryHandler(
         GetTemplateWorkoutQuery request,
         CancellationToken cancellationToken)
     {
-        var template = await repository.GetTemplateByIdAsync(
+        var template = await repository.FindTemplateByIdReadonlyAsync(
             request.TemplateId,
             request.UserId,
             cancellationToken);

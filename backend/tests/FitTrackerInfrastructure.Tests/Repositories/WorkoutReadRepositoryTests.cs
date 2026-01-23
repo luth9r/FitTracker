@@ -72,7 +72,7 @@ public sealed class WorkoutReadRepositoryTests : RepositoryTestBase
         await context.SaveChangesAsync();
 
         // Act
-        var result = await _repository.GetCompletedByUserIdAsync(userId, CancellationToken.None);
+        var result = await _repository.GetCompletedByUserIdReadonlyAsync(userId, CancellationToken.None);
 
         // Assert
         result.Should().HaveCount(2);
@@ -132,7 +132,7 @@ public sealed class WorkoutReadRepositoryTests : RepositoryTestBase
         await context.SaveChangesAsync();
 
         // Act
-        var result = await _repository.GetCompletedByUserIdAsync(userId, CancellationToken.None);
+        var result = await _repository.GetCompletedByUserIdReadonlyAsync(userId, CancellationToken.None);
 
         // Assert
         result.Should().HaveCount(3);
@@ -182,7 +182,7 @@ public sealed class WorkoutReadRepositoryTests : RepositoryTestBase
         await context.SaveChangesAsync();
 
         // Act
-        var result = await _repository.GetCompletedByUserIdAsync(userId1, CancellationToken.None);
+        var result = await _repository.GetCompletedByUserIdReadonlyAsync(userId1, CancellationToken.None);
 
         // Assert
         result.Should().HaveCount(1);
@@ -196,7 +196,7 @@ public sealed class WorkoutReadRepositoryTests : RepositoryTestBase
         var userId = Guid.NewGuid();
 
         // Act
-        var result = await _repository.GetCompletedByUserIdAsync(userId, CancellationToken.None);
+        var result = await _repository.GetCompletedByUserIdReadonlyAsync(userId, CancellationToken.None);
 
         // Assert
         result.Should().BeEmpty();
@@ -255,7 +255,7 @@ public sealed class WorkoutReadRepositoryTests : RepositoryTestBase
         await context.SaveChangesAsync();
 
         // Act
-        var result = await _repository.GetRecentByUserIdAsync(userId, 2, CancellationToken.None);
+        var result = await _repository.GetRecentByUserIdReadonlyAsync(userId, 2, CancellationToken.None);
 
         // Assert
         result.Should().HaveCount(2);
@@ -314,7 +314,7 @@ public sealed class WorkoutReadRepositoryTests : RepositoryTestBase
         await context.SaveChangesAsync();
 
         // Act
-        var result = await _repository.GetRecentByUserIdAsync(userId, 3, CancellationToken.None);
+        var result = await _repository.GetRecentByUserIdReadonlyAsync(userId, 3, CancellationToken.None);
 
         // Assert
         result.Should().HaveCount(3);
@@ -364,7 +364,7 @@ public sealed class WorkoutReadRepositoryTests : RepositoryTestBase
         await context.SaveChangesAsync();
 
         // Act
-        var result = await _repository.GetRecentByUserIdAsync(userId1, 10, CancellationToken.None);
+        var result = await _repository.GetRecentByUserIdReadonlyAsync(userId1, 10, CancellationToken.None);
 
         // Assert
         result.Should().HaveCount(1);
@@ -378,7 +378,7 @@ public sealed class WorkoutReadRepositoryTests : RepositoryTestBase
         var userId = Guid.NewGuid();
 
         // Act
-        var result = await _repository.GetRecentByUserIdAsync(userId, 5, CancellationToken.None);
+        var result = await _repository.GetRecentByUserIdReadonlyAsync(userId, 5, CancellationToken.None);
 
         // Assert
         result.Should().BeEmpty();
@@ -408,7 +408,7 @@ public sealed class WorkoutReadRepositoryTests : RepositoryTestBase
         await context.SaveChangesAsync();
 
         // Act
-        var result = await _repository.GetRecentByUserIdAsync(userId, 0, CancellationToken.None);
+        var result = await _repository.GetRecentByUserIdReadonlyAsync(userId, 0, CancellationToken.None);
 
         // Assert
         result.Should().BeEmpty();

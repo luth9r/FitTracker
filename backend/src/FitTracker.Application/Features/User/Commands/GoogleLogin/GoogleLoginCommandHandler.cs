@@ -56,13 +56,13 @@ public sealed class GoogleLoginCommandHandler(
 
         logger.LogDebug("Google Token validated for email: {Email}", googlePayload.Email);
 
-        var user = await userReadRepository.GetByGoogleTokenReadonlyAsync(googlePayload.GoogleId, cancellationToken);
+        var user = await userReadRepository.FindByGoogleTokenReadonlyAsync(googlePayload.GoogleId, cancellationToken);
 
         if (user == null)
         {
             logger.LogDebug("User not found by GoogleId. Checking by email: {Email}", googlePayload.Email);
 
-            user = await userReadRepository.GetByEmailReadonlyAsync(googlePayload.Email, cancellationToken);
+            user = await userReadRepository.FindByEmailReadonlyAsync(googlePayload.Email, cancellationToken);
 
             if (user == null)
             {

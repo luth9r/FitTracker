@@ -11,35 +11,34 @@ internal sealed class UserReadRepository(
     FitTrackerDbContext context,
     IMapper mapper) : IUserReadRepository
 {
-    private static readonly Func<FitTrackerDbContext, Guid, IAsyncEnumerable<UserEf>> GetUserEfByIdCompiled =
+    private static readonly Func<FitTrackerDbContext, Guid, Task<UserEf?>> GetUserEfByIdCompiled =
         EF.CompileAsyncQuery((FitTrackerDbContext dbContext, Guid userId) =>
             dbContext.Users
                 .AsNoTracking()
-                .Where(u => u.Id == userId));
+                .FirstOrDefault(u => u.Id == userId));
 
-    private static readonly Func<FitTrackerDbContext, string, IAsyncEnumerable<UserEf>> GetUserEfByUsernameCompiled =
+    private static readonly Func<FitTrackerDbContext, string, Task<UserEf?>> GetUserEfByUsernameCompiled =
         EF.CompileAsyncQuery((FitTrackerDbContext dbContext, string username) =>
             dbContext.Users
                 .AsNoTracking()
-                .Where(u => u.Username == username));
+                .FirstOrDefault(u => u.Username == username));
 
-    private static readonly Func<FitTrackerDbContext, string, IAsyncEnumerable<UserEf>> GetUserEfByEmailCompiled =
+    private static readonly Func<FitTrackerDbContext, string, Task<UserEf?>> GetUserEfByEmailCompiled =
         EF.CompileAsyncQuery((FitTrackerDbContext dbContext, string email) =>
             dbContext.Users
                 .AsNoTracking()
-                .Where(u => u.Email == email));
+                .FirstOrDefault(u => u.Email == email));
 
-    private static readonly Func<FitTrackerDbContext, string, IAsyncEnumerable<UserEf>> GetUserEfByGoogleTokenCompiled =
+    private static readonly Func<FitTrackerDbContext, string, Task<UserEf?>> GetUserEfByGoogleTokenCompiled =
         EF.CompileAsyncQuery((FitTrackerDbContext dbContext, string token) =>
             dbContext.Users
                 .AsNoTracking()
-                .Where(u => u.GoogleProviderId == token));
+                .FirstOrDefault(u => u.GoogleProviderId == token));
 
     /// <inheritdoc />
-    public async Task<User?> GetByIdReadonlyAsync(Guid id, CancellationToken cancellationToken)
+    public async Task<User?> FindByIdReadonlyAsync(Guid id, CancellationToken cancellationToken)
     {
-        var userEf = await GetUserEfByIdCompiled(context, id)
-            .FirstOrDefaultAsync(cancellationToken);
+        var userEf = await GetUserEfByIdCompiled(context, id);
 
         if (userEf == null)
         {
@@ -51,10 +50,9 @@ internal sealed class UserReadRepository(
     }
 
     /// <inheritdoc />
-    public async Task<User?> GetByUsernameReadonlyAsync(string username, CancellationToken cancellationToken)
+    public async Task<User?> FindByUsernameReadonlyAsync(string username, CancellationToken cancellationToken)
     {
-        var userEf = await GetUserEfByUsernameCompiled(context, username)
-            .FirstOrDefaultAsync(u => u.Username == username, cancellationToken);
+        var userEf = await GetUserEfByUsernameCompiled(context, username);
 
         if (userEf == null)
         {
@@ -66,10 +64,9 @@ internal sealed class UserReadRepository(
     }
 
     /// <inheritdoc />
-    public async Task<User?> GetByEmailReadonlyAsync(string email, CancellationToken cancellationToken)
+    public async Task<User?> FindByEmailReadonlyAsync(string email, CancellationToken cancellationToken)
     {
-        var userEf = await GetUserEfByEmailCompiled(context, email)
-            .FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
+        var userEf = await GetUserEfByEmailCompiled(context, email);
 
         if (userEf == null)
         {
@@ -81,10 +78,9 @@ internal sealed class UserReadRepository(
     }
 
     /// <inheritdoc />
-    public async Task<User?> GetByGoogleTokenReadonlyAsync(string token, CancellationToken cancellationToken)
+    public async Task<User?> FindByGoogleTokenReadonlyAsync(string token, CancellationToken cancellationToken)
     {
-        var userEf = await GetUserEfByGoogleTokenCompiled(context, token)
-            .FirstOrDefaultAsync(u => u.GoogleProviderId == token, cancellationToken);
+        var userEf = await GetUserEfByGoogleTokenCompiled(context, token);
 
         if (userEf == null)
         {

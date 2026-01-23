@@ -13,7 +13,7 @@ internal sealed class WorkoutReadRepository(
     IMapper mapper) : IWorkoutReadRepository
 {
     /// <inheritdoc />
-    public async Task<IReadOnlyList<Workout>> GetCompletedByUserIdAsync(Guid userId, CancellationToken cancelationToken)
+    public async Task<IReadOnlyList<Workout>> GetCompletedByUserIdReadonlyAsync(Guid userId, CancellationToken cancelationToken)
     {
         var workoutsEf = await context.Workouts
             .AsNoTracking()
@@ -26,7 +26,7 @@ internal sealed class WorkoutReadRepository(
     }
 
     /// <inheritdoc />
-    public async Task<IReadOnlyList<WorkoutSummary>> GetRecentByUserIdAsync(
+    public async Task<IReadOnlyList<WorkoutSummary>> GetRecentByUserIdReadonlyAsync(
         Guid userId,
         int take,
         CancellationToken cancellationToken)

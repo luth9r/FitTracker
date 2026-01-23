@@ -39,7 +39,7 @@ public sealed class LoginCommandHandler(
     {
         logger.LogDebug("Starting login process for email: {Email}", request.Email);
 
-        var user = await userReadRepository.GetByEmailReadonlyAsync(request.Email, cancellationToken);
+        var user = await userReadRepository.FindByEmailReadonlyAsync(request.Email, cancellationToken);
 
         if (user == null)
         {

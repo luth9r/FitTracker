@@ -17,7 +17,6 @@ namespace FitTracker.Application.Features.User.Commands.GoogleMobileAuth;
 ///     request and managing user authentication in the system.
 /// </summary>
 /// <param name="googleOAuthService">The Google OAuth service.</param>
-/// <param name="userReadRepository">The user read repository.</param>
 /// <param name="userWriteRepository">The user write repository.</param>
 /// <param name="unitOfWork">The unit of work.</param>
 /// <param name="jwtTokenService">The JWT token service.</param>
@@ -25,7 +24,6 @@ namespace FitTracker.Application.Features.User.Commands.GoogleMobileAuth;
 /// <param name="logger">The logger.</param>
 public sealed class GoogleMobileAuthCommandHandler(
     IGoogleOAuthService googleOAuthService,
-    IUserReadRepository userReadRepository,
     IUserWriteRepository userWriteRepository,
     IUnitOfWork unitOfWork,
     IJwtTokenGenerator jwtTokenService,
@@ -59,8 +57,8 @@ public sealed class GoogleMobileAuthCommandHandler(
                 DomainErrors.Google.InvalidToken);
         }
 
-        var user = await userReadRepository.GetByGoogleTokenReadonlyAsync(googlePayload.GoogleId, cancellationToken)
-                   ?? await userReadRepository.GetByEmailReadonlyAsync(googlePayload.Email, cancellationToken);
+        var user = await userWriteRepository.FindByGoogleTokenAsync(googlePayload.GoogleId, cancellationToken)
+                   ?? await userWriteRepository.FindByEmailAsync(googlePayload.Email, cancellationToken);
 
         if (user == null)
         {
@@ -77,7 +75,7 @@ public sealed class GoogleMobileAuthCommandHandler(
         else if (string.IsNullOrEmpty(user.GoogleProviderId))
         {
             user.SetGoogleProviderId(googlePayload.GoogleId);
-            userWriteRepository.Update(user);
+            await userWriteRepository.UpdateAsync(user, cancellationToken);
         }
 
         _ = await unitOfWork.SaveChangesAsync(CancellationToken.None);

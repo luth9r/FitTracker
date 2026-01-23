@@ -85,61 +85,97 @@ public sealed class UserWriteRepositoryTests : RepositoryTestBase
     }
 
     [Fact]
-    public async Task Update_ShouldUpdateExistingUser()
+    public async Task GetByIdAsync_ShouldReturnDomainEntity_WhenUserExists()
     {
         // Arrange
-        var user = User.Create("testuser", "test@example.com", "hash123");
-        var userEf = mapper.Map<UserEf>(user);
+        var userEf = new UserEf
+        {
+            Id = Guid.NewGuid(),
+            Username = "exists",
+            Email = "exists@test.com",
+            PasswordHash = "hash",
+            CreatedAt = DateTime.UtcNow
+        };
         context.Users.Add(userEf);
         await context.SaveChangesAsync();
 
-        context.ChangeTracker.Clear();
-
-        // Modify user
-        var userToUpdate = mapper.Map<User>(userEf);
-        userToUpdate.UpdateProfile("UpdatedFirst", "UpdatedLast", "Updated bio", null);
-
         // Act
-        _repository.Update(userToUpdate);
-        await context.SaveChangesAsync();
+        var result = await _repository.FindByIdAsync(userEf.Id, CancellationToken.None);
 
         // Assert
-        var updatedUser = await context.Users.FindAsync(userToUpdate.Id);
-        updatedUser.Should().NotBeNull();
-        updatedUser.FirstName.Should().Be("UpdatedFirst");
-        updatedUser.LastName.Should().Be("UpdatedLast");
-        updatedUser.Bio.Should().Be("Updated bio");
+        result.Should().NotBeNull();
+        result!.Id.Should().Be(userEf.Id);
+        result.Username.Should().Be("exists");
+
+        context.Entry(userEf).State.Should().Be(EntityState.Unchanged);
     }
 
     [Fact]
-    public async Task Update_ShouldNotModifyCreatedAt()
+    public async Task UpdateAsync_ShouldUpdate_WhenUserIsLoadedFromRepo()
     {
         // Arrange
-        var originalCreatedAt = DateTime.UtcNow;
-        var user = User.Create("testuser", "test@example.com", "hash123");
-
-        var userEf = mapper.Map<UserEf>(user);
-        userEf.CreatedAt = originalCreatedAt;
-        context.Users.Add(userEf);
+        var userId = Guid.NewGuid();
+        var originalUser = new UserEf
+        {
+            Id = userId,
+            Username = "bob",
+            Email = "bob@test.com",
+            FirstName = "Bob",
+            LastName = "Old",
+            PasswordHash = "hash"
+        };
+        context.Users.Add(originalUser);
         await context.SaveChangesAsync();
 
-        var originalId = userEf.Id;
-        context.ChangeTracker.Clear();
-
-        var userFromDb = await context.Users.FindAsync(originalId);
-        context.ChangeTracker.Clear();
-
-        var userToUpdate = mapper.Map<User>(userFromDb);
-        userToUpdate.UpdateProfile("NewName", null, null, null);
-
         // Act
-        _repository.Update(userToUpdate);
+        var domainUser = await _repository.FindByIdAsync(userId, CancellationToken.None);
+
+        domainUser!.UpdateProfile("Bob", "NewLastName", "New Bio", null);
+
+        await _repository.UpdateAsync(domainUser, CancellationToken.None);
+
         await context.SaveChangesAsync();
 
         // Assert
-        var updatedUser = await context.Users.FindAsync(originalId);
-        updatedUser.Should().NotBeNull();
-        updatedUser.CreatedAt.Should().BeCloseTo(originalCreatedAt, TimeSpan.FromSeconds(1));
-        updatedUser.FirstName.Should().Be("NewName");
+        context.ChangeTracker.Clear();
+        var updatedUserEf = await context.Users.FindAsync(userId);
+
+        updatedUserEf.Should().NotBeNull();
+        updatedUserEf!.LastName.Should().Be("NewLastName");
+        updatedUserEf.Bio.Should().Be("New Bio");
+        updatedUserEf.FirstName.Should().Be("Bob");
+    }
+
+    [Fact]
+    public async Task UpdateAsync_ShouldNotModifyCreatedAt()
+    {
+        // Arrange
+        var oldDate = DateTime.UtcNow.AddYears(-1);
+        var userId = Guid.NewGuid();
+
+        var userEf = new UserEf
+        {
+            Id = userId,
+            Username = "time",
+            Email = "time@test.com",
+            PasswordHash = "h",
+            CreatedAt = oldDate
+        };
+        context.Users.Add(userEf);
+        await context.SaveChangesAsync();
+
+        // Act
+        var domainUser = await _repository.FindByIdAsync(userId, CancellationToken.None);
+
+        domainUser!.UpdateProfile("Name", "Last", null, null);
+
+        await _repository.UpdateAsync(domainUser, CancellationToken.None);
+        await context.SaveChangesAsync();
+
+        // Assert
+        context.ChangeTracker.Clear();
+        var result = await context.Users.FindAsync(userId);
+
+        result!.CreatedAt.Should().BeCloseTo(oldDate, TimeSpan.FromMilliseconds(100));
     }
 }

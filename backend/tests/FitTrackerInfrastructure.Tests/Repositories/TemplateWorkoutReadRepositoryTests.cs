@@ -81,7 +81,7 @@ public class TemplateWorkoutReadRepositoryTests : RepositoryTestBase
         await context.SaveChangesAsync();
 
         // Act
-        var result = await _repository.GetTemplateByNameAsync(templateName, userId, CancellationToken.None);
+        var result = await _repository.FindTemplateByNameReadonlyAsync(templateName, userId, CancellationToken.None);
 
         // Assert
         result.Should().NotBeNull();
@@ -123,7 +123,7 @@ public class TemplateWorkoutReadRepositoryTests : RepositoryTestBase
         await context.SaveChangesAsync();
 
         // Act
-        var result = await _repository.GetTemplateByNameAsync("Push Day", userId, CancellationToken.None);
+        var result = await _repository.FindTemplateByNameReadonlyAsync("Push Day", userId, CancellationToken.None);
 
         // Assert
         result.Should().BeNull();
@@ -148,7 +148,7 @@ public class TemplateWorkoutReadRepositoryTests : RepositoryTestBase
         await context.SaveChangesAsync();
 
         // Act
-        var result = await _repository.GetTemplateByNameAsync(templateName, otherUserId, CancellationToken.None);
+        var result = await _repository.FindTemplateByNameReadonlyAsync(templateName, otherUserId, CancellationToken.None);
 
         // Assert
         result.Should().BeNull();
@@ -161,7 +161,7 @@ public class TemplateWorkoutReadRepositoryTests : RepositoryTestBase
         // Database is empty
 
         // Act
-        var result = await _repository.GetTemplateByNameAsync("Any", Guid.NewGuid(), CancellationToken.None);
+        var result = await _repository.FindTemplateByNameReadonlyAsync("Any", Guid.NewGuid(), CancellationToken.None);
 
         // Assert
         result.Should().BeNull();

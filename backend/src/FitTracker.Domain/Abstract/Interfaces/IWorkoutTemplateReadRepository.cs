@@ -11,7 +11,7 @@ public interface IWorkoutTemplateReadRepository
     /// <param name="userId">The unique identifier of the user who owns the workout template.</param>
     /// <param name="cancellationToken">A cancellation token to observe while waiting for the task to complete.</param>
     /// <returns>The workout template with the specified name for the given user, or null if no template is found.</returns>
-    Task<TemplateWorkout?> GetTemplateByNameAsync(
+    Task<TemplateWorkout?> FindTemplateByNameReadonlyAsync(
         string name,
         Guid userId,
         CancellationToken cancellationToken = default);
@@ -23,7 +23,7 @@ public interface IWorkoutTemplateReadRepository
     /// <param name="userId">The unique identifier of the user who owns the workout template.</param>
     /// <param name="cancellationToken">A cancellation token to observe while waiting for the task to complete.</param>
     /// <returns>The workout template with the specified identifier for the given user, or null if no template is found.</returns>
-    Task<TemplateWorkout?> GetTemplateByIdAsync(
+    Task<TemplateWorkout?> FindTemplateByIdReadonlyAsync(
         Guid id,
         Guid userId,
         CancellationToken cancellationToken = default);

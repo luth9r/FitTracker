@@ -15,7 +15,7 @@ internal sealed class ExerciseReadRepository(
     IMapper mapper) : IExerciseReadRepository
 {
     /// <inheritdoc />
-    public async Task<IReadOnlyList<Exercise>> GetExercisesAsync(
+    public async Task<IReadOnlyList<Exercise>> GetExercisesReadonlyAsync(
         ExerciseFilterType filter,
         Guid? userId,
         CancellationToken cancellationToken)
@@ -58,7 +58,7 @@ internal sealed class ExerciseReadRepository(
     }
 
     /// <inheritdoc />
-    public async Task<ExerciseDetails?> GetExerciseDetailsAsync(
+    public async Task<ExerciseDetails?> FindExerciseDetailsReadonlyAsync(
         Guid exerciseId,
         Guid userId,
         int fromDateMonths = 24,

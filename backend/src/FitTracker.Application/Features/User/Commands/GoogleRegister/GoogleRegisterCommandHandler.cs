@@ -58,8 +58,8 @@ public sealed class GoogleRegisterCommandHandler(
                 DomainErrors.Google.InvalidToken);
         }
 
-        if (await userReadRepository.GetByEmailReadonlyAsync(googlePayload.Email, cancellationToken) != null ||
-            await userReadRepository.GetByGoogleTokenReadonlyAsync(googlePayload.GoogleId, cancellationToken) != null)
+        if (await userReadRepository.FindByEmailReadonlyAsync(googlePayload.Email, cancellationToken) != null ||
+            await userReadRepository.FindByGoogleTokenReadonlyAsync(googlePayload.GoogleId, cancellationToken) != null)
         {
             logger.LogWarning(
                 "Account already exists for {Email} or {GoogleId}",

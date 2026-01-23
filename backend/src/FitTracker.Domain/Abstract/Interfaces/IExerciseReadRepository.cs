@@ -20,7 +20,7 @@ public interface IExerciseReadRepository
     /// <returns>
     ///     A read-only list of exercises matching the specified filter.
     /// </returns>
-    Task<IReadOnlyList<Exercise>> GetExercisesAsync(
+    Task<IReadOnlyList<Exercise>> GetExercisesReadonlyAsync(
         ExerciseFilterType filter,
         Guid? userId,
         CancellationToken cancellationToken);
@@ -34,7 +34,7 @@ public interface IExerciseReadRepository
     /// <param name="fromDateMonths">The number of moths back from today to include in the volume history (0 for all time).</param>
     /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
     /// <returns>An <see cref="ExerciseDetails" /> object containing metadata, PRs, and progress history.</returns>
-    Task<ExerciseDetails?> GetExerciseDetailsAsync(
+    Task<ExerciseDetails?> FindExerciseDetailsReadonlyAsync(
         Guid exerciseId,
         Guid userId,
         int fromDateMonths = 24,

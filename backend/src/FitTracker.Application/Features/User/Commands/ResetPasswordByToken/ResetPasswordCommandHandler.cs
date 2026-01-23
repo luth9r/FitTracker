@@ -13,14 +13,12 @@ namespace FitTracker.Application.Features.User.Commands.ResetPasswordByToken;
 /// <summary>
 ///     Handler for processing password reset commands.
 /// </summary>
-/// <param name="userReadRepository">The user read repository.</param>
 /// <param name="userWriteRepository">The user write repository.</param>
 /// <param name="unitOfWork">The unit of work.</param>
 /// <param name="jwtTokenValidator">The JWT token validator.</param>
 /// <param name="hasher">The password hasher.</param>
 /// <param name="logger">The logger.</param>
 public sealed class ResetPasswordCommandHandler(
-    IUserReadRepository userReadRepository,
     IUserWriteRepository userWriteRepository,
     IUnitOfWork unitOfWork,
     IJwtTokenValidator jwtTokenValidator,
@@ -41,7 +39,7 @@ public sealed class ResetPasswordCommandHandler(
         }
 
         var userId = validationResult.Value;
-        var user = await userReadRepository.GetByIdReadonlyAsync(userId, cancellationToken);
+        var user = await userWriteRepository.FindByIdAsync(userId, cancellationToken);
 
         if (user == null)
         {
@@ -53,7 +51,7 @@ public sealed class ResetPasswordCommandHandler(
 
         user.ChangePassword(passwordHash);
 
-        userWriteRepository.Update(user);
+        await userWriteRepository.UpdateAsync(user, cancellationToken);
 
         _ = await unitOfWork.SaveChangesAsync(CancellationToken.None);
 

@@ -102,7 +102,7 @@ public class GoogleLoginCommandHandlerTests
         _mockGoogleOAuth.Setup(s => s.ValidateAsync(tokenResponse.IdToken))
             .ReturnsAsync(googlePayload);
 
-        _mockUserRepo.Setup(r => r.GetByGoogleTokenReadonlyAsync(
+        _mockUserRepo.Setup(r => r.FindByGoogleTokenReadonlyAsync(
                 user.GoogleProviderId!,
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(user);
@@ -121,7 +121,7 @@ public class GoogleLoginCommandHandlerTests
         result.Value.Should().BeEquivalentTo(mappedResponse with { Jwt = jwtToken });
 
         _mockUserRepo.Verify(
-            r => r.GetByEmailReadonlyAsync(
+            r => r.FindByEmailReadonlyAsync(
                 It.IsAny<string>(),
                 It.IsAny<CancellationToken>()),
             Times.Never);
@@ -160,12 +160,12 @@ public class GoogleLoginCommandHandlerTests
         _mockGoogleOAuth.Setup(s => s.ValidateAsync(tokenResponse.IdToken))
             .ReturnsAsync(googlePayload);
 
-        _mockUserRepo.Setup(r => r.GetByGoogleTokenReadonlyAsync(
+        _mockUserRepo.Setup(r => r.FindByGoogleTokenReadonlyAsync(
                 googlePayload.GoogleId,
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync((User)null);
 
-        _mockUserRepo.Setup(r => r.GetByEmailReadonlyAsync(
+        _mockUserRepo.Setup(r => r.FindByEmailReadonlyAsync(
                 user.Email,
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(user);
@@ -184,13 +184,13 @@ public class GoogleLoginCommandHandlerTests
         result.Value.Should().BeEquivalentTo(mappedResponse with { Jwt = jwtToken });
 
         _mockUserRepo.Verify(
-            r => r.GetByGoogleTokenReadonlyAsync(
+            r => r.FindByGoogleTokenReadonlyAsync(
                 googlePayload.GoogleId,
                 It.IsAny<CancellationToken>()),
             Times.Once);
 
         _mockUserRepo.Verify(
-            r => r.GetByEmailReadonlyAsync(
+            r => r.FindByEmailReadonlyAsync(
                 user.Email,
                 It.IsAny<CancellationToken>()),
             Times.Once);
@@ -220,12 +220,12 @@ public class GoogleLoginCommandHandlerTests
 
         _mockGoogleOAuth.Setup(s => s.ValidateAsync(tokenResponse.IdToken)).ReturnsAsync(googlePayload);
 
-        _mockUserRepo.Setup(r => r.GetByGoogleTokenReadonlyAsync(
+        _mockUserRepo.Setup(r => r.FindByGoogleTokenReadonlyAsync(
                 It.IsAny<string>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync((User)null);
 
-        _mockUserRepo.Setup(r => r.GetByEmailReadonlyAsync(
+        _mockUserRepo.Setup(r => r.FindByEmailReadonlyAsync(
                 It.IsAny<string>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync((User)null);

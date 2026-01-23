@@ -12,7 +12,6 @@ namespace FitTrackerApplication.Tests.CommandHandlers;
 public class ForgotPasswordCommandHandlerTests
 {
     private readonly ForgotPasswordCommandHandler _handler;
-    private readonly Mock<IUserReadRepository> _mockReadRepository = new();
     private readonly Mock<IUserWriteRepository> _mockWriteRepository = new();
     private readonly Mock<IUnitOfWork> _mockUnit = new();
     private readonly Mock<ILocalizationService> _mockLocalization = new();
@@ -21,7 +20,6 @@ public class ForgotPasswordCommandHandlerTests
     public ForgotPasswordCommandHandlerTests()
     {
         _handler = new ForgotPasswordCommandHandler(
-            _mockReadRepository.Object,
             _mockWriteRepository.Object,
             _mockUnit.Object,
             _mockLocalization.Object,
@@ -33,8 +31,8 @@ public class ForgotPasswordCommandHandlerTests
     {
         // Arrange
         var command = new ForgotPasswordCommand("nonexistent@example.com");
-        _mockReadRepository
-            .Setup(r => r.GetByEmailReadonlyAsync(command.Email, It.IsAny<CancellationToken>()))
+        _mockWriteRepository
+            .Setup(r => r.FindByEmailAsync(command.Email, It.IsAny<CancellationToken>()))
             .ReturnsAsync((User)null);
 
         // Act
@@ -43,7 +41,7 @@ public class ForgotPasswordCommandHandlerTests
         // Assert
         result.IsSuccess.Should().BeTrue();
         _mockWriteRepository.Verify(
-            w => w.Update(It.IsAny<User>()),
+            w => w.UpdateAsync(It.IsAny<User>(), It.IsAny<CancellationToken>()),
             Times.Never);
         _mockUnit.Verify(
             u => u.SaveChangesAsync(It.IsAny<CancellationToken>()),
@@ -58,8 +56,8 @@ public class ForgotPasswordCommandHandlerTests
         // Assuming user has IsEmailVerified property that can be set to false
         var command = new ForgotPasswordCommand(user.Email);
 
-        _mockReadRepository
-            .Setup(r => r.GetByEmailReadonlyAsync(command.Email, It.IsAny<CancellationToken>()))
+        _mockWriteRepository
+            .Setup(r => r.FindByEmailAsync(command.Email, It.IsAny<CancellationToken>()))
             .ReturnsAsync(user);
 
         // Act
@@ -68,7 +66,7 @@ public class ForgotPasswordCommandHandlerTests
         // Assert
         result.IsSuccess.Should().BeTrue();
         _mockWriteRepository.Verify(
-            w => w.Update(It.IsAny<User>()),
+            w => w.UpdateAsync(It.IsAny<User>(), It.IsAny<CancellationToken>()),
             Times.Never);
         _mockUnit.Verify(
             u => u.SaveChangesAsync(It.IsAny<CancellationToken>()),
@@ -95,8 +93,8 @@ public class ForgotPasswordCommandHandlerTests
             .Setup(l => l.GetCurrentCulture())
             .Returns(culture);
 
-        _mockReadRepository
-            .Setup(r => r.GetByEmailReadonlyAsync(command.Email, It.IsAny<CancellationToken>()))
+        _mockWriteRepository
+            .Setup(r => r.FindByEmailAsync(command.Email, It.IsAny<CancellationToken>()))
             .ReturnsAsync(user);
 
         // Act
@@ -104,14 +102,14 @@ public class ForgotPasswordCommandHandlerTests
 
         // Assert
         result.IsSuccess.Should().BeTrue();
-        _mockReadRepository.Verify(
-            r => r.GetByEmailReadonlyAsync(command.Email, It.IsAny<CancellationToken>()),
+        _mockWriteRepository.Verify(
+            r => r.FindByEmailAsync(command.Email, It.IsAny<CancellationToken>()),
             Times.Once);
 
         _mockWriteRepository.Verify(
-            w => w.Update(user),
+            w => w.UpdateAsync(user, It.IsAny<CancellationToken>()),
             Times.Once);
-        
+
         _mockUnit.Verify(
             u => u.SaveChangesAsync(It.IsAny<CancellationToken>()),
             Times.Once);
@@ -126,8 +124,8 @@ public class ForgotPasswordCommandHandlerTests
 
         var command = new ForgotPasswordCommand("cancel@example.com");
 
-        _mockReadRepository
-            .Setup(r => r.GetByEmailReadonlyAsync(
+        _mockWriteRepository
+            .Setup(r => r.FindByEmailAsync(
                 It.IsAny<string>(),
                 It.Is<CancellationToken>(ct => ct.IsCancellationRequested)))
             .ThrowsAsync(new OperationCanceledException(cts.Token));

@@ -9,7 +9,7 @@ namespace FitTracker.Infrastructure.Persistence.Repositories;
 public class TemplateWorkoutReadRepository(FitTrackerDbContext context, IMapper mapper) : IWorkoutTemplateReadRepository
 {
     /// <inheritdoc />
-    public async Task<TemplateWorkout?> GetTemplateByNameAsync(
+    public async Task<TemplateWorkout?> FindTemplateByNameReadonlyAsync(
         string name,
         Guid userId,
         CancellationToken cancellationToken = default)
@@ -29,7 +29,7 @@ public class TemplateWorkoutReadRepository(FitTrackerDbContext context, IMapper 
     }
 
     /// <inheritdoc />
-    public async Task<TemplateWorkout?> GetTemplateByIdAsync(
+    public async Task<TemplateWorkout?> FindTemplateByIdReadonlyAsync(
         Guid id,
         Guid userId,
         CancellationToken cancellationToken = default)

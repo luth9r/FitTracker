@@ -12,13 +12,11 @@ namespace FitTracker.Application.Features.User.Commands.ResendVerificationEmail;
 /// <summary>
 ///     Handles the process of resending a verification email to a user.
 /// </summary>
-/// <param name="userReadRepository"> Repository for retrieving user data in a read-only context.</param>
 /// <param name="userWriteRepository">Repository for performing modifications on user data.</param>
 /// <param name="logger"> Logging service used to log information, warnings, and errors during processing. </param>
 /// <param name="localization"> Service for obtaining localization and cultural settings.</param>
 /// <param name="unit">Unit of work responsible for committing transactional operations.</param>
 public sealed class ResendVerificationEmailCommandHandler(
-    IUserReadRepository userReadRepository,
     IUserWriteRepository userWriteRepository,
     ILogger<ResendVerificationEmailCommandHandler> logger,
     ILocalizationService localization,
@@ -38,7 +36,7 @@ public sealed class ResendVerificationEmailCommandHandler(
         var culture = localization.GetCurrentCulture();
 
         // Retrieve user by email
-        var user = await userReadRepository.GetByEmailReadonlyAsync(request.Email, cancellationToken);
+        var user = await userWriteRepository.FindByEmailAsync(request.Email, cancellationToken);
 
         if (user == null)
         {
@@ -61,7 +59,7 @@ public sealed class ResendVerificationEmailCommandHandler(
         user.RequestVerificationEmail(culture);
 
         // Used to create an event inside the database
-        userWriteRepository.Update(user);
+        await userWriteRepository.UpdateAsync(user, cancellationToken);
 
         await unit.SaveChangesAsync(CancellationToken.None);
 

@@ -22,7 +22,7 @@ public sealed class CreateTemplateWorkoutCommandHandler(
         CancellationToken cancellationToken)
     {
         // 1. Check for duplicate template name for this user
-        var duplicateTemplate = await readRepository.GetTemplateByNameAsync(
+        var duplicateTemplate = await readRepository.FindTemplateByNameReadonlyAsync(
             request.Name,
             request.UserId,
             cancellationToken);

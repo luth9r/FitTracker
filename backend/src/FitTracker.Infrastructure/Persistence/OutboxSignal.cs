@@ -13,9 +13,19 @@ namespace FitTracker.Infrastructure.Persistence;
 /// </remarks>
 public sealed class OutboxSignal
 {
+    /// <summary>
+    ///     A private channel used for communication of boolean signals
+    ///     within the outbox mechanism.
+    /// </summary>
     private readonly Channel<bool> _channel = Channel.CreateUnbounded<bool>();
 
+    /// <summary>
+    ///     Gets the channel writer used to signal new events.
+    /// </summary>
     public ChannelWriter<bool> Writer => _channel.Writer;
 
+    /// <summary>
+    ///     Gets the channel reader used to process incoming signals.
+    /// </summary>
     public ChannelReader<bool> Reader => _channel.Reader;
 }

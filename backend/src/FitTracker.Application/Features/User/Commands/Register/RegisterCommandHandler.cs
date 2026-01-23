@@ -45,7 +45,7 @@ public sealed class RegisterCommandHandler(
 
         var currentCulture = localization.GetCurrentCulture();
 
-        var existingUser = await userReadRepository.GetByUsernameReadonlyAsync(request.Username, cancellationToken);
+        var existingUser = await userReadRepository.FindByUsernameReadonlyAsync(request.Username, cancellationToken);
         if (existingUser != null)
         {
             logger.LogWarning("Registration failed: Username {Username} already exists.", request.Username);
@@ -55,7 +55,7 @@ public sealed class RegisterCommandHandler(
         }
 
         var existingUserByEmail =
-            await userReadRepository.GetByEmailReadonlyAsync(request.Email, cancellationToken);
+            await userReadRepository.FindByEmailReadonlyAsync(request.Email, cancellationToken);
         if (existingUserByEmail != null)
         {
             logger.LogWarning("Registration failed: Email {Email} already exists.", request.Email);

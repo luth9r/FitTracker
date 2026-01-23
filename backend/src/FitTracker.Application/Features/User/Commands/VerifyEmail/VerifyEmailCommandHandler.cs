@@ -17,7 +17,6 @@ namespace FitTracker.Application.Features.User.Commands.VerifyEmail;
 /// </summary>
 /// <param name="jwtTokenGenerator">The <see cref="IJwtTokenGenerator" />.</param>
 /// <param name="jwtTokenValidator">The <see cref="IJwtTokenValidator" />.</param>
-/// <param name="userReadRepository">The <see cref="IUserReadRepository" />.</param>
 /// <param name="userWriteRepository">The <see cref="IUserWriteRepository" />.</param>
 /// <param name="unitOfWork">The <see cref="IUnitOfWork" />.</param>
 /// <param name="mapper">The <see cref="IMapper" />.</param>
@@ -25,7 +24,6 @@ namespace FitTracker.Application.Features.User.Commands.VerifyEmail;
 public sealed class VerifyEmailCommandHandler(
     IJwtTokenGenerator jwtTokenGenerator,
     IJwtTokenValidator jwtTokenValidator,
-    IUserReadRepository userReadRepository,
     IUserWriteRepository userWriteRepository,
     IUnitOfWork unitOfWork,
     IMapper mapper,
@@ -53,7 +51,7 @@ public sealed class VerifyEmailCommandHandler(
         }
 
         var userId = validationResult.Value;
-        var user = await userReadRepository.GetByIdReadonlyAsync(userId, cancellationToken);
+        var user = await userWriteRepository.FindByIdAsync(userId, cancellationToken);
         if (user == null)
         {
             logger.LogWarning("User not found for email verification. UserId: {UserId}", userId);
@@ -72,7 +70,7 @@ public sealed class VerifyEmailCommandHandler(
 
         user.SetEmailVerified();
 
-        userWriteRepository.Update(user);
+        await userWriteRepository.UpdateAsync(user, cancellationToken);
 
         _ = await unitOfWork.SaveChangesAsync(CancellationToken.None);
 

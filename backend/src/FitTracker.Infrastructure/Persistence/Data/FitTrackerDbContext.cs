@@ -80,11 +80,18 @@ public class FitTrackerDbContext : DbContext
             switch (entry.State)
             {
                 case EntityState.Added:
-                    entry.Entity.CreatedAt = DateTime.UtcNow;
+
+                    // Set CreatedAt to DateTime.UtcNow for new entities
+                    if (entry.Entity.CreatedAt == default)
+                    {
+                        entry.Entity.CreatedAt = DateTime.UtcNow;
+                    }
+
                     entry.Entity.UpdatedAt = DateTime.UtcNow;
                     break;
 
                 case EntityState.Modified:
+                    entry.Property(x => x.CreatedAt).IsModified = false;
                     entry.Entity.UpdatedAt = DateTime.UtcNow;
                     break;
             }

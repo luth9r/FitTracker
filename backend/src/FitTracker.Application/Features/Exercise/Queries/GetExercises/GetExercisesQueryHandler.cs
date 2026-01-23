@@ -33,7 +33,7 @@ public sealed class GetExercisesQueryHandler(
     {
         logger.LogDebug("Starting GetExercise query handling.");
 
-        var exercisesResult = await readRepository.GetExercisesAsync(request.Type, request.UserId, cancellationToken);
+        var exercisesResult = await readRepository.GetExercisesReadonlyAsync(request.Type, request.UserId, cancellationToken);
 
         var response = mapper.Map<IReadOnlyList<ExerciseResponse>>(exercisesResult);
 

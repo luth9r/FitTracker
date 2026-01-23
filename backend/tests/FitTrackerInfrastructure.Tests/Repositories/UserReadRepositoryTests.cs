@@ -42,7 +42,7 @@ public sealed class UserReadRepositoryTests : RepositoryTestBase
         await context.SaveChangesAsync();
 
         // Act
-        var result = await _repository.GetByIdReadonlyAsync(userId, CancellationToken.None);
+        var result = await _repository.FindByIdReadonlyAsync(userId, CancellationToken.None);
 
         // Assert
         result.Should().NotBeNull();
@@ -60,7 +60,7 @@ public sealed class UserReadRepositoryTests : RepositoryTestBase
         var nonExistentId = Guid.NewGuid();
 
         // Act
-        var result = await _repository.GetByIdReadonlyAsync(nonExistentId, CancellationToken.None);
+        var result = await _repository.FindByIdReadonlyAsync(nonExistentId, CancellationToken.None);
 
         // Assert
         result.Should().BeNull();
@@ -84,7 +84,7 @@ public sealed class UserReadRepositoryTests : RepositoryTestBase
         await context.SaveChangesAsync();
 
         // Act
-        var result = await _repository.GetByUsernameReadonlyAsync("johndoe", CancellationToken.None);
+        var result = await _repository.FindByUsernameReadonlyAsync("johndoe", CancellationToken.None);
 
         // Assert
         result.Should().NotBeNull();
@@ -97,7 +97,7 @@ public sealed class UserReadRepositoryTests : RepositoryTestBase
     {
         // Arrange
         // Act
-        var result = await _repository.GetByUsernameReadonlyAsync("nonexistent", CancellationToken.None);
+        var result = await _repository.FindByUsernameReadonlyAsync("nonexistent", CancellationToken.None);
 
         // Assert
         result.Should().BeNull();
@@ -121,7 +121,7 @@ public sealed class UserReadRepositoryTests : RepositoryTestBase
         await context.SaveChangesAsync();
 
         // Act
-        var result = await _repository.GetByEmailReadonlyAsync("unique@example.com", CancellationToken.None);
+        var result = await _repository.FindByEmailReadonlyAsync("unique@example.com", CancellationToken.None);
 
         // Assert
         result.Should().NotBeNull();
@@ -134,7 +134,7 @@ public sealed class UserReadRepositoryTests : RepositoryTestBase
     {
         // Arrange
         // Act
-        var result = await _repository.GetByEmailReadonlyAsync("nonexistent@example.com", CancellationToken.None);
+        var result = await _repository.FindByEmailReadonlyAsync("nonexistent@example.com", CancellationToken.None);
 
         // Assert
         result.Should().BeNull();
@@ -159,7 +159,7 @@ public sealed class UserReadRepositoryTests : RepositoryTestBase
         await context.SaveChangesAsync();
 
         // Act
-        var result = await _repository.GetByGoogleTokenReadonlyAsync(googleToken, CancellationToken.None);
+        var result = await _repository.FindByGoogleTokenReadonlyAsync(googleToken, CancellationToken.None);
 
         // Assert
         result.Should().NotBeNull();
@@ -172,7 +172,7 @@ public sealed class UserReadRepositoryTests : RepositoryTestBase
     {
         // Arrange
         // Act
-        var result = await _repository.GetByGoogleTokenReadonlyAsync("nonexistent_token", CancellationToken.None);
+        var result = await _repository.FindByGoogleTokenReadonlyAsync("nonexistent_token", CancellationToken.None);
 
         // Assert
         result.Should().BeNull();
@@ -219,7 +219,7 @@ public sealed class UserReadRepositoryTests : RepositoryTestBase
         await context.SaveChangesAsync();
 
         // Act
-        var result = await _repository.GetByUsernameReadonlyAsync("user2", CancellationToken.None);
+        var result = await _repository.FindByUsernameReadonlyAsync("user2", CancellationToken.None);
 
         // Assert
         result.Should().NotBeNull();

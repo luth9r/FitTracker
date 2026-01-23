@@ -14,7 +14,7 @@ public interface IWorkoutReadRepository
     /// <param name="userId">The ID of the user.</param>
     /// <param name="cancelationToken">The cancellation token.</param>
     /// <returns>The completed workouts by the user.</returns>
-    Task<IReadOnlyList<Workout>> GetCompletedByUserIdAsync(Guid userId, CancellationToken cancelationToken);
+    Task<IReadOnlyList<Workout>> GetCompletedByUserIdReadonlyAsync(Guid userId, CancellationToken cancelationToken);
 
     /// <summary>
     ///     Retrieves a limited list of recent workouts for the specified user.
@@ -25,7 +25,7 @@ public interface IWorkoutReadRepository
     /// <returns>
     ///     A read-only list of recent workout summaries.
     /// </returns>
-    Task<IReadOnlyList<WorkoutSummary>> GetRecentByUserIdAsync(
+    Task<IReadOnlyList<WorkoutSummary>> GetRecentByUserIdReadonlyAsync(
         Guid userId,
         int take,
         CancellationToken cancellationToken);
